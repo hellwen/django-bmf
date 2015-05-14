@@ -354,11 +354,22 @@ class BMFModelBase(ModelBase):
         add_signals(cls)
 
         if cls._bmfmeta.has_workflow:
-            def post_init(sender, instance, *args, **kwargs):
+
+            def post_init_workflow(sender, instance, *args, **kwargs):
                 workflow = getattr(instance, instance._bmfmeta.workflow_field_name)
                 workflow.set_django_object(instance)
                 instance._bmfmeta.workflow = workflow
-            signals.post_init.connect(post_init, sender=cls, weak=False)
+
+            signals.post_init.connect(post_init_workflow, sender=cls, weak=False)
+
+        if cls._bmfmeta.observed_fields:
+
+            def post_init_observed_fields(sender, instance, *args, **kwargs):
+                if instance.pk:
+                    for key in instance._bmfmeta.observed_fields:
+                        instance._bmfmeta.changelog[key] = getattr(instance, key)
+
+            signals.post_init.connect(post_init_observed_fields, sender=cls, weak=False)
 
 #       # add signals from base-classes
 #       if hasattr(cls,'pre_save'):

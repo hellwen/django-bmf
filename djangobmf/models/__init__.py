@@ -109,16 +109,16 @@ def object_created(sender, instance, **kwargs):
 
 @receiver(activity_update)
 def object_changed(sender, instance, **kwargs):
+
     if instance._bmfmeta.has_history and len(instance._bmfmeta.observed_fields) > 0:
         changes = []
-        # TODO detect changes
-#       values = instance._get_observed_values()
-#       for key in instance._bmfmeta.observed_fields:
-#           try:
-#               if instance._bmfmeta.changelog[key] != values[key]:
-#                   changes.append((key, instance._bmfmeta.changelog[key], values[key]))
-#           except KeyError:
-#               pass
+        for key in instance._bmfmeta.observed_fields:
+            try:
+                if instance._bmfmeta.changelog[key] != getattr(instance, key):
+                    changes.append((key, instance._bmfmeta.changelog[key], getattr(instance, key)))
+            except KeyError:
+                pass
+
         if len(changes) > 0:
             history = Activity(
                 user=instance.modified_by,
