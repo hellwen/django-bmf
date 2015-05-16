@@ -10,28 +10,18 @@ http://nvie.com/posts/a-successful-git-branching-model/
 Running tests
 *************
 
-There are more ways to do this, here is one way to help you get started::
-
-    # create a virtual environment
-    virtualenv test-django-bmf
-    # activate it 
-    cd test-django-bmf/
-    source bin/activate
-    # get django BMF from GitHub
-    git clone git@github.com:....
-    # run the test suite
-    python setup.py test
-
-When you run tests against your own new code, don't forget that it's useful to
-repeat them for different versions of Python and Django. You can use ``tox`` to
-achieve it::
+When you run tests against your own new code, it's useful to
+repeat them for different versions of Python and Django. The recommended way to
+run tests is to use``tox``::
 
     # get django BMF from GitHub
     git clone https://github.com/django-bmf/django-bmf.git
     # run the test suite
     tox
 
-Yeah it's that simple!
+You can also run the tests in your specific environment by using the test-runner script directly::
+
+    ./runtests.py
 
 Writing tests
 *************

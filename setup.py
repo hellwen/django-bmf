@@ -51,9 +51,9 @@ setup(
     ],
     include_package_data=True,
     zip_safe=False,
-    test_suite='runtests.main',
-    tests_require = [
+#   test_suite='runtests.main',
+#   tests_require = [
 #       'coverage',
 #       'pep8',
-    ],
+#   ],
 )

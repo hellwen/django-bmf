@@ -292,7 +292,7 @@ class WorkflowContainer(object):
         """
         Returns the current states name
         """
-        return self.__str__()
+        return self.obj._current_state.name
 
     @property
     def states(self):
@@ -350,4 +350,4 @@ class WorkflowContainer(object):
         return success_url
 
     def __str__(self):
-        return force_text(self.obj._current_state)
+        return six.text_type(self.obj._current_state.name)
