@@ -8,6 +8,8 @@ from django.db import models
 from django.utils.six import with_metaclass
 from django.utils.translation import ugettext_lazy as _
 
+from configobj import ConfigObj
+
 
 class ConfigField(with_metaclass(models.SubfieldBase, models.TextField)):
     """
@@ -16,7 +18,10 @@ class ConfigField(with_metaclass(models.SubfieldBase, models.TextField)):
     description = _("Config Field")
 
     def __init__(self, config, *args, **kwargs):
-        self.def_config = config
+        self.config = config
+        print(args)
+        print(kwargs)
+
         if callable(config):
             self.generate_config = config
 
@@ -38,24 +43,24 @@ class ConfigField(with_metaclass(models.SubfieldBase, models.TextField)):
         return name, path, args, kwargs
 
     def generate_config(self, instance):
-        return self.def_config
+        return self.config
 
 #   def to_python(self, value):
 #       if isinstance(value, WorkflowContainer):
 #           return value
 #       return WorkflowContainer(self.workflow, value)
 
-#   def get_prep_value(self, value):
-#       if isinstance(value, WorkflowContainer):
-#           return value.key
-#       return value
+    def get_prep_value(self, value):
+        if isinstance(value, ConfigObj):
+            return '\n'.join(value.write())
+        return value
 
-#   def value_to_string(self, obj):
-#       """
-#       serialization
-#       """
-#       value = self._get_val_from_obj(obj)
-#       return self.get_prep_value(value)
+    def value_to_string(self, obj):
+        """
+        serialization
+        """
+        value = self._get_val_from_obj(obj)
+        return self.get_prep_value(value)
 
 #   def clean(self, value, *args, **kwargs):
 #       if (isinstance(value, WorkflowContainer) and isinstance(value.obj, self.workflow)) \
