@@ -12,6 +12,7 @@ from djangobmf.conf import settings
 from djangobmf.currency import BaseCurrency
 
 from .configobj import ConfigField
+from .file import FileField
 from .workflow import WorkflowField
 
 import logging
@@ -24,6 +25,7 @@ __all__ = [
     'WorkflowField',
     'CurrencyField',
     'MoneyField',
+    'FileField',
 ]
 
 
@@ -185,68 +187,3 @@ class MoneyField(models.DecimalField):
         if isinstance(value, BaseCurrency):
             value = value.value
         return super(MoneyField, self).get_db_prep_save(value, *args, **kwargs)
-
-
-'''
-#-*- coding: utf-8 -*-
-import inspect
-from django import forms
-from django.conf import settings as globalsettings
-from django.contrib.admin.widgets import ForeignKeyRawIdWidget
-from django.contrib.admin.sites import site
-from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
-from django.db import models
-from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
-from filer.utils.compatibility import truncate_words
-from filer.models import File
-from filer import settings as filer_settings
-
-class AdminFileFormField(forms.ModelChoiceField):
-    widget = AdminFileWidget
-
-    def __init__(self, rel, queryset, to_field_name, *args, **kwargs):
-        self.rel = rel
-        self.queryset = queryset
-        self.to_field_name = to_field_name
-        self.max_value = None
-        self.min_value = None
-        other_widget = kwargs.pop('widget', None)
-        if 'admin_site' in inspect.getargspec(self.widget.__init__)[0]: # Django 1.4
-            widget_instance = self.widget(rel, site)
-        else: # Django <= 1.3
-            widget_instance = self.widget(rel)
-        forms.Field.__init__(self, widget=widget_instance, *args, **kwargs)
-
-    def widget_attrs(self, widget):
-        widget.required = self.required
-        return {}
-
-
-class FilerFileField(models.ForeignKey):
-    default_form_class = AdminFileFormField
-    default_model_class = File
-
-    def __init__(self, **kwargs):
-        # we call ForeignKey.__init__ with the Image model as parameter...
-        # a FilerImageFiled can only be a ForeignKey to a Image
-        return super(FilerFileField, self).__init__(
-            self.default_model_class, **kwargs)
-
-    def formfield(self, **kwargs):
-        # This is a fairly standard way to set up some defaults
-        # while letting the caller override them.
-        defaults = {
-            'form_class': self.default_form_class,
-            'rel': self.rel,
-        }
-        defaults.update(kwargs)
-        return super(FilerFileField, self).formfield(**defaults)
-
-from datetime import date
-from django.forms import widgets
-
-from django.contrib.admin.widgets import ForeignKeyRawIdWidget
-
-'''

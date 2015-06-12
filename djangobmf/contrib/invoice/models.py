@@ -18,6 +18,7 @@ from djangobmf.settings import CONTRIB_TRANSACTION
 from djangobmf.numbering.utils import numbercycle_get_name, numbercycle_delete_object
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
+from djangobmf.fields import FileField
 
 import datetime
 from decimal import Decimal
@@ -45,6 +46,7 @@ class BaseInvoice(BMFModel):
         null=True, on_delete=models.SET_NULL,
     )
     invoice_number = models.CharField(_('Invoice number'), max_length=255, null=True, blank=False)
+    invoice = FileField(_('Invoice'), null=True)
     products = models.ManyToManyField(CONTRIB_PRODUCT, through='InvoiceProduct', editable=False)
     net = models.FloatField(editable=False, blank=True, null=True)
     date = models.DateField(_("Date"), null=True, blank=False)
