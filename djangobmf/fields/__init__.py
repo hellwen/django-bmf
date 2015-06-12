@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 
-from django.db import models
+from django.db import models as django_models
 from django.forms.widgets import TextInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.six import with_metaclass
@@ -12,7 +12,7 @@ from djangobmf.conf import settings
 from djangobmf.currency import BaseCurrency
 
 from .configobj import ConfigField
-from .file import FileField
+from .models.file import FileField
 from .workflow import WorkflowField
 
 import logging
@@ -29,7 +29,7 @@ __all__ = [
 ]
 
 
-class OLDWorkflowField(with_metaclass(models.SubfieldBase, models.CharField)):
+class OLDWorkflowField(with_metaclass(django_models.SubfieldBase, django_models.CharField)):
     """
     OLD DONT USE
     """
@@ -84,7 +84,7 @@ class MoneyProxy(object):
         obj.__dict__[self.field.name] = value
 
 
-class CurrencyField(with_metaclass(models.SubfieldBase, models.CharField)):
+class CurrencyField(with_metaclass(django_models.SubfieldBase, django_models.CharField)):
     description = _("Currency Field")
 
     def __init__(self, *args, **kwargs):
@@ -127,7 +127,7 @@ class CurrencyField(with_metaclass(models.SubfieldBase, models.CharField)):
         return name, path, args, kwargs
 
 
-class MoneyField(models.DecimalField):
+class MoneyField(django_models.DecimalField):
     description = _("Money Field")
 
     def __init__(self, *args, **kwargs):

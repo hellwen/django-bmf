@@ -6,14 +6,31 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.six import with_metaclass
 
+from djangobmf.conf import settings as bmfsettings
 
-class FileField(with_metaclass(models.SubfieldBase, models.FileField)):
-    pass
+
+class FileField(models.ForeignKey):
+    # default_form_class = AdminFileFormField
+    model_class = '.'.join([bmfsettings.APP_LABEL, 'Document'])
+
+    def __init__(self, **kwargs):
+        if 'to' in kwargs:
+            del kwargs['to']
+        super(FileField, self).__init__(self.model_class, **kwargs)
+
+#   def formfield(self, **kwargs):
+#       # This is a fairly standard way to set up some defaults
+#       # while letting the caller override them.
+#       defaults = {
+#           'form_class': self.default_form_class,
+#           'rel': self.rel,
+#       }
+#       defaults.update(kwargs)
+#       return super(FilerFileField, self).formfield(**defaults)
+#   pass
 
 
 '''
-import warnings
-
 from django import forms
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.contrib.admin.sites import site
