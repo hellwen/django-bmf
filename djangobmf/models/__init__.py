@@ -33,6 +33,7 @@ from .document import Document as AbstractDocument
 from .notification import Notification as AbstractNotification
 from .numbering import NumberCycle as AbstractNumberCycle
 from .report import Report as AbstractReport
+from .reportconf import ReportConf as AbstractReportConf
 
 
 __all__ = (
@@ -91,6 +92,12 @@ class NumberCycle(AbstractNumberCycle):
 
 class Report(AbstractReport):
     class Meta(AbstractReport.Meta):
+        abstract = False
+        app_label = settings.APP_LABEL
+
+
+class ReportConf(AbstractReportConf):
+    class Meta(AbstractReportConf.Meta):
         abstract = False
         app_label = settings.APP_LABEL
 
