@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.http import HttpResponse
 
 from djangobmf.core.report import Report as BaseReport
@@ -15,13 +16,33 @@ class Report(models.Model):
     """
     Model to store informations to generate a report
     """
-    # TODO replace with report field
+    # TODO filter queryset to show only valid contentypes 
+    model_ct = models.ForeignKey(
+        ContentType, related_name="bmf_report", null=True, blank=True,
+        help_text="Connect a Report to an BMF-Model", on_delete=models.CASCADE,
+    )
+    model_pk = models.PositiveIntegerField()
+    model_obj = GenericForeignKey('module_ct', 'module_id')
+
+    # TODO: choices over all valid renderers
+    renderer = models.CharField(
+        _("Renderer"), max_length=30, blank=True, null=False,
+    )
+    config = models.ForeignKey(
+        ContentType, related_name="bmf_report", null=True, blank=True,
+        help_text="Connect a Report to an BMF-Model", on_delete=models.CASCADE,
+    )
+    view_function = models.CharField(
+        _("View"), max_length=255, blank=True, null=True,
+    )
+
     reporttype = models.CharField(
         _("Reporttype"), max_length=20, blank=False, null=False,
     )
     mimetype = models.CharField(
         _("Mimetype"), max_length=20, blank=False, null=False, editable=False, default="pdf",
     )
+
     contenttype = models.ForeignKey(
         ContentType, related_name="bmf_report", null=True, blank=True,
         help_text="Connect a Report to an BMF-Model", on_delete=models.CASCADE,
