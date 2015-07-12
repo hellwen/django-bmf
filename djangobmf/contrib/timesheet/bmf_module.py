@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.sites import site
-from djangobmf.categories import BaseCategory
 from djangobmf.categories import ViewFactory
 from djangobmf.categories import TimeAndAttendance
 
@@ -23,11 +22,6 @@ from .views import UpdateView
 #   'serializer': TimesheetSerializer,
 #   'permissions': TimesheetPermission,
 #)
-
-
-#lass TimesheetCategory(BaseCategory):
-#   name = _('Timesheets')
-#   slug = "timesheets"
 
 
 #ite.register_dashboards(

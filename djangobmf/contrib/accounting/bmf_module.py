@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import BaseCategory
 from djangobmf.categories import ViewFactory
 from djangobmf.categories import Accounting
 from djangobmf.sites import site
@@ -48,11 +47,6 @@ from .views import TransactionUpdateView
 #   'customer': forms.ModelChoiceField(queryset=Account.objects.filter(type=ACCOUNTING_ASSET)),
 #   'supplier': forms.ModelChoiceField(queryset=Account.objects.filter(type=ACCOUNTING_LIABILITY)),
 #)
-
-
-#lass TransactionCategory(BaseCategory):
-#   name = _('Transactions')
-#   slug = "transactions"
 
 
 #ite.register_dashboards(

@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import BaseCategory
 from djangobmf.categories import ViewFactory
 from djangobmf.categories import Sales
 from djangobmf.sites import site
@@ -27,11 +26,6 @@ from .views import QuotationUpdateView
 
 #ite.register_module(QuotationProduct, **{
 #)
-
-
-#lass QuotationCategory(BaseCategory):
-#   name = _('Quotations')
-#   slug = "quotations"
 
 
 #ite.register_dashboards(

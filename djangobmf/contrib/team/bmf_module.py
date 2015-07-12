@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.sites import site
-from djangobmf.categories import BaseCategory
 from djangobmf.categories import ViewFactory
 from djangobmf.categories import HumanResources
 
@@ -25,11 +24,6 @@ from .views import TeamUpdateView
 
 #ite.register_module(TeamMember, **{
 #)
-
-
-#lass TeamCategory(BaseCategory):
-#   name = _('Teams')
-#   slug = "teams"
 
 
 #ite.register_dashboards(

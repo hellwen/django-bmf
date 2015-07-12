@@ -7,7 +7,6 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.sites import site
-from djangobmf.categories import BaseCategory
 from djangobmf.categories import ViewFactory
 from djangobmf.categories import Sales
 
@@ -35,11 +34,6 @@ from .views import ProductUpdateView
 #ite.register_settings('bmfcontrib_product', {
 #   'default': forms.ModelChoiceField(queryset=Product.objects.filter(type=PRODUCT_SERVICE)),
 #)
-
-
-#lass ProductCategory(BaseCategory):
-#   name = _('Products')
-#   slug = "products"
 
 
 #ite.register_dashboards(
