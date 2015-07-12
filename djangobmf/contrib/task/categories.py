@@ -13,14 +13,8 @@ class GoalCategory(BaseCategory):
         name = _('Goals')
         slug = "goals"
 
-    name = _('Goals')
-    slug = "goals"
-
 
 class TaskCategory(BaseCategory):
     class Meta:
         name = _('Tasks')
         slug = "tasks"
-
-    name = _('Tasks')
-    slug = "tasks"

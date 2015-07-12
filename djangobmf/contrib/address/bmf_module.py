@@ -14,24 +14,24 @@ from .models import Address
 from .serializers import AddressSerializer
 
 
-site.register_module(Address, **{
-    'serializer': AddressSerializer,
-})
+#ite.register_module(Address, **{
+#   'serializer': AddressSerializer,
+#)
 
 
-class AddressCategory(BaseCategory):
-    name = _('Address')
-    slug = "address"
+#lass AddressCategory(BaseCategory):
+#   name = _('Address')
+#   slug = "address"
 
 
-site.register_dashboards(
-    Sales(
-        AddressCategory(
-            ViewFactory(
-                model=Address,
-                name=_("All Addresses"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+#ite.register_dashboards(
+#   Sales(
+#       AddressCategory(
+#           ViewFactory(
+#               model=Address,
+#               name=_("All Addresses"),
+#               slug="all",
+#           ),
+#       ),
+#   ),
+#

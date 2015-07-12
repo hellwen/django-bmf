@@ -11,7 +11,6 @@ from djangobmf.categories import ProjectManagement
 from djangobmf.sites import Module
 from djangobmf.sites import site
 from djangobmf.sites import register
-from djangobmf.models import Serializer
 
 # from djangobmf.contrib.project.categories import ProjectCategory
 # from djangobmf.contrib.project.models import Project
@@ -31,12 +30,12 @@ from .views import GoalDetailView
 @register(dashboard=ProjectManagement)
 class TaskModule(Module):
     model = Task
+    serializer = TaskSerializer
 
 
 @register(dashboard=ProjectManagement)
 class GoalModule(Module):
     model = Goal
-    get = GoalGetView
     clone = GoalCloneView
     detail = GoalDetailView
     serializer = GoalSerializer

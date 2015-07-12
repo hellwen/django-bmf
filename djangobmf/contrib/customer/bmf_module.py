@@ -16,41 +16,41 @@ from .views import CustomerCreateView
 from .views import CompanyCreateView
 from .views import UpdateView
 
-site.register_module(Customer, **{
-    'create': {
-        u'company': (_('Company'), CompanyCreateView),
-        u'customer': (_('Customer'), CustomerCreateView),
-    },
-    'update': UpdateView,
-    'serializer': CustomerSerializer,
-})
+#ite.register_module(Customer, **{
+#   'create': {
+#       u'company': (_('Company'), CompanyCreateView),
+#       u'customer': (_('Customer'), CustomerCreateView),
+#   },
+#   'update': UpdateView,
+#   'serializer': CustomerSerializer,
+#)
 
 
-class CustomerCategory(BaseCategory):
-    name = _('Customer')
-    slug = "customer"
+#lass CustomerCategory(BaseCategory):
+#   name = _('Customer')
+#   slug = "customer"
 
 
-site.register_dashboards(
-    Sales(
-        CustomerCategory(
-            ViewFactory(
-                model=Customer,
-                name=_("Customer"),
-                slug="customer",
-                manager="customer",
-            ),
-            ViewFactory(
-                model=Customer,
-                name=_("Supplier"),
-                slug="supplier",
-                manager="supplier",
-            ),
-            ViewFactory(
-                model=Customer,
-                name=_("All"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+#ite.register_dashboards(
+#   Sales(
+#       CustomerCategory(
+#           ViewFactory(
+#               model=Customer,
+#               name=_("Customer"),
+#               slug="customer",
+#               manager="customer",
+#           ),
+#           ViewFactory(
+#               model=Customer,
+#               name=_("Supplier"),
+#               slug="supplier",
+#               manager="supplier",
+#           ),
+#           ViewFactory(
+#               model=Customer,
+#               name=_("All"),
+#               slug="all",
+#           ),
+#       ),
+#   ),
+#

@@ -30,38 +30,38 @@ class InvoiceModule(Module):
     }
 
 
-site.register_module(Invoice, **{
-    'create': InvoiceCreateView,
-    'update': InvoiceUpdateView,
-    'serializer': InvoiceSerializer,
-    'report': True,
-})
+#ite.register_module(Invoice, **{
+#   'create': InvoiceCreateView,
+#   'update': InvoiceUpdateView,
+#   'serializer': InvoiceSerializer,
+#   'report': True,
+#)
 
 
-site.register_module(InvoiceProduct, **{
-})
+#ite.register_module(InvoiceProduct, **{
+#)
 
 
-class InvoiceCategory(BaseCategory):
-    name = _('Invoices')
-    slug = "invoices"
+#lass InvoiceCategory(BaseCategory):
+#   name = _('Invoices')
+#   slug = "invoices"
 
 
-site.register_dashboards(
-    Accounting(
-        InvoiceCategory(
-            ViewFactory(
-                model=Invoice,
-                name=_("Open invoices"),
-                slug="open",
-                manager="open",
-            ),
-            ViewFactory(
-                model=Invoice,
-                name=_("All invoices"),
-                slug="all",
-                date_resolution="month",
-            ),
-        ),
-    ),
-)
+#ite.register_dashboards(
+#   Accounting(
+#       InvoiceCategory(
+#           ViewFactory(
+#               model=Invoice,
+#               name=_("Open invoices"),
+#               slug="open",
+#               manager="open",
+#           ),
+#           ViewFactory(
+#               model=Invoice,
+#               name=_("All invoices"),
+#               slug="all",
+#               date_resolution="month",
+#           ),
+#       ),
+#   ),
+#

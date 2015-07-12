@@ -15,25 +15,25 @@ from .serializers import EmployeeSerializer
 from .views import EmployeeCreateView
 
 
-site.register_module(Employee, **{
-    'create': EmployeeCreateView,
-    'serializer': EmployeeSerializer,
-})
+#ite.register_module(Employee, **{
+#   'create': EmployeeCreateView,
+#   'serializer': EmployeeSerializer,
+#)
 
 
-class EmployeeCategory(BaseCategory):
-    name = _('Employees')
-    slug = "employees"
+#lass EmployeeCategory(BaseCategory):
+#   name = _('Employees')
+#   slug = "employees"
 
 
-site.register_dashboards(
-    HumanResources(
-        EmployeeCategory(
-            ViewFactory(
-                model=Employee,
-                name=_("All Employees"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+#ite.register_dashboards(
+#   HumanResources(
+#       EmployeeCategory(
+#           ViewFactory(
+#               model=Employee,
+#               name=_("All Employees"),
+#               slug="all",
+#           ),
+#       ),
+#   ),
+#

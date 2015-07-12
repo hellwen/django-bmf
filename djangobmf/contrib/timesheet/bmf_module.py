@@ -17,35 +17,35 @@ from .views import CreateView
 from .views import UpdateView
 
 
-site.register_module(Timesheet, **{
-    'create': CreateView,
-    'update': UpdateView,
-    'serializer': TimesheetSerializer,
-    'permissions': TimesheetPermission,
-})
+#ite.register_module(Timesheet, **{
+#   'create': CreateView,
+#   'update': UpdateView,
+#   'serializer': TimesheetSerializer,
+#   'permissions': TimesheetPermission,
+#)
 
 
-class TimesheetCategory(BaseCategory):
-    name = _('Timesheets')
-    slug = "timesheets"
+#lass TimesheetCategory(BaseCategory):
+#   name = _('Timesheets')
+#   slug = "timesheets"
 
 
-site.register_dashboards(
-    TimeAndAttendance(
-        TimesheetCategory(
-            ViewFactory(
-                model=Timesheet,
-                name=_("My timesheets"),
-                slug="mytimesheets",
-                manager="mytimesheets",
-                date_resolution='week',
-            ),
-            ViewFactory(
-                model=Timesheet,
-                name=_("Archive"),
-                slug="archive",
-                date_resolution='week',
-            ),
-        ),
-    ),
-)
+#ite.register_dashboards(
+#   TimeAndAttendance(
+#       TimesheetCategory(
+#           ViewFactory(
+#               model=Timesheet,
+#               name=_("My timesheets"),
+#               slug="mytimesheets",
+#               manager="mytimesheets",
+#               date_resolution='week',
+#           ),
+#           ViewFactory(
+#               model=Timesheet,
+#               name=_("Archive"),
+#               slug="archive",
+#               date_resolution='week',
+#           ),
+#       ),
+#   ),
+#

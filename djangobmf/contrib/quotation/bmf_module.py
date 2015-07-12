@@ -17,37 +17,37 @@ from .views import QuotationCreateView
 from .views import QuotationUpdateView
 
 
-site.register_module(Quotation, **{
-    'create': QuotationCreateView,
-    'update': QuotationUpdateView,
-    'serializer': QuotationSerializer,
-    'report': True,
-})
+#ite.register_module(Quotation, **{
+#   'create': QuotationCreateView,
+#   'update': QuotationUpdateView,
+#   'serializer': QuotationSerializer,
+#   'report': True,
+#)
 
 
-site.register_module(QuotationProduct, **{
-})
+#ite.register_module(QuotationProduct, **{
+#)
 
 
-class QuotationCategory(BaseCategory):
-    name = _('Quotations')
-    slug = "quotations"
+#lass QuotationCategory(BaseCategory):
+#   name = _('Quotations')
+#   slug = "quotations"
 
 
-site.register_dashboards(
-    Sales(
-        QuotationCategory(
-            ViewFactory(
-                model=Quotation,
-                name=_("Open quotations"),
-                slug="open",
-                manager="open",
-            ),
-            ViewFactory(
-                model=Quotation,
-                name=_("All quotations"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+#ite.register_dashboards(
+#   Sales(
+#       QuotationCategory(
+#           ViewFactory(
+#               model=Quotation,
+#               name=_("Open quotations"),
+#               slug="open",
+#               manager="open",
+#           ),
+#           ViewFactory(
+#               model=Quotation,
+#               name=_("All quotations"),
+#               slug="all",
+#           ),
+#       ),
+#   ),
+#

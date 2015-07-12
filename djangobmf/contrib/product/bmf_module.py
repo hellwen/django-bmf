@@ -20,48 +20,48 @@ from .views import ProductDetailView
 from .views import ProductUpdateView
 
 
-site.register_module(Product, **{
-    'create': ProductCreateView,
-    'detail': ProductDetailView,
-    'update': ProductUpdateView,
-    'serializer': ProductSerializer,
-})
+#ite.register_module(Product, **{
+#   'create': ProductCreateView,
+#   'detail': ProductDetailView,
+#   'update': ProductUpdateView,
+#   'serializer': ProductSerializer,
+#)
 
 
-site.register_module(ProductTax, **{
-})
+#ite.register_module(ProductTax, **{
+#)
 
 
-site.register_settings('bmfcontrib_product', {
-    'default': forms.ModelChoiceField(queryset=Product.objects.filter(type=PRODUCT_SERVICE)),
-})
+#ite.register_settings('bmfcontrib_product', {
+#   'default': forms.ModelChoiceField(queryset=Product.objects.filter(type=PRODUCT_SERVICE)),
+#)
 
 
-class ProductCategory(BaseCategory):
-    name = _('Products')
-    slug = "products"
+#lass ProductCategory(BaseCategory):
+#   name = _('Products')
+#   slug = "products"
 
 
-site.register_dashboards(
-    Sales(
-        ProductCategory(
-            ViewFactory(
-                model=Product,
-                name=_("Sellable products"),
-                slug="sell",
-                manager="can_sold",
-            ),
-            ViewFactory(
-                model=Product,
-                name=_("Purchaseable products"),
-                slug="purchase",
-                manager="can_purchased",
-            ),
-            ViewFactory(
-                model=Product,
-                name=_("All products"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+#ite.register_dashboards(
+#   Sales(
+#       ProductCategory(
+#           ViewFactory(
+#               model=Product,
+#               name=_("Sellable products"),
+#               slug="sell",
+#               manager="can_sold",
+#           ),
+#           ViewFactory(
+#               model=Product,
+#               name=_("Purchaseable products"),
+#               slug="purchase",
+#               manager="can_purchased",
+#           ),
+#           ViewFactory(
+#               model=Product,
+#               name=_("All products"),
+#               slug="all",
+#           ),
+#       ),
+#   ),
+#

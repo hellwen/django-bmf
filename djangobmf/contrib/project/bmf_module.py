@@ -16,27 +16,27 @@ from .serializers import ProjectSerializer
 from .views import ProjectUpdateView
 
 
-site.register_module(Project, **{
-    'update': ProjectUpdateView,
-    'permissions': ProjectPermission,
-    'serializer': ProjectSerializer,
-})
+#ite.register_module(Project, **{
+#   'update': ProjectUpdateView,
+#   'permissions': ProjectPermission,
+#   'serializer': ProjectSerializer,
+#)
 
 
-site.register_dashboards(
-    ProjectManagement(
-        ProjectCategory(
-            ViewFactory(
-                model=Project,
-                name=_("Active projects"),
-                slug="active",
-                manager="active",
-            ),
-            ViewFactory(
-                model=Project,
-                name=_("All projects"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+#ite.register_dashboards(
+#   ProjectManagement(
+#       ProjectCategory(
+#           ViewFactory(
+#               model=Project,
+#               name=_("Active projects"),
+#               slug="active",
+#               manager="active",
+#           ),
+#           ViewFactory(
+#               model=Project,
+#               name=_("All projects"),
+#               slug="all",
+#           ),
+#       ),
+#   ),
+#

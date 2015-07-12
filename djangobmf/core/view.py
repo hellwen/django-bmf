@@ -16,12 +16,12 @@ class View(object):
     Object internally used to register modules
     """
 
-    def __init__(self, model, name, slug, view=None, **kwargs):
+    def __init__(self, model, name, view=None, **kwargs):
         self.model = model
         self.name = name
-        self.slug = slug
+        # self.slug = slug
         self.dashboard = None  # auto
-        self.key = slug
+        # self.key = slug
         self.view = view or ModuleListView
         self.kwargs = kwargs
 

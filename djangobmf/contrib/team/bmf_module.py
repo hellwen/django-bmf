@@ -17,29 +17,29 @@ from .views import TeamCreateView
 from .views import TeamUpdateView
 
 
-site.register_module(Team, **{
-    'create': TeamCreateView,
-    'update': TeamUpdateView,
-    'serializer': TeamSerializer,
-})
+#ite.register_module(Team, **{
+#   'create': TeamCreateView,
+#   'update': TeamUpdateView,
+#   'serializer': TeamSerializer,
+#)
 
-site.register_module(TeamMember, **{
-})
-
-
-class TeamCategory(BaseCategory):
-    name = _('Teams')
-    slug = "teams"
+#ite.register_module(TeamMember, **{
+#)
 
 
-site.register_dashboards(
-    HumanResources(
-        TeamCategory(
-            ViewFactory(
-                model=Team,
-                name=_("All Teams"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+#lass TeamCategory(BaseCategory):
+#   name = _('Teams')
+#   slug = "teams"
+
+
+#ite.register_dashboards(
+#   HumanResources(
+#       TeamCategory(
+#           ViewFactory(
+#               model=Team,
+#               name=_("All Teams"),
+#               slug="all",
+#           ),
+#       ),
+#   ),
+#

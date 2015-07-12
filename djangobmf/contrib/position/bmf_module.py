@@ -18,37 +18,37 @@ from .views import PositionCreateView
 from .views import PositionAPI
 
 
-site.register_module(Position, **{
-    'create': PositionCreateView,
-    'update': PositionUpdateView,
-    'serializer': PositionSerializer,
-    'api_urlpatterns': patterns(
-        '',
-        url(r'^api/$', PositionAPI.as_view(), name="api"),
-    ),
-})
+#ite.register_module(Position, **{
+#   'create': PositionCreateView,
+#   'update': PositionUpdateView,
+#   'serializer': PositionSerializer,
+#   'api_urlpatterns': patterns(
+#       '',
+#       url(r'^api/$', PositionAPI.as_view(), name="api"),
+#   ),
+#)
 
 
-class PositionCategory(BaseCategory):
-    name = _('Positions')
-    slug = "positions"
+#lass PositionCategory(BaseCategory):
+#   name = _('Positions')
+#   slug = "positions"
 
 
-site.register_dashboards(
-    Sales(
-        PositionCategory(
-            ViewFactory(
-                model=Position,
-                name=_("Open Positions"),
-                slug="open",
-                manager="open",
-            ),
-            ViewFactory(
-                model=Position,
-                name=_("All positions"),
-                slug="all",
-                date_resolution="month",
-            ),
-        ),
-    ),
-)
+#ite.register_dashboards(
+#   Sales(
+#       PositionCategory(
+#           ViewFactory(
+#               model=Position,
+#               name=_("Open Positions"),
+#               slug="open",
+#               manager="open",
+#           ),
+#           ViewFactory(
+#               model=Position,
+#               name=_("All positions"),
+#               slug="all",
+#               date_resolution="month",
+#           ),
+#       ),
+#   ),
+#

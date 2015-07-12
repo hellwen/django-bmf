@@ -14,24 +14,24 @@ from .models import Tax
 from .serializers import TaxSerializer
 
 
-site.register_module(Tax, **{
-    'serializer': TaxSerializer,
-})
+#ite.register_module(Tax, **{
+#   'serializer': TaxSerializer,
+#)
 
 
-class TaxCategory(BaseCategory):
-    name = _('Taxes')
-    slug = "taxes"
+#lass TaxCategory(BaseCategory):
+#   name = _('Taxes')
+#   slug = "taxes"
 
 
-site.register_dashboards(
-    Accounting(
-        TaxCategory(
-            ViewFactory(
-                model=Tax,
-                name=_("All Taxes"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+#ite.register_dashboards(
+#   Accounting(
+#       TaxCategory(
+#           ViewFactory(
+#               model=Tax,
+#               name=_("All Taxes"),
+#               slug="all",
+#           ),
+#       ),
+#   ),
+#
