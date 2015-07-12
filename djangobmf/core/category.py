@@ -24,12 +24,17 @@ class CategoryMetaclass(type):
         new_cls = super_new(cls, name, bases, attrs)
 
         # validation
-        # TODO add validation for name and slug
+        if not hasattr(new_cls, 'Meta'):
+            raise ImproperlyConfigured('No Meta attribute defined in %s.' % new_cls)
 
-        # TODO remove me (old syntax)
-        if hasattr(new_cls, 'Meta'):
-            new_cls.name = getattr(new_cls.Meta, 'name', None)
-            new_cls.slug = getattr(new_cls.Meta, 'slug', None)
+        if not hasattr(new_cls.Meta, 'name'):
+            raise ImproperlyConfigured('No Meta.name defined in %s.' % new_cls)
+
+        if not hasattr(new_cls.Meta, 'slug'):
+            raise ImproperlyConfigured('No Meta.slug defined in %s.' % new_cls)
+
+        if not hasattr(new_cls.Meta, 'dashboard'):
+            raise ImproperlyConfigured('No Meta.dashboard defined in %s.' % new_cls)
 
         return new_cls
 
@@ -40,16 +45,14 @@ class Category(six.with_metaclass(CategoryMetaclass, object)):
         self.data = OrderedDict()
         self.models = []
 
-        # the dashboards gets set during the registation
-        self.dashboard = None  # auto
-
         for view in args:
             self.add_view(view)
 
         # we add a key to add a unique identifier
         # the key is equal to the slug (for now) but this
         # gives us the opportunity to add i18n urls later
-        self.key = self.slug
+        self.key = self.Meta.slug
+        self.slug = self.Meta.slug
 
     @classmethod
     def views(cls, *views):
