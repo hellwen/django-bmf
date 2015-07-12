@@ -60,7 +60,7 @@ def js():
     with lcd(BASEDIR):
         js_ext = (
             'bower_components/jquery-cookie/jquery.cookie.js',
-            'submodules/jquery-treegrid/js/jquery.treegrid.js',
+            'bower_components/jquery-treegrid/js/jquery.treegrid.js',
             'bower_components/bootstrap/dist/js/bootstrap.js',
         )
         js_own = (
@@ -80,7 +80,7 @@ def js():
         local('cp bower_components/bootstrap/dist/js/bootstrap.min.js djangobmf/static/djangobmf/js/')
 
         local('yui-compressor --type js -o djangobmf/static/djangobmf/js/jquery.cookie.min.js bower_components/jquery-cookie/jquery.cookie.js')
-        local('yui-compressor --type js -o djangobmf/static/djangobmf/js/jquery.treegrid.min.js submodules/jquery-treegrid/js/jquery.treegrid.js')
+        local('yui-compressor --type js -o djangobmf/static/djangobmf/js/jquery.treegrid.min.js bower_components/jquery-treegrid/js/jquery.treegrid.js')
 
         local('cat %s > djangobmf/static/djangobmf/js/djangobmf.js' % ' '.join(js_ext + js_own))
         local('yui-compressor --type js -o djangobmf/static/djangobmf/js/djangobmf.min.js djangobmf/static/djangobmf/js/djangobmf.js')
