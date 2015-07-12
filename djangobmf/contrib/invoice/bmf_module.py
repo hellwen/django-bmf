@@ -8,13 +8,26 @@ from django.utils.translation import ugettext_lazy as _
 from djangobmf.categories import BaseCategory
 from djangobmf.categories import ViewFactory
 from djangobmf.categories import Accounting
+from djangobmf.sites import Module
 from djangobmf.sites import site
+from djangobmf.sites import register
 
 from .models import Invoice
 from .models import InvoiceProduct
 from .serializers import InvoiceSerializer
 from .views import InvoiceCreateView
 from .views import InvoiceUpdateView
+
+
+@register(dashboard=Accounting)
+class InvoiceModule(Module):
+    model = Invoice
+    create = InvoiceCreateView
+    update = InvoiceUpdateView
+    serializer = InvoiceSerializer
+    report = {
+        'invoice': True,
+    }
 
 
 site.register_module(Invoice, **{

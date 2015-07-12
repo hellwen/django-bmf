@@ -22,14 +22,14 @@ class Report(models.Model):
         help_text="Connect a Report to an BMF-Model", on_delete=models.CASCADE,
     )
     model_pk = models.PositiveIntegerField()
-    model_obj = GenericForeignKey('module_ct', 'module_id')
+    model_obj = GenericForeignKey('model_ct', 'model_pk')
 
     # TODO: choices over all valid renderers
     renderer = models.CharField(
         _("Renderer"), max_length=30, blank=True, null=False,
     )
     config = models.ForeignKey(
-        ContentType, related_name="bmf_report", null=True, blank=True,
+        ContentType, related_name="bmf_report_config", null=True, blank=True,
         help_text="Connect a Report to an BMF-Model", on_delete=models.CASCADE,
     )
     view_function = models.CharField(
@@ -44,7 +44,7 @@ class Report(models.Model):
     )
 
     contenttype = models.ForeignKey(
-        ContentType, related_name="bmf_report", null=True, blank=True,
+        ContentType, related_name="bmf_report2", null=True, blank=True,
         help_text="Connect a Report to an BMF-Model", on_delete=models.CASCADE,
     )
     # TODO needs validator
