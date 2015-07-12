@@ -10,7 +10,6 @@ from djangobmf.sites import Category
 
 
 class QuotationCategory(Category):
-    class Meta:
-        name = _('Quotations')
-        slug = "quotations"
-        dashboard = Sales
+    name = _('Quotations')
+    slug = "quotations"
+    dashboard = Sales

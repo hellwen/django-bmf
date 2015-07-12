@@ -24,17 +24,14 @@ class CategoryMetaclass(type):
         new_cls = super_new(cls, name, bases, attrs)
 
         # validation
-        if not hasattr(new_cls, 'Meta'):
-            raise ImproperlyConfigured('No Meta attribute defined in %s.' % new_cls)
+        if not hasattr(new_cls, 'name'):
+            raise ImproperlyConfigured('No name attribute defined in %s.' % new_cls)
 
-        if not hasattr(new_cls.Meta, 'name'):
-            raise ImproperlyConfigured('No Meta.name defined in %s.' % new_cls)
+        if not hasattr(new_cls, 'slug'):
+            raise ImproperlyConfigured('No slug attribute defined in %s.' % new_cls)
 
-        if not hasattr(new_cls.Meta, 'slug'):
-            raise ImproperlyConfigured('No Meta.slug defined in %s.' % new_cls)
-
-        if not hasattr(new_cls.Meta, 'dashboard'):
-            raise ImproperlyConfigured('No Meta.dashboard defined in %s.' % new_cls)
+        if not hasattr(new_cls, 'dashboard'):
+            raise ImproperlyConfigured('No dashboard attribute defined in %s.' % new_cls)
 
         return new_cls
 

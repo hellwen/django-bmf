@@ -10,7 +10,6 @@ from djangobmf.sites import Category
 
 
 class CustomerCategory(Category):
-    class Meta:
-        name = _('Customer')
-        slug = "customer"
-        dashboard = Sales
+    name = _('Customer')
+    slug = "customer"
+    dashboard = Sales

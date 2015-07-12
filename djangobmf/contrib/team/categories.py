@@ -10,7 +10,6 @@ from djangobmf.sites import Category
 
 
 class TeamCategory(Category):
-    class Meta:
-        name = _('Teams')
-        slug = "teams"
-        dashboard = HumanResources
+    name = _('Teams')
+    slug = "teams"
+    dashboard = HumanResources

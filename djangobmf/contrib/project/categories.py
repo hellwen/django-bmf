@@ -10,7 +10,6 @@ from djangobmf.sites import Category
 
 
 class ProjectCategory(Category):
-    class Meta:
-        name = _('Projects')
-        slug = "projects"
-        dashboard = ProjectManagement
+    name = _('Projects')
+    slug = "projects"
+    dashboard = ProjectManagement

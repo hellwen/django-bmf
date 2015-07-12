@@ -10,14 +10,12 @@ from djangobmf.sites import Category
 
 
 class GoalCategory(Category):
-    class Meta:
-        name = _('Goals')
-        slug = "goals"
-        dashboard = ProjectManagement
+    name = _('Goals')
+    slug = "goals"
+    dashboard = ProjectManagement
 
 
 class TaskCategory(Category):
-    class Meta:
-        name = _('Tasks')
-        slug = "tasks"
-        dashboard = ProjectManagement
+    name = _('Tasks')
+    slug = "tasks"
+    dashboard = ProjectManagement

@@ -10,7 +10,6 @@ from djangobmf.sites import Category
 
 
 class TaxCategory(Category):
-    class Meta:
-        name = _('Taxes')
-        slug = "taxes"
-        dashboard = Accounting
+    name = _('Taxes')
+    slug = "taxes"
+    dashboard = Accounting

@@ -43,29 +43,30 @@ if apps.apps_ready:  # pragma: no branch
         def __call__(self, cls):
             self.register_generic(cls)
 
+        def register_dashboard(self, dashboard):
+            for db in site.dashboards:
+                if isinstance(db, dashboard):
+                    return db
+
+            # Register and initialize the Dashboard
+            db = dashboard()
+            site.dashboards.append(db)
+            logger.debug('Registered Dashboard "%s"', dashboard.__name__)
+            return db
+
         def register_generic(self, cls):
             if "dashboard" in self.kwargs:
-                dashboard = None
-                for db in site.dashboards:
-                    if isinstance(db, self.kwargs["dashboard"]):
-                        dashboard = db
-                        break
-
-                # Register and initialize the Dashboard
-                if dashboard is None:
-                    dashboard = self.kwargs["dashboard"]()
-                    site.dashboards.append(dashboard)
-                    logger.debug('Registered Dashboard "%s"', self.kwargs["dashboard"].__name__)
-                    
-                if issubclass(cls, Category):
-                    dashboard.add_category(cls())
-                    logger.debug('Registered Category "%s"', cls.__name__)
+                dashboard = self.register_dashboard(self.kwargs["dashboard"])
 
                 if issubclass(cls, Module):
                     if cls.model in site.modules:
                         raise AlreadyRegistered('The module %s is already registered' % cls.model.__name__)
                     site.modules[cls.model] = cls()
                     logger.debug('Registered Module "%s"', cls.__name__)
+
+            if "category" in self.kwargs:
+                dashboard = self.register_dashboard(self.kwargs["category"].dashboard)
+                logger.debug('blub "%s" %s %s', cls.__name__, self.kwargs["category"].__name__, dashboard)
 
     __all__ += [
         'register',

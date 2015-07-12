@@ -10,7 +10,6 @@ from djangobmf.sites import Category
 
 
 class AddressCategory(Category):
-    class Meta:
-        name = _('Address')
-        slug = "address"
-        dashboard = Sales
+    name = _('Address')
+    slug = "address"
+    dashboard = Sales

@@ -10,7 +10,6 @@ from djangobmf.sites import Category
 
 
 class TimesheetCategory(Category):
-    class Meta:
-        name = _('Timesheets')
-        slug = "timesheets"
-        dashboard = TimeAndAttendance
+    name = _('Timesheets')
+    slug = "timesheets"
+    dashboard = TimeAndAttendance
