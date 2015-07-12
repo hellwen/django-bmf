@@ -44,6 +44,11 @@ if apps.apps_ready:  # pragma: no branch
         def __call__(self, cls):
             self.register_generic(cls)
 
+        def register_category(self, category):
+            dashboard = self.register_dashboard(category.dashboard)
+            category = dashboard.add_category(category)
+            return category
+
         def register_dashboard(self, dashboard):
             for db in site.dashboards:
                 if isinstance(db, dashboard):
@@ -66,8 +71,11 @@ if apps.apps_ready:  # pragma: no branch
                     logger.debug('Registered Module "%s"', cls.__name__)
 
             if "category" in self.kwargs:
-                dashboard = self.register_dashboard(self.kwargs["category"].dashboard)
-                logger.debug('blub "%s" %s %s', cls.__name__, self.kwargs["category"].__name__, dashboard)
+                category = self.register_category(self.kwargs["category"])
+
+                if issubclass(cls, View):
+                    category.add_view(cls(category.dashboard))
+                    logger.debug('Registered View "%s" to %s', cls.__name__, category.__class__.__name__)
 
     __all__ += [
         'register',

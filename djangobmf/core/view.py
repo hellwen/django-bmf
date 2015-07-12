@@ -15,15 +15,14 @@ class View(object):
     """
     Object internally used to register modules
     """
+    view = ModuleListView
 
-    def __init__(self, model, name, view=None, **kwargs):
-        self.model = model
-        self.name = name
-        # self.slug = slug
-        self.dashboard = None  # auto
-        # self.key = slug
-        self.view = view or ModuleListView
-        self.kwargs = kwargs
+    def __init__(self, dashboard):
+      # self.name = name
+      # # self.slug = slug
+        self.dashboard = dashboard
+        self.key = self.slug
+      # self.kwargs = kwargs
 
 #       if 'manager' in kwargs and 'queryset' in kwargs:
 #           site.get_module(self.model).manager[kwargs['manager']] = kwargs['queryset']

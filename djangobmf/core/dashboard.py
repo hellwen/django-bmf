@@ -13,6 +13,9 @@ from .category import Category
 
 import re
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class DashboardMetaclass(type):
     def __new__(cls, name, bases, attrs):
@@ -85,16 +88,24 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
         """
         Adds a category to the dashboard
         """
+        if issubclass(category, Category) and not isinstance(category, Category):
+            # initialize category
+            category = category()
+
         for model in category.models:
             pass
             # module = site.get_module(model)
             # if self not in module.dashboards:
             #     module.dashboards.append(self)
 
+        # TODO: Check if the category exists, if not initialize category and append it
         if category in self.data.values():
             self.data[category.key].merge(category)
         else:
             self.data[category.key] = category
+
+        logger.debug('Registered Category "%s"', category.__class__.__name__)
+        return category
 
     def merge(self, other):
         """

@@ -39,18 +39,14 @@ class CategoryMetaclass(type):
 
 class Category(six.with_metaclass(CategoryMetaclass, object)):
 
-    def __init__(self, *args):
+    def __init__(self):
         self.data = OrderedDict()
         self.models = []
-
-        for view in args:
-            self.add_view(view)
 
         # we add a key to add a unique identifier
         # the key is equal to the slug (for now) but this
         # gives us the opportunity to add i18n urls later
-        self.key = self.Meta.slug
-        self.slug = self.Meta.slug
+        self.key = self.slug
 
     @classmethod
     def views(cls, *views):
