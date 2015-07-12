@@ -187,16 +187,6 @@ class Site(object):
 
     # --- dashboards ----------------------------------------------------------
 
-    def register_dashboards(self, *args):
-        for dashboard in args:
-            if dashboard in self.dashboards:
-                # merge
-                i = self.dashboards.index(dashboard)
-                self.dashboards[i].merge(dashboard)
-            else:
-                # append
-                self.dashboards.append(dashboard)
-
     def get_dashboard(self, key):
         data = [i for i in self.dashboards if i.key == key]
         if len(data) == 1:

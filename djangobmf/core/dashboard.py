@@ -49,12 +49,9 @@ class DashboardMetaclass(type):
 # TODO add validation for name and slug
 class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
 
-    def __init__(self, *args):
+    def __init__(self):
         self.data = OrderedDict()
         self.modules = []
-
-        for category in args:
-            self.add_category(category)
 
     def __bool__(self):
         return bool(self.data)

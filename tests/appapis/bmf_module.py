@@ -7,4 +7,4 @@ from djangobmf.sites import site
 
 from .models import TestView
 
-site.register_module(TestView)
+# site.register_module(TestView)

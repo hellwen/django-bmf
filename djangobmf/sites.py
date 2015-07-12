@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from django.apps import apps
 
 from djangobmf.conf import settings
-
 from djangobmf.core.category import Category
 from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
@@ -46,16 +45,27 @@ if apps.apps_ready:  # pragma: no branch
 
         def register_generic(self, cls):
             if "dashboard" in self.kwargs:
-                logger.debug('Register Dashboard "%s"' % self.kwargs["dashboard"])
-                # if self.kwargs["dashboard"] not in site.dashboards:
-                #     # initialize dashboard and append to site
-                #     site.dashboards.append(self.kwargs["dashboard"]())
+                dashboard = None
+                for db in site.dashboards:
+                    if isinstance(db, self.kwargs["dashboard"]):
+                        dashboard = db
+                        break
 
-            if issubclass(cls, Category) and 'dashboard' in self.kwargs:
-                logger.debug('Register Category "%s"' % cls.__name__)
+                # Register and initialize the Dashboard
+                if dashboard is None:
+                    dashboard = self.kwargs["dashboard"]()
+                    site.dashboards.append(dashboard)
+                    logger.debug('Registered Dashboard "%s"', self.kwargs["dashboard"].__name__)
+                    
+                if issubclass(cls, Category):
+                    dashboard.add_category(cls())
+                    logger.debug('Registered Category "%s"', cls.__name__)
 
-            if issubclass(cls, Module) and 'dashboard' in self.kwargs:
-                logger.debug('Register Module "%s"' % cls.__name__)
+                if issubclass(cls, Module):
+                    if cls.model in site.modules:
+                        raise AlreadyRegistered('The module %s is already registered' % cls.model.__name__)
+                    site.modules[cls.model] = cls()
+                    logger.debug('Registered Module "%s"', cls.__name__)
 
     __all__ += [
         'register',
