@@ -12,6 +12,7 @@ from djangobmf.sites import Module
 from djangobmf.sites import site
 from djangobmf.sites import register
 
+from .categories import InvoiceCategory
 from .models import Invoice
 from .models import InvoiceProduct
 from .serializers import InvoiceSerializer
@@ -30,21 +31,9 @@ class InvoiceModule(Module):
     }
 
 
-#ite.register_module(Invoice, **{
-#   'create': InvoiceCreateView,
-#   'update': InvoiceUpdateView,
-#   'serializer': InvoiceSerializer,
-#   'report': True,
-#)
-
-
-#ite.register_module(InvoiceProduct, **{
-#)
-
-
-#lass InvoiceCategory(BaseCategory):
-#   name = _('Invoices')
-#   slug = "invoices"
+@register(dashboard=Accounting)
+class InvoiceProductModule(Module):
+    model = InvoiceProduct
 
 
 #ite.register_dashboards(

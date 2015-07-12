@@ -81,7 +81,7 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
 
 
         # create a default serializer
-        if not self.serializer and not model._bmfmeta.only_related:
+        if not self.serializer and not self.model._bmfmeta.only_related:
             class AutoSerializer(ModuleSerializer):
                 class Meta:
                     pass

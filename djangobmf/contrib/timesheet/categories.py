@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from djangobmf.sites import Category
 
 
-class ProjectCategory(Category):
-    name = _('Projects')
-    slug = "projects"
+class TimesheetCategory(Category):
+    class Meta:
+        name = _('Timesheets')
+        slug = "timesheets"
