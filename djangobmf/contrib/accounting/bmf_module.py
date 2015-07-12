@@ -8,8 +8,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.categories import ViewFactory
 from djangobmf.categories import Accounting
+from djangobmf.sites import Module
 from djangobmf.sites import site
+from djangobmf.sites import register
 
+from .categories import TransactionCategory
 from .models import ACCOUNTING_INCOME
 from .models import ACCOUNTING_EXPENSE
 from .models import ACCOUNTING_ASSET
@@ -24,21 +27,24 @@ from .views import TransactionCreateView
 from .views import TransactionUpdateView
 
 
-#ite.register_module(Account, **{
-#   'serializer': AccountSerializer,
-#)
+@register(dashboard=Accounting)
+class AccountModule(Module):
+    model = Account
+    serializer = AccountSerializer
 
 
-#ite.register_module(Transaction, **{
-#   'create': TransactionCreateView,
-#   'update': TransactionUpdateView,
-#   'serializer': TransactionSerializer,
-#)
+@register(dashboard=Accounting)
+class TransactionModule(Module):
+    model = Transaction
+    create = TransactionCreateView
+    update = TransactionUpdateView
+    serializer = TransactionSerializer
 
 
-#ite.register_module(TransactionItem, **{
-#   'serializer': TransactionItemSerializer,
-#)
+@register(dashboard=Accounting)
+class TransactionItemModule(Module):
+    model = TransactionItem
+    serializer = TransactionItemSerializer
 
 
 #ite.register_settings('bmfcontrib_accounting', {
@@ -49,33 +55,33 @@ from .views import TransactionUpdateView
 #)
 
 
-#ite.register_dashboards(
-#   Accounting(
-#       TransactionCategory(
-#           ViewFactory(
-#               model=Account,
-#               name=_("All Accounts"),
-#               slug="accounts",
-#           ),
-#           ViewFactory(
-#               model=Transaction,
-#               name=_("Open transactions"),
-#               slug="open",
-#               manager="open",
-#           ),
-#           ViewFactory(
-#               model=Transaction,
-#               name=_("Closed transactions"),
-#               slug="closed",
-#               manager="closed",
-#               date_resolution="month",
-#           ),
-#           ViewFactory(
-#               model=TransactionItem,
-#               name=_("Transaction archive"),
-#               slug="archive",
-#               date_resolution="week",
-#           ),
-#       ),
-#   ),
-#
+@register(category=TransactionCategory)
+class AllAccounts(ViewFactory):
+    model = Account
+    name = _("All Accounts")
+    slug = "accounts"
+
+
+@register(category=TransactionCategory)
+class OpenTransactions(ViewFactory):
+    model = Transaction
+    name = _("Open transactions")
+    slug = "open"
+    manager = "open"
+
+
+@register(category=TransactionCategory)
+class ClosedTrancations(ViewFactory):
+    model = Transaction
+    name = _("Closed transactions")
+    slug = "closed"
+    manager = "closed"
+    date_resolution = "month"
+
+
+@register(category=TransactionCategory)
+class Archive(ViewFactory):
+    model = TransactionItem
+    name = _("Transaction archive")
+    slug = "archive"
+    date_resolution = "week"

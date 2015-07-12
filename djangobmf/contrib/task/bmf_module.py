@@ -12,9 +12,6 @@ from djangobmf.sites import Module
 from djangobmf.sites import site
 from djangobmf.sites import register
 
-# from djangobmf.contrib.project.categories import ProjectCategory
-# from djangobmf.contrib.project.models import Project
-
 from .categories import GoalCategory
 from .categories import TaskCategory
 from .models import Task
@@ -67,38 +64,38 @@ class ArchiveGoals(ViewFactory):
 
 @register(category=TaskCategory)
 class ArchiveGoals(ViewFactory):
-    model=Task
-    slug='my'
-    name=_("My tasks")
-    manager="mytasks"
+    model = Task
+    slug = 'my'
+    name = _("My tasks")
+    manager = "mytasks"
 
 
 @register(category=TaskCategory)
 class Todolist(ViewFactory):
-    model=Task
-    slug='todo'
-    name=_("Todolist")
-    manager="todo"
+    model = Task
+    slug = 'todo'
+    name = _("Todolist")
+    manager = "todo"
 
 
 @register(category=TaskCategory)
 class AvailableTasks(ViewFactory):
-    model=Task
-    slug='availiable'
-    name=_("Availalbe tasks")
-    manager="available"
+    model = Task
+    slug = 'availiable'
+    name = _("Availalbe tasks")
+    manager = "available"
 
 
 @register(category=TaskCategory)
 class OpenTasks(ViewFactory):
-    model=Task
-    slug='open'
-    name=_("Open tasks")
-    manager="active"
+    model = Task
+    slug = 'open'
+    name = _("Open tasks")
+    manager = "active"
 
 
 @register(category=TaskCategory)
 class ArchiveTasks(ViewFactory):
-    model=Task
-    slug='archive'
-    name=_("Archive")
+    model = Task
+    slug = 'archive'
+    name = _("Archive")

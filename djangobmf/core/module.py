@@ -11,13 +11,13 @@ from django.utils.text import slugify
 
 from djangobmf.permissions import ModulePermission
 from djangobmf.serializers import ModuleSerializer
-from djangobmf.views import ModuleCloneView
+# from djangobmf.views import ModuleCloneView
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
 from djangobmf.views import ModuleDetailView
 from djangobmf.views import ModuleFormAPI
 from djangobmf.views import ModuleListView
-from djangobmf.views import ModuleReportView
+# from djangobmf.views import ModuleReportView
 from djangobmf.views import ModuleUpdateView
 from djangobmf.views import ModuleWorkflowView
 from djangobmf.views.api import ModuleListAPIView
@@ -78,7 +78,6 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
         self.delete_view = self.detail()
         self.detail_view = self.detail()
         self.update_view = self.detail()
-
 
         # create a default serializer
         if not self.serializer and not self.model._bmfmeta.only_related:

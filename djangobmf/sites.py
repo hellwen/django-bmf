@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 from django.apps import apps
+from django.contrib.admin.sites import AlreadyRegistered
 
 from djangobmf.conf import settings
 from djangobmf.core.category import Category
