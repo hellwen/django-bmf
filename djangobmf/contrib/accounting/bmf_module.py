@@ -10,6 +10,7 @@ from djangobmf.categories import Accounting
 from djangobmf.sites import Module
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
+from djangobmf.sites import site
 
 from .categories import TransactionCategory
 from .models import ACCOUNTING_INCOME
@@ -46,12 +47,12 @@ class TransactionItemModule(Module):
     serializer = TransactionItemSerializer
 
 
-#ite.register_settings('bmfcontrib_accounting', {
-#   'income': forms.ModelChoiceField(queryset=Account.objects.filter(type=ACCOUNTING_INCOME)),
-#   'expense': forms.ModelChoiceField(queryset=Account.objects.filter(type=ACCOUNTING_EXPENSE)),
-#   'customer': forms.ModelChoiceField(queryset=Account.objects.filter(type=ACCOUNTING_ASSET)),
-#   'supplier': forms.ModelChoiceField(queryset=Account.objects.filter(type=ACCOUNTING_LIABILITY)),
-#)
+site.register_settings('bmfcontrib_accounting', {
+    'income': forms.ModelChoiceField(queryset=Account.objects.filter(type=ACCOUNTING_INCOME)),
+    'expense': forms.ModelChoiceField(queryset=Account.objects.filter(type=ACCOUNTING_EXPENSE)),
+    'customer': forms.ModelChoiceField(queryset=Account.objects.filter(type=ACCOUNTING_ASSET)),
+    'supplier': forms.ModelChoiceField(queryset=Account.objects.filter(type=ACCOUNTING_LIABILITY)),
+})
 
 
 @register(category=TransactionCategory)

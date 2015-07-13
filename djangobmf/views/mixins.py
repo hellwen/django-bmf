@@ -162,8 +162,8 @@ class BaseMixin(object):
                 for category in dashboard:
                     dashboards[dashboard.key][category.key] = {}
                     for view in category:
-                        model = view.model
-                        permissions = view.view(model=model).get_permissions([])
+                        # model = view.model
+                        permissions = view().get_permissions([])
                         if self.request.user.has_perms(permissions):
                             dashboards[dashboard.key][category.key][view.key] = reverse(
                                 'djangobmf:dashboard_view',

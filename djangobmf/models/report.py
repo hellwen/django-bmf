@@ -16,7 +16,7 @@ class Report(models.Model):
     """
     Model to store informations to generate a report
     """
-    # TODO filter queryset to show only valid contentypes 
+    # TODO filter queryset to show only valid contentypes
     model_ct = models.ForeignKey(
         ContentType, related_name="bmf_report", null=True, blank=True,
         help_text="Connect a Report to an BMF-Model", on_delete=models.CASCADE,

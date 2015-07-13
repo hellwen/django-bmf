@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.utils.six import with_metaclass
+# from django.utils.six import with_metaclass
 
 from djangobmf.conf import settings as bmfsettings
 

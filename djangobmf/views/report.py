@@ -3,7 +3,10 @@
 
 from __future__ import unicode_literals
 
+from django.contrib.contenttypes.models import ContentType
 from django.views.generic import DetailView
+
+from djangobmf.models import Report
 
 from .mixins import ModuleViewPermissionMixin
 from .mixins import ModuleViewMixin
@@ -31,7 +34,7 @@ class ReportView(ModuleViewPermissionMixin, ModuleViewMixin, DetailView):
         return ["djangobmf/module_report.html"]
 
     def get(self, request, *args, **kwargs):
-        response = super(ModuleReportView, self).get(request, *args, **kwargs)
+        response = super(ReportView, self).get(request, *args, **kwargs)
 
         ct = ContentType.objects.get_for_model(self.get_object())
         try:

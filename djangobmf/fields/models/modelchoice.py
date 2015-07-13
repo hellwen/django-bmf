@@ -8,6 +8,7 @@ from django.forms.models import ModelChoiceField as DjangoModelChoiceField
 
 
 class ModelChoiceIterator(DjangoModelChoiceIterator):
+
     def __iter__(self):
         if self.field.empty_label is not None:
             yield ("", self.field.empty_label)
@@ -21,12 +22,13 @@ class ModelChoiceIterator(DjangoModelChoiceIterator):
         else:
             for obj in self.queryset.iterator():
                 yield self.choice(obj)
+
     def __len__(self):
-        return (len(self.queryset) +
-            (1 if self.field.empty_label is not None else 0))
+        return (len(self.queryset) + (1 if self.field.empty_label is not None else 0))
 
 
 class ModelChoiceField(DjangoModelChoiceField):
+
     def _get_choices(self):
         if hasattr(self, '_choices'):
             return self._choices
