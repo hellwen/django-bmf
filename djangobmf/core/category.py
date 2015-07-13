@@ -6,9 +6,9 @@ from __future__ import unicode_literals
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 
-from collections import OrderedDict
+from djangobmf.views import ModuleListView as ViewMixin
 
-from .view import View
+from collections import OrderedDict
 
 
 class CategoryMetaclass(type):
@@ -74,7 +74,7 @@ class Category(six.with_metaclass(CategoryMetaclass, object)):
         return self.data[key]
 
     def __contains__(self, item):
-        if isinstance(item, View):
+        if isinstance(item, ViewMixin):
             key = item.key
         else:
             key = item
@@ -87,7 +87,7 @@ class Category(six.with_metaclass(CategoryMetaclass, object)):
         if view not in self.data.values():
             if view.model not in self.models:
                 self.models.append(view.model)
-            self.data[view.key] = view
+            self.data[view.slug] = view
 
     def merge(self, other):
         """

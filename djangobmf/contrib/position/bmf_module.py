@@ -6,10 +6,12 @@ from __future__ import unicode_literals
 from django.conf.urls import patterns, url
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import ViewFactory
 from djangobmf.categories import Sales
-from djangobmf.sites import site
+from djangobmf.sites import Module
+from djangobmf.sites import ViewMixin
+from djangobmf.sites import register
 
+from .categories import PositionCategory
 from .models import Position
 from .serializers import PositionSerializer
 from .views import PositionUpdateView
@@ -17,32 +19,29 @@ from .views import PositionCreateView
 from .views import PositionAPI
 
 
-#ite.register_module(Position, **{
-#   'create': PositionCreateView,
-#   'update': PositionUpdateView,
-#   'serializer': PositionSerializer,
-#   'api_urlpatterns': patterns(
-#       '',
-#       url(r'^api/$', PositionAPI.as_view(), name="api"),
-#   ),
-#)
+@register(dashboard=Sales)
+class PositionModule(Module):
+    model = Position
+    create = PositionCreateView
+    update = PositionUpdateView
+    serializer = PositionSerializer
+    api_urlpatterns = patterns(
+        '',
+        url(r'^api/$', PositionAPI.as_view(), name="api"),
+    )
 
 
-#ite.register_dashboards(
-#   Sales(
-#       PositionCategory(
-#           ViewFactory(
-#               model=Position,
-#               name=_("Open Positions"),
-#               slug="open",
-#               manager="open",
-#           ),
-#           ViewFactory(
-#               model=Position,
-#               name=_("All positions"),
-#               slug="all",
-#               date_resolution="month",
-#           ),
-#       ),
-#   ),
-#
+@register(category=PositionCategory)
+class OpenPositions(ViewMixin):
+    model = Position
+    name = _("Open Positions")
+    slug = "open"
+    manager = "open"
+
+
+@register(category=PositionCategory)
+class AllPositions(ViewMixin):
+    model = Position
+    name = _("All positions")
+    slug = "all"
+    date_resolution = "month"

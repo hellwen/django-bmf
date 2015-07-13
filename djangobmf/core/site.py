@@ -128,7 +128,7 @@ class Site(object):
 
     def unregister_module(self, module):
         if module not in self.modules:
-            raise NotRegistered('The model %s is not registered' % module.__name__)
+            raise NotRegistered('The module %s is not registered' % module.__name__)
         del self.modules[module]
 
     def get_module(self, model):

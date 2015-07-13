@@ -11,7 +11,7 @@ from djangobmf.core.category import Category
 from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
 from djangobmf.core.report import Report
-from djangobmf.core.view import View
+from djangobmf.views import ModuleListView as ViewMixin
 
 import logging
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ __all__ = [
     'Dashboard',
     'Module',
     'Report',
-    'View',
+    'ViewMixin',
 ]
 
 
@@ -62,7 +62,7 @@ if apps.apps_ready:  # pragma: no branch
 
         def register_generic(self, cls):
             if "dashboard" in self.kwargs:
-                dashboard = self.register_dashboard(self.kwargs["dashboard"])
+                self.register_dashboard(self.kwargs["dashboard"])
 
                 if issubclass(cls, Module):
                     if cls.model in site.modules:
@@ -73,8 +73,8 @@ if apps.apps_ready:  # pragma: no branch
             if "category" in self.kwargs:
                 category = self.register_category(self.kwargs["category"])
 
-                if issubclass(cls, View):
-                    category.add_view(cls(category.dashboard))
+                if issubclass(cls, ViewMixin):
+                    category.add_view(cls)
                     logger.debug('Registered View "%s" to %s', cls.__name__, category.__class__.__name__)
 
     __all__ += [

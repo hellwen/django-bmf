@@ -3,21 +3,19 @@
 
 from __future__ import unicode_literals
 
-from django.utils.formats import date_format
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import ViewFactory
 from djangobmf.categories import ProjectManagement
 from djangobmf.sites import Module
-from djangobmf.sites import site
+from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
 
 from .categories import GoalCategory
 from .categories import TaskCategory
 from .models import Task
 from .models import Goal
-from .permissions import GoalPermission
-from .permissions import TaskPermission
+# from .permissions import GoalPermission
+# from .permissions import TaskPermission
 from .serializers import GoalSerializer
 from .serializers import TaskSerializer
 from .views import GoalCloneView
@@ -39,7 +37,7 @@ class GoalModule(Module):
 
 
 @register(category=GoalCategory)
-class MyGoals(ViewFactory):
+class MyGoals(ViewMixin):
     model = Goal
     slug = 'my'
     name = _("My goals")
@@ -47,7 +45,7 @@ class MyGoals(ViewFactory):
 
 
 @register(category=GoalCategory)
-class ActiveGoals(ViewFactory):
+class ActiveGoals(ViewMixin):
     model = Goal
     slug = 'active'
     name = _("Active goals")
@@ -55,7 +53,7 @@ class ActiveGoals(ViewFactory):
 
 
 @register(category=GoalCategory)
-class ArchiveGoals(ViewFactory):
+class ArchiveGoals(ViewMixin):
     model = Goal
     slug = 'archive'
     name = _("Archive")
@@ -63,7 +61,7 @@ class ArchiveGoals(ViewFactory):
 
 
 @register(category=TaskCategory)
-class ArchiveGoals(ViewFactory):
+class MyTasks(ViewMixin):
     model = Task
     slug = 'my'
     name = _("My tasks")
@@ -71,7 +69,7 @@ class ArchiveGoals(ViewFactory):
 
 
 @register(category=TaskCategory)
-class Todolist(ViewFactory):
+class Todolist(ViewMixin):
     model = Task
     slug = 'todo'
     name = _("Todolist")
@@ -79,7 +77,7 @@ class Todolist(ViewFactory):
 
 
 @register(category=TaskCategory)
-class AvailableTasks(ViewFactory):
+class AvailableTasks(ViewMixin):
     model = Task
     slug = 'availiable'
     name = _("Availalbe tasks")
@@ -87,7 +85,7 @@ class AvailableTasks(ViewFactory):
 
 
 @register(category=TaskCategory)
-class OpenTasks(ViewFactory):
+class OpenTasks(ViewMixin):
     model = Task
     slug = 'open'
     name = _("Open tasks")
@@ -95,7 +93,7 @@ class OpenTasks(ViewFactory):
 
 
 @register(category=TaskCategory)
-class ArchiveTasks(ViewFactory):
+class ArchiveTasks(ViewMixin):
     model = Task
     slug = 'archive'
     name = _("Archive")

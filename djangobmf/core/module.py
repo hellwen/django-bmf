@@ -74,10 +74,10 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
         self.dashboards = []
         self.manager = {}
 
-        self.create_view = self.create()
-        self.delete_view = self.detail()
-        self.detail_view = self.detail()
-        self.update_view = self.detail()
+        self.create_view = self.create
+        self.delete_view = self.delete
+        self.detail_view = self.detail
+        self.update_view = self.update
 
         # create a default serializer
         if not self.serializer and not self.model._bmfmeta.only_related:

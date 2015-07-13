@@ -5,10 +5,9 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import ViewFactory
 from djangobmf.categories import Accounting
 from djangobmf.sites import Module
-from djangobmf.sites import site
+from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
 
 from .categories import InvoiceCategory
@@ -35,21 +34,17 @@ class InvoiceProductModule(Module):
     model = InvoiceProduct
 
 
-#ite.register_dashboards(
-#   Accounting(
-#       InvoiceCategory(
-#           ViewFactory(
-#               model=Invoice,
-#               name=_("Open invoices"),
-#               slug="open",
-#               manager="open",
-#           ),
-#           ViewFactory(
-#               model=Invoice,
-#               name=_("All invoices"),
-#               slug="all",
-#               date_resolution="month",
-#           ),
-#       ),
-#   ),
-#
+@register(category=InvoiceCategory)
+class OpenInvoices(ViewMixin):
+    model = Invoice
+    name = _("Open invoices")
+    slug = "open"
+    manager = "open"
+
+
+@register(category=InvoiceCategory)
+class AllInvoices(ViewMixin):
+    model = Invoice
+    name = _("All invoices")
+    slug = "all"
+    date_resolution = "month"

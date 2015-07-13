@@ -49,7 +49,6 @@ class DashboardMetaclass(type):
         return new_cls
 
 
-# TODO add validation for name and slug
 class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
 
     def __init__(self):
@@ -88,24 +87,21 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
         """
         Adds a category to the dashboard
         """
-        if issubclass(category, Category) and not isinstance(category, Category):
-            # initialize category
-            category = category()
+        for cat in self.data.values():
+            if isinstance(cat, category):
+                return cat
 
-        for model in category.models:
-            pass
+        cat = category()
+        self.data[cat.key] = cat
+
+        for model in cat.models:
             # module = site.get_module(model)
             # if self not in module.dashboards:
             #     module.dashboards.append(self)
+            pass
 
-        # TODO: Check if the category exists, if not initialize category and append it
-        if category in self.data.values():
-            self.data[category.key].merge(category)
-        else:
-            self.data[category.key] = category
-
-        logger.debug('Registered Category "%s"', category.__class__.__name__)
-        return category
+        logger.debug('Registered Category "%s"', cat.__class__.__name__)
+        return cat
 
     def merge(self, other):
         """
@@ -113,8 +109,3 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
         """
         for category in other.data.values():
             self.add_category(category)
-
-#   @property
-#   def urls(self):
-#       urlpatterns = patterns('')
-#       return urlpatterns

@@ -5,27 +5,24 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import ViewFactory
 from djangobmf.categories import Accounting
-from djangobmf.sites import site
+from djangobmf.sites import Module
+from djangobmf.sites import ViewMixin
+from djangobmf.sites import register
 
+from .categories import TaxCategory
 from .models import Tax
 from .serializers import TaxSerializer
 
 
-#ite.register_module(Tax, **{
-#   'serializer': TaxSerializer,
-#)
+@register(dashboard=Accounting)
+class TaxModule(Module):
+    model = Tax
+    serializer = TaxSerializer
 
 
-#ite.register_dashboards(
-#   Accounting(
-#       TaxCategory(
-#           ViewFactory(
-#               model=Tax,
-#               name=_("All Taxes"),
-#               slug="all",
-#           ),
-#       ),
-#   ),
-#
+@register(category=TaxCategory)
+class AllTaxes(ViewMixin):
+    model = Tax
+    name = _("All Taxes")
+    slug = "all"

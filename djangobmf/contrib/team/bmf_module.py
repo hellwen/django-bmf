@@ -5,10 +5,12 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.sites import site
-from djangobmf.categories import ViewFactory
 from djangobmf.categories import HumanResources
+from djangobmf.sites import Module
+from djangobmf.sites import ViewMixin
+from djangobmf.sites import register
 
+from .categories import TeamCategory
 from .models import Team
 from .models import TeamMember
 from .serializers import TeamSerializer
@@ -16,24 +18,21 @@ from .views import TeamCreateView
 from .views import TeamUpdateView
 
 
-#ite.register_module(Team, **{
-#   'create': TeamCreateView,
-#   'update': TeamUpdateView,
-#   'serializer': TeamSerializer,
-#)
-
-#ite.register_module(TeamMember, **{
-#)
+@register(dashboard=HumanResources)
+class TeamModule(Module):
+    model = Team
+    create = TeamCreateView
+    update = TeamUpdateView
+    serializer = TeamSerializer
 
 
-#ite.register_dashboards(
-#   HumanResources(
-#       TeamCategory(
-#           ViewFactory(
-#               model=Team,
-#               name=_("All Teams"),
-#               slug="all",
-#           ),
-#       ),
-#   ),
-#
+@register(dashboard=HumanResources)
+class TeamMemberModule(Module):
+    model = TeamMember
+
+
+@register(category=TeamCategory)
+class AllTeams(ViewMixin):
+    model = Team
+    name = _("All Teams")
+    slug = "all"

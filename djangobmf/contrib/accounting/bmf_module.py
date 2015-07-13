@@ -6,10 +6,9 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import ViewFactory
 from djangobmf.categories import Accounting
 from djangobmf.sites import Module
-from djangobmf.sites import site
+from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
 
 from .categories import TransactionCategory
@@ -56,14 +55,14 @@ class TransactionItemModule(Module):
 
 
 @register(category=TransactionCategory)
-class AllAccounts(ViewFactory):
+class AllAccounts(ViewMixin):
     model = Account
     name = _("All Accounts")
     slug = "accounts"
 
 
 @register(category=TransactionCategory)
-class OpenTransactions(ViewFactory):
+class OpenTransactions(ViewMixin):
     model = Transaction
     name = _("Open transactions")
     slug = "open"
@@ -71,7 +70,7 @@ class OpenTransactions(ViewFactory):
 
 
 @register(category=TransactionCategory)
-class ClosedTrancations(ViewFactory):
+class ClosedTrancations(ViewMixin):
     model = Transaction
     name = _("Closed transactions")
     slug = "closed"
@@ -80,7 +79,7 @@ class ClosedTrancations(ViewFactory):
 
 
 @register(category=TransactionCategory)
-class Archive(ViewFactory):
+class Archive(ViewMixin):
     model = TransactionItem
     name = _("Transaction archive")
     slug = "archive"
