@@ -195,35 +195,6 @@
 
 {
  "fields": {
-  "contenttype": [
-   "djangobmf_quotation",
-   "quotation"
-  ],
-  "reporttype": "xhtml2pdf",
-  "mimetype": "pdf",
-  "options": "[layout]\r\nsize = A4\r\nform = A\r\nletter = True\r\n\r\n[letter_page]\r\nmargin_right = 10mm\r\nmargin_bottom = 40mm\r\nextra = true\r\nextra_right = 10mm\r\nextra_top = 40mm\r\npdf_background_pk = None\r\n\r\n[pages]\r\nmargin_right = 10mm\r\nmargin_bottom = 15mm\r\nmargin_top = 20mm\r\npdf_background_pk = None\r\n\r\n[footer]\r\nright = 10mm\r\nheight = 10mm",
-  "modified": "2015-02-20T03:40:14.200Z"
- },
- "model": "djangobmf.report",
- "pk": 1
-},
-{
- "fields": {
-  "contenttype": [
-   "djangobmf_invoice",
-   "invoice"
-  ],
-  "reporttype": "xhtml2pdf",
-  "mimetype": "pdf",
-  "options": "[layout]\r\nsize = A4\r\nform = A\r\nletter = True\r\n\r\n[letter_page]\r\nmargin_right = 10mm\r\nmargin_bottom = 40mm\r\nextra = true\r\nextra_right = 10mm\r\nextra_top = 40mm\r\npdf_background_pk = None\r\n\r\n[pages]\r\nmargin_right = 10mm\r\nmargin_bottom = 15mm\r\nmargin_top = 20mm\r\npdf_background_pk = None\r\n\r\n[footer]\r\nright = 10mm\r\nheight = 10mm",
-  "modified": "2015-02-20T03:40:07.347Z"
- },
- "model": "djangobmf.report",
- "pk": 2
-},
-
-{
- "fields": {
   "field_name": "currency",
   "value": "\"EUR\"",
   "app_label": "djangobmf"

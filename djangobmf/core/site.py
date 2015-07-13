@@ -37,7 +37,8 @@ class Site(object):
         # true if the site is active, ie loaded
         self.is_active = False
 
-        self.is_migrated = False
+        # TODO: remove me, if unused
+        # self.is_migrated = False
 
         # combine all registered modules here
         self.modules = {}

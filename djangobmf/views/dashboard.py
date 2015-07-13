@@ -12,6 +12,7 @@ from djangobmf.sites import site
 from djangobmf.models import Dashboard
 
 from .mixins import ViewMixin
+from .module import ModuleListView
 
 
 class DashboardView(ViewMixin, DetailView):
@@ -45,9 +46,7 @@ def dashboard_view_factory(request, dashboard, category, view, *args, **kwargs):
     except KeyError:
         raise Http404
 
-    return view_instance.view.as_view(
-        model=view_instance.model,
-        dashboard=dashboard_instance,
-        dashboard_view=view_instance,
-        **view_instance.kwargs
-    )(request, *args, **kwargs)
+    class FactoryListView(view_instance, ModuleListView):
+        pass
+
+    return FactoryListView.as_view()(request, *args, **kwargs)

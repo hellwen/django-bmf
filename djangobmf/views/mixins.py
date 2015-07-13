@@ -162,8 +162,10 @@ class BaseMixin(object):
                 for category in dashboard:
                     dashboards[dashboard.key][category.key] = {}
                     for view in category:
+                        # TODO: activate me
                         # model = view.model
-                        permissions = view().get_permissions([])
+                        # permissions = view().get_permissions([])
+                        permissions = []
                         if self.request.user.has_perms(permissions):
                             dashboards[dashboard.key][category.key][view.key] = reverse(
                                 'djangobmf:dashboard_view',
@@ -380,6 +382,7 @@ class ModuleViewPermissionMixin(object):
     """
 
     def get_permissions(self, perms=[]):
+        return []
         info = self.model._meta.app_label, self.model._meta.model_name
         perms.append('%s.view_%s' % info)
         return super(ModuleViewPermissionMixin, self).get_permissions(perms)

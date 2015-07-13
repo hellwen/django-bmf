@@ -11,7 +11,7 @@ from djangobmf.core.category import Category
 from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
 from djangobmf.core.report import Report
-from djangobmf.views import ModuleListView as ViewMixin
+from djangobmf.core.viewmixin import ViewMixin
 
 import logging
 logger = logging.getLogger(__name__)
