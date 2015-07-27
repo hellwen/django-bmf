@@ -26,9 +26,6 @@ class InvoiceModule(Module):
     create = InvoiceCreateView
     update = InvoiceUpdateView
     serializer = InvoiceSerializer
-    report = {
-        'invoice': True,
-    }
 
 
 @register(dashboard=Accounting)

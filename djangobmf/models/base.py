@@ -119,14 +119,8 @@ class BMFOptions(object):
         # namespace api
         self.namespace_api = '%s:moduleapi_%s_%s' % (bmfsettings.APP_LABEL, meta.app_label, meta.model_name)
 
-        # is set to true if a report-view is defined for this model (see sites.py)
-        self.has_report = False
-
         # is filled with create views (see core/module.py)
         self.create_views = []
-
-        # is filled with report views (see core/module.py)
-        self.report_views = []
 
         if options:
             options = inspect.getmembers(cls.BMFMeta)

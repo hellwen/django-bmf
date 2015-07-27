@@ -26,7 +26,6 @@ class QuotationModule(Module):
     create = QuotationCreateView
     update = QuotationUpdateView
     serializer = QuotationSerializer
-    report = True
 
 
 @register(dashboard=Sales)

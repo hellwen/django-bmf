@@ -42,11 +42,11 @@ class DashboardView(ViewMixin, DetailView):
 def dashboard_view_factory(request, dashboard, category, view, *args, **kwargs):
     try:
         dashboard_instance = site.get_dashboard(dashboard)
-        view_instance = dashboard_instance[category][view]
+        view_class = dashboard_instance[category][view]
     except KeyError:
         raise Http404
 
-    class FactoryListView(view_instance, ModuleListView):
+    class FactoryListView(view_class, ModuleListView):
         pass
 
     return FactoryListView.as_view()(request, *args, **kwargs)
