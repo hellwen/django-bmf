@@ -9,7 +9,7 @@ from django.utils import six
 
 from djangobmf.conf import settings
 from djangobmf.sites import site
-from djangobmf.sites import Report
+from djangobmf.core.renderer import Renderer
 from djangobmf.models import Document
 
 from io import BytesIO
@@ -56,7 +56,9 @@ height = 10mm
 """
 
 
-class Xhtml2PdfReport(Report):
+class Xhtml2PdfReport(Renderer):
+
+    model = "asd"
 
     def __init__(self, options):
         self.options = RawConfigParser(allow_no_value=True)
@@ -135,4 +137,4 @@ class Xhtml2PdfReport(Report):
             return 'html', 'text/html', html, False
 
 
-site.register_report('xhtml2pdf', Xhtml2PdfReport)
+# site.register_report('xhtml2pdf', Xhtml2PdfReport)
