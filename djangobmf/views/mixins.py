@@ -167,13 +167,13 @@ class BaseMixin(object):
                         # permissions = view().get_permissions([])
                         permissions = []
                         if self.request.user.has_perms(permissions):
+                            dashboards[dashboard.key][category.key][view.key] = '#'
                             dashboards[dashboard.key][category.key][view.key] = reverse(
-                                'djangobmf:dashboard_view',
-                                kwargs={
-                                    'dashboard': dashboard.key,
-                                    'category': category.key,
-                                    'view': view.key,
-                                },
+                                'djangobmf:dashboard_%s:%s_%s' % (
+                                    dashboard.key,
+                                    category.key,
+                                    view.key,
+                                )
                             )
 
                     # test if category has no views and delete empty categories

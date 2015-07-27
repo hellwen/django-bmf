@@ -59,11 +59,7 @@ urlpatterns = patterns(
         DashboardView.as_view(),
         name="dashboard",
     ),
-    url(
-        r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/(?P<view>[\w-]+)/$',
-        dashboard_view_factory,
-        name="dashboard_view",
-    ),
+    #   r'^dashboard/(?P<dashboard>[\w-]+)/' via sites
 
     url(r'^document/', include('djangobmf.document.urls')),
     url(r'^i18n/', i18n_javascript, name="jsi18n"),

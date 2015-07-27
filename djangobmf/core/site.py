@@ -217,8 +217,9 @@ class Site(object):
             urlpatterns += patterns(
                 '',
                 url(
-                    r'^db/%s/' % dashboard.slug,
-                    include((dashboard.get_urls(), self.app_name, "dashboard")),
+                    r'^dashboard/%s/' % dashboard.slug,
+                    include((dashboard.get_urls(), self.app_name, "dashboard_%s" % dashboard.key)),
+                    kwargs={'dashboard': dashboard.key},
                 ),
             )
 
