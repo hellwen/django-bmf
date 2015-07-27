@@ -37,20 +37,6 @@ ACCOUNTING_TYPES = (
 )
 
 
-# from django.utils import six
-# from djangobmf.models import BMFModelBase
-# from mptt.managers import TreeManager
-# from mptt.models import TreeForeignKey
-# from mptt.models import MPTTModelBase, MPTTModel
-#
-# class BMFModelMPTTBase(MPTTModelBase, BMFModelBase):
-#     pass
-#
-# class BMFModelMPTT(six.with_metaclass(BMFModelMPTTBase, BMFModel, MPTTModel)):
-#     objects = TreeManager()
-#     class Meta:
-#         abstract = True
-
 # =============================================================================
 # TODO: Add Fiscal Year
 # TODO: Add Period

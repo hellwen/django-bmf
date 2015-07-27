@@ -13,14 +13,6 @@ from djangobmf.settings import CONTRIB_TEAM
 from djangobmf.settings import CONTRIB_EMPLOYEE
 
 
-class BaseProjectManager(models.Manager):
-
-    def active(self, request):
-        return self.get_queryset().filter(
-            is_active=True,
-        )
-
-
 @python_2_unicode_compatible
 class BaseProject(BMFModel):
     team = models.ForeignKey(
@@ -35,8 +27,6 @@ class BaseProject(BMFModel):
 
     name = models.CharField(_("Name"), max_length=255, null=False, blank=False, editable=True, )
     is_active = models.BooleanField(_("Is active"), null=False, blank=True, default=True)
-
-    objects = BaseProjectManager()
 
     class Meta:  # only needed for abstract models
         verbose_name = _('Project')

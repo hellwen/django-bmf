@@ -39,7 +39,11 @@ class OpenInvoices(ViewMixin):
     model = Invoice
     name = _("Open invoices")
     slug = "open"
-    manager = "open"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            state__in=['draft', 'open'],
+        )
 
 
 @register(category=InvoiceCategory)

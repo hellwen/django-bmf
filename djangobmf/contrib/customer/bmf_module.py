@@ -35,7 +35,12 @@ class CustomerView(ViewMixin):
     model = Customer
     name = _("Customer")
     slug = "customer"
-    manager = "customer"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            is_active=True,
+            is_customer=True,
+        )
 
 
 @register(category=CustomerCategory)
@@ -43,7 +48,12 @@ class SupplierView(ViewMixin):
     model = Customer
     name = _("Supplier")
     slug = "supplier"
-    manager = "supplier"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            is_active=True,
+            is_supplier=True,
+        )
 
 
 @register(category=CustomerCategory)
@@ -51,4 +61,3 @@ class AllView(ViewMixin):
     model = Customer
     name = _("All")
     slug = "all"
-    manager = "all"

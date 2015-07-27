@@ -31,7 +31,9 @@ class ActiveProjects(ViewMixin):
     model = Project
     name = _("Active projects")
     slug = "active"
-    manager = "active"
+
+    def filter_queryset(self, qs):
+        return qs.filter(is_active=True)
 
 
 @register(category=ProjectCategory)

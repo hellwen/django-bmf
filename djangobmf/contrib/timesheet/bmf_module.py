@@ -33,8 +33,12 @@ class MyTimesheets(ViewMixin):
     model = Timesheet
     name = _("My timesheets")
     slug = "mytimesheets"
-    manager = "mytimesheets"
     date_resolution = 'week'
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            employee=request.user.djangobmf.employee or -1,
+        )
 
 
 @register(category=TimesheetCategory)

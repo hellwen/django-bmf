@@ -48,7 +48,11 @@ class SellableProducts(ViewMixin):
     model = Product
     name = _("Sellable products")
     slug = "sell"
-    manager = "can_sold"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            can_sold=True,
+        )
 
 
 @register(category=ProductCategory)
@@ -56,7 +60,11 @@ class PurchaseableProducts(ViewMixin):
     model = Product
     name = _("Purchaseable products")
     slug = "purchase"
-    manager = "can_purchased"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            can_purchased=True,
+        )
 
 
 @register(category=ProductCategory)

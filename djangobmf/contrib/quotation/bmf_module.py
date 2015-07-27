@@ -39,7 +39,12 @@ class OpenQuotations(ViewMixin):
     model = Quotation
     name = _("Open quotations")
     slug = "open"
-    manager = "open"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            # completed=False,
+            state__in=['draft', 'send', 'accepted'],
+        )
 
 
 @register(category=QuotationCategory)

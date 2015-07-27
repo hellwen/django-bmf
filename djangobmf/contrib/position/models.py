@@ -29,11 +29,6 @@ class PositionManager(models.Manager):
         return super(PositionManager, self).get_queryset(*args, **kwargs) \
             .select_related('project', 'product', 'employee')
 
-    def open(self, request):
-        return self.get_queryset().filter(
-            invoice__isnull=True,
-        )
-
 
 @python_2_unicode_compatible
 class AbstractPosition(BMFModel):

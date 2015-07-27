@@ -37,7 +37,9 @@ class OpenPositions(ViewMixin):
     model = Position
     name = _("Open Positions")
     slug = "open"
-    manager = "open"
+
+    def filter_queryset(self, qs):
+        return qs.filter(invoice__isnull=True)
 
 
 @register(category=PositionCategory)

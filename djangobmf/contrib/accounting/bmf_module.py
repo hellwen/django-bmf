@@ -70,7 +70,9 @@ class OpenTransactions(ViewMixin):
     model = Transaction
     name = _("Open transactions")
     slug = "open"
-    manager = "open"
+
+    def filter_queryset(self, qs):
+        return qs.filter(draft=False).order_by('-modified')
 
 
 @register(category=TransactionCategory)
@@ -78,8 +80,10 @@ class ClosedTrancations(ViewMixin):
     model = Transaction
     name = _("Closed transactions")
     slug = "closed"
-    manager = "closed"
     date_resolution = "month"
+
+    def filter_queryset(self, qs):
+        return qs.filter(draft=True).order_by('modified')
 
 
 @register(category=TransactionCategory)
