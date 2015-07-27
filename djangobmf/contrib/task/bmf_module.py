@@ -43,7 +43,12 @@ class MyGoals(ViewMixin):
     model = Goal
     slug = 'my'
     name = _("My goals")
-    manager = "mygoals"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            completed=False,
+            referee=self.request.user.djangobmf.employee,
+        )
 
 
 @register(category=GoalCategory)
@@ -51,7 +56,11 @@ class ActiveGoals(ViewMixin):
     model = Goal
     slug = 'active'
     name = _("Active goals")
-    manager = "active"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            completed=False,
+        )
 
 
 @register(category=GoalCategory)
@@ -59,7 +68,6 @@ class ArchiveGoals(ViewMixin):
     model = Goal
     slug = 'archive'
     name = _("Archive")
-    manager = "archive"
 
 
 @register(category=TaskCategory)
@@ -67,7 +75,12 @@ class MyTasks(ViewMixin):
     model = Task
     slug = 'my'
     name = _("My tasks")
-    manager = "mytasks"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            completed=False,
+            employee=request.user.djangobmf.employee,
+        )
 
 
 @register(category=TaskCategory)
@@ -75,7 +88,13 @@ class Todolist(ViewMixin):
     model = Task
     slug = 'todo'
     name = _("Todolist")
-    manager = "todo"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            completed=False,
+            state__in=["todo", "started", "review"],
+            employee=self.request.user.djangobmf.employee,
+        )
 
 
 @register(category=TaskCategory)
@@ -83,7 +102,12 @@ class AvailableTasks(ViewMixin):
     model = Task
     slug = 'availiable'
     name = _("Availalbe tasks")
-    manager = "available"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            employee=None,
+            completed=False,
+        )
 
 
 @register(category=TaskCategory)
@@ -91,7 +115,11 @@ class OpenTasks(ViewMixin):
     model = Task
     slug = 'open'
     name = _("Open tasks")
-    manager = "active"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            completed=False,
+        )
 
 
 @register(category=TaskCategory)

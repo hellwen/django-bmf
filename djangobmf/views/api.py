@@ -44,15 +44,8 @@ class ModuleListAPIView(ListModelMixin, CreateModelMixin, GenericAPIView):
 #       return self.create(request, *args, **kwargs)
 
     def get_queryset(self):
-        manager = self.kwargs.get('manager', 'all')
-        if manager == 'all':
-            qs = self.model.objects.all()
-        else:
-            # TODO
-            qs = self.model.objects.all()
-
+        qs = self.model.objects.all()
         self.request.user.djangobmf = Employee(self.request.user)
-
         return self.permissions().filter_queryset(
             qs,
             self.request.user,

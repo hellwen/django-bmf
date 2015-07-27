@@ -132,37 +132,25 @@ class ModuleListView(
             return self.model._meta.verbose_name_plural
 
     def get_data_url(self):
+        url = reverse('djangobmf:dashboard_%(dashboard)s:api_%(category)s_%(view)s' % self.kwargs)
         kwargs = {}
-
-        if self.manager:
-            kwargs.update({
-                'manager': self.manager
-            })
-        else:
-            kwargs.update({
-                'manager': 'all'
-            })
-
-        url = reverse('%s:get' % self.model._bmfmeta.namespace_api, kwargs=kwargs)
-
-        args = {}
 
         page = self.request.GET.get('page')
 
         if page:
             try:
-                args['page'] = int(page)
+                kwargs['page'] = int(page)
             except ValueError:
                 pass
 
         if not self.paginate:
-            args['paginate'] = 'no'
+            kwargs['paginate'] = 'no'
 
-        if args:
+        if kwargs:
             if six.PY2:
-                return url + '?' + urllib.urlencode(args)
+                return url + '?' + urllib.urlencode(kwargs)
             else:
-                return url + '?' + urllib.parse.urlencode(args)
+                return url + '?' + urllib.parse.urlencode(kwargs)
         else:
             return url
 

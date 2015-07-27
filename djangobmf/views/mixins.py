@@ -169,7 +169,7 @@ class BaseMixin(object):
                         if self.request.user.has_perms(permissions):
                             dashboards[dashboard.key][category.key][view.key] = '#'
                             dashboards[dashboard.key][category.key][view.key] = reverse(
-                                'djangobmf:dashboard_%s:%s_%s' % (
+                                'djangobmf:dashboard_%s:view_%s_%s' % (
                                     dashboard.key,
                                     category.key,
                                     view.key,

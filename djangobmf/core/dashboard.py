@@ -10,6 +10,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 from django.utils.text import slugify
 
+from djangobmf.views.api import ModuleListAPIView
 from djangobmf.views.module import ModuleListView
 
 from collections import OrderedDict
@@ -99,15 +100,38 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
         for category in self:
             for view in category:
 
-                class FactoryListView(view, ModuleListView):
+                class ViewFactory(view, ModuleListView):
                     pass
+
+                class APIFactory(view, ModuleListAPIView):
+                    pass
+
+                module = self.get_module(view.model)
 
                 urlpatterns += patterns(
                     '',
                     url(
                         r'^view/%s/%s/' % (category.slug, view.slug),
-                        FactoryListView.as_view(),
-                        name='%s_%s' % (category.key, view.key),
+                        ViewFactory.as_view(
+                        ),
+                        name='view_%s_%s' % (category.key, view.key),
+                        kwargs={
+                            'category': category.key,
+                            'view': view.key,
+                        },
+                    ),
+                    url(
+                        r'^api/%s/%s/' % (category.slug, view.slug),
+                        APIFactory.as_view(
+                            module=module,
+                            permissions=module.permissions,
+                            serializer_class=module.serializer,
+                        ),
+                        name='api_%s_%s' % (category.key, view.key),
+                        kwargs={
+                            'category': category.key,
+                            'view': view.key,
+                        },
                     )
                 )
         return urlpatterns
@@ -125,6 +149,9 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
         self.reports.append(report_instance)
         logger.debug('Registered Report "%s"', report.__name__)
         return report_instance
+
+    def get_module(self, model):
+        return self.site.modules[model]
 
     def add_module(self, module):
         """
