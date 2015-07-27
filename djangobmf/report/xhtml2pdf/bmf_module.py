@@ -8,7 +8,6 @@ from django.template.loader import select_template
 from django.utils import six
 
 from djangobmf.conf import settings
-from djangobmf.sites import site
 from djangobmf.core.renderer import Renderer
 from djangobmf.models import Document
 
@@ -57,8 +56,6 @@ height = 10mm
 
 
 class Xhtml2PdfReport(Renderer):
-
-    model = "asd"
 
     def __init__(self, options):
         self.options = RawConfigParser(allow_no_value=True)

@@ -79,7 +79,7 @@ class MyTasks(ViewMixin):
     def filter_queryset(self, qs):
         return qs.filter(
             completed=False,
-            employee=request.user.djangobmf.employee,
+            employee=self.request.user.djangobmf.employee,
         )
 
 

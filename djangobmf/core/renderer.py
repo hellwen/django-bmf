@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from django.template import Context
 from django.template.loader import select_template
-from django.core.exceptions import ImproperlyConfigured
+# from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 
 
@@ -21,12 +21,8 @@ class RendererMetaclass(type):
 
         # Create the class.
         new_cls = super_new(cls, name, bases, attrs)
-        new_cls.key = '%s.%s' % (new_cls.__module__, new_cls.__name__)
 
         # validation
-        if not hasattr(new_cls, 'model'):
-            raise ImproperlyConfigured('No model attribute defined in %s.' % new_cls)
-
         return new_cls
 
 

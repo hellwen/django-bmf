@@ -3,8 +3,6 @@
 
 from __future__ import unicode_literals
 
-from django.template import Context
-from django.template.loader import select_template
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 

@@ -37,7 +37,7 @@ class MyTimesheets(ViewMixin):
 
     def filter_queryset(self, qs):
         return qs.filter(
-            employee=request.user.djangobmf.employee or -1,
+            employee=self.request.user.djangobmf.employee or -1,
         )
 
 
