@@ -19,7 +19,6 @@ from djangobmf.views import ModuleOverviewView
 from djangobmf.views.configuration import ConfigurationView
 from djangobmf.views.configuration import ConfigurationEdit
 from djangobmf.views.dashboard import DashboardView
-from djangobmf.views.dashboard import dashboard_view_factory
 
 
 @cache_page(86400, key_prefix='bmf-js18n-%s' % get_version())

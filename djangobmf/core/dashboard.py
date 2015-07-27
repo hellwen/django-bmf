@@ -10,7 +10,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 from django.utils.text import slugify
 
-from djangobmf.views.dashboard import DashboardView
 from djangobmf.views.module import ModuleListView
 
 from collections import OrderedDict
@@ -95,16 +94,7 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
         return key in self.data
 
     def get_urls(self):
-        urlpatterns = patterns(
-            '',
-            url(
-                r'^$',
-                DashboardView.as_view(
-                    dashboard=self,
-                ),
-                name='index',
-            ),
-        )
+        urlpatterns = patterns('')
 
         for category in self:
             for view in category:
