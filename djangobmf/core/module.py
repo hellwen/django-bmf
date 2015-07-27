@@ -66,6 +66,7 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
     primary = True
     serializer = None
     report = None
+    default = False
 
     detail_urlpatterns = None
     api_urlpatterns = None

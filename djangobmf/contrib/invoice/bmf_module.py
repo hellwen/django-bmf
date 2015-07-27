@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.categories import Accounting
 from djangobmf.sites import Module
+from djangobmf.sites import Report
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
 
@@ -21,6 +22,7 @@ from .views import InvoiceUpdateView
 @register(dashboard=Accounting)
 class InvoiceModule(Module):
     model = Invoice
+    default = True
     create = InvoiceCreateView
     update = InvoiceUpdateView
     serializer = InvoiceSerializer
@@ -32,6 +34,7 @@ class InvoiceModule(Module):
 @register(dashboard=Accounting)
 class InvoiceProductModule(Module):
     model = InvoiceProduct
+    default = True
 
 
 @register(category=InvoiceCategory)
@@ -48,3 +51,8 @@ class AllInvoices(ViewMixin):
     name = _("All invoices")
     slug = "all"
     date_resolution = "month"
+
+
+@register(dashboard=Accounting)
+class InvoiceReport(Report):
+    model = Invoice

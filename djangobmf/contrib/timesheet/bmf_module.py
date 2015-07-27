@@ -21,6 +21,7 @@ from .views import UpdateView
 @register(dashboard=TimeAndAttendance)
 class TimesheetModule(Module):
     model = Timesheet
+    default = True
     create = CreateView
     update = UpdateView
     serializer = TimesheetSerializer

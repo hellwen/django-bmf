@@ -25,12 +25,14 @@ from .views import GoalDetailView
 @register(dashboard=ProjectManagement)
 class TaskModule(Module):
     model = Task
+    default = True
     serializer = TaskSerializer
 
 
 @register(dashboard=ProjectManagement)
 class GoalModule(Module):
     model = Goal
+    default = True
     clone = GoalCloneView
     detail = GoalDetailView
     serializer = GoalSerializer

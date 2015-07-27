@@ -25,6 +25,7 @@ from .views import ProductUpdateView
 @register(dashboard=Sales)
 class ProductModule(Module):
     model = Product
+    default = True
     create = ProductCreateView
     detail = ProductDetailView
     update = ProductUpdateView
@@ -34,6 +35,7 @@ class ProductModule(Module):
 @register(dashboard=Sales)
 class ProductTaxModule(Module):
     model = ProductTax
+    default = True
 
 
 site.register_settings('bmfcontrib_product', {

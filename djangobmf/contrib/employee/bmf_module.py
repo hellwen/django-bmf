@@ -19,6 +19,7 @@ from .views import EmployeeCreateView
 @register(dashboard=HumanResources)
 class EmployeeModule(Module):
     model = Employee
+    default = True
     serializer = EmployeeSerializer
     create = EmployeeCreateView
 

@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.categories import Sales
 from djangobmf.sites import Module
+from djangobmf.sites import Report
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
 
@@ -21,6 +22,7 @@ from .views import QuotationUpdateView
 @register(dashboard=Sales)
 class QuotationModule(Module):
     model = Quotation
+    default = True
     create = QuotationCreateView
     update = QuotationUpdateView
     serializer = QuotationSerializer
@@ -30,6 +32,7 @@ class QuotationModule(Module):
 @register(dashboard=Sales)
 class QuotationProductModule(Module):
     model = QuotationProduct
+    default = True
 
 
 @register(category=QuotationCategory)
@@ -45,3 +48,8 @@ class AllQuotations(ViewMixin):
     model = Quotation
     name = _("All quotations")
     slug = "all"
+
+
+@register(dashboard=Sales)
+class QuotationReport(Report):
+    model = QuotationProduct

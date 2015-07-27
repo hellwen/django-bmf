@@ -21,6 +21,7 @@ from .views import TeamUpdateView
 @register(dashboard=HumanResources)
 class TeamModule(Module):
     model = Team
+    default = True
     create = TeamCreateView
     update = TeamUpdateView
     serializer = TeamSerializer
@@ -29,6 +30,7 @@ class TeamModule(Module):
 @register(dashboard=HumanResources)
 class TeamMemberModule(Module):
     model = TeamMember
+    default = True
 
 
 @register(category=TeamCategory)

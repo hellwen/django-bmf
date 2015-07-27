@@ -30,12 +30,14 @@ from .views import TransactionUpdateView
 @register(dashboard=Accounting)
 class AccountModule(Module):
     model = Account
+    default = True
     serializer = AccountSerializer
 
 
 @register(dashboard=Accounting)
 class TransactionModule(Module):
     model = Transaction
+    default = True
     create = TransactionCreateView
     update = TransactionUpdateView
     serializer = TransactionSerializer
@@ -44,6 +46,7 @@ class TransactionModule(Module):
 @register(dashboard=Accounting)
 class TransactionItemModule(Module):
     model = TransactionItem
+    default = True
     serializer = TransactionItemSerializer
 
 

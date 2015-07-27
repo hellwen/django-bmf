@@ -22,6 +22,7 @@ from .views import PositionAPI
 @register(dashboard=Sales)
 class PositionModule(Module):
     model = Position
+    default = True
     create = PositionCreateView
     update = PositionUpdateView
     serializer = PositionSerializer

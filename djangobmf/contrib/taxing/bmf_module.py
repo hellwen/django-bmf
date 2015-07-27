@@ -18,6 +18,7 @@ from .serializers import TaxSerializer
 @register(dashboard=Accounting)
 class TaxModule(Module):
     model = Tax
+    default = True
     serializer = TaxSerializer
 
 

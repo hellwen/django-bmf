@@ -20,6 +20,7 @@ from .views import ProjectUpdateView
 @register(dashboard=ProjectManagement)
 class ProjectModule(Module):
     model = Project
+    default = True
     serializer = ProjectSerializer
     update = ProjectUpdateView
     permissions = ProjectPermission

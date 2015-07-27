@@ -21,6 +21,7 @@ from .views import UpdateView
 @register(dashboard=Sales)
 class CustomerModule(Module):
     model = Customer
+    default = True
     serializer = CustomerSerializer
     create = {
         u'company': (_('Company'), CompanyCreateView),

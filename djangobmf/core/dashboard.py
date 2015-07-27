@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 
+from django.contrib.admin.sites import AlreadyRegistered
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 from django.utils.text import slugify
@@ -54,6 +55,7 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
     def __init__(self):
         self.data = OrderedDict()
         self.modules = []
+        self.reports = []
 
     def __bool__(self):
         return bool(self.data)
@@ -83,6 +85,27 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
             key = item
         return key in self.data
 
+    def add_report(self, report):
+        """
+        Adds a report to the dashboard
+        """
+        for report_instance in self.reports:
+            if isinstance(report_instance, report):
+                raise AlreadyRegistered('The report %s is already registered' % report.__name__)
+
+        # Register and initialize the Report
+        report_instance = report()
+        self.reports.append(report_instance)
+        logger.debug('Registered Report "%s"', report.__name__)
+        return report_instance
+
+    def add_module(self, module):
+        """
+        Adds a module to the dashboard
+        """
+        # logger.debug('Registered Module "%s"', report.__name__)
+        return module
+
     def add_category(self, category):
         """
         Adds a category to the dashboard
@@ -102,10 +125,3 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
 
         logger.debug('Registered Category "%s"', cat.__class__.__name__)
         return cat
-
-    def merge(self, other):
-        """
-        merges two dashboards
-        """
-        for category in other.data.values():
-            self.add_category(category)
