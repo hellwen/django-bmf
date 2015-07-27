@@ -11,6 +11,7 @@ class Report(object):
 
     def __init__(self, options=None):
         self.options = options
+        self.key = '%s.%s' % (self.__class__.__module__, self.__class__.__name__)
 
     def get_default_options(self):
         return ''

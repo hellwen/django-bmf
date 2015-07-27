@@ -6,6 +6,8 @@ from __future__ import unicode_literals
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 
+import re
+
 
 class ViewMixinMetaclass(type):
     def __new__(cls, name, bases, attrs):
@@ -29,6 +31,9 @@ class ViewMixinMetaclass(type):
 
         if not hasattr(new_cls, 'name'):
             raise ImproperlyConfigured('No name attribute defined in %s.' % new_cls)
+
+        if not re.match('^[\w-]+$', new_cls.slug):
+            raise ImproperlyConfigured('The slug attribute defined in %s contains invalid chars.' % new_cls)
 
         # we add a key to add a unique identifier
         # the key is equal to the slug (for now) but this

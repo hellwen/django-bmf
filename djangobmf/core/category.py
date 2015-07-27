@@ -10,6 +10,8 @@ from djangobmf.views import ModuleListView as ViewMixin
 
 from collections import OrderedDict
 
+import re
+
 
 class CategoryMetaclass(type):
     def __new__(cls, name, bases, attrs):
@@ -33,6 +35,9 @@ class CategoryMetaclass(type):
 
         if not hasattr(new_cls, 'dashboard'):
             raise ImproperlyConfigured('No dashboard attribute defined in %s.' % new_cls)
+
+        if not re.match('^[\w-]+$', new_cls.slug):
+            raise ImproperlyConfigured('The slug attribute defined in %s contains invalid chars.' % new_cls)
 
         return new_cls
 
@@ -88,10 +93,3 @@ class Category(six.with_metaclass(CategoryMetaclass, object)):
             if view.model not in self.models:
                 self.models.append(view.model)
             self.data[view.slug] = view
-
-    def merge(self, other):
-        """
-        merges two categories
-        """
-        for view in other.data.values():
-            self.add_view(view)

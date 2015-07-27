@@ -38,6 +38,9 @@ class DashboardMetaclass(type):
         if not getattr(new_cls, 'slug', None):
             raise ImproperlyConfigured('No slug attribute defined in %s.' % new_cls)
 
+        if not re.match('^[\w-]+$', new_cls.slug):
+            raise ImproperlyConfigured('The slug attribute defined in %s contains invalid chars.' % new_cls)
+
         # we add a key to add a unique identifier
         # the key is equal to the slug (for now) but this
         # gives us the opportunity to add i18n urls later
@@ -52,8 +55,9 @@ class DashboardMetaclass(type):
 
 class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
 
-    def __init__(self):
+    def __init__(self, site):
         self.data = OrderedDict()
+        self.site = site
         self.modules = []
         self.reports = []
 
@@ -103,8 +107,12 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
         """
         Adds a module to the dashboard
         """
-        # logger.debug('Registered Module "%s"', report.__name__)
-        return module
+        if module.model in self.site.modules:
+            raise AlreadyRegistered('The module %s is already registered' % module.model.__name__)
+
+        self.site.modules[module.model] = module()
+        logger.debug('Registered Module "%s"', module.__name__)
+        return self.site.modules[module.model]
 
     def add_category(self, category):
         """
@@ -116,12 +124,6 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
 
         cat = category()
         self.data[cat.key] = cat
-
-        for model in cat.models:
-            # module = site.get_module(model)
-            # if self not in module.dashboards:
-            #     module.dashboards.append(self)
-            pass
 
         logger.debug('Registered Category "%s"', cat.__class__.__name__)
         return cat

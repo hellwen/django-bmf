@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import TimeAndAttendance
+from djangobmf.dashboards import TimeAndAttendance
 from djangobmf.sites import Category
 
 

@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import Accounting
+from djangobmf.dashboards import Accounting
 from djangobmf.sites import Module
 from djangobmf.sites import Report
 from djangobmf.sites import ViewMixin

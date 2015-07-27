@@ -196,19 +196,9 @@ class Site(object):
 
     # --- url generation ------------------------------------------------------
 
-    # --- misc methods --------------------------------------------------------
-
     @property
     def urls(self):
         return self.get_urls(), self.app_name, self.namespace
-
-    @property
-    def models(self):
-        models = {}
-        for model in self.modules.keys():
-            ct = ContentType.objects.get_for_model(model)
-            models[ct.pk] = model
-        return models
 
     def get_urls(self):
 
@@ -246,3 +236,13 @@ class Site(object):
                     ),
                 )
         return urlpatterns
+
+    # --- misc methods --------------------------------------------------------
+
+    @property
+    def models(self):
+        models = {}
+        for model in self.modules.keys():
+            ct = ContentType.objects.get_for_model(model)
+            models[ct.pk] = model
+        return models

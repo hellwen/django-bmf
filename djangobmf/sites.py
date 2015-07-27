@@ -56,7 +56,7 @@ if apps.apps_ready:  # pragma: no branch
                     return db
 
             # Register and initialize the Dashboard
-            db = dashboard()
+            db = dashboard(site)
             site.dashboards.append(db)
             logger.debug('Registered Dashboard "%s"', dashboard.__name__)
             return db
@@ -68,7 +68,6 @@ if apps.apps_ready:  # pragma: no branch
                         'You need to define a category, when registering the view %s',
                         cls,
                     )
-
                 category = self.register_category(self.kwargs["category"])
                 category.add_view(cls)
                 logger.debug('Registered View "%s" to %s', cls.__name__, category.__class__.__name__)
@@ -79,16 +78,8 @@ if apps.apps_ready:  # pragma: no branch
                         'You need to define a dashbord, when registering the module %s',
                         cls,
                     )
-
                 dashboard = self.register_dashboard(self.kwargs["dashboard"])
                 dashboard.add_module(cls)
-
-                # TODO: this code shoule be removed, if the site dependency from modules is removed
-                if cls.model in site.modules:
-                    raise AlreadyRegistered('The module %s is already registered' % cls.model.__name__)
-
-                site.modules[cls.model] = cls()
-                logger.debug('Registered Module "%s"', cls.__name__)
 
             elif issubclass(cls, Report):
                 if "dashboard" not in self.kwargs:
