@@ -213,6 +213,15 @@ class Site(object):
             # pattern - the urls are not needed during migrations.
             return patterns('')
 
+        for dashboard in self.dashboards:
+            urlpatterns += patterns(
+                '',
+                url(
+                    r'^db/%s/' % dashboard.slug,
+                    include((dashboard.get_urls(), self.app_name, "dashboard")),
+                ),
+            )
+
         for module, data in self.modules.items():
             info = (module._meta.app_label, module._meta.model_name)
             ct = ContentType.objects.get_for_model(module)

@@ -3,6 +3,8 @@
 
 from __future__ import unicode_literals
 
+from django.conf.urls import patterns
+from django.conf.urls import url
 from django.contrib.admin.sites import AlreadyRegistered
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
@@ -11,6 +13,7 @@ from django.utils.text import slugify
 from collections import OrderedDict
 
 from .category import Category
+from ..views.module import ModuleListView
 
 import re
 
@@ -88,6 +91,23 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
         else:
             key = item
         return key in self.data
+
+    def get_urls(self):
+        urlpatterns = patterns('')
+        for category in self:
+            for view in category:
+
+                class FactoryListView(view, ModuleListView):
+                    pass
+
+                urlpatterns += patterns(
+                    '',
+                    url(
+                        r'^%s/%s/' % (category.slug , view.slug),
+                        FactoryListView.as_view()
+                    )
+                )
+        return urlpatterns
 
     def add_report(self, report):
         """
