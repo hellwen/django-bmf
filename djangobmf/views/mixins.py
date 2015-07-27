@@ -505,7 +505,7 @@ class ModuleBaseMixin(object):
                 'report_views': self.model._bmfmeta.report_views,
                 'model': self.model,
                 # 'contenttype': ContentType.objects.get_for_model(self.model).pk,
-                'has_report': self.model._bmfmeta.has_report,
+                # 'has_report': self.model._bmfmeta.has_report,
                 'can_clone': self.model._bmfmeta.can_clone and self.request.user.has_perms([
                     '%s.view_%s' % info,
                     '%s.clone_%s' % info,
