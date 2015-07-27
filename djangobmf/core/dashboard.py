@@ -103,7 +103,7 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
                 urlpatterns += patterns(
                     '',
                     url(
-                        r'^%s/%s/' % (category.slug , view.slug),
+                        r'^%s/%s/' % (category.slug, view.slug),
                         FactoryListView.as_view()
                     )
                 )
