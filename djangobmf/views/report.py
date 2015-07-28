@@ -12,7 +12,7 @@ from .mixins import ModuleViewPermissionMixin
 from .mixins import ModuleViewMixin
 
 
-class ReportView(ModuleViewPermissionMixin, ModuleViewMixin, DetailView):
+class ReportBaseView(ModuleViewPermissionMixin, ModuleViewMixin, DetailView):
     """
     render a report
     """
@@ -34,7 +34,7 @@ class ReportView(ModuleViewPermissionMixin, ModuleViewMixin, DetailView):
         return ["djangobmf/module_report.html"]
 
     def get(self, request, *args, **kwargs):
-        response = super(ReportView, self).get(request, *args, **kwargs)
+        response = super(ReportBaseView, self).get(request, *args, **kwargs)
 
         ct = ContentType.objects.get_for_model(self.get_object())
         try:
@@ -46,3 +46,17 @@ class ReportView(ModuleViewPermissionMixin, ModuleViewMixin, DetailView):
 
     def get_filename(self):
         return "report"
+
+
+class ReportFormView(ReportBaseView):
+    """
+    render a report
+    """
+    pass
+
+
+class ReportDirectView(ReportBaseView):
+    """
+    render a report
+    """
+    pass
