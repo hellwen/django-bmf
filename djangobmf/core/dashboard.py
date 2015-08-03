@@ -136,19 +136,18 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
                 )
         return urlpatterns
 
-    def add_report(self, report):
+    def add_report(self, report_class):
         """
         Adds a report to the dashboard
         """
-        for report_instance in self.reports:
-            if isinstance(report_instance, report):
-                raise AlreadyRegistered('The report %s is already registered' % report.__name__)
+        for report in self.reports:
+            if isinstance(report_class, report):
+                raise AlreadyRegistered('The report %s is already registered' % report_class.__name__)
 
-        # Register and initialize the Report
-        report_instance = report()
-        self.reports.append(report_instance)
-        logger.debug('Registered Report "%s"', report.__name__)
-        return report_instance
+        report = report_class()
+        self.reports.append(report)
+        logger.debug('Registered Report "%s"', report.key)
+        return report
 
     def get_module(self, model):
         return self.site.modules[model]

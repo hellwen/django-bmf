@@ -15,6 +15,7 @@ from django.core.exceptions import ImproperlyConfigured
 from djangobmf.core.module import Module
 from djangobmf.models import Configuration
 from djangobmf.models import NumberCycle
+from djangobmf.models import Report
 
 from rest_framework import routers
 
@@ -37,9 +38,6 @@ class Site(object):
         # true if the site is active, ie loaded
         self.is_active = False
 
-        # TODO: remove me, if unused
-        # self.is_migrated = False
-
         # combine all registered modules here
         self.modules = {}
 
@@ -48,9 +46,6 @@ class Site(object):
 
         # all numbercycles are here
         self.numbercycles = []
-
-        # all reports should be stored here
-        self.reports = {}
 
         # all dashboards are stored here
         self.dashboards = []
@@ -75,6 +70,18 @@ class Site(object):
             return True
 
         logger.debug('Site activation started')
+
+        # ~~~~ reports ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        for dashboard in self.dashboards:
+            for report in dashboard.reports:
+                ct = ContentType.objects.get_for_model(report.model)
+                report.object, created = Report.objects.get_or_create(
+                    key=report.key,
+                    contenttype=ct
+                )
+                if created:
+                    logger.debug('Reportobject for report %s created' % report.key)
 
         # ~~~~ numbercycles ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -146,18 +153,6 @@ class Site(object):
         if currency.iso not in self.currencies:
             raise NotRegistered('The currency %s is not registered' % currency.__name__)
         del self.currencies[currency.iso]
-
-    # --- reports -------------------------------------------------------------
-
-    def register_report(self, name, cls):
-        if name in self.reports:
-            raise AlreadyRegistered('The report %s is already registered' % name)
-        self.reports[name] = cls
-
-    def unregister_report(self, name):
-        if name not in self.reports:
-            raise NotRegistered('The currency %s is not registered' % name)
-        del self.reports[name]
 
     # --- settings ------------------------------------------------------------
 
