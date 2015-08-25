@@ -9,11 +9,11 @@ from .models import Configuration
 from .models import Dashboard
 from .models import NumberCycle
 from .models import Report
-from .models import ReportConf
+from .models import Renderer
 
 
 admin.site.register(Configuration)
 admin.site.register(Dashboard)
 admin.site.register(NumberCycle)
 admin.site.register(Report)
-admin.site.register(ReportConf)
+admin.site.register(Renderer)

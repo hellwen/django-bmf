@@ -6,42 +6,44 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 # from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes.fields import GenericForeignKey
 # from django.http import HttpResponse
 
 # from djangobmf.core.report import Report as BaseReport
 
 
-class ReportConf(models.Model):
+class Renderer(models.Model):
     """
     Model to store informations to generate a report
     """
-    # TODO replace with report field
+    key = models.CharField(
+        _("Key"),
+        max_length=255,
+        blank=True,
+        null=True,
+        editable=False,
+        db_index=True,
+    )
     name = models.CharField(
         _("Name"), max_length=20, blank=False, null=False,
     )
-    renderer = models.CharField(
-        _("Renderer"), max_length=20, blank=False, null=False,
-    )
-    mimetype = models.CharField(
-        _("Mimetype"), max_length=20, blank=False, null=False, editable=False, default="pdf",
-    )
-    # TODO needs validator
-    options = models.TextField(
-        _("Options"), blank=True, null=False,
-        help_text=_(
-            "Options for the renderer. Empty this field to get all available options with default values"
-        ),
-    )
+#   # TODO needs validator
+#   options = models.TextField(
+#       _("Options"), blank=True, null=False,
+#       help_text=_(
+#           "Options for the renderer. Empty this field to get all available options with default values"
+#       ),
+#   )
     modified = models.DateTimeField(_("Modified"), auto_now=True, editable=False,)
 
     class Meta:
-        verbose_name = _('Report Configuration')
-        verbose_name_plural = _('Report Configurations')
+        verbose_name = _('Renderer')
+        verbose_name_plural = _('Renderer')
         get_latest_by = "modified"
         abstract = True
 
     def __str__(self):
-        return '%s' % self.contenttype
+        return '%s' % self.name
 
 #   def clean(self):
 #       if self.options == "":
@@ -55,8 +57,9 @@ class ReportConf(models.Model):
 #       except KeyError:
 #           return BaseReport()
 
-#   # response with generated file
-#   def render(self, filename, request, context):
+    # response with generated file
+    def render(self, filename, request, context):
+        pass
 #       generator = self.get_generator()
 
 #       extension, mimetype, data, attachment = generator.render(request, context)
