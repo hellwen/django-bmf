@@ -76,6 +76,7 @@ def js():
         local('cp bower_components/jquery/dist/jquery.min.map djangobmf/static/djangobmf/js/')
         local('cp bower_components/angular/angular.min.js djangobmf/static/djangobmf/js/')
         local('cp bower_components/angular/angular.min.js.map djangobmf/static/djangobmf/js/')
+        local('cp bower_components/d3/d3.min.js djangobmf/static/djangobmf/js/')
 
         local('cp bower_components/bootstrap/dist/js/bootstrap.min.js djangobmf/static/djangobmf/js/')
 
