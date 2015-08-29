@@ -38,12 +38,6 @@ class Report(models.Model):
         help_text="Connect a Report to an Renderer",
         on_delete=models.SET_NULL,
     )
-#   options = models.TextField(
-#       _("Options"), blank=True, null=False,
-#       help_text=_(
-#           "Overwrite specific renderer options"
-#       ),
-#   )
     modified = models.DateTimeField(_("Modified"), auto_now=True, editable=False,)
 
     class Meta:
