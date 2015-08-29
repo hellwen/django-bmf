@@ -44,7 +44,7 @@ class Renderer(models.Model):
         verbose_name=_("Letter extra top"), blank=False, null=False, default=10,
     )
     letter_background = FileField(
-        verbose_name=_("Letter background"), null=True,
+        verbose_name=_("Letter background"), null=True, blank=True,
     )
     letter_footer_right = models.PositiveIntegerField(
         verbose_name=_("Letter footer right"), blank=False, null=False, default=10,
@@ -62,7 +62,7 @@ class Renderer(models.Model):
         verbose_name=_("Letter margin top"), blank=False, null=False, default=20,
     )
     page_background = FileField(
-        verbose_name=_("Page background"), null=True,
+        verbose_name=_("Page background"), null=True, blank=True,
     )
 
     modified = models.DateTimeField(_("Modified"), auto_now=True, editable=False,)
