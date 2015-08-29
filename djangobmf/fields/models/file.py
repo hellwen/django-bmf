@@ -13,10 +13,10 @@ class FileField(models.ForeignKey):
     # default_form_class = AdminFileFormField
     model_class = '.'.join([bmfsettings.APP_LABEL, 'Document'])
 
-    def __init__(self, **kwargs):
+    def __init__(self, related_name="+", **kwargs):
         if 'to' in kwargs:
             del kwargs['to']
-        super(FileField, self).__init__(self.model_class, **kwargs)
+        super(FileField, self).__init__(self.model_class, related_name=related_name, **kwargs)
 
 #   def formfield(self, **kwargs):
 #       # This is a fairly standard way to set up some defaults

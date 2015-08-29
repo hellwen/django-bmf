@@ -20,49 +20,49 @@ class Renderer(models.Model):
     Model to store informations to generate a report
     """
     name = models.CharField(
-        _("Name"), max_length=20, blank=False, null=False,
+        verbose_name=_("Name"), max_length=20, blank=False, null=False,
     )
     size = models.CharField(
-        _("Size"), max_length=20, blank=False, null=False, default="A4 - Form A",
+        verbose_name=_("Size"), max_length=20, blank=False, null=False, default="A4/A",
     )
     letter = models.BooleanField(
-        _("Letter"), default=True,
+        verbose_name=_("Letter"), default=True,
     )
     extra = models.BooleanField(
-        _("Extra"), default=False,
+        verbose_name=_("Extra"), default=False,
     )
     letter_margin_right = models.PositiveIntegerField(
-        _("Letter margin right"), blank=False, null=False, default=10,
+        verbose_name=_("Letter margin right"), blank=False, null=False, default=10,
     )
     letter_margin_bottom = models.PositiveIntegerField(
-        _("Letter margin bottom"), blank=False, null=False, default=40,
+        verbose_name=_("Letter margin bottom"), blank=False, null=False, default=40,
     )
     letter_extra_right = models.PositiveIntegerField(
-        _("Letter extra right"), blank=False, null=False, default=10,
+        verbose_name=_("Letter extra right"), blank=False, null=False, default=10,
     )
     letter_extra_top = models.PositiveIntegerField(
-        _("Letter extra top"), blank=False, null=False, default=10,
+        verbose_name=_("Letter extra top"), blank=False, null=False, default=10,
     )
     letter_background = FileField(
-        _("Letter background"), null=False,
+        verbose_name=_("Letter background"), null=True,
     )
     letter_footer_right = models.PositiveIntegerField(
-        _("Letter footer right"), blank=False, null=False, default=10,
+        verbose_name=_("Letter footer right"), blank=False, null=False, default=10,
     )
     letter_footer_right = models.PositiveIntegerField(
-        _("Letter footer height"), blank=False, null=False, default=10,
+        verbose_name=_("Letter footer height"), blank=False, null=False, default=10,
     )
     page_margin_right = models.PositiveIntegerField(
-        _("Letter margin right"), blank=False, null=False, default=10,
+        verbose_name=_("Letter margin right"), blank=False, null=False, default=10,
     )
     page_margin_bottom = models.PositiveIntegerField(
-        _("Letter margin bottom"), blank=False, null=False, default=15,
+        verbose_name=_("Letter margin bottom"), blank=False, null=False, default=15,
     )
     page_margin_top = models.PositiveIntegerField(
-        _("Letter margin top"), blank=False, null=False, default=20,
+        verbose_name=_("Letter margin top"), blank=False, null=False, default=20,
     )
     page_background = FileField(
-        _("Page background"), null=False,
+        verbose_name=_("Page background"), null=True,
     )
 
     modified = models.DateTimeField(_("Modified"), auto_now=True, editable=False,)
