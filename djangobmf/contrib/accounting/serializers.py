@@ -33,6 +33,14 @@ class TransactionSerializer(ModuleSerializer):
 
 
 class TransactionItemSerializer(ModuleSerializer):
+    transaction_name = serializers.SerializerMethodField()
+    account_name = serializers.SerializerMethodField()
+
+    def get_account_name(self, obj):
+        return '%s' % obj.account
+
+    def get_transaction_name(self, obj):
+        return '%s' % obj.transaction
 
     class Meta:
         model = TransactionItem
