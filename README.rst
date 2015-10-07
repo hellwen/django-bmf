@@ -25,7 +25,7 @@ Features
 * PDF-Reports (very simple and easy to-modify)
 * Responsive design -> getbootstrap.com
 * Workflows attached to models
-  - easy configureable as classes (Workflow, states and transitions)
+  - easy configurable as classes (Workflow, states and transitions)
   - custom functions for transitions
   - integrated into the BMF (i.e you can delete or update a model instance only if the State allows you to do so)
 * Each option should be activated and deactivated in die model definition (how needs to append files or write comments to a tax-model?)
