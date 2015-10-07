@@ -168,7 +168,10 @@ class AbstractTask(BMFModel):
         swappable = "BMF_CONTRIB_TASK"
 
     def __str__(self):
-        return '#%s: %s' % (self.pk, self.summary)
+        if self.goal:
+            return '[%s] #%s: %s' % (self.goal, self.pk, self.summary)
+        else:
+            return '#%s: %s' % (self.pk, self.summary)
 
     def clean(self):
         # overwrite the project with the goals project
