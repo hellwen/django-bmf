@@ -6,6 +6,8 @@ from __future__ import unicode_literals
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 
+from djangobmf.views.mixins import BaseMixin
+
 import re
 
 
@@ -44,7 +46,7 @@ class ViewMixinMetaclass(type):
         return new_cls
 
 
-class ViewMixin(six.with_metaclass(ViewMixinMetaclass, object)):
+class ViewMixin(six.with_metaclass(ViewMixinMetaclass, BaseMixin)):
     """
     This class acts a an mixin for the REST-API and the view, which is
     rendering the table.

@@ -13,6 +13,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.db.models.query import QuerySet
 from django.forms.models import modelform_factory
 from django.http import HttpResponse
+from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import get_language
@@ -52,29 +53,31 @@ class BaseMixin(object):
     this provides us with more flexibility and removes the need to define
     a middleware.
     """
+    # TODO move this to a setting
     # Timeout for caching dashboards
     _bmf_cache_timeout = 600
 
     # permission classes
+    # TODO: Check if we need to add "default" permissions and combine them (simpler api)
     permission_classes = []
 
-    # name identical to rest framework
+    # Function name and parameters are identical to the django rest framework
     def check_permissions(self, request):
         """
         checks all the permissions given in permission_classes
         """
         for permission in self.permission_classes:
-            if not permission().has_permission(request, self):
-                return permission_denied(request)
+            if not permission().has_permission(request, self): return False
+        return True
 
-    # name identical to rest framework
+    # Function name and parameters are identical to the django rest framework
     def check_object_permissions(self, request, obj):
         """
         checks all the permissions given in permission_classes
         """
         for permission in self.permission_classes:
-            if not permission().has_object_permission(request, self, obj):
-                return permission_denied(request)
+            if not permission().has_object_permission(request, self, obj): return False
+        return True
 
     def _read_session_data(self):
         """
@@ -117,12 +120,17 @@ class BaseMixin(object):
         # add the site object to every request
         setattr(self.request, 'djangobmf_site', apps.get_app_config(bmfsettings.APP_LABEL).site)
 
-        if not self.check_permissions() or not self.request.user.has_perms(self.get_permissions([])):
-            return permission_denied(self.request)
-
-        # automagicaly add the authenticated user and employee to the request (as a lazy queryset)
+        # add the authenticated user and employee to the request (as a lazy queryset)
         self.request.user.djangobmf = Employee(self.request.user)
 
+        # TODO ... call check_object_permission instead when objects have a model
+        try:
+            if not self.check_permissions(self.request):
+                return permission_denied(self.request)
+        except Http404:
+            return page_not_found(self.request)
+
+        # TODO MOVE THIS CHECK TO PERMISSIONS
         # check if bmf has a employee model and if so do a validation of the
         # employee instance (users, who are not employees are not allowed to access)
         if self.request.user.djangobmf.has_employee and not self.request.user.djangobmf.employee:
@@ -163,8 +171,8 @@ class BaseMixin(object):
         # load navigation key from cache
         dashboards = cache.get(cache_key)
 
-#       if dashboards:  # pragma: no branch
-#           return dashboards
+        if dashboards:  # pragma: no branch
+            return dashboards
 
         logger.debug("Reload cache: %s" % cache_key)
         dashboards = {}
@@ -175,18 +183,15 @@ class BaseMixin(object):
             for category in dashboard:
                 dashboards[dashboard.key][category.key] = {}
                 for view in category:
+                    # parse the function name
                     name = 'djangobmf:dashboard_%s:view_%s_%s' % (
                         dashboard.key,
                         category.key,
                         view.key,
                     )
-                    url = reverse(name)
-                    # TODO: activate me
-                    # model = view.model
-                    # permissions = view().get_permissions([])
-                    permissions = []
-                    if self.request.user.has_perms(permissions):
-                        dashboards[dashboard.key][category.key][view.key] = url
+                    # add the view if the user has the permissions to view it
+                    if view().check_permissions(self.request):
+                        dashboards[dashboard.key][category.key][view.key] = reverse(name)
 
                 # test if category has no views and delete empty categories
                 if not dashboards[dashboard.key][category.key]:
@@ -196,8 +201,11 @@ class BaseMixin(object):
             if not dashboards[dashboard.key]:
                 del dashboards[dashboard.key]
 
+        # update cache and return dashboards
         cache.set(cache_key, dashboards, self._bmf_cache_timeout)
         return dashboards
+
+    # TODO --- check everything below this line ---------------------
 
     def update_notification(self, count=None):
         """

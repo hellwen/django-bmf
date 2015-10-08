@@ -28,27 +28,27 @@ class ModulePermission(BasePermission):
     _action = None
 
     _actions_map = {
-        'view': ['%(app_label)s.view_%(model_name)s'],
-        'clone': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.clone_%(model_name)s'],
-        'create': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.add_%(model_name)s'],
-        'update': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.change_%(model_name)s'],
-        'delete': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.delete_%(model_name)s'],
+        'view': ['%(app)s.view_%(model)s'],
+        'clone': ['%(app)s.view_%(model)s', '%(app)s.clone_%(model)s'],
+        'create': ['%(app)s.view_%(model)s', '%(app)s.add_%(model)s'],
+        'update': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
+        'delete': ['%(app)s.view_%(model)s', '%(app)s.delete_%(model)s'],
     }
 
-    _perms_map = {
-        'GET': ['%(app_label)s.view_%(model_name)s'],
-        'OPTIONS': ['%(app_label)s.view_%(model_name)s'],
-        'HEAD': ['%(app_label)s.view_%(model_name)s'],
-        'POST': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.add_%(model_name)s'],
-        'PUT': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.change_%(model_name)s'],
-        'PATCH': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.change_%(model_name)s'],
-        'DELETE': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.delete_%(model_name)s'],
+    _methods_map = {
+        'GET': ['%(app)s.view_%(model)s'],
+        'OPTIONS': ['%(app)s.view_%(model)s'],
+        'HEAD': ['%(app)s.view_%(model)s'],
+        'POST': ['%(app)s.view_%(model)s', '%(app)s.add_%(model)s'],
+        'PUT': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
+        'PATCH': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
+        'DELETE': ['%(app)s.view_%(model)s', '%(app)s.delete_%(model)s'],
     }
 
-    def _map_perms(method):
+    def _map_perms(self, method):
         if self._action in self._actions_map:
             return self._actions_map[self._action]
-        return self._perms_map[method]
+        return self._methods_map[method]
 
     def _get_default_permissions(self, method, view):
         """
@@ -61,8 +61,8 @@ class ModulePermission(BasePermission):
             'does not have a `model` property.'
         )
         kwargs = {
-            'app_label': model_cls._meta.app_label,
-            'model_name': model_cls._meta.model_name,
+            'app': model_cls._meta.app_label,
+            'model': model_cls._meta.model_name,
         }
         return [perm % kwargs for perm in self._map_perms(method)]
 
