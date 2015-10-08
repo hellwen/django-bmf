@@ -205,8 +205,7 @@ class BaseMixin(object):
         cache.set(cache_key, dashboards, self._bmf_cache_timeout)
         return dashboards
 
-    # TODO --- check everything below this line ---------------------
-
+    # TODO check this function, maybe we can move it to a separate class
     def update_notification(self, count=None):
         """
         This function is used by django BMF to update the notifications
@@ -231,12 +230,21 @@ class BaseMixin(object):
         self._write_session_data(session_data)
 
 
-class ViewMixin(BaseMixin):
+class BaseAPIMixin(BaseMixin):
+    """
+    Adds additional functions to `BaseMixin` needed for the REST API
+    """
+    pass
 
+
+class BaseViewMixin(BaseMixin):
+    """
+    Adds additional functions to `BaseMixin` needed for view functions
+    """
     def get_context_data(self, **kwargs):
-
         session_data = self._read_session_data()
 
+        # TODO check below this line ----------------------------------------
         # load dashboard
         if hasattr(self, 'get_dashboard_view'):
             current_dashboard = self.get_dashboard()
@@ -297,12 +305,17 @@ class ViewMixin(BaseMixin):
             'active_dashboard': current_dashboard,
             'active_dashboard_view': current_view,
         })
+        # TODO check above this line ----------------------------------------
 
-        # always read current version, if in development mode
+        # always read current version, if in DEBUG mode
         if settings.DEBUG:
             kwargs["djangobmf"]['version'] = get_version()
 
-        return super(ViewMixin, self).get_context_data(**kwargs)
+        return super(BaseViewMixin, self).get_context_data(**kwargs)
+
+
+class ViewMixin(BaseViewMixin):
+    pass
 
 
 class AjaxMixin(BaseMixin):
