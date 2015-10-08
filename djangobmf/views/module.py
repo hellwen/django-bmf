@@ -38,23 +38,23 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
-from djangobmf.models import Report
-from djangobmf.signals import activity_create
-from djangobmf.signals import activity_update
-# from djangobmf.utils.deprecation import RemovedInNextBMFVersionWarning
-
-from .mixins import ModuleClonePermissionMixin
-from .mixins import ModuleCreatePermissionMixin
-from .mixins import ModuleDeletePermissionMixin
-from .mixins import ModuleUpdatePermissionMixin
 from .mixins import ModuleSearchMixin
-from .mixins import ModuleViewPermissionMixin
 from .mixins import ModuleAjaxMixin
 from .mixins import ModuleViewMixin
 from .mixins import ModuleActivityMixin
 from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
+from djangobmf.models import Report
+from djangobmf.permissions import AjaxPermission
+from djangobmf.permissions import ModuleViewPermission
+from djangobmf.permissions import ModuleClonePermission
+from djangobmf.permissions import ModuleCreatePermission
+from djangobmf.permissions import ModuleDeletePermission
+from djangobmf.permissions import ModuleUpdatePermission
+from djangobmf.signals import activity_create
+from djangobmf.signals import activity_update
+# from djangobmf.utils.deprecation import RemovedInNextBMFVersionWarning
 
 import copy
 # import datetime
@@ -73,10 +73,11 @@ logger = logging.getLogger(__name__)
 # --- list views --------------------------------------------------------------
 
 
-class ModuleListView(
-        ModuleViewPermissionMixin, ModuleViewMixin, TemplateView):
+class ModuleListView(ModuleViewMixin, TemplateView):
     """
     """
+    permission_classes = [ModuleViewPermission]
+
     # set by views.dashboard
     model = None
     dashboard = None
@@ -281,10 +282,11 @@ class ModuleLetterView(ModuleGenericBaseView, FilterView):
 
 
 class ModuleDetailView(
-        ModuleViewPermissionMixin, ModuleFilesMixin, ModuleActivityMixin, ModuleViewMixin, DetailView):
+        ModuleFilesMixin, ModuleActivityMixin, ModuleViewMixin, DetailView):
     """
     show the details of an entry
     """
+    permission_classes = [ModuleViewPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfdetail'
     reports = []
@@ -338,10 +340,11 @@ class ModuleDetailView(
             + ["djangobmf/module_detail_default.html"]
 
 
-class ModuleReportView(ModuleViewPermissionMixin, ModuleViewMixin, DetailView):
+class ModuleReportView(ModuleViewMixin, DetailView):
     """
     render a report
     """
+    permission_classes = [ModuleViewPermission]
     context_object_name = 'object'
 
     def get_template_names(self):
@@ -488,10 +491,11 @@ class ModuleReportView(ModuleViewPermissionMixin, ModuleViewMixin, DetailView):
 #       })
 
 
-class ModuleCloneView(ModuleFormMixin, ModuleClonePermissionMixin, ModuleAjaxMixin, UpdateView):
+class ModuleCloneView(ModuleFormMixin, ModuleAjaxMixin, UpdateView):
     """
     clone a object
     """
+    permission_classes = [ModuleClonePermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfclone'
     fields = []
@@ -532,9 +536,10 @@ class ModuleCloneView(ModuleFormMixin, ModuleClonePermissionMixin, ModuleAjaxMix
         })
 
 
-class ModuleUpdateView(ModuleFormMixin, ModuleUpdatePermissionMixin, ModuleAjaxMixin, ReadOnlyMixin, UpdateView):
+class ModuleUpdateView(ModuleFormMixin, ModuleAjaxMixin, ReadOnlyMixin, UpdateView):
     """
     """
+    permission_classes = [ModuleUpdatePermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfupdate'
     exclude = []
@@ -566,10 +571,11 @@ class ModuleUpdateView(ModuleFormMixin, ModuleUpdatePermissionMixin, ModuleAjaxM
             })
 
 
-class ModuleCreateView(ModuleFormMixin, ModuleCreatePermissionMixin, ModuleAjaxMixin, ReadOnlyMixin, CreateView):
+class ModuleCreateView(ModuleFormMixin, ModuleAjaxMixin, ReadOnlyMixin, CreateView):
     """
     create a new instance
     """
+    permission_classes = [ModuleCreatePermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfcreate'
 
@@ -593,10 +599,11 @@ class ModuleCreateView(ModuleFormMixin, ModuleCreatePermissionMixin, ModuleAjaxM
         })
 
 
-class ModuleDeleteView(ModuleDeletePermissionMixin, ModuleAjaxMixin, DeleteView):
+class ModuleDeleteView(ModuleAjaxMixin, DeleteView):
     """
     delete an instance
     """
+    permission_classes = [ModuleDeletePermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfdelete'
 
@@ -715,6 +722,7 @@ class ModuleWorkflowView(ModuleAjaxMixin, DetailView):
     """
     update the state of a workflow
     """
+    permission_classes = [AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfworkflow'
 
@@ -748,6 +756,7 @@ class ModuleWorkflowView(ModuleAjaxMixin, DetailView):
 class ModuleFormAPI(ModuleFormMixin, ModuleAjaxMixin, ModuleSearchMixin, SingleObjectMixin, BaseFormView):
     """
     """
+    permission_classes = [AjaxPermission]
     model = None
     queryset = None
     form_view = None

@@ -27,6 +27,7 @@ from djangobmf.notification.forms import HistoryCommentForm
 from djangobmf.models import Activity
 from djangobmf.models import Document
 from djangobmf.models import Notification
+from djangobmf.permissions import AjaxPermission
 from djangobmf.utils.serializers import DjangoBMFEncoder
 from djangobmf.views.defaults import bad_request
 from djangobmf.views.defaults import permission_denied
@@ -54,24 +55,26 @@ class BaseMixin(object):
     # Timeout for caching dashboards
     _bmf_cache_timeout = 600
 
-    # Permissions
-    permissions = []
+    # permission classes
+    permission_classes = []
 
-    def get_permissions(self, permissions=[]):
+    # name identical to rest framework
+    def check_permissions(self, request):
         """
-        returns a list of (django) permissions and use them in dispatch to
-        determinate if the user can view the page, he requested
+        checks all the permissions given in permission_classes
         """
-        for perm in self.permissions:
-            permissions.append(perm)
-        return permissions
+        for permission in self.permission_classes:
+            if not permission().has_permission(request, self):
+                return permission_denied(request)
 
-    def check_permissions(self):
+    # name identical to rest framework
+    def check_object_permissions(self, request, obj):
         """
-        overwrite this function to add a view permission check (i.e
-        one which depends on the object or on the request)
+        checks all the permissions given in permission_classes
         """
-        return True
+        for permission in self.permission_classes:
+            if not permission().has_object_permission(request, self, obj):
+                return permission_denied(request)
 
     def _read_session_data(self):
         """
@@ -298,12 +301,11 @@ class AjaxMixin(BaseMixin):
     """
     add some basic function for ajax requests
     """
+    permission_classes = [AjaxPermission]
+
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
         return super(AjaxMixin, self).dispatch(*args, **kwargs)
-
-    def check_permissions(self):
-        return self.request.is_ajax() and super(AjaxMixin, self).check_permissions()
 
     def render_to_json_response(self, context, **response_kwargs):
         data = json.dumps(context, cls=DjangoBMFEncoder)
@@ -381,80 +383,6 @@ class ReadOnlyMixin(object):
                     )
                 )
         return form
-
-
-# PERMISSIONS
-
-class ModuleViewPermissionMixin(object):
-    """
-    Checks view permissions of an bmfmodule
-    """
-
-    def get_permissions(self, perms=[]):
-        return []
-        info = self.model._meta.app_label, self.model._meta.model_name
-        perms.append('%s.view_%s' % info)
-        return super(ModuleViewPermissionMixin, self).get_permissions(perms)
-
-
-class ModuleCreatePermissionMixin(object):
-    """
-    Checks create permissions of an bmfmodule
-    """
-
-    def get_permissions(self, perms=[]):
-        info = self.model._meta.app_label, self.model._meta.model_name
-        perms.append('%s.add_%s' % info)
-        perms.append('%s.view_%s' % info)
-        return super(ModuleCreatePermissionMixin, self).get_permissions(perms)
-
-
-class ModuleClonePermissionMixin(object):
-    """
-    Checks create permissions of an bmfmodule
-    """
-
-    def get_permissions(self, perms=[]):
-        info = self.model._meta.app_label, self.model._meta.model_name
-        perms.append('%s.clone_%s' % info)
-        perms.append('%s.view_%s' % info)
-        return super(ModuleClonePermissionMixin, self).get_permissions(perms)
-
-
-class ModuleUpdatePermissionMixin(object):
-    """
-    Checks update permissions of an bmfmodule
-    """
-
-    def check_permissions(self):
-        if self.model._bmfmeta.workflow:
-            return self.get_object()._bmfmeta.workflow.object.update and \
-                super(ModuleUpdatePermissionMixin, self).check_permissions()
-        return super(ModuleUpdatePermissionMixin, self).check_permissions()
-
-    def get_permissions(self, perms=[]):
-        info = self.model._meta.app_label, self.model._meta.model_name
-        perms.append('%s.change_%s' % info)
-        perms.append('%s.view_%s' % info)
-        return super(ModuleUpdatePermissionMixin, self).get_permissions(perms)
-
-
-class ModuleDeletePermissionMixin(object):
-    """
-    Checks delete permission of an bmfmodule
-    """
-
-    def check_permissions(self):
-        if self.model._bmfmeta.workflow:
-            return self.get_object()._bmfmeta.workflow.object.delete and \
-                super(ModuleDeletePermissionMixin, self).check_permissions()
-        return super(ModuleDeletePermissionMixin, self).check_permissions()
-
-    def get_permissions(self, perms=[]):
-        info = self.model._meta.app_label, self.model._meta.model_name
-        perms.append('%s.delete_%s' % info)
-        perms.append('%s.view_%s' % info)
-        return super(ModuleDeletePermissionMixin, self).get_permissions(perms)
 
 
 # MODULES
