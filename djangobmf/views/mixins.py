@@ -48,10 +48,14 @@ logger = logging.getLogger(__name__)
 class BaseMixin(object):
     """
     provides functionality used in EVERY view throughout the application.
-    this is used so we don't neet to define a middleware
+    this provides us with more flexibility and removes the need to define
+    a middleware.
     """
+    # Timeout for caching dashboards
+    _bmf_cache_timeout = 600
+
+    # Permissions
     permissions = []
-    bmf_cache_timeout = 600
 
     def get_permissions(self, permissions=[]):
         """
@@ -69,7 +73,7 @@ class BaseMixin(object):
         """
         return True
 
-    def read_session_data(self):
+    def _read_session_data(self):
         """
         returns the data saved in the session or an
         default dictionary containing the version of
@@ -78,13 +82,19 @@ class BaseMixin(object):
         return self.request.session.get("djangobmf", {
             'version': get_version(),
             'active_dashboard': None,
-            # 'active_view': None,
+            'active_category': None,
+            'active_view': None,
         })
 
-    def write_session_data(self, data):
+    def _write_session_data(self, data):
+        """
+        stores the session under the request object
+        and marks the session as modified, so django will
+        save it
+        """
         # reload sessiondata, because we can not be sure, that the
         # session was not changed during this request
-        session_data = self.read_session_data()
+        session_data = self._read_session_data()
         session_data.update(data)
 
         # update session
@@ -97,7 +107,8 @@ class BaseMixin(object):
         checks permissions, requires a login and
         because we are using a generic view approach to the data-models
         in django BMF, we can ditch a middleware (less configuration)
-        and add the functionality to this function.
+        and add the functionality we need for the framework to
+        work properly to this function.
         """
 
         # add the site object to every request
@@ -137,54 +148,52 @@ class BaseMixin(object):
 
         return response
 
-    def get_dashboards_cache_key(self):
-        return 'bmf_dashboards_%s_%s' % (self.request.user.pk, get_language())
-
-    def update_dashboards(self):
+    def _update_dashboards(self):
         """
-        This functions loads all dashboards for one user instance
+        Loads all dashboards from cache or create them from the site
+        object and stores them in the cache.
         """
 
         # store information about all user dashboards
-        cache_key = self.get_dashboards_cache_key()
+        cache_key = 'bmf_dashboard_%s_%s' % (self.request.user.pk, get_language())
 
-        # get navigation key from cache
+        # load navigation key from cache
         dashboards = cache.get(cache_key)
 
-        if not dashboards:  # pragma: no branch
-            logger.debug("Reload cache: %s" % cache_key)
+#       if dashboards:  # pragma: no branch
+#           return dashboards
 
-            dashboards = {}
+        logger.debug("Reload cache: %s" % cache_key)
+        dashboards = {}
 
-            # update all dashboards
-            for dashboard in self.request.djangobmf_site.dashboards:
-                dashboards[dashboard.key] = {}
-                for category in dashboard:
-                    dashboards[dashboard.key][category.key] = {}
-                    for view in category:
-                        # TODO: activate me
-                        # model = view.model
-                        # permissions = view().get_permissions([])
-                        permissions = []
-                        if self.request.user.has_perms(permissions):
-                            dashboards[dashboard.key][category.key][view.key] = '#'
-                            dashboards[dashboard.key][category.key][view.key] = reverse(
-                                'djangobmf:dashboard_%s:view_%s_%s' % (
-                                    dashboard.key,
-                                    category.key,
-                                    view.key,
-                                )
-                            )
+        # update all dashboards
+        for dashboard in self.request.djangobmf_site.dashboards:
+            dashboards[dashboard.key] = {}
+            for category in dashboard:
+                dashboards[dashboard.key][category.key] = {}
+                for view in category:
+                    name = 'djangobmf:dashboard_%s:view_%s_%s' % (
+                        dashboard.key,
+                        category.key,
+                        view.key,
+                    )
+                    url = reverse(name)
+                    # TODO: activate me
+                    # model = view.model
+                    # permissions = view().get_permissions([])
+                    permissions = []
+                    if self.request.user.has_perms(permissions):
+                        dashboards[dashboard.key][category.key][view.key] = url
 
-                    # test if category has no views and delete empty categories
-                    if not dashboards[dashboard.key][category.key]:
-                        del dashboards[dashboard.key][category.key]
+                # test if category has no views and delete empty categories
+                if not dashboards[dashboard.key][category.key]:
+                    del dashboards[dashboard.key][category.key]
 
-                # test if dashboard has no categories and delete empty dashboards
-                if not dashboards[dashboard.key]:
-                    del dashboards[dashboard.key]
+            # test if dashboard has no categories and delete empty dashboards
+            if not dashboards[dashboard.key]:
+                del dashboards[dashboard.key]
 
-            cache.set(cache_key, dashboards, self.bmf_cache_timeout)
+        cache.set(cache_key, dashboards, self._bmf_cache_timeout)
         return dashboards
 
     def update_notification(self, count=None):
@@ -195,7 +204,7 @@ class BaseMixin(object):
         logger.debug("Updating notifications for %s" % self.request.user)
 
         # get all session data
-        session_data = self.read_session_data()
+        session_data = self._read_session_data()
 
         # manipulate session
         session_data["notification_last_update"] = datetime.datetime.utcnow().isoformat()
@@ -208,14 +217,14 @@ class BaseMixin(object):
             session_data["notification_count"] = count
 
         # update session
-        self.write_session_data(session_data)
+        self._write_session_data(session_data)
 
 
 class ViewMixin(BaseMixin):
 
     def get_context_data(self, **kwargs):
 
-        session_data = self.read_session_data()
+        session_data = self._read_session_data()
 
         # load dashboard
         if hasattr(self, 'get_dashboard_view'):
@@ -234,9 +243,9 @@ class ViewMixin(BaseMixin):
         # update session
         if current_dashboard and current_dashboard.key != session_data['active_dashboard']:
             session_data['active_dashboard'] = current_dashboard.key
-            self.write_session_data(session_data)
+            self._write_session_data(session_data)
 
-        dashboards = self.update_dashboards()
+        dashboards = self._update_dashboards()
 
         # collect data
         sidebar = []
@@ -271,7 +280,7 @@ class ViewMixin(BaseMixin):
 
         # update context with session data
         kwargs.update({
-            'djangobmf': self.read_session_data(),
+            'djangobmf': self._read_session_data(),
             'sidebar': sidebar,
             'navigation_dashboard': navigation_dashboard,
             'active_dashboard': current_dashboard,
