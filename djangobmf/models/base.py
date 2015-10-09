@@ -17,11 +17,12 @@ from django.utils.translation import ugettext_lazy as _
 from djangobmf.conf import settings as bmfsettings
 from djangobmf.fields import WorkflowField
 from djangobmf.workflow import Workflow
+from djangobmf.core.filter_queryset import FilterQueryset
 
 import types
 import inspect
-# import logging
-# logger = logging.getLogger(__name__)
+import logging
+logger = logging.getLogger(__name__)
 
 
 def add_signals(cls):
@@ -79,7 +80,7 @@ class BMFOptions(object):
         self.search_fields = []
         self.number_cycle = None
 
-        # workflow_cls
+        # add an workflow object to the class
 
         self.workflow_cls = getattr(
             options, 'workflow', None
@@ -92,6 +93,38 @@ class BMFOptions(object):
                     cls.__name__
                 )
             )
+
+        # workflow_field_name
+        self.workflow_field_name = getattr(
+            options, 'workflow_field_name', 'state'
+        )
+
+        # shortcut to the instance workflow model
+        # is filled via a post_init signal (see below)
+        self.workflow = None
+
+        # determines if the model has an workflow
+        if self.workflow_cls and len(self.workflow_cls._transitions) > 0:
+            self.has_workflow = True
+        else:
+            self.has_workflow = False
+
+        # add an filter_queryset to the class
+
+        filter_queryset = getattr(
+            options, 'filter_queryset', None
+        )
+
+        if filter_queryset and not issubclass(filter_queryset, FilterQueryset):
+            raise ImproperlyConfigured(
+                "%s is not a FilterQueryset in %s" % (
+                    filter_queryset.__name__,
+                    cls.__name__
+                )
+            )
+            self.filter_queryset = filter_queryset()
+        else:
+            self.filter_queryset = FilterQueryset()
 
         # workflow_field_name
         self.workflow_field_name = getattr(
