@@ -57,7 +57,7 @@ class AbstractTimesheet(BMFModel):
     objects = TimesheetManager()
 
     def clean(self):
-        # overwrite the project with the goals project
+        # overwrite the project with the tasks project
         if self.task:
             self.project = self.task.project
 
