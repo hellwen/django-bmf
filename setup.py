@@ -41,7 +41,6 @@ setup(
     packages=find_packages(exclude=['sandbox', 'tests']),
     classifiers=CLASSIFIERS,
     install_requires=[
-        'configobj',
         'django>=1.7',
         'django-sekizai',
         'djangorestframework>=3.1',

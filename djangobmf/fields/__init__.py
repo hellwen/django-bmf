@@ -11,7 +11,7 @@ from django.utils.six import with_metaclass
 from djangobmf.conf import settings
 from djangobmf.currency import BaseCurrency
 
-from .configobj import ConfigField
+# from .configobj import ConfigField
 from .models.file import FileField
 from .workflow import WorkflowField
 
