@@ -3,6 +3,8 @@
 
 from __future__ import unicode_literals
 
+from django.utils import six
+
 import logging
 logger = logging.getLogger(__name__)
 
