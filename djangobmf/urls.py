@@ -64,12 +64,12 @@ urlpatterns = patterns(
 
     # --- REST API
     url(
-        r'^rest/(?P<app>[\w-]+)/(?P<model>[\w-]+)/',
+        r'^rest/(?P<app>[\w-]+)/(?P<model>[\w-]+)/$',
         APIModuleListView.as_view(),
         name="rest",
     ),
     url(
-        r'^rest/(?P<app_label>[\w_]+)/(?P<model>[\w_]+)/(?P<model>[0-9]+)/',
+        r'^rest/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
         APIModuleDetailView.as_view(),
         name="rest",
     ),

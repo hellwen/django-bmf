@@ -17,6 +17,7 @@ from django.utils.translation import ugettext_lazy as _
 from djangobmf.conf import settings as bmfsettings
 from djangobmf.core.filter_queryset import FilterQueryset
 from djangobmf.fields import WorkflowField
+from djangobmf.serializers import ModuleSerializer
 from djangobmf.workflow import Workflow
 
 import types
@@ -109,10 +110,10 @@ class BMFOptions(object):
         else:
             self.has_workflow = False
 
-        # add an filter_queryset to the class
+        # add a filter_queryset to the class
 
-        filter_backend = getattr(
-            options, 'filter_backend', None
+        filter_queryset = getattr(
+            options, 'filter_queryset', None
         )
 
         if filter_queryset and not issubclass(filter_queryset, FilterQueryset):
@@ -125,6 +126,11 @@ class BMFOptions(object):
             self.filter_queryset = filter_queryset()
         else:
             self.filter_queryset = FilterQueryset()
+
+        # add a serializer to the class
+        self.serializer_class = getattr(
+            options, 'serializer_class', ModuleSerializer
+        )
 
         # workflow_field_name
         self.workflow_field_name = getattr(
@@ -237,6 +243,15 @@ class BMFModelBase(ModelBase):
             cls._meta.permissions += (
                 ('addfile_' + cls._meta.model_name, u'Can add files to %s' % cls.__name__),
             )
+
+        # Dynamicaly add the modelclass to the serializer
+        if hasattr(cls._bmfmeta.serializer_class, 'Meta'):
+            cls._bmfmeta.serializer_class.Meta.model = cls
+        else:
+            class MetaFactory:
+                model = cls
+                fields = ['pk', '__str__', 'bmfdetail']
+            cls._bmfmeta.serializer_class.Meta = MetaFactory
 
         # add field: workflow field
         if cls._bmfmeta.has_workflow:

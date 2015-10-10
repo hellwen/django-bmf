@@ -32,7 +32,7 @@ class FilterQueryset(object):
     to your model with the `FilterQueryset` class.
     """
 
-    def filter_queryset(self, qs, user):
+    def filter_queryset(self, qs, request):
         """
         The filter_queryset method is ment to be overwritten
         """
