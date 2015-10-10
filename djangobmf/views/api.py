@@ -7,8 +7,9 @@ from django.apps import apps
 from django.http import Http404
 
 from djangobmf.core.employee import Employee
+from djangobmf.filters import FilterBackend
+from djangobmf.pagination import ModulePagination
 
-from rest_framework import pagination
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import ListModelMixin
@@ -16,27 +17,11 @@ from rest_framework.mixins import CreateModelMixin
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.mixins import DestroyModelMixin
-from rest_framework.serializers import Serializer
 
-
-class TestSerializer(Serializer):
-    pass
-
-class ModulePaginationSerializer(pagination.PageNumberPagination):
-
-    def get_paginated_response(self, data):
-        return Response({
-            'pagination': {
-                'next': self.get_next_link(),
-                'prev': self.get_previous_link(),
-                'count': self.page.paginator.count,
-            },
-            'items': data,
-        })
 
 class APIMixin(object):
 
-    serializer_class = TestSerializer
+    filter_backends = (FilterBackend,)
 
     @property
     def model(self):
@@ -51,18 +36,30 @@ class APIMixin(object):
         if not hasattr(self._model, '_bmfmeta'):
             raise Http404
 
+        # Connect the requests user to the BMF-Employee model (if installed)
+        self.request.user.djangobmf = Employee(self.request.user)
+
         return self._model
 
     def get_queryset(self):
-        return self.model.objects.all()
+        qs = self.model._bmfmeta.filter_queryset(
+            self.model.objects.all(),
+            self.request.user,
+        )
+        return qs
 
     def get_serializer_class(self):
+        """
+        return the serializer which is registered with the model
+        """
         return self.model._bmfmeta.serializer_class
+
 
 class APIModuleListView(APIMixin, ListModelMixin, CreateModelMixin, GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
 
 class APIModuleDetailView(APIMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
     def get(self, request, *args, **kwargs):
@@ -75,7 +72,7 @@ class ModuleListAPIView(ListModelMixin, CreateModelMixin, GenericAPIView):
     model = None
     module = None
     permissions = None
-    pagination_class = ModulePaginationSerializer
+    pagination_class = ModulePagination
     paginate_by = 100
 
     def get(self, request, *args, **kwargs):

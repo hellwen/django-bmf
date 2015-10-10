@@ -7,11 +7,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class BMFFilterBackend(object):
+# Parameters of the filter_queryset are identical to the filter-backends 
+# in django rest framework
+class FilterBackend(object):
     """
     """
 
-    # Function name and parameters are identical to the django rest framework
     def filter_queryset(self, request, queryset, view):
         """
         The filter_queryset method is ment to be overwritten

@@ -32,7 +32,10 @@ class FilterQueryset(object):
     to your model with the `FilterQueryset` class.
     """
 
-    def filter_queryset(self, qs, request):
+    def __call__(self, qs, user):
+        return self.filter_queryset(qs, user)
+
+    def filter_queryset(self, qs, user):
         """
         The filter_queryset method is ment to be overwritten
         """
