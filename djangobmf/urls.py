@@ -16,6 +16,8 @@ from django.views.decorators.http import last_modified
 
 from djangobmf import get_version
 from djangobmf.views import ModuleOverviewView
+from djangobmf.views.api import APIModuleListView
+from djangobmf.views.api import APIModuleDetailView
 from djangobmf.views.configuration import ConfigurationView
 from djangobmf.views.configuration import ConfigurationEdit
 from djangobmf.views.dashboard import DashboardView
@@ -59,6 +61,18 @@ urlpatterns = patterns(
         name="dashboard",
     ),
     #   r'^dashboard/(?P<dashboard>[\w-]+)/' via sites
+
+    # --- REST API
+    url(
+        r'^rest/(?P<app>[\w-]+)/(?P<model>[\w-]+)/',
+        APIModuleListView.as_view(),
+        name="rest",
+    ),
+    url(
+        r'^rest/(?P<app_label>[\w_]+)/(?P<model>[\w_]+)/(?P<model>[0-9]+)/',
+        APIModuleDetailView.as_view(),
+        name="rest",
+    ),
 
     url(r'^document/', include('djangobmf.document.urls')),
     url(r'^i18n/', i18n_javascript, name="jsi18n"),

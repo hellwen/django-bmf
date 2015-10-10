@@ -15,9 +15,9 @@ from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.conf import settings as bmfsettings
+from djangobmf.core.filter_queryset import FilterQueryset
 from djangobmf.fields import WorkflowField
 from djangobmf.workflow import Workflow
-from djangobmf.core.filter_queryset import FilterQueryset
 
 import types
 import inspect
@@ -111,8 +111,8 @@ class BMFOptions(object):
 
         # add an filter_queryset to the class
 
-        filter_queryset = getattr(
-            options, 'filter_queryset', None
+        filter_backend = getattr(
+            options, 'filter_backend', None
         )
 
         if filter_queryset and not issubclass(filter_queryset, FilterQueryset):

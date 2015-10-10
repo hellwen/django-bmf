@@ -28,6 +28,13 @@ class ModulePaginationSerializer(pagination.PageNumberPagination):
         })
 
 
+class APIModuleListView(ListModelMixin, CreateModelMixin, GenericAPIView):
+    pass
+
+class APIModuleDetailView(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
+    pass
+
+
 class ModuleListAPIView(ListModelMixin, CreateModelMixin, GenericAPIView):
     """
     """
