@@ -138,10 +138,6 @@ class ModuleListView(ModuleViewMixin, TemplateView):
             'model': self.model._meta.model_name,
         })
 
-        print(dir(self))
-        print(self.dashboard)
-        print(self.get_dashboard_view())
-
         kwargs = {
             'd': 'projects',
             'c': 'tasks',

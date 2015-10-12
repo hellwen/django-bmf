@@ -45,7 +45,6 @@ class APIMixin(BaseMixin):
             self.model.objects.all(),
             self.request.user,
         )
-        print(self.paginator)
         return qs
 
     def get_serializer_class(self):
