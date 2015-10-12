@@ -41,7 +41,16 @@ urlpatterns = patterns(
     url(r'^$', DashboardView.as_view(), name="dashboard"),
     url(r'^accounts/', include('djangobmf.account.urls')),
 
-    #   r'^api/module/' via sites
+    url(
+        r'^api/data/(?P<app>[\w-]+)/(?P<model>[\w-]+)/$',
+        APIModuleListView.as_view(),
+        name="api",
+    ),
+    url(
+        r'^api/data/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        APIModuleDetailView.as_view(),
+        name="api",
+    ),
 
     # --- Configuration
     url(
@@ -62,17 +71,6 @@ urlpatterns = patterns(
     ),
     #   r'^dashboard/(?P<dashboard>[\w-]+)/' via sites
 
-    # --- REST API
-    url(
-        r'^rest/(?P<app>[\w-]+)/(?P<model>[\w-]+)/$',
-        APIModuleListView.as_view(),
-        name="rest",
-    ),
-    url(
-        r'^rest/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
-        APIModuleDetailView.as_view(),
-        name="rest",
-    ),
 
     url(r'^document/', include('djangobmf.document.urls')),
     url(r'^i18n/', i18n_javascript, name="jsi18n"),

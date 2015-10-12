@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 from rest_framework import pagination
+from rest_framework.response import Response
 
 
 class ModulePagination(pagination.PageNumberPagination):

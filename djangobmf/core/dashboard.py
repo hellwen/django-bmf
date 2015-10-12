@@ -120,19 +120,19 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
                             'view': view.key,
                         },
                     ),
-                    url(
-                        r'^api/%s/%s/' % (category.slug, view.slug),
-                        APIFactory.as_view(
-                            module=module,
-                            permissions=module.permissions,
-                            serializer_class=module.serializer,
-                        ),
-                        name='api_%s_%s' % (category.key, view.key),
-                        kwargs={
-                            'category': category.key,
-                            'view': view.key,
-                        },
-                    )
+#                   url(
+#                       r'^api/%s/%s/' % (category.slug, view.slug),
+#                       APIFactory.as_view(
+#                           module=module,
+#                           permissions=module.permissions,
+#                           serializer_class=module.serializer,
+#                       ),
+#                       name='api_%s_%s' % (category.key, view.key),
+#                       kwargs={
+#                           'category': category.key,
+#                           'view': view.key,
+#                       },
+#                   )
                 )
         return urlpatterns
 

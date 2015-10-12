@@ -7,10 +7,10 @@ from django.apps import apps
 from django.http import Http404
 
 from djangobmf.core.employee import Employee
-from djangobmf.filters import FilterBackend
+from djangobmf.views.mixins import BaseMixin
+from djangobmf.filters import ViewFilterBackend
 from djangobmf.pagination import ModulePagination
 
-from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import CreateModelMixin
@@ -19,9 +19,11 @@ from rest_framework.mixins import UpdateModelMixin
 from rest_framework.mixins import DestroyModelMixin
 
 
-class APIMixin(object):
+class APIMixin(BaseMixin):
 
-    filter_backends = (FilterBackend,)
+    filter_backends = (ViewFilterBackend,)
+    pagination_class = ModulePagination
+    paginate_by = 100
 
     @property
     def model(self):
@@ -36,9 +38,6 @@ class APIMixin(object):
         if not hasattr(self._model, '_bmfmeta'):
             raise Http404
 
-        # Connect the requests user to the BMF-Employee model (if installed)
-        self.request.user.djangobmf = Employee(self.request.user)
-
         return self._model
 
     def get_queryset(self):
@@ -46,6 +45,7 @@ class APIMixin(object):
             self.model.objects.all(),
             self.request.user,
         )
+        print(self.paginator)
         return qs
 
     def get_serializer_class(self):

@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# ex:set fileencoding=utf-8:
+
+from __future__ import unicode_literals
+
 from django.apps import apps
 from djangobmf import fields
 from rest_framework import serializers

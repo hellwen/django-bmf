@@ -44,10 +44,10 @@ class MyGoals(ViewMixin):
     slug = 'my'
     name = _("My goals")
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             completed=False,
-            referee=self.request.user.djangobmf.employee,
+            referee=request.user.djangobmf.employee,
         )
 
 
@@ -57,8 +57,8 @@ class ActiveGoals(ViewMixin):
     slug = 'active'
     name = _("Active goals")
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             completed=False,
         )
 
@@ -76,10 +76,10 @@ class MyTasks(ViewMixin):
     slug = 'my'
     name = _("My tasks")
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             completed=False,
-            employee=self.request.user.djangobmf.employee,
+            employee=request.user.djangobmf.employee,
         )
 
 
@@ -89,11 +89,11 @@ class Todolist(ViewMixin):
     slug = 'todo'
     name = _("Todolist")
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             completed=False,
             state__in=["todo", "started", "review"],
-            employee=self.request.user.djangobmf.employee,
+            employee=request.user.djangobmf.employee,
         )
 
 
@@ -103,8 +103,8 @@ class AvailableTasks(ViewMixin):
     slug = 'availiable'
     name = _("Availalbe tasks")
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             employee=None,
             completed=False,
         )
@@ -116,8 +116,8 @@ class OpenTasks(ViewMixin):
     slug = 'open'
     name = _("Open tasks")
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             completed=False,
         )
 

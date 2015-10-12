@@ -160,6 +160,9 @@ class BaseMixin(object):
         return response
 
     def _update_dashboards(self):
+        return self.get_dashboards()
+
+    def get_dashboards(self):
         """
         Loads all dashboards from cache or create them from the site
         object and stores them in the cache.
