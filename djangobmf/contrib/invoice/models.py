@@ -23,6 +23,7 @@ from djangobmf.fields.models import FileField
 import datetime
 from decimal import Decimal
 
+from .serializers import InvoiceSerializer
 from .workflows import InvoiceWorkflow
 
 
@@ -48,6 +49,18 @@ class BaseInvoice(BMFModel):
         editable=False, on_delete=models.PROTECT,
     )
 
+    class Meta:
+        verbose_name = _('Invoice')
+        verbose_name_plural = _('Invoices')
+        ordering = ['invoice_number']
+        abstract = True
+        swappable = "BMF_CONTRIB_INVOICE"
+
+    class BMFMeta:
+        number_cycle = "INV{year}/{month}-{counter:04d}"
+        workflow = InvoiceWorkflow
+        serializer = InvoiceSerializer
+
     @staticmethod
     def post_save(sender, instance, created, raw, *args, **kwargs):
         if not instance.invoice_number:
@@ -56,17 +69,6 @@ class BaseInvoice(BMFModel):
 
     def __str__(self):
         return '%s' % self.invoice_number
-
-    class BMFMeta:
-        number_cycle = "INV{year}/{month}-{counter:04d}"
-        workflow = InvoiceWorkflow
-
-    class Meta:
-        verbose_name = _('Invoice')
-        verbose_name_plural = _('Invoices')
-        ordering = ['invoice_number']
-        abstract = True
-        swappable = "BMF_CONTRIB_INVOICE"
 
 
 class AbstractInvoice(BaseInvoice):

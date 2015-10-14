@@ -16,8 +16,6 @@ from .models import Task
 from .models import Goal
 # from .permissions import GoalPermission
 # from .permissions import TaskPermission
-from .serializers import GoalSerializer
-from .serializers import TaskSerializer
 from .views import GoalCloneView
 from .views import GoalDetailView
 
@@ -26,7 +24,6 @@ from .views import GoalDetailView
 class TaskModule(Module):
     model = Task
     default = True
-    serializer = TaskSerializer
 
 
 @register(dashboard=ProjectManagement)
@@ -35,7 +32,6 @@ class GoalModule(Module):
     default = True
     clone = GoalCloneView
     detail = GoalDetailView
-    serializer = GoalSerializer
 
 
 @register(category=GoalCategory)

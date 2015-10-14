@@ -12,7 +12,6 @@ from djangobmf.sites import register
 
 from .categories import TimesheetCategory
 from .models import Timesheet
-from .serializers import TimesheetSerializer
 from .permissions import TimesheetPermission
 from .views import CreateView
 from .views import UpdateView
@@ -24,7 +23,6 @@ class TimesheetModule(Module):
     default = True
     create = CreateView
     update = UpdateView
-    serializer = TimesheetSerializer
     permissions = TimesheetPermission
 
 

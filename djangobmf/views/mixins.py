@@ -162,6 +162,11 @@ class BaseMixin(object):
     def _update_dashboards(self):
         return self.get_dashboards()
 
+    def get_current_view(self):
+        if hasattr(self, '_bmf_view'):
+            return self._bmf_view
+        return None
+
     def get_dashboards(self):
         """
         Loads all dashboards from cache or create them from the site

@@ -25,7 +25,6 @@ class InvoiceModule(Module):
     default = True
     create = InvoiceCreateView
     update = InvoiceUpdateView
-    serializer = InvoiceSerializer
 
 
 @register(dashboard=Accounting)

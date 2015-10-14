@@ -11,6 +11,8 @@ from django.utils.translation import ugettext_lazy as _
 from djangobmf.conf import settings
 from djangobmf.models import BMFModel
 
+from .serializers import GoalSerializer
+from .serializers import TaskSerializer
 from .workflows import GoalWorkflow
 from .workflows import TaskWorkflow
 
@@ -60,6 +62,12 @@ class AbstractGoal(BMFModel):
             ('can_manage', 'Can manage all goals'),
         )
         swappable = "BMF_CONTRIB_GOAL"
+
+    class BMFMeta:
+        has_logging = False
+        workflow = GoalWorkflow
+        can_clone = True
+        serializer = GoalSerializer
 
     def bmfget_customer(self):
         if self.project:
@@ -115,13 +123,13 @@ class AbstractGoal(BMFModel):
 
         return states
 
-    class BMFMeta:
-        has_logging = False
-        workflow = GoalWorkflow
-        can_clone = True
+
+class BaseGoal(AbstractGoal):
+    class Meta(AbstractGoal.Meta):
+        abstract = True
 
 
-class Goal(AbstractGoal):
+class Goal(BaseGoal):
     pass
 
 
@@ -167,6 +175,12 @@ class AbstractTask(BMFModel):
         abstract = True
         swappable = "BMF_CONTRIB_TASK"
 
+    class BMFMeta:
+        workflow = TaskWorkflow
+        serializer = TaskSerializer
+        has_files = True
+        has_comments = True
+
     def __str__(self):
         if self.goal:
             return '[%s] #%s: %s' % (self.goal, self.pk, self.summary)
@@ -197,11 +211,11 @@ class AbstractTask(BMFModel):
                 return 0
             return (self.due_date - time).days
 
-    class BMFMeta:
-        workflow = TaskWorkflow
-        has_files = True
-        has_comments = True
+
+class BaseTask(AbstractTask):
+    class Meta(AbstractTask.Meta):
+        abstract = True
 
 
-class Task(AbstractTask):
+class Task(BaseTask):
     pass

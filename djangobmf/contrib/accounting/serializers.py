@@ -7,10 +7,6 @@ from djangobmf.serializers import ModuleSerializer
 
 from rest_framework import serializers
 
-#rom .models import Account
-#rom .models import Transaction
-#rom .models import TransactionItem
-
 
 class AccountSerializer(ModuleSerializer):
     balance_formatted = serializers.SerializerMethodField()
@@ -29,9 +25,6 @@ class AccountSerializer(ModuleSerializer):
 class TransactionSerializer(ModuleSerializer):
     pass
 
-#   class Meta:
-#       model = Transaction
-
 
 class TransactionItemSerializer(ModuleSerializer):
     transaction_name = serializers.SerializerMethodField()
@@ -42,6 +35,3 @@ class TransactionItemSerializer(ModuleSerializer):
 
     def get_transaction_name(self, obj):
         return '%s' % obj.transaction
-
-#   class Meta:
-#       model = TransactionItem

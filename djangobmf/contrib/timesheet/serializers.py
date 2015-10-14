@@ -11,8 +11,6 @@ from djangobmf.serializers import ModuleSerializer
 
 from rest_framework import serializers
 
-from .models import Timesheet
-
 
 class TimesheetSerializer(ModuleSerializer):
     date = serializers.SerializerMethodField()
@@ -23,7 +21,6 @@ class TimesheetSerializer(ModuleSerializer):
     task_name = serializers.ReadOnlyField(source='task.name')
 
     class Meta:
-        model = Timesheet
         fields = (
             'date',
             'time',

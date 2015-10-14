@@ -61,6 +61,7 @@ class APIModuleListView(APIMixin, ListModelMixin, CreateModelMixin, GenericAPIVi
 
 
 class APIModuleDetailView(APIMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
+
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
