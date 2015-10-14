@@ -10,7 +10,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 from django.utils.text import slugify
 
-from djangobmf.views.api import ModuleListAPIView
 from djangobmf.views.module import ModuleListView
 
 from collections import OrderedDict
@@ -103,11 +102,6 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
                 class ViewFactory(view, ModuleListView):
                     pass
 
-                class APIFactory(view, ModuleListAPIView):
-                    pass
-
-                module = self.get_module(view.model)
-
                 urlpatterns += patterns(
                     '',
                     url(
@@ -120,19 +114,6 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
                             'view': view.key,
                         },
                     ),
-#                   url(
-#                       r'^api/%s/%s/' % (category.slug, view.slug),
-#                       APIFactory.as_view(
-#                           module=module,
-#                           permissions=module.permissions,
-#                           serializer_class=module.serializer,
-#                       ),
-#                       name='api_%s_%s' % (category.key, view.key),
-#                       kwargs={
-#                           'category': category.key,
-#                           'view': view.key,
-#                       },
-#                   )
                 )
         return urlpatterns
 

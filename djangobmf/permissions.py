@@ -74,12 +74,12 @@ class ModulePermission(BasePermission):
         perms = self._get_default_permissions(request.method, view)
 
         # generate a 403 response if the object's state does not allow it to be updated
-        if request.method in ["PUT", "PATCH"] or _action in ["update"]:
+        if request.method in ["PUT", "PATCH"] or self._action in ["update"]:
             if obj._bmfmeta.workflow and not obj._bmfmeta.workflow.object.update:
                 return False
 
         # generate a 403 response if the object's state does not allow it to be deleted
-        if request.method in ["DELETE"] or _action in ["delete"]:
+        if request.method in ["DELETE"] or self._action in ["delete"]:
             if obj._bmfmeta.workflow and not obj._bmfmeta.workflow.object.delete:
                 return False
 

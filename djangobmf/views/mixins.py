@@ -67,7 +67,8 @@ class BaseMixin(object):
         checks all the permissions given in permission_classes
         """
         for permission in self.permission_classes:
-            if not permission().has_permission(request, self): return False
+            if not permission().has_permission(request, self):
+                return False
         return True
 
     # Function name and parameters are identical to the django rest framework
@@ -76,7 +77,8 @@ class BaseMixin(object):
         checks all the permissions given in permission_classes
         """
         for permission in self.permission_classes:
-            if not permission().has_object_permission(request, self, obj): return False
+            if not permission().has_object_permission(request, self, obj):
+                return False
         return True
 
     def _read_session_data(self):

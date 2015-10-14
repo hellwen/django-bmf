@@ -14,7 +14,6 @@ from djangobmf.sites import register
 from .categories import InvoiceCategory
 from .models import Invoice
 from .models import InvoiceProduct
-from .serializers import InvoiceSerializer
 from .views import InvoiceCreateView
 from .views import InvoiceUpdateView
 
