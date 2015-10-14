@@ -179,7 +179,7 @@ class ModuleTestFactory(SuperuserMixin, BaseTestCase):
                             views.append((model, view, dashboard.key, category.key, view.key))
 
         for v in views:
-            url = reverse('%s:dashboard_view' % settings.APP_LABEL, kwargs={
+            url = reverse('%s:dashboard' % settings.APP_LABEL, kwargs={
                 'dashboard': v[2],
                 'category': v[3],
                 'view': v[4],

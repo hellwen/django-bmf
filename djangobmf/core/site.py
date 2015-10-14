@@ -17,8 +17,6 @@ from djangobmf.models import Configuration
 from djangobmf.models import NumberCycle
 from djangobmf.models import Report
 
-from rest_framework import routers
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -31,7 +29,6 @@ class Site(object):
     def __init__(self, namespace=None, app_name=None):
         self.namespace = namespace or "djangobmf"
         self.app_name = app_name or "djangobmf"
-        self.router = routers.DefaultRouter()
         self.clear()
 
     def clear(self):
