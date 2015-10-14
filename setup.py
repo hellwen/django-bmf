@@ -41,7 +41,7 @@ setup(
     packages=find_packages(exclude=['sandbox', 'tests']),
     classifiers=CLASSIFIERS,
     install_requires=[
-        'django>=1.7',
+        'django>=1.8',
         'django-sekizai',
         'djangorestframework>=3.1',
         'markdown',

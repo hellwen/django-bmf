@@ -4,9 +4,6 @@ db:
 redis:
     image: redis
 
-elasticsearch:
-    image: dockerfile/elasticsearch
-
 web:
     build: .
     environment:
@@ -18,7 +15,6 @@ web:
         - "8000:8000"
     links:
         - db
-        - elasticsearch
         - redis
 worker:
     build: .
@@ -30,12 +26,4 @@ worker:
         - .:/code
     links:
         - db
-        - elasticsearch
         - redis
-
-flower:
-    build: docker/flower
-    links:
-        - redis
-    ports:
-        - "5555:5555"
