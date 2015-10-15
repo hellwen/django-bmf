@@ -71,8 +71,8 @@ class OpenTransactions(ViewMixin):
     name = _("Open transactions")
     slug = "open"
 
-    def filter_queryset(self, qs):
-        return qs.filter(draft=True).order_by('-modified')
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(draft=True).order_by('-modified')
 
 
 @register(category=TransactionCategory)
@@ -82,8 +82,8 @@ class ClosedTrancations(ViewMixin):
     slug = "closed"
     date_resolution = "month"
 
-    def filter_queryset(self, qs):
-        return qs.filter(draft=False).order_by('modified')
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(draft=False).order_by('modified')
 
 
 @register(category=TransactionCategory)

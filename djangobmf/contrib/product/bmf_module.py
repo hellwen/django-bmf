@@ -49,8 +49,8 @@ class SellableProducts(ViewMixin):
     name = _("Sellable products")
     slug = "sell"
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             can_sold=True,
         )
 
@@ -61,8 +61,8 @@ class PurchaseableProducts(ViewMixin):
     name = _("Purchaseable products")
     slug = "purchase"
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             can_purchased=True,
         )
 

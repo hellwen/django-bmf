@@ -38,8 +38,8 @@ class OpenPositions(ViewMixin):
     name = _("Open Positions")
     slug = "open"
 
-    def filter_queryset(self, qs):
-        return qs.filter(invoice__isnull=True)
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(invoice__isnull=True)
 
 
 @register(category=PositionCategory)

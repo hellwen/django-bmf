@@ -33,9 +33,9 @@ class MyTimesheets(ViewMixin):
     slug = "mytimesheets"
     date_resolution = 'week'
 
-    def filter_queryset(self, qs):
-        return qs.filter(
-            employee=self.request.user.djangobmf.employee or -1,
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
+            employee=request.user.djangobmf.employee or -1,
         )
 
 

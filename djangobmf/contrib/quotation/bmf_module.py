@@ -40,8 +40,8 @@ class OpenQuotations(ViewMixin):
     name = _("Open quotations")
     slug = "open"
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             # completed=False,
             state__in=['draft', 'send', 'accepted'],
         )

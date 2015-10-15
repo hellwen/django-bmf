@@ -38,8 +38,8 @@ class OpenInvoices(ViewMixin):
     name = _("Open invoices")
     slug = "open"
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             state__in=['draft', 'open'],
         )
 

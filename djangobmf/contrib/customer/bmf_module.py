@@ -36,8 +36,8 @@ class CustomerView(ViewMixin):
     name = _("Customer")
     slug = "customer"
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             is_active=True,
             is_customer=True,
         )
@@ -49,8 +49,8 @@ class SupplierView(ViewMixin):
     name = _("Supplier")
     slug = "supplier"
 
-    def filter_queryset(self, qs):
-        return qs.filter(
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
             is_active=True,
             is_supplier=True,
         )
