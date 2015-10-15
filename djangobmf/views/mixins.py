@@ -256,9 +256,9 @@ class BaseViewMixin(BaseMixin):
 
         # TODO check below this line ----------------------------------------
         # load dashboard
-        if hasattr(self, 'get_dashboard_view'):
-            current_dashboard = self.get_dashboard()
-            current_view = self.get_dashboard_view()
+        if hasattr(self, '_bmf_view_class'):
+            current_view = self._bmf_view_class.key
+            current_dashboard = self._bmf_dashboard
         elif hasattr(self, 'get_dashboard'):
             current_dashboard = self.get_dashboard()
             current_view = None
@@ -289,7 +289,7 @@ class BaseViewMixin(BaseMixin):
                         'category': category.name,
                         'view': view,
                         'url': url,
-                        'active': current_view == view,
+                        'active': current_view == view.key,
                     })
 
         navigation_dashboard = []
