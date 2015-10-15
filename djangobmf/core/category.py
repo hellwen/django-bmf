@@ -3,11 +3,14 @@
 
 from __future__ import unicode_literals
 
+from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
+
+from djangobmf.views import ModuleListView as ViewMixin
 
 from collections import OrderedDict
 
-from .view import View
+import re
 
 
 class CategoryMetaclass(type):
@@ -24,27 +27,26 @@ class CategoryMetaclass(type):
         new_cls = super_new(cls, name, bases, attrs)
 
         # validation
-        # TODO add validation for name and slug
+        if not hasattr(new_cls, 'name'):
+            raise ImproperlyConfigured('No name attribute defined in %s.' % new_cls)
 
-        # TODO remove me (old syntax)
-        if hasattr(new_cls, 'Meta'):
-            new_cls.name = getattr(new_cls.Meta, 'name', None)
-            new_cls.slug = getattr(new_cls.Meta, 'slug', None)
+        if not hasattr(new_cls, 'slug'):
+            raise ImproperlyConfigured('No slug attribute defined in %s.' % new_cls)
+
+        if not hasattr(new_cls, 'dashboard'):
+            raise ImproperlyConfigured('No dashboard attribute defined in %s.' % new_cls)
+
+        if not re.match('^[\w-]+$', new_cls.slug):
+            raise ImproperlyConfigured('The slug attribute defined in %s contains invalid chars.' % new_cls)
 
         return new_cls
 
 
 class Category(six.with_metaclass(CategoryMetaclass, object)):
 
-    def __init__(self, *args):
+    def __init__(self):
         self.data = OrderedDict()
         self.models = []
-
-        # the dashboards gets set during the registation
-        self.dashboard = None  # auto
-
-        for view in args:
-            self.add_view(view)
 
         # we add a key to add a unique identifier
         # the key is equal to the slug (for now) but this
@@ -77,7 +79,7 @@ class Category(six.with_metaclass(CategoryMetaclass, object)):
         return self.data[key]
 
     def __contains__(self, item):
-        if isinstance(item, View):
+        if isinstance(item, ViewMixin):
             key = item.key
         else:
             key = item
@@ -90,11 +92,4 @@ class Category(six.with_metaclass(CategoryMetaclass, object)):
         if view not in self.data.values():
             if view.model not in self.models:
                 self.models.append(view.model)
-            self.data[view.key] = view
-
-    def merge(self, other):
-        """
-        merges two categories
-        """
-        for view in other.data.values():
-            self.add_view(view)
+            self.data[view.slug] = view

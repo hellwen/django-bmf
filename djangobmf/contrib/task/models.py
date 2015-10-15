@@ -11,6 +11,8 @@ from django.utils.translation import ugettext_lazy as _
 from djangobmf.conf import settings
 from djangobmf.models import BMFModel
 
+from .serializers import GoalSerializer
+from .serializers import TaskSerializer
 from .workflows import GoalWorkflow
 from .workflows import TaskWorkflow
 
@@ -18,22 +20,10 @@ from math import floor
 
 
 class GoalManager(models.Manager):
-
     def get_queryset(self):
         return super(GoalManager, self) \
             .get_queryset() \
             .select_related('project')
-
-    def active(self, request):
-        return self.get_queryset().filter(
-            completed=False,
-        )
-
-    def mygoals(self, request):
-        return self.get_queryset().filter(
-            completed=False,
-            referee=request.user.djangobmf.employee,
-        )
 
 
 @python_2_unicode_compatible
@@ -72,6 +62,12 @@ class AbstractGoal(BMFModel):
             ('can_manage', 'Can manage all goals'),
         )
         swappable = "BMF_CONTRIB_GOAL"
+
+    class BMFMeta:
+        has_logging = False
+        workflow = GoalWorkflow
+        can_clone = True
+        serializer = GoalSerializer
 
     def bmfget_customer(self):
         if self.project:
@@ -127,50 +123,23 @@ class AbstractGoal(BMFModel):
 
         return states
 
-    class BMFMeta:
-        has_logging = False
-        workflow = GoalWorkflow
-        can_clone = True
+
+class BaseGoal(AbstractGoal):
+    class Meta(AbstractGoal.Meta):
+        abstract = True
 
 
-class Goal(AbstractGoal):
+class Goal(BaseGoal):
     pass
 
 
 class TaskManager(models.Manager):
-
     def get_queryset(self):
-
         related = ['goal', 'project']
-
         return super(TaskManager, self).get_queryset() \
             .annotate(due_count=models.Count('due_date')) \
             .order_by('-due_count', 'due_date', 'summary') \
             .select_related(*related)
-
-    def active(self, request):
-        return self.get_queryset().filter(
-            completed=False,
-        )
-
-    def available(self, request):
-        return self.get_queryset().filter(
-            employee=None,
-            completed=False,
-        )
-
-    def mytasks(self, request):
-        return self.get_queryset().filter(
-            completed=False,
-            employee=request.user.djangobmf.employee,
-        )
-
-    def todo(self, request):
-        return self.get_queryset().filter(
-            completed=False,
-            state__in=["todo", "started", "review"],
-            employee=request.user.djangobmf.employee,
-        )
 
 
 @python_2_unicode_compatible
@@ -206,6 +175,12 @@ class AbstractTask(BMFModel):
         abstract = True
         swappable = "BMF_CONTRIB_TASK"
 
+    class BMFMeta:
+        workflow = TaskWorkflow
+        serializer = TaskSerializer
+        has_files = True
+        has_comments = True
+
     def __str__(self):
         if self.goal:
             return '[%s] #%s: %s' % (self.goal, self.pk, self.summary)
@@ -236,11 +211,11 @@ class AbstractTask(BMFModel):
                 return 0
             return (self.due_date - time).days
 
-    class BMFMeta:
-        workflow = TaskWorkflow
-        has_files = True
-        has_comments = True
+
+class BaseTask(AbstractTask):
+    class Meta(AbstractTask.Meta):
+        abstract = True
 
 
-class Task(AbstractTask):
+class Task(BaseTask):
     pass

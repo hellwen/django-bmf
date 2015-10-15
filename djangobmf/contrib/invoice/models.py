@@ -18,19 +18,13 @@ from djangobmf.settings import CONTRIB_TRANSACTION
 from djangobmf.numbering.utils import numbercycle_get_name, numbercycle_delete_object
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
+from djangobmf.fields.models import FileField
 
 import datetime
 from decimal import Decimal
 
+from .serializers import InvoiceSerializer
 from .workflows import InvoiceWorkflow
-
-
-class InvoiceManager(models.Manager):
-
-    def open(self, request):
-        return self.get_queryset().filter(
-            state__in=['draft', 'open'],
-        )
 
 
 @python_2_unicode_compatible
@@ -45,6 +39,7 @@ class BaseInvoice(BMFModel):
         null=True, on_delete=models.SET_NULL,
     )
     invoice_number = models.CharField(_('Invoice number'), max_length=255, null=True, blank=False)
+    invoice = FileField(verbose_name=_('Invoice'), null=True)
     products = models.ManyToManyField(CONTRIB_PRODUCT, through='InvoiceProduct', editable=False)
     net = models.FloatField(editable=False, blank=True, null=True)
     date = models.DateField(_("Date"), null=True, blank=False)
@@ -54,7 +49,17 @@ class BaseInvoice(BMFModel):
         editable=False, on_delete=models.PROTECT,
     )
 
-    objects = InvoiceManager()
+    class Meta:
+        verbose_name = _('Invoice')
+        verbose_name_plural = _('Invoices')
+        ordering = ['invoice_number']
+        abstract = True
+        swappable = "BMF_CONTRIB_INVOICE"
+
+    class BMFMeta:
+        number_cycle = "INV{year}/{month}-{counter:04d}"
+        workflow = InvoiceWorkflow
+        serializer = InvoiceSerializer
 
     @staticmethod
     def post_save(sender, instance, created, raw, *args, **kwargs):
@@ -64,17 +69,6 @@ class BaseInvoice(BMFModel):
 
     def __str__(self):
         return '%s' % self.invoice_number
-
-    class BMFMeta:
-        number_cycle = "INV{year}/{month}-{counter:04d}"
-        workflow = InvoiceWorkflow
-
-    class Meta:
-        verbose_name = _('Invoice')
-        verbose_name_plural = _('Invoices')
-        ordering = ['invoice_number']
-        abstract = True
-        swappable = "BMF_CONTRIB_INVOICE"
 
 
 class AbstractInvoice(BaseInvoice):

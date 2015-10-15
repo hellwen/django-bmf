@@ -59,23 +59,6 @@ class ModuleTemplate(AppConfig):
             for model in [m for m in self.models.values() if hasattr(m, '_bmfmeta') and m._bmfmeta.number_cycle]:
                 self.bmf_config.site.register_numbercycle(model)
 
-        #     copy = self.bmfsite.copy()
-        # try:
-        #     # get a copy of old site configuration
-        #     logger.debug('bmf_module from %s loaded' % app_config.name)
-        #     site.register_workspace_views(app_config)
-        # except:
-        #     # Reset the model registry to the state before the last import
-        #     # skiping this may result in an AlreadyRegistered Error
-        #     site.modules = before_import_m
-        #     site.currencies = before_import_c
-        #     site.settings = before_import_s
-        #     site.reports = before_import_p
-        #     site.workspace = before_import_w
-        #
-        #     # Decide whether to bubble up this error
-        #         raise
-
         logger.debug('App "%s" (%s) is ready' % (
             self.verbose_name,
             self.label,

@@ -6,6 +6,18 @@ from __future__ import unicode_literals
 from django.http import Http404
 
 from rest_framework.permissions import BasePermission
+from rest_framework.permissions import SAFE_METHODS
+
+
+class AjaxPermission(BasePermission):
+    """
+    Only allow Ajax requests
+    """
+    def has_permission(self, request, view):
+        return request.is_ajax()
+
+    def has_object_permission(self, request, view, obj):
+        return request.is_ajax()
 
 
 class ModulePermission(BasePermission):
@@ -13,55 +25,101 @@ class ModulePermission(BasePermission):
     Permission object to check the module's permissions
     """
 
-    perms_map = {
-        'GET': ['%(app_label)s.view_%(model_name)s'],
-        'OPTIONS': ['%(app_label)s.view_%(model_name)s'],
-        'HEAD': ['%(app_label)s.view_%(model_name)s'],
-        'POST': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.add_%(model_name)s'],
-        'PUT': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.change_%(model_name)s'],
-        'PATCH': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.change_%(model_name)s'],
-        'DELETE': ['%(app_label)s.view_%(model_name)s', '%(app_label)s.delete_%(model_name)s'],
+    _action = None
+
+    _actions_map = {
+        'view': ['%(app)s.view_%(model)s'],
+        'clone': ['%(app)s.view_%(model)s', '%(app)s.clone_%(model)s'],
+        'create': ['%(app)s.view_%(model)s', '%(app)s.add_%(model)s'],
+        'update': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
+        'delete': ['%(app)s.view_%(model)s', '%(app)s.delete_%(model)s'],
     }
 
-    def has_permission(self, request, view):
+    _methods_map = {
+        'GET': ['%(app)s.view_%(model)s'],
+        'OPTIONS': ['%(app)s.view_%(model)s'],
+        'HEAD': ['%(app)s.view_%(model)s'],
+        'POST': ['%(app)s.view_%(model)s', '%(app)s.add_%(model)s'],
+        'PUT': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
+        'PATCH': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
+        'DELETE': ['%(app)s.view_%(model)s', '%(app)s.delete_%(model)s'],
+    }
+
+    def _map_perms(self, method):
+        if self._action in self._actions_map:
+            return self._actions_map[self._action]
+        return self._methods_map[method]
+
+    def _get_default_permissions(self, method, view):
+        """
+        Given a view and a HTTP method, return the list of permission
+        codes that the user is required to have.
+        """
         model_cls = getattr(view, 'model', None)
-        perms = self.get_permissions(request.method, model_cls)
+        assert model_cls is not None, (
+            'Cannot apply Permissions on a view that '
+            'does not have a `model` property.'
+        )
+        kwargs = {
+            'app': model_cls._meta.app_label,
+            'model': model_cls._meta.model_name,
+        }
+        return [perm % kwargs for perm in self._map_perms(method)]
+
+    def has_permission(self, request, view):
+        perms = self._get_default_permissions(request.method, view)
         return request.user.has_perms(perms)
 
     def has_object_permission(self, request, view, obj):
-        model_cls = getattr(view, 'model', None)
-        perms = self.get_permissions(request.method, model_cls)
+        perms = self._get_default_permissions(request.method, view)
 
-        if not request.user.has_perms(perms, obj):
-            # If the user does not have permissions we need to determine if
-            # they have read permissions to see 403, or not, and simply see
-            # a 404 response.
+        # generate a 403 response if the object's state does not allow it to be updated
+        if request.method in ["PUT", "PATCH"] or self._action in ["update"]:
+            if obj._bmfmeta.workflow and not obj._bmfmeta.workflow.object.update:
+                return False
 
-            if request.method in ['GET', 'OPTIONS', 'HEAD']:
-                # Read permissions already checked and failed, no need
-                # to make another lookup.
-                raise Http404
+        # generate a 403 response if the object's state does not allow it to be deleted
+        if request.method in ["DELETE"] or self._action in ["delete"]:
+            if obj._bmfmeta.workflow and not obj._bmfmeta.workflow.object.delete:
+                return False
 
-            read_perms = self.get_permissions('GET', model_cls)
-            if not request.user.has_perms(read_perms, obj):
-                raise Http404
+        if request.user.has_perms(perms, obj):
+            return True
 
-            # Has read permissions - generate 403 response
-            return False
+        # If the user does not have permissions we need to determine if
+        # they have read permissions to see 403, or get a 404 response.
 
-        # Has permissions to view object
-        return True
+        if request.method in SAFE_METHODS:
+            # Read permissions already checked and failed, no need
+            # to make another lookup.
+            raise Http404
+
+        read_perms = self.get_permissions('GET', view)
+        if not request.user.has_perms(read_perms, obj):
+            raise Http404
+
+        # Has read permissions - generate 403 response
+        return False
 
     def filter_queryset(self, qs, user):
         return qs
 
-    def get_permissions(self, method, model_cls):
-        """
-        Given a model and an HTTP method, return the list of permission
-        codes that the user is required to have.
-        """
-        kwargs = {
-            'app_label': model_cls._meta.app_label,
-            'model_name': model_cls._meta.model_name,
-        }
-        return [perm % kwargs for perm in self.perms_map[method]]
+
+class ModuleViewPermission(ModulePermission):
+    _action = 'view'
+
+
+class ModuleCreatePermission(ModulePermission):
+    _action = 'create'
+
+
+class ModuleClonePermission(ModulePermission):
+    _action = 'clone'
+
+
+class ModuleUpdatePermission(ModulePermission):
+    _action = 'update'
+
+
+class ModuleDeletePermission(ModulePermission):
+    _action = 'delete'

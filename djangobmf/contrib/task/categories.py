@@ -5,22 +5,17 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import BaseCategory
+from djangobmf.dashboards import ProjectManagement
+from djangobmf.sites import Category
 
 
-class GoalCategory(BaseCategory):
-    class Meta:
-        name = _('Goals')
-        slug = "goals"
-
+class GoalCategory(Category):
     name = _('Goals')
     slug = "goals"
+    dashboard = ProjectManagement
 
 
-class TaskCategory(BaseCategory):
-    class Meta:
-        name = _('Tasks')
-        slug = "tasks"
-
+class TaskCategory(Category):
     name = _('Tasks')
     slug = "tasks"
+    dashboard = ProjectManagement

@@ -11,13 +11,13 @@ from django.utils.text import slugify
 
 from djangobmf.permissions import ModulePermission
 from djangobmf.serializers import ModuleSerializer
-from djangobmf.views import ModuleCloneView
+# from djangobmf.views import ModuleCloneView
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
 from djangobmf.views import ModuleDetailView
 from djangobmf.views import ModuleFormAPI
 from djangobmf.views import ModuleListView
-from djangobmf.views import ModuleReportView
+# from djangobmf.views import ModuleReportView
 from djangobmf.views import ModuleUpdateView
 from djangobmf.views import ModuleWorkflowView
 from djangobmf.views.api import ModuleListAPIView
@@ -43,6 +43,12 @@ class ModuleMetaclass(type):
         if not getattr(new_cls, 'model', None):
             raise ImproperlyConfigured('No model defined in %s.' % new_cls)
 
+        if not hasattr(new_cls.model, '_bmfmeta'):
+            raise ImproperlyConfigured(
+                'The module %s needs to be an BMF-Model in order to be'
+                'registered with django BMF.' % new_cls.model.__name__
+            )
+
         return new_cls
 
 
@@ -50,29 +56,37 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
     """
     Object internally used to register modules
     """
+    create = ModuleCreateView
+    delete = ModuleDeleteView
+    detail = ModuleDetailView
+    update = ModuleUpdateView
+    permissions = ModulePermission
 
-    def __init__(self, model, **options):
-        self.model = model
+    clone = None
+    primary = True
+    serializer = None
+    report = None
+    default = False
+
+    detail_urlpatterns = None
+    api_urlpatterns = None
+
+    def __init__(self):
         self.dashboards = []
-        self.create = options.get('create', ModuleCreateView)
-        self.detail = options.get('detail', ModuleDetailView)
-        self.update = options.get('update', ModuleUpdateView)
-        self.delete = options.get('delete', ModuleDeleteView)
-        self.clone = options.get('clone', ModuleCloneView)
-        self.permissions = options.get('permissions', ModulePermission)
-        self.serializer = options.get('serializer', None)
-        self.report = options.get('report', None)
-        self.detail_urlpatterns = options.get('detail_urlpatterns', None)
-        self.api_urlpatterns = options.get('api_urlpatterns', None)
         self.manager = {}
 
+        self.create_view = self.create
+        self.delete_view = self.delete
+        self.detail_view = self.detail
+        self.update_view = self.update
+
         # create a default serializer
-        if not self.serializer and not model._bmfmeta.only_related:
+        if not self.serializer and not self.model._bmfmeta.only_related:
             class AutoSerializer(ModuleSerializer):
                 class Meta:
                     pass
-            AutoSerializer.Meta.model = model
-            logger.info('Creating a serializer for module %s' % model.__name__)
+            AutoSerializer.Meta.model = self.model
+            logger.info('Creating a serializer for module %s' % self.model.__name__)
             self.serializer = AutoSerializer
 
     def list_reports(self):
@@ -80,22 +94,22 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
             return self.listed_reports
         self.listed_reports = []
 
-        if isinstance(self.report, dict):
-            for label, view in six.iteritems(self.report):
-                key = slugify(label)
-                if isinstance(view, (list, tuple)) and len(view) == 2:
-                    # overwrite the label, and correct the view
-                    label = slugify(view[0])
-                    view = view[1]
+#       if isinstance(self.report, dict):
+#           for label, view in six.iteritems(self.report):
+#               key = slugify(label)
+#               if isinstance(view, (list, tuple)) and len(view) == 2:
+#                   # overwrite the label, and correct the view
+#                   label = slugify(view[0])
+#                   view = view[1]
 
-                if issubclass(view, ModuleReportView):
-                    self.listed_reports.append((key, label, view))
+#               if issubclass(view, ModuleReportView):
+#                   self.listed_reports.append((key, label, view))
 
-        elif isinstance(self.report, bool):
-            self.listed_reports.append(('default', 'default', ModuleReportView))
+#       elif isinstance(self.report, bool):
+#           self.listed_reports.append(('default', 'default', ModuleReportView))
 
-        elif self.report and issubclass(self.report, ModuleReportView):
-            self.listed_reports.append(('default', 'default', self.report))
+#       elif self.report and issubclass(self.report, ModuleReportView):
+#           self.listed_reports.append(('default', 'default', self.report))
 
         # update model with all report views
         self.model._bmfmeta.report_views = self.listed_reports

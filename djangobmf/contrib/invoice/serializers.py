@@ -7,15 +7,12 @@ from djangobmf.serializers import ModuleSerializer
 
 from rest_framework import serializers
 
-from .models import Invoice
-
 
 class InvoiceSerializer(ModuleSerializer):
     state_name = serializers.ReadOnlyField(source='state.name')
     project_name = serializers.ReadOnlyField(source='project.name')
 
     class Meta:
-        model = Invoice
         fields = (
             'invoice_number',
             'state',

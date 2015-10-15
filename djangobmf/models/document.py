@@ -20,6 +20,7 @@ class Document(models.Model):
     name = models.CharField(_('Name'), max_length=120, null=True, blank=True, editable=False)
     file = models.FileField(_('File'), upload_to=generate_filename, storage=BMFStorage())
     size = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    # mime = models.CharField(_('Mime-Type'), max_length=120, null=True, blank=True, editable=False)
 
     is_static = models.BooleanField(default=False)
 

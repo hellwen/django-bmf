@@ -22,6 +22,10 @@ from djangobmf.settings import CONTRIB_TRANSACTION
 
 from .workflows import TransactionWorkflow
 
+from .serializers import AccountSerializer
+from .serializers import TransactionSerializer
+from .serializers import TransactionItemSerializer
+
 ACCOUNTING_INCOME = 10
 ACCOUNTING_EXPENSE = 20
 ACCOUNTING_ASSET = 30
@@ -36,20 +40,6 @@ ACCOUNTING_TYPES = (
     (ACCOUNTING_EQUITY, _('Equity')),
 )
 
-
-# from django.utils import six
-# from djangobmf.models import BMFModelBase
-# from mptt.managers import TreeManager
-# from mptt.models import TreeForeignKey
-# from mptt.models import MPTTModelBase, MPTTModel
-#
-# class BMFModelMPTTBase(MPTTModelBase, BMFModelBase):
-#     pass
-#
-# class BMFModelMPTT(six.with_metaclass(BMFModelMPTTBase, BMFModel, MPTTModel)):
-#     objects = TreeManager()
-#     class Meta:
-#         abstract = True
 
 # =============================================================================
 # TODO: Add Fiscal Year
@@ -104,6 +94,7 @@ class BaseAccount(BMFModel):
 
     class BMFMeta:
         observed_fields = ['name', ]
+        serializer_class = AccountSerializer
 
     def __init__(self, *args, **kwargs):
         super(BaseAccount, self).__init__(*args, **kwargs)
@@ -196,6 +187,7 @@ class BaseTransaction(BMFModel):
         observed_fields = ['expensed', 'text']
         has_files = True
         workflow = TransactionWorkflow
+        serializer_class = TransactionSerializer
 
     def __str__(self):
         return '%s' % self.text
@@ -266,6 +258,9 @@ class BaseTransactionItem(BMFModel):
     class Meta:
         abstract = True
         swappable = "BMF_CONTRIB_TRANSACTIONITEM"
+
+    class BMFMeta:
+        TransactionItemSerializer
 
 # def set_debit(self, amount):
 #   if self.get_type in [ACCOUNTING_ASSET, ACCOUNTING_EXPENSE]:

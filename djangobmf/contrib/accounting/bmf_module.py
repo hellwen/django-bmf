@@ -6,11 +6,13 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import BaseCategory
-from djangobmf.categories import ViewFactory
-from djangobmf.categories import Accounting
+from djangobmf.dashboards import Accounting
+from djangobmf.sites import Module
+from djangobmf.sites import ViewMixin
+from djangobmf.sites import register
 from djangobmf.sites import site
 
+from .categories import TransactionCategory
 from .models import ACCOUNTING_INCOME
 from .models import ACCOUNTING_EXPENSE
 from .models import ACCOUNTING_ASSET
@@ -25,21 +27,27 @@ from .views import TransactionCreateView
 from .views import TransactionUpdateView
 
 
-site.register_module(Account, **{
-    'serializer': AccountSerializer,
-})
+@register(dashboard=Accounting)
+class AccountModule(Module):
+    model = Account
+    default = True
+    serializer = AccountSerializer
 
 
-site.register_module(Transaction, **{
-    'create': TransactionCreateView,
-    'update': TransactionUpdateView,
-    'serializer': TransactionSerializer,
-})
+@register(dashboard=Accounting)
+class TransactionModule(Module):
+    model = Transaction
+    default = True
+    create = TransactionCreateView
+    update = TransactionUpdateView
+    serializer = TransactionSerializer
 
 
-site.register_module(TransactionItem, **{
-    'serializer': TransactionItemSerializer,
-})
+@register(dashboard=Accounting)
+class TransactionItemModule(Module):
+    model = TransactionItem
+    default = True
+    serializer = TransactionItemSerializer
 
 
 site.register_settings('bmfcontrib_accounting', {
@@ -50,38 +58,37 @@ site.register_settings('bmfcontrib_accounting', {
 })
 
 
-class TransactionCategory(BaseCategory):
-    name = _('Transactions')
-    slug = "transactions"
+@register(category=TransactionCategory)
+class AllAccounts(ViewMixin):
+    model = Account
+    name = _("All Accounts")
+    slug = "accounts"
 
 
-site.register_dashboards(
-    Accounting(
-        TransactionCategory(
-            ViewFactory(
-                model=Account,
-                name=_("All Accounts"),
-                slug="accounts",
-            ),
-            ViewFactory(
-                model=Transaction,
-                name=_("Open transactions"),
-                slug="open",
-                manager="open",
-            ),
-            ViewFactory(
-                model=Transaction,
-                name=_("Closed transactions"),
-                slug="closed",
-                manager="closed",
-                date_resolution="month",
-            ),
-            ViewFactory(
-                model=TransactionItem,
-                name=_("Transaction archive"),
-                slug="archive",
-                date_resolution="week",
-            ),
-        ),
-    ),
-)
+@register(category=TransactionCategory)
+class OpenTransactions(ViewMixin):
+    model = Transaction
+    name = _("Open transactions")
+    slug = "open"
+
+    def filter_queryset(self, qs):
+        return qs.filter(draft=True).order_by('-modified')
+
+
+@register(category=TransactionCategory)
+class ClosedTrancations(ViewMixin):
+    model = Transaction
+    name = _("Closed transactions")
+    slug = "closed"
+    date_resolution = "month"
+
+    def filter_queryset(self, qs):
+        return qs.filter(draft=False).order_by('modified')
+
+
+@register(category=TransactionCategory)
+class Archive(ViewMixin):
+    model = TransactionItem
+    name = _("Transaction archive")
+    slug = "archive"
+    date_resolution = "week"

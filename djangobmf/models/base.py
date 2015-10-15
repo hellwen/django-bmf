@@ -15,13 +15,15 @@ from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.conf import settings as bmfsettings
+from djangobmf.core.filter_queryset import FilterQueryset
 from djangobmf.fields import WorkflowField
+from djangobmf.serializers import ModuleSerializer
 from djangobmf.workflow import Workflow
 
 import types
 import inspect
-# import logging
-# logger = logging.getLogger(__name__)
+import logging
+logger = logging.getLogger(__name__)
 
 
 def add_signals(cls):
@@ -79,7 +81,7 @@ class BMFOptions(object):
         self.search_fields = []
         self.number_cycle = None
 
-        # workflow_cls
+        # add an workflow object to the class
 
         self.workflow_cls = getattr(
             options, 'workflow', None
@@ -108,6 +110,43 @@ class BMFOptions(object):
         else:
             self.has_workflow = False
 
+        # add a filter_queryset to the class
+
+        filter_queryset = getattr(
+            options, 'filter_queryset', None
+        )
+
+        if filter_queryset and not issubclass(filter_queryset, FilterQueryset):
+            raise ImproperlyConfigured(
+                "%s is not a FilterQueryset in %s" % (
+                    filter_queryset.__name__,
+                    cls.__name__
+                )
+            )
+            self.filter_queryset = filter_queryset()
+        else:
+            self.filter_queryset = FilterQueryset()
+
+        # add a serializer to the class
+        self.serializer_class = getattr(
+            options, 'serializer_class', ModuleSerializer
+        )
+
+        # workflow_field_name
+        self.workflow_field_name = getattr(
+            options, 'workflow_field_name', 'state'
+        )
+
+        # shortcut to the instance workflow model
+        # is filled via a post_init signal (see below)
+        self.workflow = None
+
+        # determines if the model has an workflow
+        if self.workflow_cls and len(self.workflow_cls._transitions) > 0:
+            self.has_workflow = True
+        else:
+            self.has_workflow = False
+
         # protected =============================================================
 
         # used to detect changes
@@ -119,14 +158,8 @@ class BMFOptions(object):
         # namespace api
         self.namespace_api = '%s:moduleapi_%s_%s' % (bmfsettings.APP_LABEL, meta.app_label, meta.model_name)
 
-        # is set to true if a report-view is defined for this model (see sites.py)
-        self.has_report = False
-
         # is filled with create views (see core/module.py)
         self.create_views = []
-
-        # is filled with report views (see core/module.py)
-        self.report_views = []
 
         if options:
             options = inspect.getmembers(cls.BMFMeta)
@@ -210,6 +243,15 @@ class BMFModelBase(ModelBase):
             cls._meta.permissions += (
                 ('addfile_' + cls._meta.model_name, u'Can add files to %s' % cls.__name__),
             )
+
+        # Dynamicaly add the modelclass to the serializer
+        if hasattr(cls._bmfmeta.serializer_class, 'Meta'):
+            cls._bmfmeta.serializer_class.Meta.model = cls
+        else:
+            class MetaFactory:
+                model = cls
+                fields = ['pk', '__str__', 'bmfdetail']
+            cls._bmfmeta.serializer_class.Meta = MetaFactory
 
         # add field: workflow field
         if cls._bmfmeta.has_workflow:

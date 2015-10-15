@@ -5,50 +5,53 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import BaseCategory
-from djangobmf.categories import ViewFactory
-from djangobmf.categories import Accounting
-from djangobmf.sites import site
+from djangobmf.dashboards import Accounting
+from djangobmf.sites import Module
+from djangobmf.sites import Report
+from djangobmf.sites import ViewMixin
+from djangobmf.sites import register
 
+from .categories import InvoiceCategory
 from .models import Invoice
 from .models import InvoiceProduct
-from .serializers import InvoiceSerializer
 from .views import InvoiceCreateView
 from .views import InvoiceUpdateView
 
 
-site.register_module(Invoice, **{
-    'create': InvoiceCreateView,
-    'update': InvoiceUpdateView,
-    'serializer': InvoiceSerializer,
-    'report': True,
-})
+@register(dashboard=Accounting)
+class InvoiceModule(Module):
+    model = Invoice
+    default = True
+    create = InvoiceCreateView
+    update = InvoiceUpdateView
 
 
-site.register_module(InvoiceProduct, **{
-})
+@register(dashboard=Accounting)
+class InvoiceProductModule(Module):
+    model = InvoiceProduct
+    default = True
 
 
-class InvoiceCategory(BaseCategory):
-    name = _('Invoices')
-    slug = "invoices"
+@register(category=InvoiceCategory)
+class OpenInvoices(ViewMixin):
+    model = Invoice
+    name = _("Open invoices")
+    slug = "open"
+
+    def filter_queryset(self, qs):
+        return qs.filter(
+            state__in=['draft', 'open'],
+        )
 
 
-site.register_dashboards(
-    Accounting(
-        InvoiceCategory(
-            ViewFactory(
-                model=Invoice,
-                name=_("Open invoices"),
-                slug="open",
-                manager="open",
-            ),
-            ViewFactory(
-                model=Invoice,
-                name=_("All invoices"),
-                slug="all",
-                date_resolution="month",
-            ),
-        ),
-    ),
-)
+@register(category=InvoiceCategory)
+class AllInvoices(ViewMixin):
+    model = Invoice
+    name = _("All invoices")
+    slug = "all"
+    date_resolution = "month"
+
+
+@register(dashboard=Accounting)
+class InvoiceReport(Report):
+    model = Invoice

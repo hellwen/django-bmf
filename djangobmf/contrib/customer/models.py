@@ -14,21 +14,6 @@ from djangobmf.models import BMFModel
 from djangobmf.contrib.accounting.models import ACCOUNTING_ASSET, ACCOUNTING_LIABILITY
 
 
-class BaseCustomerManager(models.Manager):
-
-    def supplier(self, request):
-        return self.get_queryset().filter(
-            is_active=True,
-            is_supplier=True,
-        )
-
-    def customer(self, request):
-        return self.get_queryset().filter(
-            is_active=True,
-            is_customer=True,
-        )
-
-
 class BaseCustomer(BMFModel):
     name = models.CharField(_("Name"), max_length=255, null=True, blank=False, )
     number = models.CharField(_("Number"), max_length=255, null=True, blank=True, )
@@ -83,8 +68,6 @@ class BaseCustomer(BMFModel):
 
     customer_payment_term = models.PositiveSmallIntegerField(editable=False, default=1)
     supplier_payment_term = models.PositiveSmallIntegerField(editable=False, default=1)
-
-    objects = BaseCustomerManager()
 
     class Meta:
         verbose_name = _('Customer')

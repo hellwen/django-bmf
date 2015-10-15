@@ -13,6 +13,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.db.models.query import QuerySet
 from django.forms.models import modelform_factory
 from django.http import HttpResponse
+from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import get_language
@@ -27,6 +28,7 @@ from djangobmf.notification.forms import HistoryCommentForm
 from djangobmf.models import Activity
 from djangobmf.models import Document
 from djangobmf.models import Notification
+from djangobmf.permissions import AjaxPermission
 from djangobmf.utils.serializers import DjangoBMFEncoder
 from djangobmf.views.defaults import bad_request
 from djangobmf.views.defaults import permission_denied
@@ -48,28 +50,38 @@ logger = logging.getLogger(__name__)
 class BaseMixin(object):
     """
     provides functionality used in EVERY view throughout the application.
-    this is used so we don't neet to define a middleware
+    this provides us with more flexibility and removes the need to define
+    a middleware.
     """
-    permissions = []
-    bmf_cache_timeout = 600
+    # TODO move this to a setting
+    # Timeout for caching dashboards
+    _bmf_cache_timeout = 600
 
-    def get_permissions(self, permissions=[]):
-        """
-        returns a list of (django) permissions and use them in dispatch to
-        determinate if the user can view the page, he requested
-        """
-        for perm in self.permissions:
-            permissions.append(perm)
-        return permissions
+    # permission classes
+    # TODO: Check if we need to add "default" permissions and combine them (simpler api)
+    permission_classes = []
 
-    def check_permissions(self):
+    # Function name and parameters are identical to the django rest framework
+    def check_permissions(self, request):
         """
-        overwrite this function to add a view permission check (i.e
-        one which depends on the object or on the request)
+        checks all the permissions given in permission_classes
         """
+        for permission in self.permission_classes:
+            if not permission().has_permission(request, self):
+                return False
         return True
 
-    def read_session_data(self):
+    # Function name and parameters are identical to the django rest framework
+    def check_object_permissions(self, request, obj):
+        """
+        checks all the permissions given in permission_classes
+        """
+        for permission in self.permission_classes:
+            if not permission().has_object_permission(request, self, obj):
+                return False
+        return True
+
+    def _read_session_data(self):
         """
         returns the data saved in the session or an
         default dictionary containing the version of
@@ -78,13 +90,19 @@ class BaseMixin(object):
         return self.request.session.get("djangobmf", {
             'version': get_version(),
             'active_dashboard': None,
-            # 'active_view': None,
+            'active_category': None,
+            'active_view': None,
         })
 
-    def write_session_data(self, data):
+    def _write_session_data(self, data):
+        """
+        stores the session under the request object
+        and marks the session as modified, so django will
+        save it
+        """
         # reload sessiondata, because we can not be sure, that the
         # session was not changed during this request
-        session_data = self.read_session_data()
+        session_data = self._read_session_data()
         session_data.update(data)
 
         # update session
@@ -97,18 +115,24 @@ class BaseMixin(object):
         checks permissions, requires a login and
         because we are using a generic view approach to the data-models
         in django BMF, we can ditch a middleware (less configuration)
-        and add the functionality to this function.
+        and add the functionality we need for the framework to
+        work properly to this function.
         """
 
         # add the site object to every request
         setattr(self.request, 'djangobmf_site', apps.get_app_config(bmfsettings.APP_LABEL).site)
 
-        if not self.check_permissions() or not self.request.user.has_perms(self.get_permissions([])):
-            return permission_denied(self.request)
-
-        # automagicaly add the authenticated user and employee to the request (as a lazy queryset)
+        # add the authenticated user and employee to the request (as a lazy queryset)
         self.request.user.djangobmf = Employee(self.request.user)
 
+        # TODO ... call check_object_permission instead when objects have a model
+        try:
+            if not self.check_permissions(self.request):
+                return permission_denied(self.request)
+        except Http404:
+            return page_not_found(self.request)
+
+        # TODO MOVE THIS CHECK TO PERMISSIONS
         # check if bmf has a employee model and if so do a validation of the
         # employee instance (users, who are not employees are not allowed to access)
         if self.request.user.djangobmf.has_employee and not self.request.user.djangobmf.employee:
@@ -137,54 +161,61 @@ class BaseMixin(object):
 
         return response
 
-    def get_dashboards_cache_key(self):
-        return 'bmf_dashboards_%s_%s' % (self.request.user.pk, get_language())
+    def _update_dashboards(self):
+        return self.get_dashboards()
 
-    def update_dashboards(self):
+    def get_current_view(self):
+        if hasattr(self, '_bmf_view'):
+            return self._bmf_view
+        return None
+
+    def get_dashboards(self):
         """
-        This functions loads all dashboards for one user instance
+        Loads all dashboards from cache or create them from the site
+        object and stores them in the cache.
         """
 
         # store information about all user dashboards
-        cache_key = self.get_dashboards_cache_key()
+        cache_key = 'bmf_dashboard_%s_%s' % (self.request.user.pk, get_language())
 
-        # get navigation key from cache
+        # load navigation key from cache
         dashboards = cache.get(cache_key)
 
-        if not dashboards:  # pragma: no branch
-            logger.debug("Reload cache: %s" % cache_key)
+        if dashboards:  # pragma: no branch
+            return dashboards
 
-            dashboards = {}
+        logger.debug("Reload cache: %s" % cache_key)
+        dashboards = {}
 
-            # update all dashboards
-            for dashboard in self.request.djangobmf_site.dashboards:
-                dashboards[dashboard.key] = {}
-                for category in dashboard:
-                    dashboards[dashboard.key][category.key] = {}
-                    for view in category:
-                        model = view.model
-                        permissions = view.view(model=model).get_permissions([])
-                        if self.request.user.has_perms(permissions):
-                            dashboards[dashboard.key][category.key][view.key] = reverse(
-                                'djangobmf:dashboard_view',
-                                kwargs={
-                                    'dashboard': dashboard.key,
-                                    'category': category.key,
-                                    'view': view.key,
-                                },
-                            )
+        # update all dashboards
+        for dashboard in self.request.djangobmf_site.dashboards:
+            dashboards[dashboard.key] = {}
+            for category in dashboard:
+                dashboards[dashboard.key][category.key] = {}
+                for view in category:
+                    # parse the function name
+                    name = 'djangobmf:dashboard_%s:view_%s_%s' % (
+                        dashboard.key,
+                        category.key,
+                        view.key,
+                    )
+                    # add the view if the user has the permissions to view it
+                    if view().check_permissions(self.request):
+                        dashboards[dashboard.key][category.key][view.key] = reverse(name)
 
-                    # test if category has no views and delete empty categories
-                    if not dashboards[dashboard.key][category.key]:
-                        del dashboards[dashboard.key][category.key]
+                # test if category has no views and delete empty categories
+                if not dashboards[dashboard.key][category.key]:
+                    del dashboards[dashboard.key][category.key]
 
-                # test if dashboard has no categories and delete empty dashboards
-                if not dashboards[dashboard.key]:
-                    del dashboards[dashboard.key]
+            # test if dashboard has no categories and delete empty dashboards
+            if not dashboards[dashboard.key]:
+                del dashboards[dashboard.key]
 
-            cache.set(cache_key, dashboards, self.bmf_cache_timeout)
+        # update cache and return dashboards
+        cache.set(cache_key, dashboards, self._bmf_cache_timeout)
         return dashboards
 
+    # TODO check this function, maybe we can move it to a separate class
     def update_notification(self, count=None):
         """
         This function is used by django BMF to update the notifications
@@ -193,7 +224,7 @@ class BaseMixin(object):
         logger.debug("Updating notifications for %s" % self.request.user)
 
         # get all session data
-        session_data = self.read_session_data()
+        session_data = self._read_session_data()
 
         # manipulate session
         session_data["notification_last_update"] = datetime.datetime.utcnow().isoformat()
@@ -206,15 +237,24 @@ class BaseMixin(object):
             session_data["notification_count"] = count
 
         # update session
-        self.write_session_data(session_data)
+        self._write_session_data(session_data)
 
 
-class ViewMixin(BaseMixin):
+class BaseAPIMixin(BaseMixin):
+    """
+    Adds additional functions to `BaseMixin` needed for the REST API
+    """
+    pass
 
+
+class BaseViewMixin(BaseMixin):
+    """
+    Adds additional functions to `BaseMixin` needed for view functions
+    """
     def get_context_data(self, **kwargs):
+        session_data = self._read_session_data()
 
-        session_data = self.read_session_data()
-
+        # TODO check below this line ----------------------------------------
         # load dashboard
         if hasattr(self, 'get_dashboard_view'):
             current_dashboard = self.get_dashboard()
@@ -232,9 +272,9 @@ class ViewMixin(BaseMixin):
         # update session
         if current_dashboard and current_dashboard.key != session_data['active_dashboard']:
             session_data['active_dashboard'] = current_dashboard.key
-            self.write_session_data(session_data)
+            self._write_session_data(session_data)
 
-        dashboards = self.update_dashboards()
+        dashboards = self._update_dashboards()
 
         # collect data
         sidebar = []
@@ -269,30 +309,34 @@ class ViewMixin(BaseMixin):
 
         # update context with session data
         kwargs.update({
-            'djangobmf': self.read_session_data(),
+            'djangobmf': self._read_session_data(),
             'sidebar': sidebar,
             'navigation_dashboard': navigation_dashboard,
             'active_dashboard': current_dashboard,
             'active_dashboard_view': current_view,
         })
+        # TODO check above this line ----------------------------------------
 
-        # always read current version, if in development mode
+        # always read current version, if in DEBUG mode
         if settings.DEBUG:
             kwargs["djangobmf"]['version'] = get_version()
 
-        return super(ViewMixin, self).get_context_data(**kwargs)
+        return super(BaseViewMixin, self).get_context_data(**kwargs)
+
+
+class ViewMixin(BaseViewMixin):
+    pass
 
 
 class AjaxMixin(BaseMixin):
     """
     add some basic function for ajax requests
     """
+    permission_classes = [AjaxPermission]
+
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
         return super(AjaxMixin, self).dispatch(*args, **kwargs)
-
-    def check_permissions(self):
-        return self.request.is_ajax() and super(AjaxMixin, self).check_permissions()
 
     def render_to_json_response(self, context, **response_kwargs):
         data = json.dumps(context, cls=DjangoBMFEncoder)
@@ -372,79 +416,6 @@ class ReadOnlyMixin(object):
         return form
 
 
-# PERMISSIONS
-
-class ModuleViewPermissionMixin(object):
-    """
-    Checks view permissions of an bmfmodule
-    """
-
-    def get_permissions(self, perms=[]):
-        info = self.model._meta.app_label, self.model._meta.model_name
-        perms.append('%s.view_%s' % info)
-        return super(ModuleViewPermissionMixin, self).get_permissions(perms)
-
-
-class ModuleCreatePermissionMixin(object):
-    """
-    Checks create permissions of an bmfmodule
-    """
-
-    def get_permissions(self, perms=[]):
-        info = self.model._meta.app_label, self.model._meta.model_name
-        perms.append('%s.add_%s' % info)
-        perms.append('%s.view_%s' % info)
-        return super(ModuleCreatePermissionMixin, self).get_permissions(perms)
-
-
-class ModuleClonePermissionMixin(object):
-    """
-    Checks create permissions of an bmfmodule
-    """
-
-    def get_permissions(self, perms=[]):
-        info = self.model._meta.app_label, self.model._meta.model_name
-        perms.append('%s.clone_%s' % info)
-        perms.append('%s.view_%s' % info)
-        return super(ModuleClonePermissionMixin, self).get_permissions(perms)
-
-
-class ModuleUpdatePermissionMixin(object):
-    """
-    Checks update permissions of an bmfmodule
-    """
-
-    def check_permissions(self):
-        if self.model._bmfmeta.workflow:
-            return self.get_object()._bmfmeta.workflow.object.update and \
-                super(ModuleUpdatePermissionMixin, self).check_permissions()
-        return super(ModuleUpdatePermissionMixin, self).check_permissions()
-
-    def get_permissions(self, perms=[]):
-        info = self.model._meta.app_label, self.model._meta.model_name
-        perms.append('%s.change_%s' % info)
-        perms.append('%s.view_%s' % info)
-        return super(ModuleUpdatePermissionMixin, self).get_permissions(perms)
-
-
-class ModuleDeletePermissionMixin(object):
-    """
-    Checks delete permission of an bmfmodule
-    """
-
-    def check_permissions(self):
-        if self.model._bmfmeta.workflow:
-            return self.get_object()._bmfmeta.workflow.object.delete and \
-                super(ModuleDeletePermissionMixin, self).check_permissions()
-        return super(ModuleDeletePermissionMixin, self).check_permissions()
-
-    def get_permissions(self, perms=[]):
-        info = self.model._meta.app_label, self.model._meta.model_name
-        perms.append('%s.delete_%s' % info)
-        perms.append('%s.view_%s' % info)
-        return super(ModuleDeletePermissionMixin, self).get_permissions(perms)
-
-
 # MODULES
 
 class ModuleBaseMixin(object):
@@ -502,7 +473,7 @@ class ModuleBaseMixin(object):
                 'report_views': self.model._bmfmeta.report_views,
                 'model': self.model,
                 # 'contenttype': ContentType.objects.get_for_model(self.model).pk,
-                'has_report': self.model._bmfmeta.has_report,
+                # 'has_report': self.model._bmfmeta.has_report,
                 'can_clone': self.model._bmfmeta.can_clone and self.request.user.has_perms([
                     '%s.view_%s' % info,
                     '%s.clone_%s' % info,

@@ -5,9 +5,10 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import ViewFactory
-from djangobmf.categories import ProjectManagement
-from djangobmf.sites import site
+from djangobmf.dashboards import ProjectManagement
+from djangobmf.sites import Module
+from djangobmf.sites import ViewMixin
+from djangobmf.sites import register
 
 from .categories import ProjectCategory
 from .models import Project
@@ -16,27 +17,27 @@ from .serializers import ProjectSerializer
 from .views import ProjectUpdateView
 
 
-site.register_module(Project, **{
-    'update': ProjectUpdateView,
-    'permissions': ProjectPermission,
-    'serializer': ProjectSerializer,
-})
+@register(dashboard=ProjectManagement)
+class ProjectModule(Module):
+    model = Project
+    default = True
+    serializer = ProjectSerializer
+    update = ProjectUpdateView
+    permissions = ProjectPermission
 
 
-site.register_dashboards(
-    ProjectManagement(
-        ProjectCategory(
-            ViewFactory(
-                model=Project,
-                name=_("Active projects"),
-                slug="active",
-                manager="active",
-            ),
-            ViewFactory(
-                model=Project,
-                name=_("All projects"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+@register(category=ProjectCategory)
+class ActiveProjects(ViewMixin):
+    model = Project
+    name = _("Active projects")
+    slug = "active"
+
+    def filter_queryset(self, qs):
+        return qs.filter(is_active=True)
+
+
+@register(category=ProjectCategory)
+class AllProjects(ViewMixin):
+    model = Project
+    name = _("All projects")
+    slug = "all"

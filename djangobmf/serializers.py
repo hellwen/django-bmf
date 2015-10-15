@@ -1,5 +1,9 @@
+#!/usr/bin/python
+# ex:set fileencoding=utf-8:
+
+from __future__ import unicode_literals
+
 from djangobmf import fields
-from djangobmf.models import Document
 from rest_framework import serializers
 from rest_framework.fields import CharField
 from rest_framework.fields import DecimalField
@@ -25,8 +29,7 @@ class WorkflowField(CharField):
 ModuleSerializer.serializer_field_mapping[fields.WorkflowField] = WorkflowField
 
 
-class DocumentSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Document
-        fields = ['pk']
+# class DocumentSerializer(serializers.HyperlinkedModelSerializer):
+#   class Meta:
+#       model = apps.get_model('djangobmf', 'Document')
+#       fields = ['pk']

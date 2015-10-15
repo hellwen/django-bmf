@@ -3,15 +3,23 @@
 
 from __future__ import unicode_literals
 
+from django.conf.urls import patterns
+from django.conf.urls import url
+from django.contrib.admin.sites import AlreadyRegistered
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 from django.utils.text import slugify
+
+from djangobmf.views.module import ModuleListView
 
 from collections import OrderedDict
 
 from .category import Category
 
 import re
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 class DashboardMetaclass(type):
@@ -34,6 +42,9 @@ class DashboardMetaclass(type):
         if not getattr(new_cls, 'slug', None):
             raise ImproperlyConfigured('No slug attribute defined in %s.' % new_cls)
 
+        if not re.match('^[\w-]+$', new_cls.slug):
+            raise ImproperlyConfigured('The slug attribute defined in %s contains invalid chars.' % new_cls)
+
         # we add a key to add a unique identifier
         # the key is equal to the slug (for now) but this
         # gives us the opportunity to add i18n urls later
@@ -46,15 +57,13 @@ class DashboardMetaclass(type):
         return new_cls
 
 
-# TODO add validation for name and slug
 class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
 
-    def __init__(self, *args):
+    def __init__(self, site):
         self.data = OrderedDict()
+        self.site = site
         self.modules = []
-
-        for category in args:
-            self.add_category(category)
+        self.reports = []
 
     def __bool__(self):
         return bool(self.data)
@@ -84,29 +93,67 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
             key = item
         return key in self.data
 
+    def get_urls(self):
+        urlpatterns = patterns('')
+
+        for category in self:
+            for view in category:
+
+                class ViewFactory(view, ModuleListView):
+                    pass
+
+                urlpatterns += patterns(
+                    '',
+                    url(
+                        r'^view/%s/%s/' % (category.slug, view.slug),
+                        ViewFactory.as_view(
+                        ),
+                        name='view_%s_%s' % (category.key, view.key),
+                        kwargs={
+                            'category': category.key,
+                            'view': view.key,
+                        },
+                    ),
+                )
+        return urlpatterns
+
+    def add_report(self, report_class):
+        """
+        Adds a report to the dashboard
+        """
+        for report in self.reports:
+            if isinstance(report_class, report):
+                raise AlreadyRegistered('The report %s is already registered' % report_class.__name__)
+
+        report = report_class()
+        self.reports.append(report)
+        logger.debug('Registered Report "%s"', report.key)
+        return report
+
+    def get_module(self, model):
+        return self.site.modules[model]
+
+    def add_module(self, module):
+        """
+        Adds a module to the dashboard
+        """
+        if module.model in self.site.modules:
+            raise AlreadyRegistered('The module %s is already registered' % module.model.__name__)
+
+        self.site.modules[module.model] = module()
+        logger.debug('Registered Module "%s"', module.__name__)
+        return self.site.modules[module.model]
+
     def add_category(self, category):
         """
         Adds a category to the dashboard
         """
-        for model in category.models:
-            pass
-            # module = site.get_module(model)
-            # if self not in module.dashboards:
-            #     module.dashboards.append(self)
+        for cat in self.data.values():
+            if isinstance(cat, category):
+                return cat
 
-        if category in self.data.values():
-            self.data[category.key].merge(category)
-        else:
-            self.data[category.key] = category
+        cat = category()
+        self.data[cat.key] = cat
 
-    def merge(self, other):
-        """
-        merges two dashboards
-        """
-        for category in other.data.values():
-            self.add_category(category)
-
-#   @property
-#   def urls(self):
-#       urlpatterns = patterns('')
-#       return urlpatterns
+        logger.debug('Registered Category "%s"', cat.__class__.__name__)
+        return cat
