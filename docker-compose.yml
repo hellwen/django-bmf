@@ -1,29 +1,30 @@
 db:
-    image: postgres
+  image: postgres
 
 redis:
-    image: redis
+  image: redis
 
 web:
-    build: .
-    environment:
-        - DJANGO_SETTINGS_MODULE=sandbox.settings_docker
-    volumes:
-        - .:/code
-    command: /code/docker/web.sh
-    ports:
-        - "8000:8000"
-    links:
-        - db
-        - redis
+  build: .
+  command: /code/web.sh
+  environment:
+    - DJANGO_SETTINGS_MODULE=sandbox.settings_docker
+  volumes:
+    - .:/code
+  ports:
+    - "8000:8000"
+  links:
+    - db
+    - redis
+
 worker:
-    build: .
-    command: celery -A sandbox worker -l info -c 1 --autoreload
-    environment:
-        - C_FORCE_ROOT=1
-        - DJANGO_SETTINGS_MODULE=sandbox.settings_docker
-    volumes:
-        - .:/code
-    links:
-        - db
-        - redis
+  build: .
+  command: celery -A sandbox worker -l info -c 1 --autoreload
+  environment:
+    - DJANGO_SETTINGS_MODULE=sandbox.settings_docker
+    - C_FORCE_ROOT=1
+  volumes:
+    - .:/code
+  links:
+    - db
+    - redis

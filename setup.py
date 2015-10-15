@@ -40,6 +40,11 @@ setup(
     author_email="sebastian@elmnt.de",
     packages=find_packages(exclude=['sandbox', 'tests']),
     classifiers=CLASSIFIERS,
+    extras_require={
+      'celery': ['celery'],
+      'redis': ['redis'],
+      'postgres': ['psycopg2'],
+    },
     install_requires=[
         'django>=1.8',
         'django-sekizai',
