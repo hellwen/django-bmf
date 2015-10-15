@@ -368,8 +368,8 @@ class NextMixin(object):
     """
 
     def redirect_next(self, reverse=None, *args, **kwargs):
-        if 'next' in self.request.REQUEST:
-            redirect_to = self.request.REQUEST.get('next', '')
+        if 'next' in self.request.GET:
+            redirect_to = self.request.GET.get('next', '')
 
             netloc = parse.urlparse(redirect_to)[1]
             if not netloc or netloc == self.request.get_host():
