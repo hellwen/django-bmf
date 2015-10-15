@@ -51,7 +51,6 @@ setup(
         'djangorestframework>=3.1',
         'markdown',
         'pytz',
-        'requests',
     ],
     include_package_data=True,
     zip_safe=False,
