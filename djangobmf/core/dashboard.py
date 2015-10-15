@@ -102,6 +102,10 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
                 class ViewFactory(view, ModuleListView):
                     pass
 
+                ViewFactory._bmf_view_class = view
+                ViewFactory._bmf_category = category
+                ViewFactory._bmf_dashboard = self
+
                 urlpatterns += patterns(
                     '',
                     url(

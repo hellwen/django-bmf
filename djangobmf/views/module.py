@@ -139,9 +139,9 @@ class ModuleListView(ModuleViewMixin, TemplateView):
         })
 
         kwargs = {
-            'd': 'projects',
-            'c': 'tasks',
-            'v': 'all',
+            'd': self._bmf_dashboard.key,
+            'c': self._bmf_category.key,
+            'v': self._bmf_view_class.key,
         }
 
         page = self.request.GET.get('page')
