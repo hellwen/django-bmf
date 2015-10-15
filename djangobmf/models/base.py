@@ -129,7 +129,7 @@ class BMFOptions(object):
 
         # add a serializer to the class
         self.serializer_class = getattr(
-            options, 'serializer_class', ModuleSerializer
+            options, 'serializer', ModuleSerializer
         )
 
         # workflow_field_name

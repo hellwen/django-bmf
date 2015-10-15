@@ -94,7 +94,7 @@ class BaseAccount(BMFModel):
 
     class BMFMeta:
         observed_fields = ['name', ]
-        serializer_class = AccountSerializer
+        serializer = AccountSerializer
 
     def __init__(self, *args, **kwargs):
         super(BaseAccount, self).__init__(*args, **kwargs)
@@ -187,7 +187,7 @@ class BaseTransaction(BMFModel):
         observed_fields = ['expensed', 'text']
         has_files = True
         workflow = TransactionWorkflow
-        serializer_class = TransactionSerializer
+        serializer = TransactionSerializer
 
     def __str__(self):
         return '%s' % self.text
@@ -260,7 +260,7 @@ class BaseTransactionItem(BMFModel):
         swappable = "BMF_CONTRIB_TRANSACTIONITEM"
 
     class BMFMeta:
-        TransactionItemSerializer
+        serializer = TransactionItemSerializer
 
 # def set_debit(self, amount):
 #   if self.get_type in [ACCOUNTING_ASSET, ACCOUNTING_EXPENSE]:
