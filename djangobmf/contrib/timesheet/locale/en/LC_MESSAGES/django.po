@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-10 09:33+0100\n"
+"POT-Creation-Date: 2015-10-15 17:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:29 models.py:78
-msgid "Timesheets"
-msgstr ""
-
-#: bmf_module.py:38
+#: bmf_module.py:32
 msgid "My timesheets"
 msgstr ""
 
@@ -29,15 +25,19 @@ msgstr ""
 msgid "Archive"
 msgstr ""
 
-#: models.py:36
+#: categories.py:13 models.py:57
+msgid "Timesheets"
+msgstr ""
+
+#: models.py:32
 msgid "Title"
 msgstr ""
 
-#: models.py:37
+#: models.py:33
 msgid "Description"
 msgstr ""
 
-#: models.py:77
+#: models.py:56
 msgid "Timesheet"
 msgstr ""
 
