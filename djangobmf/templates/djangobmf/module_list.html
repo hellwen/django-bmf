@@ -10,7 +10,7 @@
     {% verbatim %}
         <tr ng-repeat="obj in data.items">
             <td>
-                <a href="{{ obj.bmfdetail }}">{{ obj.name }}</a>
+                <a href="{{ obj.bmfdetail }}">{{ obj.__str__ }}</a>
             </td>
             <td class="text-right">
             <a class="btn btn-xs btn-bmfdetail" href="{{ obj.bmfdetail }}">

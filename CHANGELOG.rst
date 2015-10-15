@@ -2,6 +2,7 @@ Version 0.2.4 (currently in development)
 ========================================
 
 * Removed django-mptt dependency
+* Reworked module registrations
 
 Version 0.2.3 (2015-03-11)
 ========================================

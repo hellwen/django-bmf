@@ -65,13 +65,13 @@ Credits
 
 .. |Build status| image:: https://api.travis-ci.org/django-bmf/django-bmf.svg?branch=develop
    :target: http://travis-ci.org/django-bmf/django-bmf
-.. |PyPi version| image:: https://pypip.in/v/django-bmf/badge.svg?text=version
+.. |PyPi version| image:: https://img.shields.io/pypi/v/django-bmf.svg
    :target: https://pypi.python.org/pypi/django-bmf/
-.. |PyPi downloads| image:: https://pypip.in/d/django-bmf/badge.svg?period=month
+.. |PyPi downloads| image:: https://img.shields.io/pypi/dm/django-bmf.svg
    :target: https://pypi.python.org/pypi/django-bmf/
-.. |Python version| image:: https://pypip.in/py_versions/django-bmf/badge.svg
+.. |Python version| image:: https://img.shields.io/pypi/pyversions/django-bmf.svg
    :target: https://pypi.python.org/pypi/django-bmf/
-.. |PyPi wheel| image:: https://pypip.in/wheel/django-bmf/badge.svg
+.. |PyPi wheel| image:: https://img.shields.io/pypi/wheel/django-bmf.svg
    :target: https://pypi.python.org/pypi/django-bmf/
-.. |Project license| image:: https://pypip.in/license/django-bmf/badge.svg
+.. |Project license| image:: https://img.shields.io/pypi/l/django-bmf.svg
    :target: https://pypi.python.org/pypi/django-bmf/
