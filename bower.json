@@ -1,6 +1,6 @@
 {
   "name": "django-bmf",
-  "version": "0.2.4.a0",
+  "version": "0.2.4.a1",
   "homepage": "http://www.django-bmf.org",
   "authors": [
     "Sebastian Braun <sebastian@elmnt.de>"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-10 09:33+0100\n"
+"POT-Creation-Date: 2015-10-15 17:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,24 +17,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:54 models.py:187
-msgid "Transactions"
-msgstr ""
-
-#: bmf_module.py:63
+#: bmf_module.py:64
 msgid "All Accounts"
 msgstr ""
 
-#: bmf_module.py:68
+#: bmf_module.py:71
 msgid "Open transactions"
 msgstr ""
 
-#: bmf_module.py:74
+#: bmf_module.py:81
 msgid "Closed transactions"
 msgstr ""
 
-#: bmf_module.py:81
+#: bmf_module.py:92
 msgid "Transaction archive"
+msgstr ""
+
+#: categories.py:13 models.py:182
+msgid "Transactions"
 msgstr ""
 
 #: forms.py:36
@@ -45,84 +45,93 @@ msgstr ""
 msgid "Create draft"
 msgstr ""
 
-#: models.py:38
+#: models.py:36
 msgid "Income"
 msgstr ""
 
-#: models.py:39
+#: models.py:37
 msgid "Expense"
 msgstr ""
 
-#: models.py:40
+#: models.py:38
 msgid "Asset"
 msgstr ""
 
-#: models.py:41
+#: models.py:39
 msgid "Liability"
 msgstr ""
 
-#: models.py:42
+#: models.py:40
 msgid "Equity"
 msgstr ""
 
-#: models.py:83
+#: models.py:75
 msgid "Number"
 msgstr ""
 
-#: models.py:84
+#: models.py:76 templates/djangobmf_accounting/account_bmflist.html:5
 msgid "Name"
 msgstr ""
 
-#: models.py:86
+#: models.py:78
 msgid "Type"
 msgstr ""
 
-#: models.py:88
+#: models.py:80
 msgid "Read-only"
 msgstr ""
 
-#: models.py:97 templates/djangobmf_accounting/transaction_bmfdetail.html:25
+#: models.py:89 templates/djangobmf_accounting/account_bmfdetail.html:6
+#: templates/djangobmf_accounting/account_bmfdetail.html:9
+#: templates/djangobmf_accounting/transaction_bmfdetail.html:25
+#: templates/djangobmf_accounting/transactionitem_bmflist.html:6
 msgid "Account"
 msgstr ""
 
-#: models.py:98
+#: models.py:90
 msgid "Accounts"
 msgstr ""
 
-#: models.py:127
+#: models.py:122
 msgid "The type does not match the model parents type"
 msgstr ""
 
-#: models.py:129
+#: models.py:124
 msgid "Root accounts must define a type"
 msgstr ""
 
-#: models.py:138
+#: models.py:133
 msgid "Comment"
 msgstr ""
 
-#: models.py:177
+#: models.py:172
 msgid "Posting text"
 msgstr ""
 
-#: models.py:179 models.py:258
+#: models.py:174 models.py:254
 msgid "Draft"
 msgstr ""
 
-#: models.py:186 templates/djangobmf_accounting/transaction_bmfdetail.html:6
+#: models.py:181 templates/djangobmf_accounting/transaction_bmfdetail.html:6
 #: templates/djangobmf_accounting/transaction_bmfdetail.html:9
 msgid "Transaction"
 msgstr ""
 
-#: models.py:255 templates/djangobmf_accounting/transaction_bmfdetail.html:27
+#: models.py:251 templates/djangobmf_accounting/transaction_bmfdetail.html:27
+#: templates/djangobmf_accounting/transactionitem_bmflist.html:7
 msgid "Credit"
 msgstr ""
 
-#: models.py:255 templates/djangobmf_accounting/transaction_bmfdetail.html:26
+#: models.py:251 templates/djangobmf_accounting/transaction_bmfdetail.html:26
 msgid "Debit"
 msgstr ""
 
+#: templates/djangobmf_accounting/account_bmflist.html:6 workflows.py:21
+msgid "Balance"
+msgstr ""
+
 #: templates/djangobmf_accounting/transaction_bmfdetail.html:11
+#: templates/djangobmf_accounting/transaction_bmflist.html:6
 msgid "Project"
 msgstr ""
 
@@ -132,6 +141,15 @@ msgstr ""
 
 #: templates/djangobmf_accounting/transaction_bmfdetail.html:23
 msgid "Date"
+msgstr ""
+
+#: templates/djangobmf_accounting/transaction_bmflist.html:5
+#: templates/djangobmf_accounting/transactionitem_bmflist.html:5
+msgid "Text"
+msgstr ""
+
+#: templates/djangobmf_accounting/transactionitem_bmflist.html:8
+msgid "Value"
 msgstr ""
 
 #: workflows.py:16
@@ -144,10 +162,6 @@ msgstr ""
 
 #: workflows.py:18
 msgid "Cancelled"
-msgstr ""
-
-#: workflows.py:21
-msgid "Balance"
 msgstr ""
 
 #: workflows.py:22

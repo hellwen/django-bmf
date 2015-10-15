@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-10 09:33+0100\n"
+"POT-Creation-Date: 2015-10-15 17:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,41 +17,40 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:66 bmf_module.py:143
+#: bmf_module.py:41
 msgid "My goals"
 msgstr ""
 
-#: bmf_module.py:72 bmf_module.py:149
+#: bmf_module.py:54
 msgid "Active goals"
 msgstr ""
 
-#: bmf_module.py:78 bmf_module.py:111 bmf_module.py:155 bmf_module.py:186
+#: bmf_module.py:66 bmf_module.py:125
 msgid "Archive"
 msgstr ""
 
-#: bmf_module.py:87 bmf_module.py:162
+#: bmf_module.py:73
 msgid "My tasks"
 msgstr ""
 
-#: bmf_module.py:93 bmf_module.py:168
+#: bmf_module.py:86
 msgid "Todolist"
 msgstr ""
 
-#: bmf_module.py:99 bmf_module.py:174
+#: bmf_module.py:100
 msgid "Availalbe tasks"
 msgstr ""
 
-#: bmf_module.py:105 bmf_module.py:180
-#: templates/djangobmf_task/goal_bmfdetail.html:26
+#: bmf_module.py:113 templates/djangobmf_task/goal_bmfdetail.html:26
 #: templates/djangobmf_task/task_bmfrelated_project.html:9
 msgid "Open tasks"
 msgstr ""
 
-#: categories.py:13 categories.py:16 models.py:68
+#: categories.py:13 models.py:58
 msgid "Goals"
 msgstr ""
 
-#: categories.py:22 categories.py:25 models.py:204
+#: categories.py:19 models.py:173
 msgid "Tasks"
 msgstr ""
 
@@ -63,27 +62,27 @@ msgstr ""
 msgid "When copying unset the task's employee"
 msgstr ""
 
-#: models.py:43 models.py:181
+#: models.py:33 models.py:150
 msgid "Title"
 msgstr ""
 
-#: models.py:44 models.py:182
+#: models.py:34 models.py:151
 msgid "Description"
 msgstr ""
 
-#: models.py:62 models.py:198 workflows.py:23
+#: models.py:52 models.py:167 workflows.py:23
 msgid "Completed"
 msgstr ""
 
-#: models.py:67
+#: models.py:57
 msgid "Goal"
 msgstr ""
 
-#: models.py:183
+#: models.py:152
 msgid "Due date"
 msgstr ""
 
-#: models.py:203
+#: models.py:172
 msgid "Task"
 msgstr ""
 
