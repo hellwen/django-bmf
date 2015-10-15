@@ -20,7 +20,9 @@ from djangobmf.views.api import APIModuleListView
 from djangobmf.views.api import APIModuleDetailView
 from djangobmf.views.configuration import ConfigurationView
 from djangobmf.views.configuration import ConfigurationEdit
-from djangobmf.views.dashboard import DashboardView
+from djangobmf.views.dashboard import DashboardIndex
+# from djangobmf.views.dashboard import DashboardCategory
+# from djangobmf.views.dashboard import DashboardView
 
 
 @cache_page(86400, key_prefix='bmf-js18n-%s' % get_version())
@@ -38,7 +40,7 @@ def i18n_javascript(request):
 
 urlpatterns = patterns(
     '',
-    url(r'^$', DashboardView.as_view(), name="dashboard"),
+    url(r'^$', DashboardIndex.as_view(), name="dashboard"),
     url(r'^accounts/', include('djangobmf.account.urls')),
 
     url(
@@ -66,9 +68,19 @@ urlpatterns = patterns(
     # --- Dashboard
     url(
         r'^dashboard/(?P<dashboard>[\w-]+)/$',
-        DashboardView.as_view(),
+        DashboardIndex.as_view(),
         name="dashboard",
     ),
+    #   url(
+    #       r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/$',
+    #       DashboardCategory.as_view(),
+    #       name="dashboard",
+    #   ),
+    #   url(
+    #       r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/(?P<view>[\w-]+)/$',
+    #       DashboardView.as_view(),
+    #       name="dashboard",
+    #   ),
     #   r'^dashboard/(?P<dashboard>[\w-]+)/' via sites
 
 

@@ -19,23 +19,23 @@ from .models import TestView
 
 class MixinTests(TestCase):
 
-    def test_basemixin_get_permissions1(self):
-        obj = BaseMixin()
-        obj.model = TestView
-        self.assertEqual(obj.get_permissions(), [])
-        self.assertEqual(obj.get_permissions(['test']), ['test'])
+#   def test_basemixin_get_permissions1(self):
+#       obj = BaseMixin()
+#       obj.model = TestView
+#       self.assertEqual(obj.get_permissions(), [])
+#       self.assertEqual(obj.get_permissions(['test']), ['test'])
 
-    def test_basemixin_get_permissions2(self):
-        obj = BaseMixin()
-        obj.model = TestView
-        obj.permissions = ['test2']
-        self.assertEqual(obj.get_permissions(), ['test2'])
-        self.assertEqual(obj.get_permissions(['test']), ['test','test2'])
+#   def test_basemixin_get_permissions2(self):
+#       obj = BaseMixin()
+#       obj.model = TestView
+#       obj.permissions = ['test2']
+#       self.assertEqual(obj.get_permissions(), ['test2'])
+#       self.assertEqual(obj.get_permissions(['test']), ['test','test2'])
 
-    def test_basemixin_check_permissions(self):
-        obj = BaseMixin()
-        obj.model = TestView
-        self.assertEqual(obj.check_permissions(), True)
+#   def test_basemixin_check_permissions(self):
+#       obj = BaseMixin()
+#       obj.model = TestView
+#       self.assertEqual(obj.check_permissions(), True)
 
     @expectedFailure
     def test_basemixin_read_session_data(self):

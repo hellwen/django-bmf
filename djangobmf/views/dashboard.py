@@ -14,7 +14,7 @@ from djangobmf.models import Dashboard
 from .mixins import ViewMixin
 
 
-class DashboardView(ViewMixin, DetailView):
+class DashboardIndex(ViewMixin, DetailView):
     context_object_name = 'object'
     model = Dashboard
     dashboard = None
