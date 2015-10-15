@@ -10,7 +10,7 @@ Available ``BMFMeta`` options
 =============================
 
 ``only_related``
----------------
+----------------
 
 Default: ``False``
 

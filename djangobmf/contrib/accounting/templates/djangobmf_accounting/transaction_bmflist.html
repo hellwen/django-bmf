@@ -1,0 +1,21 @@
+{% load i18n %}
+<table class="table table-striped table-condensed table-hover">
+    <thead>
+        <tr>
+            <th width="60%">{% trans "Text" %}</th>
+            <th width="40%">{% trans "Project" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% verbatim %}
+        <tr ng-repeat="obj in data.items">
+            <td>
+                <a href="{{ obj.bmfdetail }}">{{ obj.text }}</a>
+            </td>
+            <td>
+                {{ obj.project }}
+            </td>
+        </tr>
+    {% endverbatim %}
+    </tbody>
+</table>

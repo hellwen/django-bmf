@@ -179,11 +179,12 @@ class ModuleTestFactory(SuperuserMixin, BaseTestCase):
                             views.append((model, view, dashboard.key, category.key, view.key))
 
         for v in views:
-            url = reverse('%s:dashboard_view' % settings.APP_LABEL, kwargs={
-                'dashboard': v[2],
-                'category': v[3],
-                'view': v[4],
-            })
+            url = reverse('%s:dashboard_%s:view_%s_%s' % (
+                settings.APP_LABEL,
+                v[2],
+                v[3],
+                v[4],
+            ))
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 

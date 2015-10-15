@@ -28,10 +28,10 @@
                 <span ng-if="obj.completed == false" class="glyphicon glyphicon-unchecked"></span>
                 <span ng-if="obj.completed == true" class="glyphicon glyphicon-check"></span>
 
-                <span ng-if="obj.state_key == 'review'"  class="label label-info">{{ obj.state }}</span>
-                <span ng-if="obj.state_key == 'started'"  class="label label-primary">{{ obj.state }}</span>
-                <span ng-if="obj.state_key == 'hold'"  class="label label-default">{{ obj.state }}</span>
-                <span ng-if="obj.state_key == 'todo'"  class="label label-warning">{{ obj.state }}</span>
+                <span ng-if="obj.state == 'review'"  class="label label-info">{{ obj.state_name }}</span>
+                <span ng-if="obj.state == 'started'"  class="label label-primary">{{ obj.state_name }}</span>
+                <span ng-if="obj.state == 'hold'"  class="label label-default">{{ obj.state_name }}</span>
+                <span ng-if="obj.state == 'todo'"  class="label label-warning">{{ obj.state_name }}</span>
 
                 <a href="{{ obj.bmfdetail }}">{{ obj.summary }}</a>
 
@@ -44,7 +44,7 @@
             <td ng-if="obj.employee == null">{% endverbatim %}{% trans "None" %}{% verbatim %}
             </td>
             <td>
-                {{ obj.state }}
+                {{ obj.state_name }}
                 <br><small>{{ obj.modified_date }}</small>
             </td>
         </tr>

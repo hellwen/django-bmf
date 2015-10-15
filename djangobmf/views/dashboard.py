@@ -14,9 +14,10 @@ from djangobmf.models import Dashboard
 from .mixins import ViewMixin
 
 
-class DashboardView(ViewMixin, DetailView):
+class DashboardIndex(ViewMixin, DetailView):
     context_object_name = 'object'
     model = Dashboard
+    dashboard = None
     template_name = "djangobmf/dashboard/detail.html"
 
     def get_dashboard(self):
@@ -36,18 +37,3 @@ class DashboardView(ViewMixin, DetailView):
         )
 
         return self.object
-
-
-def dashboard_view_factory(request, dashboard, category, view, *args, **kwargs):
-    try:
-        dashboard_instance = site.get_dashboard(dashboard)
-        view_instance = dashboard_instance[category][view]
-    except KeyError:
-        raise Http404
-
-    return view_instance.view.as_view(
-        model=view_instance.model,
-        dashboard=dashboard_instance,
-        dashboard_view=view_instance,
-        **view_instance.kwargs
-    )(request, *args, **kwargs)

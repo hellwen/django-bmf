@@ -9,9 +9,6 @@ from djangobmf.serializers import ModuleSerializer
 
 from rest_framework import serializers
 
-from .models import Goal
-from .models import Task
-
 
 class GoalSerializer(ModuleSerializer):
     project_name = serializers.ReadOnlyField(source='project.name')
@@ -20,7 +17,6 @@ class GoalSerializer(ModuleSerializer):
     state_summary = serializers.SerializerMethodField()
 
     class Meta:
-        model = Goal
         fields = (
             'completed',
             'summary',
@@ -46,7 +42,6 @@ class TaskSerializer(ModuleSerializer):
     modified_date = serializers.SerializerMethodField()
 
     class Meta:
-        model = Task
         fields = (
             'state',
             'state_name',

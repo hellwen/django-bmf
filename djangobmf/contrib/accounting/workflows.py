@@ -25,9 +25,10 @@ class TransactionWorkflow(Workflow):
         if not self.instance.is_balanced():
             raise ValidationError(_('The transaction is not balanced'))
 
-        self.instance.items.update(draft=False)
+        update_accounts = self.instance.items.filter(draft=True)
+        update_accounts.update(draft=False)
 
-        for item in self.instance.items.all():
+        for item in update_accounts:
             calc_account_balance(item.account_id)
 
         # Update accounts

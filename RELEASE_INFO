@@ -7,6 +7,9 @@
 - compile translations
 - run tests and recreate test env
 
+- update freeze on develop branch
+- update bower libs on develop branch
+
 - pypi:
   python setup.py register
   python setup.py bdist_wheel upload

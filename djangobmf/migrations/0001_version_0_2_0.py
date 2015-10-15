@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import mptt.fields
 import djangobmf.utils.generate_filename
 import django.db.models.deletion
 import django.utils.timezone
@@ -145,7 +144,7 @@ class Migration(migrations.Migration):
                 ('tree_id', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('level', models.PositiveIntegerField(editable=False, db_index=True)),
                 ('ct', models.ForeignKey(related_name='+', blank=True, to='contenttypes.ContentType', null=True)),
-                ('parent', mptt.fields.TreeForeignKey(related_name='children', blank=True, to='djangobmf.Workspace', null=True)),
+                ('parent', models.ForeignKey(related_name='children', blank=True, to='djangobmf.Workspace', null=True)),
             ],
             options={
                 'verbose_name': 'Workspace',

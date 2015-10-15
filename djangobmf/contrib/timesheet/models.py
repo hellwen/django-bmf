@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from djangobmf.conf import settings
 from djangobmf.models import BMFModel
 
+from .serializers import TimesheetSerializer
 from .workflows import TimesheetWorkflow
 
 
@@ -22,11 +23,6 @@ class TimesheetManager(models.Manager):
             .annotate(end_count=models.Count('end')) \
             .order_by('end_count', '-end', 'summary') \
             .select_related('task', 'project', 'employee')
-
-    def mytimesheets(self, request):
-        return self.get_queryset().filter(
-            employee=request.user.djangobmf.employee or -1,
-        )
 
 
 @python_2_unicode_compatible
@@ -56,8 +52,23 @@ class AbstractTimesheet(BMFModel):
 
     objects = TimesheetManager()
 
+    class Meta(BMFModel.Meta):  # only needed for abstract models
+        verbose_name = _('Timesheet')
+        verbose_name_plural = _('Timesheets')
+        ordering = ['-end']
+        abstract = True
+        permissions = (
+            ('can_manage', 'Can manage timesheets'),
+        )
+        swappable = "BMF_CONTRIB_TIMESHEET"
+
+    class BMFMeta:
+        has_logging = True
+        workflow = TimesheetWorkflow
+        serializer = TimesheetSerializer
+
     def clean(self):
-        # overwrite the project with the goals project
+        # overwrite the project with the tasks project
         if self.task:
             self.project = self.task.project
 
@@ -73,16 +84,6 @@ class AbstractTimesheet(BMFModel):
         else:
             return qs
 
-    class Meta(BMFModel.Meta):  # only needed for abstract models
-        verbose_name = _('Timesheet')
-        verbose_name_plural = _('Timesheets')
-        ordering = ['-end']
-        abstract = True
-        permissions = (
-            ('can_manage', 'Can manage timesheets'),
-        )
-        swappable = "BMF_CONTRIB_TIMESHEET"
-
     def bmfget_customer(self):
         if self.project:
             return self.project.customer
@@ -93,10 +94,6 @@ class AbstractTimesheet(BMFModel):
 
     def __str__(self):
         return '%s' % (self.start)
-
-    class BMFMeta:
-        has_logging = True
-        workflow = TimesheetWorkflow
 
 
 class Timesheet(AbstractTimesheet):

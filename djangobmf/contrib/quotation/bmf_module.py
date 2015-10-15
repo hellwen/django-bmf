@@ -5,11 +5,13 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import BaseCategory
-from djangobmf.categories import ViewFactory
-from djangobmf.categories import Sales
-from djangobmf.sites import site
+from djangobmf.dashboards import Sales
+from djangobmf.sites import Module
+from djangobmf.sites import Report
+from djangobmf.sites import ViewMixin
+from djangobmf.sites import register
 
+from .categories import QuotationCategory
 from .models import Quotation
 from .models import QuotationProduct
 from .serializers import QuotationSerializer
@@ -17,37 +19,41 @@ from .views import QuotationCreateView
 from .views import QuotationUpdateView
 
 
-site.register_module(Quotation, **{
-    'create': QuotationCreateView,
-    'update': QuotationUpdateView,
-    'serializer': QuotationSerializer,
-    'report': True,
-})
+@register(dashboard=Sales)
+class QuotationModule(Module):
+    model = Quotation
+    default = True
+    create = QuotationCreateView
+    update = QuotationUpdateView
+    serializer = QuotationSerializer
 
 
-site.register_module(QuotationProduct, **{
-})
+@register(dashboard=Sales)
+class QuotationProductModule(Module):
+    model = QuotationProduct
+    default = True
 
 
-class QuotationCategory(BaseCategory):
-    name = _('Quotations')
-    slug = "quotations"
+@register(category=QuotationCategory)
+class OpenQuotations(ViewMixin):
+    model = Quotation
+    name = _("Open quotations")
+    slug = "open"
+
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
+            # completed=False,
+            state__in=['draft', 'send', 'accepted'],
+        )
 
 
-site.register_dashboards(
-    Sales(
-        QuotationCategory(
-            ViewFactory(
-                model=Quotation,
-                name=_("Open quotations"),
-                slug="open",
-                manager="open",
-            ),
-            ViewFactory(
-                model=Quotation,
-                name=_("All quotations"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+@register(category=QuotationCategory)
+class AllQuotations(ViewMixin):
+    model = Quotation
+    name = _("All quotations")
+    slug = "all"
+
+
+@register(dashboard=Sales)
+class QuotationReport(Report):
+    model = QuotationProduct

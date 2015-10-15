@@ -3,13 +3,122 @@
 
 from __future__ import unicode_literals
 
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
+from djangobmf.fields.models import FileField
+
+# from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes.fields import GenericForeignKey
+# from django.http import HttpResponse
+
+# from djangobmf.core.report import Report as BaseReport
+
+
+class Renderer(models.Model):
+    """
+    Model to store informations to generate a report
+    """
+    name = models.CharField(
+        verbose_name=_("Name"), max_length=20, blank=False, null=False,
+    )
+    size = models.CharField(
+        verbose_name=_("Size"), max_length=20, blank=False, null=False, default="A4/A",
+    )
+    letter = models.BooleanField(
+        verbose_name=_("Letter"), default=True,
+    )
+    extra = models.BooleanField(
+        verbose_name=_("Extra"), default=False,
+    )
+    letter_margin_right = models.PositiveIntegerField(
+        verbose_name=_("Letter margin right"), blank=False, null=False, default=10,
+    )
+    letter_margin_bottom = models.PositiveIntegerField(
+        verbose_name=_("Letter margin bottom"), blank=False, null=False, default=40,
+    )
+    letter_extra_right = models.PositiveIntegerField(
+        verbose_name=_("Letter extra right"), blank=False, null=False, default=10,
+    )
+    letter_extra_top = models.PositiveIntegerField(
+        verbose_name=_("Letter extra top"), blank=False, null=False, default=10,
+    )
+    letter_background = FileField(
+        verbose_name=_("Letter background"), null=True, blank=True,
+    )
+    letter_footer_right = models.PositiveIntegerField(
+        verbose_name=_("Letter footer right"), blank=False, null=False, default=10,
+    )
+    letter_footer_right = models.PositiveIntegerField(
+        verbose_name=_("Letter footer height"), blank=False, null=False, default=10,
+    )
+    page_margin_right = models.PositiveIntegerField(
+        verbose_name=_("Letter margin right"), blank=False, null=False, default=10,
+    )
+    page_margin_bottom = models.PositiveIntegerField(
+        verbose_name=_("Letter margin bottom"), blank=False, null=False, default=15,
+    )
+    page_margin_top = models.PositiveIntegerField(
+        verbose_name=_("Letter margin top"), blank=False, null=False, default=20,
+    )
+    page_background = FileField(
+        verbose_name=_("Page background"), null=True, blank=True,
+    )
+
+    modified = models.DateTimeField(_("Modified"), auto_now=True, editable=False,)
+
+    class Meta:
+        verbose_name = _('Renderer')
+        verbose_name_plural = _('Renderer')
+        get_latest_by = "modified"
+        abstract = True
+
+    def __str__(self):
+        return '%s' % self.name
+
+#   def clean(self):
+#       if self.options == "":
+#           generator = self.get_generator()
+#           self.options = generator.get_default_options().strip()
+
+#   def get_generator(self):
+#       from djangobmf.sites import site
+#       try:
+#           return site.reports[self.reporttype](self.options)
+#       except KeyError:
+#           return BaseReport()
+
+    # response with generated file
+    def render(self, filename, request, context):
+        pass
+#       generator = self.get_generator()
+
+#       extension, mimetype, data, attachment = generator.render(request, context)
+
+#       response = HttpResponse(content_type=mimetype)
+
+#       if attachment:
+#           response['Content-Disposition'] = 'attachment; filename="%s.%s"' % (
+#               filename,
+#               extension
+#           )
+
+#       response.write(data)
+
+#       return response
+
+'''
+#!/usr/bin/python
+# ex:set fileencoding=utf-8:
+
+from __future__ import unicode_literals
+
 from django.template import Context
 from django.template.loader import select_template
 from django.utils import six
 
 from djangobmf.conf import settings
-from djangobmf.sites import site
-from djangobmf.sites import Report
+from djangobmf.core.renderer import Renderer
 from djangobmf.models import Document
 
 from io import BytesIO
@@ -56,7 +165,7 @@ height = 10mm
 """
 
 
-class Xhtml2PdfReport(Report):
+class Xhtml2PdfReport(Renderer):
 
     def __init__(self, options):
         self.options = RawConfigParser(allow_no_value=True)
@@ -135,4 +244,5 @@ class Xhtml2PdfReport(Report):
             return 'html', 'text/html', html, False
 
 
-site.register_report('xhtml2pdf', Xhtml2PdfReport)
+# site.register_report('xhtml2pdf', Xhtml2PdfReport)
+'''

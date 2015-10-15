@@ -126,7 +126,6 @@ TEST_PROJECT_APPS = (
     'djangobmf.contrib.timesheet',
     'djangobmf.currency.EUR',
     'djangobmf.currency.USD',
-    'djangobmf.report.xhtml2pdf',
     'tests.appapis',
 )
 
@@ -140,7 +139,6 @@ INSTALLED_APPS = (
     'django.contrib.sitemaps',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'mptt',
     'sekizai',
     'rest_framework',
     # 'haystack',

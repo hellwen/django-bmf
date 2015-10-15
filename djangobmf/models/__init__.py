@@ -32,6 +32,7 @@ from .dashboard import Dashboard as AbstractDashboard
 from .document import Document as AbstractDocument
 from .notification import Notification as AbstractNotification
 from .numbering import NumberCycle as AbstractNumberCycle
+from .renderer import Renderer as AbstractRenderer
 from .report import Report as AbstractReport
 
 
@@ -49,6 +50,7 @@ __all__ = (
     'Configuration',
     'Notification',
     'NumberCycle',
+    'Renderer',
     'Report',
 )
 
@@ -89,6 +91,12 @@ class NumberCycle(AbstractNumberCycle):
         app_label = settings.APP_LABEL
 
 
+class Renderer(AbstractRenderer):
+    class Meta(AbstractRenderer.Meta):
+        abstract = False
+        app_label = settings.APP_LABEL
+
+
 class Report(AbstractReport):
     class Meta(AbstractReport.Meta):
         abstract = False
@@ -109,16 +117,16 @@ def object_created(sender, instance, **kwargs):
 
 @receiver(activity_update)
 def object_changed(sender, instance, **kwargs):
+
     if instance._bmfmeta.has_history and len(instance._bmfmeta.observed_fields) > 0:
         changes = []
-        # TODO detect changes
-#       values = instance._get_observed_values()
-#       for key in instance._bmfmeta.observed_fields:
-#           try:
-#               if instance._bmfmeta.changelog[key] != values[key]:
-#                   changes.append((key, instance._bmfmeta.changelog[key], values[key]))
-#           except KeyError:
-#               pass
+        for key in instance._bmfmeta.observed_fields:
+            try:
+                if instance._bmfmeta.changelog[key] != getattr(instance, key):
+                    changes.append((key, instance._bmfmeta.changelog[key], getattr(instance, key)))
+            except KeyError:
+                pass
+
         if len(changes) > 0:
             history = Activity(
                 user=instance.modified_by,

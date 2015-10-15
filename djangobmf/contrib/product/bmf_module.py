@@ -6,11 +6,13 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from djangobmf.dashboards import Sales
+from djangobmf.sites import Module
+from djangobmf.sites import ViewMixin
+from djangobmf.sites import register
 from djangobmf.sites import site
-from djangobmf.categories import BaseCategory
-from djangobmf.categories import ViewFactory
-from djangobmf.categories import Sales
 
+from .categories import ProductCategory
 from .models import Product
 from .models import ProductTax
 from .models import PRODUCT_SERVICE
@@ -20,16 +22,20 @@ from .views import ProductDetailView
 from .views import ProductUpdateView
 
 
-site.register_module(Product, **{
-    'create': ProductCreateView,
-    'detail': ProductDetailView,
-    'update': ProductUpdateView,
-    'serializer': ProductSerializer,
-})
+@register(dashboard=Sales)
+class ProductModule(Module):
+    model = Product
+    default = True
+    create = ProductCreateView
+    detail = ProductDetailView
+    update = ProductUpdateView
+    serializer = ProductSerializer
 
 
-site.register_module(ProductTax, **{
-})
+@register(dashboard=Sales)
+class ProductTaxModule(Module):
+    model = ProductTax
+    default = True
 
 
 site.register_settings('bmfcontrib_product', {
@@ -37,31 +43,32 @@ site.register_settings('bmfcontrib_product', {
 })
 
 
-class ProductCategory(BaseCategory):
-    name = _('Products')
-    slug = "products"
+@register(category=ProductCategory)
+class SellableProducts(ViewMixin):
+    model = Product
+    name = _("Sellable products")
+    slug = "sell"
+
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
+            can_sold=True,
+        )
 
 
-site.register_dashboards(
-    Sales(
-        ProductCategory(
-            ViewFactory(
-                model=Product,
-                name=_("Sellable products"),
-                slug="sell",
-                manager="can_sold",
-            ),
-            ViewFactory(
-                model=Product,
-                name=_("Purchaseable products"),
-                slug="purchase",
-                manager="can_purchased",
-            ),
-            ViewFactory(
-                model=Product,
-                name=_("All products"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+@register(category=ProductCategory)
+class PurchaseableProducts(ViewMixin):
+    model = Product
+    name = _("Purchaseable products")
+    slug = "purchase"
+
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
+            can_purchased=True,
+        )
+
+
+@register(category=ProductCategory)
+class AllProducts(ViewMixin):
+    model = Product
+    name = _("All products")
+    slug = "all"

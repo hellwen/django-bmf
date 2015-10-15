@@ -1,0 +1,22 @@
+{% extends "djangobmf/module_detail.html" %}
+
+{% load i18n %}
+{% load djangobmf_core %}
+
+{% block title %}{% trans "Account" %}: {{ object.number }} {{ object.name }}{% endblock %}
+
+{% block base_content %}
+<h1>{% trans "Account" %}: {{ object.number }} {{ object.name }} <small>{{ object.get_type_display }}</small></h1>
+{% if object.parent %}
+<ol class="breadcrumb">
+    {% for parent in object.parents.all %}
+    <li><a href="{{ parent.bmfmodule_detail }}">{{ parent.name }}</a></li>
+    {% endfor %}
+</ol>
+{% endif %}
+
+Balance: {{ object.balance }}
+
+
+{{ block.super }}
+{% endblock %}

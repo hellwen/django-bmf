@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.workflow import Workflow, State, Transition
+from djangobmf.contrib.accounting.tasks import calc_account_balance
 
 
 class InvoiceWorkflow(Workflow):
@@ -34,7 +35,7 @@ class InvoiceWorkflow(Workflow):
         """
         if not self.instance.transaction:
             transaction_mdl = self.instance._meta.model.transaction.field.related_field.model
-            account_mdl = transaction_mdl.accounts.through
+            item_cls = transaction_mdl.items.related.model
             items = self.instance.invoice_products.select_related('product').all()
             transaction = transaction_mdl(
                 project=self.instance.project,
@@ -55,14 +56,14 @@ class InvoiceWorkflow(Workflow):
                 # calculate taxes for the products
                 taxes = item.product.calc_tax(item.amount, item.price)
                 # add total net to income account (product)
-                accounts.append((item.product.income_account_id, taxes[1], True, True))
+                accounts.append((item.product.income_account_id, taxes[1], False, True))
                 for tax, value in taxes[3]:
                     # add taxes
-                    accounts.append((tax.account_id, value, True, True))
+                    accounts.append((tax.account_id, value, False, True))
                 # add the gross value to the credit and debit site of the customers liability account
                 # and only mark the debit site as executed
-                accounts.append((self.instance.project.customer.asset_account_id, taxes[2], False, True))
-                accounts.append((self.instance.project.customer.asset_account_id, taxes[2], True, False))
+                accounts.append((self.instance.project.customer.asset_account_id, taxes[2], False, False))
+                accounts.append((self.instance.project.customer.asset_account_id, taxes[2], True, True))
 
             # sort and summerize the accounts
             credit_execute = {}
@@ -88,41 +89,46 @@ class InvoiceWorkflow(Workflow):
                     arr[data[0]] = data[1]
 
             for account, value in credit_execute.items():
-                account = account_mdl(
+                item = item_cls(
                     account_id=account,
                     transaction=transaction,
                     amount=value,
                     credit=True,
-                    balanced=True,
+                    draft=False,
                 )
-                account.save()
+                item.save()
+                calc_account_balance(account)
+
             for account, value in debit_execute.items():
-                account = account_mdl(
+                item = item_cls(
                     account_id=account,
                     transaction=transaction,
                     amount=value,
                     credit=False,
-                    balanced=True,
+                    draft=False,
                 )
-                account.save()
+                item.save()
+                calc_account_balance(account)
+
             for account, value in credit_virtual.items():
-                account = account_mdl(
+                item = item_cls(
                     account_id=account,
                     transaction=transaction,
                     amount=value,
                     credit=True,
-                    balanced=False,
+                    draft=True,
                 )
-                account.save()
+                item.save()
+
             for account, value in debit_virtual.items():  # pragma: no cover / see above
-                account = account_mdl(
+                item = item_cls(
                     account_id=account,
                     transaction=transaction,
                     amount=value,
                     credit=False,
-                    balanced=False,
+                    draft=True,
                 )
-                account.save()
+                item.save()
 
             self.instance.transaction = transaction
 

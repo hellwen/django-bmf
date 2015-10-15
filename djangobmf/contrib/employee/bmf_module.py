@@ -5,35 +5,27 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.categories import BaseCategory
-from djangobmf.categories import ViewFactory
-from djangobmf.categories import HumanResources
-from djangobmf.sites import site
+from djangobmf.dashboards import HumanResources
+from djangobmf.sites import Module
+from djangobmf.sites import ViewMixin
+from djangobmf.sites import register
 
+from .categories import EmployeeCategory
 from .models import Employee
 from .serializers import EmployeeSerializer
 from .views import EmployeeCreateView
 
 
-site.register_module(Employee, **{
-    'create': EmployeeCreateView,
-    'serializer': EmployeeSerializer,
-})
+@register(dashboard=HumanResources)
+class EmployeeModule(Module):
+    model = Employee
+    default = True
+    serializer = EmployeeSerializer
+    create = EmployeeCreateView
 
 
-class EmployeeCategory(BaseCategory):
-    name = _('Employees')
-    slug = "employees"
-
-
-site.register_dashboards(
-    HumanResources(
-        EmployeeCategory(
-            ViewFactory(
-                model=Employee,
-                name=_("All Employees"),
-                slug="all",
-            ),
-        ),
-    ),
-)
+@register(category=EmployeeCategory)
+class AllAccounts(ViewMixin):
+    model = Employee
+    name = _("All Employees")
+    slug = "all"

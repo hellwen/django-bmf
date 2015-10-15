@@ -15,7 +15,7 @@
       <td></td>
       <td></td>
       <td class="text-right">
-          <a class="btn btn-xs bmf-edit btn-success" href="{% url "djangobmf:moduleapi_djangobmf_task_task:create" "default" %}?data[goal]={{ object.pk }}&amp;data[project]={{ object.project_id|default:"" }}">
+          <a class="btn btn-xs bmf-edit btn-bmfcreate" href="{% url "djangobmf:moduleapi_djangobmf_task_task:create" "default" %}?data[goal]={{ object.pk }}&amp;data[project]={{ object.project_id|default:"" }}">
           <span class="glyphicon glyphicon-plus"></span>
         </a>
       </td>

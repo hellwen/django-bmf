@@ -1,4 +1,15 @@
-Version 0.2.3 (currently in development)
+Version 0.2.5 (currently in development)
+========================================
+
+(in development)
+
+Version 0.2.4 (2015-10-15)
+========================================
+
+* Removed django-mptt dependency
+* Reworked module registrations
+
+Version 0.2.3 (2015-03-11)
 ========================================
 
 * Added Configuration Cache

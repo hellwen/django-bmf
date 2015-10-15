@@ -9,7 +9,6 @@ models doctype
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -17,16 +16,15 @@ from djangobmf.currency import Wallet
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
 from djangobmf.models import BMFModel
-from djangobmf.models import BMFModelBase
 from djangobmf.settings import CONTRIB_ACCOUNT
 from djangobmf.settings import CONTRIB_PROJECT
 from djangobmf.settings import CONTRIB_TRANSACTION
 
 from .workflows import TransactionWorkflow
 
-from mptt.managers import TreeManager
-from mptt.models import TreeForeignKey
-from mptt.models import MPTTModelBase, MPTTModel
+from .serializers import AccountSerializer
+from .serializers import TransactionSerializer
+from .serializers import TransactionItemSerializer
 
 ACCOUNTING_INCOME = 10
 ACCOUNTING_EXPENSE = 20
@@ -43,16 +41,6 @@ ACCOUNTING_TYPES = (
 )
 
 
-class BMFModelMPTTBase(MPTTModelBase, BMFModelBase):
-    pass
-
-
-class BMFModelMPTT(six.with_metaclass(BMFModelMPTTBase, BMFModel, MPTTModel)):
-    objects = TreeManager()
-
-    class Meta:
-        abstract = True
-
 # =============================================================================
 # TODO: Add Fiscal Year
 # TODO: Add Period
@@ -60,7 +48,7 @@ class BMFModelMPTT(six.with_metaclass(BMFModelMPTTBase, BMFModel, MPTTModel)):
 
 
 @python_2_unicode_compatible
-class BaseAccount(BMFModelMPTT):
+class BaseAccount(BMFModel):
     """
     Accounts
 
@@ -74,10 +62,14 @@ class BaseAccount(BMFModelMPTT):
     Equity/Capital  Increase  Decrease
     ==============  ========  ========
     """
-    parent = TreeForeignKey(
-        'self', null=True, blank=True, related_name='children',
+    parent = models.ForeignKey(
+        'self', null=True, blank=True, related_name='child',
         on_delete=models.CASCADE,
     )
+    parents = models.ManyToManyField(
+        'self', related_name='children', editable=False, symmetrical=False,
+    )
+
     balance_currency = CurrencyField(editable=False)
     balance = MoneyField(editable=False)
     number = models.CharField(_('Number'), max_length=30, null=True, blank=True, unique=True, db_index=True)
@@ -102,22 +94,25 @@ class BaseAccount(BMFModelMPTT):
 
     class BMFMeta:
         observed_fields = ['name', ]
-
-    class MPTTMeta:
-        order_insertion_by = ['number', 'name', 'type']
+        serializer = AccountSerializer
 
     def __init__(self, *args, **kwargs):
         super(BaseAccount, self).__init__(*args, **kwargs)
-        self.initial_number = self.number
+        self.initial_parent = self.parent_id
 
-    @staticmethod
-    def post_save(sender, instance, created, *args, **kwargs):
-        if not created and instance.initial_number != instance.number:
-            # TODO this get's the job done, but there might be a more efficient way to do this
-            if instance.parent:
-                instance._meta.model.objects.partial_rebuild(instance.tree_id)
+    def save(self, update_parents=True, *args, **kwargs):
+        super(BaseAccount, self).save(*args, **kwargs)
+
+        if update_parents:
+            if self.parent:
+                self.parents = list(self.parent.parents.values_list('pk', flat=True)) + [self.parent_id]
             else:
-                instance._meta.model.objects.rebuild()
+                self.parents = []
+
+        if self.initial_parent != self.parent_id:
+            # Update children ...
+            for account in Account.objects.filter(parents=self):
+                account.save()
 
     def clean(self):
         if self.parent:
@@ -192,6 +187,7 @@ class BaseTransaction(BMFModel):
         observed_fields = ['expensed', 'text']
         has_files = True
         workflow = TransactionWorkflow
+        serializer = TransactionSerializer
 
     def __str__(self):
         return '%s' % self.text
@@ -262,6 +258,9 @@ class BaseTransactionItem(BMFModel):
     class Meta:
         abstract = True
         swappable = "BMF_CONTRIB_TRANSACTIONITEM"
+
+    class BMFMeta:
+        serializer = TransactionItemSerializer
 
 # def set_debit(self, amount):
 #   if self.get_type in [ACCOUNTING_ASSET, ACCOUNTING_EXPENSE]:

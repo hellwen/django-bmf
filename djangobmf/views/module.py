@@ -38,23 +38,23 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
-from djangobmf.models import Report
-from djangobmf.signals import activity_create
-from djangobmf.signals import activity_update
-# from djangobmf.utils.deprecation import RemovedInNextBMFVersionWarning
-
-from .mixins import ModuleClonePermissionMixin
-from .mixins import ModuleCreatePermissionMixin
-from .mixins import ModuleDeletePermissionMixin
-from .mixins import ModuleUpdatePermissionMixin
 from .mixins import ModuleSearchMixin
-from .mixins import ModuleViewPermissionMixin
 from .mixins import ModuleAjaxMixin
 from .mixins import ModuleViewMixin
 from .mixins import ModuleActivityMixin
 from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
+from djangobmf.models import Report
+from djangobmf.permissions import AjaxPermission
+from djangobmf.permissions import ModuleViewPermission
+from djangobmf.permissions import ModuleClonePermission
+from djangobmf.permissions import ModuleCreatePermission
+from djangobmf.permissions import ModuleDeletePermission
+from djangobmf.permissions import ModuleUpdatePermission
+from djangobmf.signals import activity_create
+from djangobmf.signals import activity_update
+# from djangobmf.utils.deprecation import RemovedInNextBMFVersionWarning
 
 import copy
 # import datetime
@@ -73,10 +73,11 @@ logger = logging.getLogger(__name__)
 # --- list views --------------------------------------------------------------
 
 
-class ModuleListView(
-        ModuleViewPermissionMixin, ModuleViewMixin, TemplateView):
+class ModuleListView(ModuleViewMixin, TemplateView):
     """
     """
+    permission_classes = [ModuleViewPermission]
+
     # set by views.dashboard
     model = None
     dashboard = None
@@ -132,37 +133,33 @@ class ModuleListView(
             return self.model._meta.verbose_name_plural
 
     def get_data_url(self):
-        kwargs = {}
+        url = reverse('djangobmf:api', kwargs={
+            'app': self.model._meta.app_label,
+            'model': self.model._meta.model_name,
+        })
 
-        if self.manager:
-            kwargs.update({
-                'manager': self.manager
-            })
-        else:
-            kwargs.update({
-                'manager': 'all'
-            })
-
-        url = reverse('%s:get' % self.model._bmfmeta.namespace_api, kwargs=kwargs)
-
-        args = {}
+        kwargs = {
+            'd': self._bmf_dashboard.key,
+            'c': self._bmf_category.key,
+            'v': self._bmf_view_class.key,
+        }
 
         page = self.request.GET.get('page')
 
         if page:
             try:
-                args['page'] = int(page)
+                kwargs['page'] = int(page)
             except ValueError:
                 pass
 
         if not self.paginate:
-            args['paginate'] = 'no'
+            kwargs['paginate'] = 'no'
 
-        if args:
+        if kwargs:
             if six.PY2:
-                return url + '?' + urllib.urlencode(args)
+                return url + '?' + urllib.urlencode(kwargs)
             else:
-                return url + '?' + urllib.parse.urlencode(args)
+                return url + '?' + urllib.parse.urlencode(kwargs)
         else:
             return url
 
@@ -293,10 +290,11 @@ class ModuleLetterView(ModuleGenericBaseView, FilterView):
 
 
 class ModuleDetailView(
-        ModuleViewPermissionMixin, ModuleFilesMixin, ModuleActivityMixin, ModuleViewMixin, DetailView):
+        ModuleFilesMixin, ModuleActivityMixin, ModuleViewMixin, DetailView):
     """
     show the details of an entry
     """
+    permission_classes = [ModuleViewPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfdetail'
     reports = []
@@ -350,10 +348,11 @@ class ModuleDetailView(
             + ["djangobmf/module_detail_default.html"]
 
 
-class ModuleReportView(ModuleViewPermissionMixin, ModuleViewMixin, DetailView):
+class ModuleReportView(ModuleViewMixin, DetailView):
     """
     render a report
     """
+    permission_classes = [ModuleViewPermission]
     context_object_name = 'object'
 
     def get_template_names(self):
@@ -374,136 +373,11 @@ class ModuleReportView(ModuleViewPermissionMixin, ModuleViewMixin, DetailView):
         return "report"
 
 
-# ass ModuleGetView(ModuleViewPermissionMixin, ModuleAjaxMixin, ModuleSearchMixin, MultipleObjectMixin, View):
-#   """
-#   Provides an API to get object data
-#   """
-
-#   # Limit Queryset length and activate pagination
-#   limit = 100
-#   date_field = None
-
-#   def get_date_field(self):
-#       """
-#       Get the name of the date field to be used to filter by.
-#       """
-#       return self.date_field or 'modified'
-
-#   def get_item_data(self, data):
-#       """
-#       this method calls the serializer, you can overwrite if, if you like
-#       but it's recommended to create a serializer for your object
-
-#       it returns a (serialized) list with all objects in the queryset
-#       """
-#       return self.serializer(self.model, data).serialize()
-
-#   def get(self, request, manager=None):
-#       pk = int(self.request.GET.get('pk', 0))
-
-#       # activate pagination
-#       pagination = not bool(self.request.GET.get('pagination', False))
-
-#       period = self.request.GET.get('period', None)
-#       since = self.request.GET.get('since', None)
-#       until = self.request.GET.get('until', None)
-#       if since and until:
-#           since = make_aware(datetime.datetime(*map(int, since.split('-', 3)[:3])), get_current_timezone())
-#           until = make_aware(datetime.datetime(*map(int, until.split('-', 3)[:3])), get_current_timezone())
-#       else:
-#           until = None
-#           since = None
-
-#       search = self.request.GET.get('search', None)
-#       page = self.request.GET.get('page', 1)
-
-#       queryset = self.get_queryset(manager)
-
-#       if period in ["year", "month", "week", "day"] and not (since and until):
-#           pass
-#       else:
-#           period = None
-
-#       if since and until:
-#           date_field = self.get_date_field()
-#           queryset = queryset.filter(**{
-#               '%s__gte' % date_field: since,
-#               '%s__lt' % date_field: until,
-#           })
-
-#       # select only models connected to a related model
-#       # defined by the models contenttype and pk
-#       # the contentype pk and the objects id
-#       # and the related fields name
-#       related_field = self.request.GET.get('rel', None)
-#       # related_ct = self.request.GET.get('relct', 0)
-#       related_pk = self.request.GET.get('relpk', 0)
-#       # related_model = None
-
-#       if related_field and related_pk:
-#           if hasattr(self.model, related_field):
-#               queryset = queryset.filter(**{related_field: related_pk})
-
-#       # search
-#       if search:
-#           if self.model._bmfmeta.search_fields:
-#               for bit in self.normalize_query(search):
-#                   lookups = [self.construct_search(str(f)) for f in self.model._bmfmeta.search_fields]
-#                   queries = [Q(**{l: bit}) for l in lookups]
-#                   queryset = queryset.filter(reduce(operator.or_, queries))
-#           else:
-#               queryset = []
-
-#       if pagination and self.limit:
-#           # pagination
-#           paginator = Paginator(queryset, self.limit)
-#           count = paginator.count
-#           num_pages = paginator.num_pages
-#           pages = paginator.page_range  # TODO move me to angular
-
-#           try:
-#               qs_data = paginator.page(self.request.GET.get('page', 1))
-#           except PageNotAnInteger:
-#               qs_data = paginator.page(1)
-#           except EmptyPage:
-#               qs_data = paginator.page(num_pages)
-
-#           page = qs_data.number
-
-#       else:
-#           # no pagination
-#           count = queryset.count()
-#           num_pages = 1
-#           qs_data = queryset
-#           page = 1
-#           pages = [1]  # TODO: move me to angular
-
-#       return self.render_to_json_response({
-#           'model': str(self.model),
-#           'count': count,
-#           'pk': pk,
-#           'time': {
-#               'period': period,
-#               'since': since.strftime('%Y-%m-%d'),
-#               'until': until.strftime('%Y-%m-%d'),
-#           } if period or since and until else None,
-#           'pagination': {
-#               'enabled': pagination,
-#               'page': page,
-#               'pages': pages,  # TODO: move me to angular
-#               'num_pages': num_pages,
-#               'next': None,  # TODO: unused
-#               'previous': None,  # TODO: unused
-#           },
-#           'search': search,
-#           'items': self.get_item_data(qs_data),
-#       })
-
-
-class ModuleCloneView(ModuleFormMixin, ModuleClonePermissionMixin, ModuleAjaxMixin, UpdateView):
+class ModuleCloneView(ModuleFormMixin, ModuleAjaxMixin, UpdateView):
     """
     clone a object
     """
+    permission_classes = [ModuleClonePermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfclone'
     fields = []
@@ -544,9 +418,10 @@ class ModuleCloneView(ModuleFormMixin, ModuleClonePermissionMixin, ModuleAjaxMix
         })
 
 
-class ModuleUpdateView(ModuleFormMixin, ModuleUpdatePermissionMixin, ModuleAjaxMixin, ReadOnlyMixin, UpdateView):
+class ModuleUpdateView(ModuleFormMixin, ModuleAjaxMixin, ReadOnlyMixin, UpdateView):
     """
     """
+    permission_classes = [ModuleUpdatePermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfupdate'
     exclude = []
@@ -578,10 +453,11 @@ class ModuleUpdateView(ModuleFormMixin, ModuleUpdatePermissionMixin, ModuleAjaxM
             })
 
 
-class ModuleCreateView(ModuleFormMixin, ModuleCreatePermissionMixin, ModuleAjaxMixin, ReadOnlyMixin, CreateView):
+class ModuleCreateView(ModuleFormMixin, ModuleAjaxMixin, ReadOnlyMixin, CreateView):
     """
     create a new instance
     """
+    permission_classes = [ModuleCreatePermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfcreate'
 
@@ -605,10 +481,11 @@ class ModuleCreateView(ModuleFormMixin, ModuleCreatePermissionMixin, ModuleAjaxM
         })
 
 
-class ModuleDeleteView(ModuleDeletePermissionMixin, ModuleAjaxMixin, DeleteView):
+class ModuleDeleteView(ModuleAjaxMixin, DeleteView):
     """
     delete an instance
     """
+    permission_classes = [ModuleDeletePermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfdelete'
 
@@ -727,6 +604,7 @@ class ModuleWorkflowView(ModuleAjaxMixin, DetailView):
     """
     update the state of a workflow
     """
+    permission_classes = [AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfworkflow'
 
@@ -760,6 +638,7 @@ class ModuleWorkflowView(ModuleAjaxMixin, DetailView):
 class ModuleFormAPI(ModuleFormMixin, ModuleAjaxMixin, ModuleSearchMixin, SingleObjectMixin, BaseFormView):
     """
     """
+    permission_classes = [AjaxPermission]
     model = None
     queryset = None
     form_view = None

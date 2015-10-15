@@ -1,0 +1,18 @@
+{% extends "djangobmf/module_detail.html" %}
+
+{% block base_content %}
+<ul>
+    <li>name {{ object.summary }}</li>
+    <li>desc {{ object.description }}</li>
+    <li>start {{ object.start }}</li>
+    <li>end_count {{ object.end_count }}</li>
+    <li>end {{ object.end }}</li>
+    <li>billable {{ object.billable }}</li>
+    <li>auto {{ object.auto }}</li>
+    <li>valid {{ object.valid }}</li>
+    <li>employee {{ object.employee }}</li>
+    <li>project {{ object.project }}</li>
+    <li>task {{ object.task }}</li>
+</ul>
+{{ block.super }}
+{% endblock %}

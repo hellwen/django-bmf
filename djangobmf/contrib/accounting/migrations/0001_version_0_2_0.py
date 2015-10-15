@@ -5,20 +5,9 @@ from django.db import models, migrations
 import djangobmf.fields
 import django.db.models.deletion
 from django.conf import settings
-import mptt.fields
 
 
 class Migration(migrations.Migration):
-
-    replaces = [
-        ('djangobmf_accounting', '0001_initial'),
-        ('djangobmf_accounting', '0002_optional_transaction_project'),
-        ('djangobmf_accounting', '0003_alter_field_type_on_account'),
-        ('djangobmf_accounting', '0004_added_transactionitem_as_framework_model'),
-        ('djangobmf_accounting', '0005_removed_m2m_relationship'),
-        ('djangobmf_accounting', '0006_auto_20141024_0355'),
-        ('djangobmf_accounting', '0007_version_0_2_0'),
-    ]
 
     dependencies = [
         migrations.swappable_dependency(settings.BMF_CONTRIB_PROJECT),
@@ -46,7 +35,7 @@ class Migration(migrations.Migration):
                 ('comment', models.TextField(null=True, blank=True, verbose_name='Comment')),
                 ('created_by', models.ForeignKey(null=True, blank=True, to=settings.AUTH_USER_MODEL, editable=False, on_delete=django.db.models.deletion.SET_NULL, related_name='+')),
                 ('modified_by', models.ForeignKey(null=True, blank=True, to=settings.AUTH_USER_MODEL, editable=False, on_delete=django.db.models.deletion.SET_NULL, related_name='+')),
-                ('parent', mptt.fields.TreeForeignKey(null=True, blank=True, to=settings.BMF_CONTRIB_ACCOUNT, related_name='children')),
+                ('parent', models.ForeignKey(null=True, blank=True, to=settings.BMF_CONTRIB_ACCOUNT, related_name='children')),
             ],
             options={
                 'verbose_name_plural': 'Accounts',

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-10 09:33+0100\n"
+"POT-Creation-Date: 2015-10-15 17:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +17,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:41 models.py:173
-msgid "Products"
-msgstr ""
-
-#: bmf_module.py:50
+#: bmf_module.py:49
 msgid "Sellable products"
 msgstr ""
 
-#: bmf_module.py:56
+#: bmf_module.py:61
 msgid "Purchaseable products"
 msgstr ""
 
-#: bmf_module.py:62
+#: bmf_module.py:73
 msgid "All products"
+msgstr ""
+
+#: categories.py:13 models.py:158
+msgid "Products"
 msgstr ""
 
 #: models.py:27
@@ -45,40 +45,40 @@ msgstr ""
 msgid "Has serial number"
 msgstr ""
 
-#: models.py:60
+#: models.py:47
 msgid "Name"
 msgstr ""
 
-#: models.py:66
+#: models.py:53
 msgid "Product Code"
 msgstr ""
 
-#: models.py:73
+#: models.py:60
 msgid "Product type"
 msgstr ""
 
-#: models.py:80
+#: models.py:67
 msgid "Can be sold"
 msgstr ""
 
-#: models.py:83
+#: models.py:70
 msgid "Can be purchased"
 msgstr ""
 
-#: models.py:85 templates/djangobmf_product/product_bmfdetail.html:30
+#: models.py:72 templates/djangobmf_product/product_bmfdetail.html:30
 msgid "Description"
 msgstr ""
 
-#: models.py:90
+#: models.py:77
 msgid "Price"
 msgstr ""
 
-#: models.py:172 templates/djangobmf_product/product_bmfdetail.html:5
+#: models.py:157 templates/djangobmf_product/product_bmfdetail.html:5
 #: templates/djangobmf_product/product_bmfdetail.html:8
 msgid "Product"
 msgstr ""
 
-#: models.py:242
+#: models.py:227
 msgid "Is the tax included in the price?"
 msgstr ""
 

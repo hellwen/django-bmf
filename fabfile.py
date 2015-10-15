@@ -9,7 +9,7 @@ import os
 BASEDIR = os.path.dirname(env.real_fabfile)
 
 PYTHON = BASEDIR + "/virtenv/bin/python"
-DEVELOP = BASEDIR + "/develop.py"
+MANAGE = BASEDIR + "/manage.py"
 
 from djangobmf.demo import FIXTURES
 
@@ -60,7 +60,7 @@ def js():
     with lcd(BASEDIR):
         js_ext = (
             'bower_components/jquery-cookie/jquery.cookie.js',
-            'submodules/jquery-treegrid/js/jquery.treegrid.js',
+            'bower_components/jquery-treegrid/js/jquery.treegrid.js',
             'bower_components/bootstrap/dist/js/bootstrap.js',
         )
         js_own = (
@@ -76,11 +76,12 @@ def js():
         local('cp bower_components/jquery/dist/jquery.min.map djangobmf/static/djangobmf/js/')
         local('cp bower_components/angular/angular.min.js djangobmf/static/djangobmf/js/')
         local('cp bower_components/angular/angular.min.js.map djangobmf/static/djangobmf/js/')
+        local('cp bower_components/d3/d3.min.js djangobmf/static/djangobmf/js/')
 
         local('cp bower_components/bootstrap/dist/js/bootstrap.min.js djangobmf/static/djangobmf/js/')
 
         local('yui-compressor --type js -o djangobmf/static/djangobmf/js/jquery.cookie.min.js bower_components/jquery-cookie/jquery.cookie.js')
-        local('yui-compressor --type js -o djangobmf/static/djangobmf/js/jquery.treegrid.min.js submodules/jquery-treegrid/js/jquery.treegrid.js')
+        local('yui-compressor --type js -o djangobmf/static/djangobmf/js/jquery.treegrid.min.js bower_components/jquery-treegrid/js/jquery.treegrid.js')
 
         local('cat %s > djangobmf/static/djangobmf/js/djangobmf.js' % ' '.join(js_ext + js_own))
         local('yui-compressor --type js -o djangobmf/static/djangobmf/js/djangobmf.min.js djangobmf/static/djangobmf/js/djangobmf.js')
@@ -117,24 +118,24 @@ def test_core(module=""):
 @task
 def locale():
     with lcd(BASEDIR + '/djangobmf'):
-        local('%s %s makemessages -l %s --domain django' % (PYTHON, DEVELOP, 'en'))
-        local('%s %s makemessages -l %s --domain djangojs' % (PYTHON, DEVELOP, 'en'))
+        local('%s %s makemessages -l %s --domain django' % (PYTHON, MANAGE, 'en'))
+        local('%s %s makemessages -l %s --domain djangojs' % (PYTHON, MANAGE, 'en'))
         check_locale()
 
     for app in APPS:
         with lcd(BASEDIR + '/djangobmf/contrib/' + app):
-            local('%s %s makemessages -l %s --domain django' % (PYTHON, DEVELOP, 'en'))
+            local('%s %s makemessages -l %s --domain django' % (PYTHON, MANAGE, 'en'))
             check_locale()
 
     with lcd(BASEDIR):
         local('tx pull')
 
     with lcd(BASEDIR + '/djangobmf'):
-        local('%s %s compilemessages' % (PYTHON, DEVELOP))
+        local('%s %s compilemessages' % (PYTHON, MANAGE))
 
     for app in APPS:
         with lcd(BASEDIR + '/djangobmf/contrib/' + app):
-            local('%s %s compilemessages' % (PYTHON, DEVELOP))
+            local('%s %s compilemessages' % (PYTHON, MANAGE))
 
     puts("Dont forget to run 'tx push -s' to push new source files")
 
@@ -152,11 +153,11 @@ def make(data=''):
   """
   with lcd(BASEDIR):
     local('rm -f sandbox/database.sqlite')
-    local('%s %s migrate --noinput' % (PYTHON, DEVELOP))
+    local('%s %s migrate --noinput' % (PYTHON, MANAGE))
     if not data:
-        local('%s %s loaddata %s' % (PYTHON, DEVELOP, ' '.join(FIXTURES)))
+        local('%s %s loaddata %s' % (PYTHON, MANAGE, ' '.join(FIXTURES)))
     else:
-        local('%s %s loaddata fixtures/users.json' % (PYTHON, DEVELOP))
+        local('%s %s loaddata fixtures/users.json' % (PYTHON, MANAGE))
 
 
 @task
@@ -164,11 +165,11 @@ def start():
   """
   """
   with lcd(BASEDIR):
-    local('%s %s runserver 8000' % (PYTHON, DEVELOP))
+    local('%s %s runserver 8000' % (PYTHON, MANAGE))
 
 
 @task
 def shell():
   """
   """
-  local('%s %s shell' % (PYTHON, DEVELOP))
+  local('%s %s shell' % (PYTHON, MANAGE))

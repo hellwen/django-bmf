@@ -39,19 +39,6 @@ PRODUCT_NO = (
 # =============================================================================
 
 
-class ProductManager(models.Manager):
-
-    def can_sold(self, request):
-        return self.get_queryset().filter(
-            can_sold=True,
-        )
-
-    def can_purchased(self, request):
-        return self.get_queryset().filter(
-            can_purchased=True,
-        )
-
-
 @python_2_unicode_compatible
 class AbstractProduct(BMFModel):
     """
@@ -114,8 +101,6 @@ class AbstractProduct(BMFModel):
         limit_choices_to={'type': ACCOUNTING_EXPENSE, 'read_only': False},
         on_delete=models.PROTECT,
     )
-
-    objects = ProductManager()
 
     # warehouse
     # number = models.PositiveSmallIntegerField( _("Product number"), null=True, blank=True, choices=PRODUCT_NO)

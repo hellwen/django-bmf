@@ -16,16 +16,8 @@ from djangobmf.fields import MoneyField
 import datetime
 from decimal import Decimal
 
+from .serializers import QuotationSerializer
 from .workflows import QuotationWorkflow
-
-
-class QuotationManager(models.Manager):
-
-    def open(self, request):
-        return self.get_queryset().filter(
-            # completed=False,
-            state__in=['draft', 'send', 'accepted'],
-        )
 
 
 @python_2_unicode_compatible
@@ -86,7 +78,21 @@ class AbstractQuotation(BMFModel):
 
     completed = models.BooleanField(_("Completed"), default=False, editable=False)
 
-    objects = QuotationManager()
+    class Meta:
+        verbose_name = _('Quotation')
+        verbose_name_plural = _('Quotations')
+        ordering = ['-pk']
+        abstract = True
+        swappable = "BMF_CONTRIB_QUOTATION"
+
+    class BMFMeta:
+        observed_fields = ['quotation_number', 'net', 'state']
+        has_files = True
+        has_comments = True
+        clean = True
+        serializer = QuotationSerializer
+        number_cycle = "Q{year}/{month}-{counter:04d}"
+        workflow = QuotationWorkflow
 
     def __init__(self, *args, **kwargs):
         super(AbstractQuotation, self).__init__(*args, **kwargs)
@@ -168,21 +174,6 @@ class AbstractQuotation(BMFModel):
                 else:
                     t[tax] = value
         return t.items()
-
-    class Meta:
-        verbose_name = _('Quotation')
-        verbose_name_plural = _('Quotations')
-        ordering = ['-pk']
-        abstract = True
-        swappable = "BMF_CONTRIB_QUOTATION"
-
-    class BMFMeta:
-        observed_fields = ['quotation_number', 'net', 'state']
-        has_files = True
-        has_comments = True
-        clean = True
-        number_cycle = "Q{year}/{month}-{counter:04d}"
-        workflow = QuotationWorkflow
 
 
 class Quotation(AbstractQuotation):

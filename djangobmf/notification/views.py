@@ -125,7 +125,7 @@ class NotificationView(ViewMixin, ListView):
         if self.kwargs.get('ct', None):
             qs = qs.filter(watch_ct_id=self.kwargs.get('ct'))
 
-        return qs.select_related('activity', 'ct', 'created_by')
+        return qs.select_related('watch_ct')
 
 
 class NotificationCreate(AjaxMixin, CreateView):

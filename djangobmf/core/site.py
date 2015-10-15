@@ -15,8 +15,7 @@ from django.core.exceptions import ImproperlyConfigured
 from djangobmf.core.module import Module
 from djangobmf.models import Configuration
 from djangobmf.models import NumberCycle
-
-from rest_framework import routers
+from djangobmf.models import Report
 
 import logging
 logger = logging.getLogger(__name__)
@@ -30,14 +29,11 @@ class Site(object):
     def __init__(self, namespace=None, app_name=None):
         self.namespace = namespace or "djangobmf"
         self.app_name = app_name or "djangobmf"
-        self.router = routers.DefaultRouter()
         self.clear()
 
     def clear(self):
         # true if the site is active, ie loaded
         self.is_active = False
-
-        self.is_migrated = False
 
         # combine all registered modules here
         self.modules = {}
@@ -47,9 +43,6 @@ class Site(object):
 
         # all numbercycles are here
         self.numbercycles = []
-
-        # all reports should be stored here
-        self.reports = {}
 
         # all dashboards are stored here
         self.dashboards = []
@@ -74,6 +67,18 @@ class Site(object):
             return True
 
         logger.debug('Site activation started')
+
+        # ~~~~ reports ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        for dashboard in self.dashboards:
+            for report in dashboard.reports:
+                ct = ContentType.objects.get_for_model(report.model)
+                report.object, created = Report.objects.get_or_create(
+                    key=report.key,
+                    contenttype=ct
+                )
+                if created:
+                    logger.debug('Reportobject for report %s created' % report.key)
 
         # ~~~~ numbercycles ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -128,7 +133,7 @@ class Site(object):
 
     def unregister_module(self, module):
         if module not in self.modules:
-            raise NotRegistered('The model %s is not registered' % module.__name__)
+            raise NotRegistered('The module %s is not registered' % module.__name__)
         del self.modules[module]
 
     def get_module(self, model):
@@ -145,18 +150,6 @@ class Site(object):
         if currency.iso not in self.currencies:
             raise NotRegistered('The currency %s is not registered' % currency.__name__)
         del self.currencies[currency.iso]
-
-    # --- reports -------------------------------------------------------------
-
-    def register_report(self, name, cls):
-        if name in self.reports:
-            raise AlreadyRegistered('The report %s is already registered' % name)
-        self.reports[name] = cls
-
-    def unregister_report(self, name):
-        if name not in self.reports:
-            raise NotRegistered('The currency %s is not registered' % name)
-        del self.reports[name]
 
     # --- settings ------------------------------------------------------------
 
@@ -187,16 +180,6 @@ class Site(object):
 
     # --- dashboards ----------------------------------------------------------
 
-    def register_dashboards(self, *args):
-        for dashboard in args:
-            if dashboard in self.dashboards:
-                # merge
-                i = self.dashboards.index(dashboard)
-                self.dashboards[i].merge(dashboard)
-            else:
-                # append
-                self.dashboards.append(dashboard)
-
     def get_dashboard(self, key):
         data = [i for i in self.dashboards if i.key == key]
         if len(data) == 1:
@@ -205,19 +188,9 @@ class Site(object):
 
     # --- url generation ------------------------------------------------------
 
-    # --- misc methods --------------------------------------------------------
-
     @property
     def urls(self):
         return self.get_urls(), self.app_name, self.namespace
-
-    @property
-    def models(self):
-        models = {}
-        for model in self.modules.keys():
-            ct = ContentType.objects.get_for_model(model)
-            models[ct.pk] = model
-        return models
 
     def get_urls(self):
 
@@ -231,6 +204,16 @@ class Site(object):
             # and raise a Runtime error. We ignore that error and return an empty
             # pattern - the urls are not needed during migrations.
             return patterns('')
+
+        for dashboard in self.dashboards:
+            urlpatterns += patterns(
+                '',
+                url(
+                    r'^dashboard/%s/' % dashboard.slug,
+                    include((dashboard.get_urls(), self.app_name, "dashboard_%s" % dashboard.key)),
+                    kwargs={'dashboard': dashboard.key},
+                ),
+            )
 
         for module, data in self.modules.items():
             info = (module._meta.app_label, module._meta.model_name)
@@ -255,3 +238,13 @@ class Site(object):
                     ),
                 )
         return urlpatterns
+
+    # --- misc methods --------------------------------------------------------
+
+    @property
+    def models(self):
+        models = {}
+        for model in self.modules.keys():
+            ct = ContentType.objects.get_for_model(model)
+            models[ct.pk] = model
+        return models

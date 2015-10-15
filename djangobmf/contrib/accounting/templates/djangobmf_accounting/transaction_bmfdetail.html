@@ -35,7 +35,7 @@
         <td class="text-right">{{ object.balance_debit }}</td>
         <td class="text-right">{{ object.balance_credit }}</td>
         <td class="text-right">
-          <a class="btn btn-xs bmfedit btn-bmfcreate" href="{% url "djangobmf:module_djangobmf_accounting_transactionitem:create" %}?data[transaction]={{ object.pk }}">
+          <a class="btn btn-xs bmf-edit btn-bmfcreate" href="{% url "djangobmf:moduleapi_djangobmf_accounting_transactionitem:create" "default" %}?set-transaction={{ object.pk }}">
             <span class="glyphicon glyphicon-plus"></span>
           </a>
         </td>

@@ -4,14 +4,15 @@
 from __future__ import unicode_literals
 
 from django.apps import apps
+from django.core.exceptions import ImproperlyConfigured
 
 from djangobmf.conf import settings
-
 from djangobmf.core.category import Category
 from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
 from djangobmf.core.report import Report
-from djangobmf.core.view import View
+from djangobmf.core.viewmixin import ViewMixin
+from djangobmf.core.filter_queryset import FilterQueryset
 
 import logging
 logger = logging.getLogger(__name__)
@@ -22,7 +23,8 @@ __all__ = [
     'Dashboard',
     'Module',
     'Report',
-    'View',
+    'ViewMixin',
+    'FilterQueryset',
 ]
 
 
@@ -44,18 +46,56 @@ if apps.apps_ready:  # pragma: no branch
         def __call__(self, cls):
             self.register_generic(cls)
 
+        def register_category(self, category):
+            dashboard = self.register_dashboard(category.dashboard)
+            category = dashboard.add_category(category)
+            return category
+
+        def register_dashboard(self, dashboard):
+            for db in site.dashboards:
+                if isinstance(db, dashboard):
+                    return db
+
+            # Register and initialize the Dashboard
+            db = dashboard(site)
+            site.dashboards.append(db)
+            logger.debug('Registered Dashboard "%s"', dashboard.__name__)
+            return db
+
         def register_generic(self, cls):
-            if "dashboard" in self.kwargs:
-                logger.debug('Register Dashboard "%s"' % self.kwargs["dashboard"])
-                # if self.kwargs["dashboard"] not in site.dashboards:
-                #     # initialize dashboard and append to site
-                #     site.dashboards.append(self.kwargs["dashboard"]())
+            if issubclass(cls, ViewMixin):
+                if "category" not in self.kwargs:
+                    raise ImproperlyConfigured(
+                        'You need to define a category, when registering the view %s',
+                        cls,
+                    )
+                category = self.register_category(self.kwargs["category"])
+                category.add_view(cls)
+                logger.debug('Registered View "%s" to %s', cls.__name__, category.__class__.__name__)
 
-            if issubclass(cls, Category) and 'dashboard' in self.kwargs:
-                logger.debug('Register Category "%s"' % cls.__name__)
+            elif issubclass(cls, Module):
+                if "dashboard" not in self.kwargs:
+                    raise ImproperlyConfigured(
+                        'You need to define a dashbord, when registering the module %s',
+                        cls,
+                    )
+                dashboard = self.register_dashboard(self.kwargs["dashboard"])
+                dashboard.add_module(cls)
 
-            if issubclass(cls, Module) and 'dashboard' in self.kwargs:
-                logger.debug('Register Module "%s"' % cls.__name__)
+            elif issubclass(cls, Report):
+                if "dashboard" not in self.kwargs:
+                    raise ImproperlyConfigured(
+                        'You need to define a dashbord, when registering the report %s',
+                        cls,
+                    )
+                dashboard = self.register_dashboard(self.kwargs["dashboard"])
+                dashboard.add_report(cls)
+
+            else:
+                raise ImproperlyConfigured(
+                    'You can not register %s with django-bmf',
+                    cls,
+                )
 
     __all__ += [
         'register',

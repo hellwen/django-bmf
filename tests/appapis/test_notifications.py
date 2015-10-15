@@ -7,6 +7,8 @@ from __future__ import unicode_literals
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 
+from djangobmf.models import Activity
+from djangobmf.models import ACTION_UPDATED
 from djangobmf.models import Notification
 from djangobmf.signals import activity_create
 from djangobmf.signals import activity_update
@@ -46,11 +48,10 @@ class NotificationTests(ModuleMixin, TestCase):
 
     def test_model_create(self):
         self.prepare_model_tests()
-        object = TestView.objects.create(field="b")
+        obj = TestView.objects.create(field="b")
+        activity_create.send(sender=obj.__class__, instance=obj)
 
-        activity_create.send(sender=object.__class__, instance=object)
-
-        self.assertEqual(Notification.objects.filter(watch_ct=self.ct, watch_id=object.pk).count(), 2, "Counting notification objects")
+        self.assertEqual(Notification.objects.filter(watch_ct=self.ct, watch_id=obj.pk).count(), 2, "Counting notification objects")
 
     @expectedFailure
     def test_model_comment(self):
@@ -62,16 +63,21 @@ class NotificationTests(ModuleMixin, TestCase):
         self.prepare_model_tests()
         self.assertEqual(1, 0, "not implemented")
 
-    @expectedFailure
     def test_model_changed(self):
         self.prepare_model_tests()
-        object = TestView.objects.create(field="b")
+        obj = TestView.objects.create(field="b")
+        activity_create.send(sender=obj.__class__, instance=obj)  # TODO: check why we need this
 
-        object.field = "a"
+        obj.field = "a"
+        activity_update.send(sender=obj.__class__, instance=obj)
 
-        activity_update.send(sender=object.__class__, instance=object)
+        data = Activity.objects.get(parent_ct=self.ct, parent_id=obj.pk, action=ACTION_UPDATED)
 
-        self.assertEqual(Notification.objects.filter(watch_ct=self.ct, watch_id=object.pk).count(), 2, "Counting notification objects")
+        self.assertEqual(
+            data.text,
+            '[["field", "b", "a"]]',
+            "Validation Activity object",
+        )
 
     @expectedFailure
     def test_model_workflow(self):
@@ -144,14 +150,14 @@ class NotificationTests(ModuleMixin, TestCase):
 
     def test_notification_views_edit_object(self):
         self.client_login("user1")
-        object = TestView.objects.create(field="a")
+        obj = TestView.objects.create(field="a")
 
         data = self.autotest_ajax_get(
-            url=reverse('djangobmf:notification-create', kwargs={'ct': self.ct.pk, 'pk': object.pk}),
+            url=reverse('djangobmf:notification-create', kwargs={'ct': self.ct.pk, 'pk': obj.pk}),
         )
 
         data = self.autotest_ajax_post(
-            url=reverse('djangobmf:notification-create', kwargs={'ct': self.ct.pk, 'pk': object.pk}),
+            url=reverse('djangobmf:notification-create', kwargs={'ct': self.ct.pk, 'pk': obj.pk}),
             data={
                 'new_entry': True,
                 'comment': True,
@@ -163,7 +169,7 @@ class NotificationTests(ModuleMixin, TestCase):
         notification = Notification.objects.get(**{
             'user': self.user1,
             'watch_ct': self.ct,
-            'watch_id': object.pk,
+            'watch_id': obj.pk,
         })
         self.assertFalse(notification.new_entry)
         self.assertTrue(notification.comment)

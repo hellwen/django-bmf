@@ -19,6 +19,9 @@ CACHE_KEY_TEMPLATE = 'bmfconfig.%s.%s'
 
 class ConfigurationManager(models.Manager):
 
+    def get_by_natural_key(self, app_label, field_name):
+        return self.get(app_label=app_label, field_name=field_name)
+
     def get_setting(self, app, name):
         """
         Returns the current ``Configuration`` based on the app-label and
@@ -80,6 +83,7 @@ class Configuration(models.Model):
         default_permissions = ('change',)
         ordering = ["app_label", "field_name"]
         abstract = True
+        unique_together = (('app_label', 'field_name'))
 
     def remove_cached_value(self):
         """
@@ -112,6 +116,9 @@ class Configuration(models.Model):
             "app_label": self.app_label,
             "name": self.field_name,
         })
+
+    def natural_key(self):
+        return (self.app_label, self.field_name)
 
 #   def clear_cache(self):
 #       """Clears the ``Configuration`` object cache."""
