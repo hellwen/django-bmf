@@ -15,6 +15,8 @@ from .serializers import GoalSerializer
 from .serializers import TaskSerializer
 from .workflows import GoalWorkflow
 from .workflows import TaskWorkflow
+from .permissions import GoalFilter
+from .permissions import TaskFilter
 
 from math import floor
 
@@ -68,6 +70,7 @@ class AbstractGoal(BMFModel):
         workflow = GoalWorkflow
         can_clone = True
         serializer = GoalSerializer
+        filter_queryset = GoalFilter
 
     def bmfget_customer(self):
         if self.project:
@@ -180,6 +183,7 @@ class AbstractTask(BMFModel):
         serializer = TaskSerializer
         has_files = True
         has_comments = True
+        filter_queryset = TaskFilter
 
     def __str__(self):
         if self.goal:

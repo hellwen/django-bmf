@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from django.apps import apps
 from django.http import Http404
 
-from djangobmf.core.employee import Employee
 from djangobmf.views.mixins import BaseMixin
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.pagination import ModulePagination
@@ -64,55 +63,3 @@ class APIModuleDetailView(APIMixin, RetrieveModelMixin, UpdateModelMixin, Destro
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
-
-
-class ModuleListAPIView(ListModelMixin, CreateModelMixin, GenericAPIView):
-    """
-    """
-    model = None
-    module = None
-    permissions = None
-    pagination_class = ModulePagination
-    paginate_by = 100
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-#   def post(self, request, *args, **kwargs):
-#       return self.create(request, *args, **kwargs)
-
-    def get_queryset(self):
-        qs = self.model.objects.all()
-        self.request.user.djangobmf = Employee(self.request.user)
-        return self.permissions().filter_queryset(
-            qs,
-            self.request.user,
-        )
-
-    def get_permissions(self):
-        perms = super(ModuleListAPIView, self).get_permissions()
-        return [self.permissions()] + perms
-
-
-class ModuleDetailAPIView(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
-    """
-    """
-    model = None
-    module = None
-    serializer = None
-    permissions = None
-
-#   def get(self, request, *args, **kwargs):
-#       return self.retrieve(request, *args, **kwargs)
-
-#   def put(self, request, *args, **kwargs):
-#       return self.update(request, *args, **kwargs)
-
-#   def patch(self, request, *args, **kwargs):
-#       return self.partial_update(request, *args, **kwargs)
-
-#   def delete(self, request, *args, **kwargs):
-#       return self.destroy(request, *args, **kwargs)
-
-    def get_queryset(self):
-        return self.model.objects.all()

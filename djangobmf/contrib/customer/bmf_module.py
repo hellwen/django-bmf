@@ -12,7 +12,6 @@ from djangobmf.sites import register
 
 from .categories import CustomerCategory
 from .models import Customer
-from .serializers import CustomerSerializer
 from .views import CustomerCreateView
 from .views import CompanyCreateView
 from .views import UpdateView
@@ -22,7 +21,6 @@ from .views import UpdateView
 class CustomerModule(Module):
     model = Customer
     default = True
-    serializer = CustomerSerializer
     create = {
         u'company': (_('Company'), CompanyCreateView),
         u'customer': (_('Customer'), CustomerCreateView),

@@ -16,7 +16,6 @@ from .categories import ProductCategory
 from .models import Product
 from .models import ProductTax
 from .models import PRODUCT_SERVICE
-from .serializers import ProductSerializer
 from .views import ProductCreateView
 from .views import ProductDetailView
 from .views import ProductUpdateView
@@ -29,7 +28,6 @@ class ProductModule(Module):
     create = ProductCreateView
     detail = ProductDetailView
     update = ProductUpdateView
-    serializer = ProductSerializer
 
 
 @register(dashboard=Sales)

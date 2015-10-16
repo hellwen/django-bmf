@@ -13,7 +13,6 @@ from djangobmf.sites import register
 from .categories import TeamCategory
 from .models import Team
 from .models import TeamMember
-from .serializers import TeamSerializer
 from .views import TeamCreateView
 from .views import TeamUpdateView
 
@@ -24,7 +23,6 @@ class TeamModule(Module):
     default = True
     create = TeamCreateView
     update = TeamUpdateView
-    serializer = TeamSerializer
 
 
 @register(dashboard=HumanResources)

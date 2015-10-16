@@ -12,14 +12,12 @@ from djangobmf.sites import register
 
 from .categories import AddressCategory
 from .models import Address
-from .serializers import AddressSerializer
 
 
 @register(dashboard=Sales)
 class AddressModule(Module):
     model = Address
     default = True
-    serializer = AddressSerializer
 
 
 @register(category=AddressCategory)

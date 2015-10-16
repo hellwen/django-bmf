@@ -10,6 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 from djangobmf.models import BMFModel
 from djangobmf.conf import settings
 
+from .serializers import TeamSerializer
+
 
 @python_2_unicode_compatible
 class AbstractTeam(BMFModel):
@@ -33,6 +35,7 @@ class AbstractTeam(BMFModel):
     class BMFMeta:
         search_fields = ['name']
         has_logging = False
+        serializer = TeamSerializer
 
     def __str__(self):
         return self.name

@@ -13,7 +13,6 @@ from djangobmf.sites import register
 
 from .categories import PositionCategory
 from .models import Position
-from .serializers import PositionSerializer
 from .views import PositionUpdateView
 from .views import PositionCreateView
 from .views import PositionAPI
@@ -25,7 +24,6 @@ class PositionModule(Module):
     default = True
     create = PositionCreateView
     update = PositionUpdateView
-    serializer = PositionSerializer
     api_urlpatterns = patterns(
         '',
         url(r'^api/$', PositionAPI.as_view(), name="api"),

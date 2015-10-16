@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # ex:set fileencoding=utf-8:
 
+'''
+
 from __future__ import unicode_literals
 
 # from django.core.exceptions import ValidationError
@@ -67,3 +69,5 @@ class ConfigField(with_metaclass(models.SubfieldBase, models.TextField)):
 #               or value in self.workflow._states:
 #           return value
 #       raise ValidationError(_('The workflow state "%s" is no valid') % value)
+
+'''

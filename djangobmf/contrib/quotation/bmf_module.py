@@ -14,7 +14,6 @@ from djangobmf.sites import register
 from .categories import QuotationCategory
 from .models import Quotation
 from .models import QuotationProduct
-from .serializers import QuotationSerializer
 from .views import QuotationCreateView
 from .views import QuotationUpdateView
 
@@ -25,7 +24,6 @@ class QuotationModule(Module):
     default = True
     create = QuotationCreateView
     update = QuotationUpdateView
-    serializer = QuotationSerializer
 
 
 @register(dashboard=Sales)

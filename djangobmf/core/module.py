@@ -10,7 +10,6 @@ from django.utils import six
 from django.utils.text import slugify
 
 from djangobmf.permissions import ModulePermission
-from djangobmf.serializers import ModuleSerializer
 # from djangobmf.views import ModuleCloneView
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
@@ -20,7 +19,6 @@ from djangobmf.views import ModuleListView
 # from djangobmf.views import ModuleReportView
 from djangobmf.views import ModuleUpdateView
 from djangobmf.views import ModuleWorkflowView
-from djangobmf.views.api import ModuleListAPIView
 
 import logging
 logger = logging.getLogger(__name__)
@@ -64,7 +62,6 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
 
     clone = None
     primary = True
-    serializer = None
     report = None
     default = False
 
@@ -79,15 +76,6 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
         self.delete_view = self.delete
         self.detail_view = self.detail
         self.update_view = self.update
-
-        # create a default serializer
-        if not self.serializer and not self.model._bmfmeta.only_related:
-            class AutoSerializer(ModuleSerializer):
-                class Meta:
-                    pass
-            AutoSerializer.Meta.model = self.model
-            logger.info('Creating a serializer for module %s' % self.model.__name__)
-            self.serializer = AutoSerializer
 
     def list_reports(self):
         if hasattr(self, 'listed_reports'):
@@ -177,16 +165,6 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
                     model=self.model
                 ),
                 name='list',
-            ),
-            url(
-                r'^get/(?P<manager>\w+)/$',
-                ModuleListAPIView.as_view(
-                    module=self,
-                    model=self.model,
-                    permissions=self.permissions,
-                    serializer_class=self.serializer,
-                ),
-                name='get',
             ),
             url(
                 r'^update/(?P<pk>[0-9]+)/$',

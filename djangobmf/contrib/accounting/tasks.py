@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def _calc_account_balance(pk):
+    logger.debug('Calc account balance for account #%s' % pk)
     account_cls = apps.get_model(settings.CONTRIB_ACCOUNT)
     transaction_cls = apps.get_model(settings.CONTRIB_TRANSACTIONITEM)
     account = account_cls.objects.get(pk=pk)

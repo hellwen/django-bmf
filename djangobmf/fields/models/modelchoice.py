@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # ex:set fileencoding=utf-8:
 
+'''
+
 from __future__ import unicode_literals
 
 from django.forms.models import ModelChoiceIterator as DjangoModelChoiceIterator
@@ -33,3 +35,5 @@ class ModelChoiceField(DjangoModelChoiceField):
         if hasattr(self, '_choices'):
             return self._choices
         return ModelChoiceIterator(self)
+
+'''

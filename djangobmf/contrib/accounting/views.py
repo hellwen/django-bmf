@@ -27,6 +27,8 @@ class TransactionCreateView(ModuleCreateView):
             amount=form.cleaned_data['amount'],
         )
 
+        self.object.save()
+
         if form.cleaned_data['draft'] is False:
             self.object.state.transition('balance', self.request.user)
 

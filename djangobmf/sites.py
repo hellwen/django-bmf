@@ -12,7 +12,6 @@ from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
 from djangobmf.core.report import Report
 from djangobmf.core.viewmixin import ViewMixin
-from djangobmf.core.filter_queryset import FilterQueryset
 
 import logging
 logger = logging.getLogger(__name__)
@@ -24,7 +23,6 @@ __all__ = [
     'Module',
     'Report',
     'ViewMixin',
-    'FilterQueryset',
 ]
 
 
