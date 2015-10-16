@@ -19,6 +19,8 @@ from djangobmf.contrib.accounting.models import ACCOUNTING_INCOME, ACCOUNTING_EX
 
 from decimal import Decimal
 
+from .serializers import ProductSerializer
+
 
 PRODUCT_SERVICE = 1
 PRODUCT_CONSUMABLE = 2
@@ -162,6 +164,7 @@ class AbstractProduct(BMFModel):
 
     class BMFMeta:
         search_fields = ['name', 'code']
+        serializer = ProductSerializer
 
     def __str__(self):
         return self.name

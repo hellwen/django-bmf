@@ -14,6 +14,8 @@ from djangobmf.settings import CONTRIB_PRODUCT
 
 from djangobmf.contrib.product.models import PRODUCT_SERVICE
 
+from .serializers import EmployeeSerializer
+
 
 class BaseEmployee(BMFModel):
     user = models.OneToOneField(
@@ -82,6 +84,7 @@ class AbstractEmployee(BaseEmployee):
 
     class BMFMeta:
         search_fields = ['name', 'email', 'user__username']
+        serializer = EmployeeSerializer
 
     def __str__(self):
         return self.name or '%s' % self.user

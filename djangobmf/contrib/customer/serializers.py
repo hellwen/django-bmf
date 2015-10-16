@@ -5,9 +5,6 @@ from __future__ import unicode_literals
 
 from djangobmf.serializers import ModuleSerializer
 
-from .models import Customer
-
 
 class CustomerSerializer(ModuleSerializer):
-    class Meta:
-        model = Customer
+    pass

@@ -12,6 +12,8 @@ from djangobmf.settings import CONTRIB_CUSTOMER
 from djangobmf.settings import CONTRIB_TEAM
 from djangobmf.settings import CONTRIB_EMPLOYEE
 
+from .serializers import ProjectSerializer
+
 
 @python_2_unicode_compatible
 class BaseProject(BMFModel):
@@ -68,6 +70,7 @@ class AbstractProject(BaseProject):
         has_logging = True
         has_comments = True
         has_files = True
+        serializer = ProjectSerializer
 
 
 class Project(AbstractProject):

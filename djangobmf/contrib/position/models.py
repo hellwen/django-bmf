@@ -15,6 +15,8 @@ from djangobmf.settings import CONTRIB_PRODUCT
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
 
+from .serializers import PositionSerializer
+
 
 RATE_CHOICES = (
     (1, '100%'),
@@ -95,6 +97,7 @@ class AbstractPosition(BMFModel):
 
     class BMFMeta:
         has_logging = False
+        serializer = PositionSerializer
 
 
 class Position(AbstractPosition):
