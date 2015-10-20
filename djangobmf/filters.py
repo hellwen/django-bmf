@@ -67,7 +67,7 @@ class RangeFilterBackend(BaseFilterBackend):
             logger.critical('Date selection range is inverted, returning unfiltered queryset')
             return queryset
 
-        return queryset.filter(**{'%s__gte' % fieldname: i, '%s_lt' % fieldname: f})
+        return queryset.filter(**{'%s__gte' % fieldname: i, '%s__lt' % fieldname: f})
 
 
 class RelatedFilterBackend(BaseFilterBackend):
