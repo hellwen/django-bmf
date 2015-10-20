@@ -8,6 +8,8 @@ from django.http import Http404
 
 from djangobmf.views.mixins import BaseMixin
 from djangobmf.filters import ViewFilterBackend
+from djangobmf.filters import RangeFilterBackend
+from djangobmf.filters import RelatedFilterBackend
 from djangobmf.pagination import ModulePagination
 
 from rest_framework.generics import GenericAPIView
@@ -20,7 +22,7 @@ from rest_framework.mixins import DestroyModelMixin
 
 class APIMixin(BaseMixin):
 
-    filter_backends = (ViewFilterBackend,)
+    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
 

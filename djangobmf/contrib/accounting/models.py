@@ -71,7 +71,7 @@ class BaseAccount(BMFModel):
     )
 
     balance_currency = CurrencyField(editable=False)
-    balance = MoneyField(editable=False)
+    balance = MoneyField(editable=False, default=0)
     number = models.CharField(_('Number'), max_length=30, null=True, blank=True, unique=True, db_index=True)
     name = models.CharField(_('Name'), max_length=100, null=False, blank=False)
     type = models.PositiveSmallIntegerField(
