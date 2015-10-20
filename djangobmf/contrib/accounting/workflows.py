@@ -25,11 +25,16 @@ class TransactionWorkflow(Workflow):
         if not self.instance.is_balanced():
             raise ValidationError(_('The transaction is not balanced'))
 
-        update_accounts = self.instance.items.filter(draft=True)
-        update_accounts.update(draft=False)
+        queryset = self.instance.items.filter(draft=True)
+
+        # we need to excecute the queryset here in oder to get
+        # all affected accounts (querysets are lazy)
+        update_accounts = list(queryset.distinct().values_list('account_id', flat=True).order_by('account_id'))
+
+        queryset.update(draft=False)
 
         for item in update_accounts:
-            calc_account_balance(item.account_id)
+            calc_account_balance(item)
 
         # Update accounts
         self.instance.draft = False
