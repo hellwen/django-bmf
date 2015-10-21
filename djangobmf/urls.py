@@ -15,7 +15,11 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import last_modified
 
 from djangobmf import get_version
+from djangobmf.sites import site
 from djangobmf.views import ModuleOverviewView
+from djangobmf.views.api import APIViewList
+from djangobmf.views.api import APIViewDetail
+from djangobmf.views.api import APIModuleOverView
 from djangobmf.views.api import APIModuleListView
 from djangobmf.views.api import APIModuleDetailView
 from djangobmf.views.configuration import ConfigurationView
@@ -43,6 +47,13 @@ urlpatterns = patterns(
     url(r'^$', DashboardIndex.as_view(), name="dashboard"),
     url(r'^accounts/', include('djangobmf.account.urls')),
 
+    url(r'^router/', include(site.router.urls, namespace="router")),
+
+    url(
+        r'^api/data/$',
+        APIModuleOverView.as_view(),
+        name="api",
+    ),
     url(
         r'^api/data/(?P<app>[\w-]+)/(?P<model>[\w-]+)/$',
         APIModuleListView.as_view(),
@@ -52,6 +63,16 @@ urlpatterns = patterns(
         r'^api/data/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
         APIModuleDetailView.as_view(),
         name="api",
+    ),
+    url(
+        r'^api/view/$',
+        APIViewList.as_view(),
+        name="api-view",
+    ),
+    url(
+        r'^api/view/(?P<db>[\w_]+)/(?P<cat>[\w_]+)/(?P<view>[\w_]+)/$',
+        APIViewDetail.as_view(),
+        name="api-view",
     ),
 
     # --- Configuration
