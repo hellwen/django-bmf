@@ -7,10 +7,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 
+from djangobmf.conf import settings
 from djangobmf.models import BMFModel
-from djangobmf.settings import CONTRIB_CUSTOMER
-from djangobmf.settings import CONTRIB_TEAM
-from djangobmf.settings import CONTRIB_EMPLOYEE
 
 from .serializers import ProjectSerializer
 
@@ -18,12 +16,12 @@ from .serializers import ProjectSerializer
 @python_2_unicode_compatible
 class BaseProject(BMFModel):
     team = models.ForeignKey(
-        CONTRIB_TEAM, null=True, blank=True,
+        settings.CONTRIB_TEAM, null=True, blank=True,
         on_delete=models.SET_NULL,
         related_name="bmf_projects",
     )
     employees = models.ManyToManyField(
-        CONTRIB_EMPLOYEE, blank=True,
+        settings.CONTRIB_EMPLOYEE, blank=True,
         related_name="bmf_projects",
     )
 
@@ -55,7 +53,7 @@ class AbstractProject(BaseProject):
     notes = models.TextField(null=False, blank=True, )
 
     customer = models.ForeignKey(  # TODO: make optional
-        CONTRIB_CUSTOMER, null=True, blank=True, related_name="bmf_projects",
+        settings.CONTRIB_CUSTOMER, null=True, blank=True, related_name="bmf_projects",
         on_delete=models.SET_NULL,
     )
 
