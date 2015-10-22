@@ -5,7 +5,9 @@ app.config(['$httpProvider', function($httpProvider) {
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-app.controller('FrameworkCtrl', function($http, $scope) {
+app.controller('FrameworkCtrl', function($http, $window, $scope) {
+
+    $scope.django = $window.django;
 
     // TODO: MOVE TO FACTORY/SERVICE/ETC
     $scope.get_view = function(url) {
@@ -96,6 +98,7 @@ app.controller('SidebarCtrl', function($scope) {
                     c.views.forEach(function(v, vindex) {
                         if (current_view && c.key == current_view.category.key && v.key == current_view.view.key) {
                             response.push({'name': v.name, 'url': v.url, 'class': 'active'});
+                            $scope.$parent.$broadcast('BMFrameworkUpdateView', v, c, d);
                         }
                         else {
                             response.push({'name': v.name, 'url': v.url});
@@ -105,5 +108,14 @@ app.controller('SidebarCtrl', function($scope) {
             }
         });
         $scope.data = response;
+    });
+});
+
+app.controller('bmfListCtrl', function($scope, $http) {
+    $scope.$on('BMFrameworkUpdateView', function(event, view, category, dashboard) {
+        var url = view.dataapi + '?d=' + dashboard.key + '&c=' + category.key + '&v=' + view.key
+        $http.get(url).then(function(response) {
+            $scope.data = response.data;
+        });
     });
 });

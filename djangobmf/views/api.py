@@ -122,6 +122,10 @@ class APIOverView(BaseMixin, APIView):
                                 'cat': category.key,
                                 'view': view.key,
                             }),
+                            'dataapi': reverse('djangobmf:api', request=request, format=format, kwargs={
+                                'app': view.model._meta.app_label,
+                                'model': view.model._meta.model_name,
+                            }),
                         })
 
                 if views:

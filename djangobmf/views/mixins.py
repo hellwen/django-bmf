@@ -6,9 +6,7 @@ from __future__ import unicode_literals
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
-from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
 from django.core.urlresolvers import reverse_lazy
 from django.db.models.query import QuerySet
 from django.forms.models import modelform_factory
@@ -16,7 +14,6 @@ from django.http import HttpResponse
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-from django.utils.translation import get_language
 from django.views.decorators.cache import never_cache
 
 from djangobmf import get_version
@@ -170,50 +167,7 @@ class BaseMixin(object):
         return None
 
     def get_dashboards(self):
-        """
-        Loads all dashboards from cache or create them from the site
-        object and stores them in the cache.
-        """
-
-        # store information about all user dashboards
-        cache_key = 'bmf_dashboard_%s_%s' % (self.request.user.pk, get_language())
-
-        # load navigation key from cache
-        dashboards = cache.get(cache_key)
-
-        if dashboards:  # pragma: no branch
-            return dashboards
-
-        logger.debug("Reload cache: %s" % cache_key)
-        dashboards = {}
-
-        # update all dashboards
-        for dashboard in self.request.djangobmf_site.dashboards:
-            dashboards[dashboard.key] = {}
-            for category in dashboard:
-                dashboards[dashboard.key][category.key] = {}
-                for view in category:
-                    # parse the function name
-                    name = 'djangobmf:dashboard_%s:view_%s_%s' % (
-                        dashboard.key,
-                        category.key,
-                        view.key,
-                    )
-                    # add the view if the user has the permissions to view it
-                    if view().check_permissions(self.request):
-                        dashboards[dashboard.key][category.key][view.key] = reverse(name)
-
-                # test if category has no views and delete empty categories
-                if not dashboards[dashboard.key][category.key]:
-                    del dashboards[dashboard.key][category.key]
-
-            # test if dashboard has no categories and delete empty dashboards
-            if not dashboards[dashboard.key]:
-                del dashboards[dashboard.key]
-
-        # update cache and return dashboards
-        cache.set(cache_key, dashboards, self._bmf_cache_timeout)
-        return dashboards
+        return {}
 
     # TODO check this function, maybe we can move it to a separate class
     def update_notification(self, count=None):
@@ -252,70 +206,10 @@ class BaseViewMixin(BaseMixin):
     Adds additional functions to `BaseMixin` needed for view functions
     """
     def get_context_data(self, **kwargs):
-        session_data = self._read_session_data()
-
-        # TODO check below this line ----------------------------------------
-        # load dashboard
-        if hasattr(self, '_bmf_view_class'):
-            current_view = self._bmf_view_class.key
-            current_dashboard = self._bmf_dashboard
-        elif hasattr(self, 'get_dashboard'):
-            current_dashboard = self.get_dashboard()
-            current_view = None
-        else:
-            try:
-                current_dashboard = self.request.djangobmf_site.get_dashboard(session_data['active_dashboard'])
-            except KeyError:
-                current_dashboard = None
-            current_view = None
-
-        # update session
-        if current_dashboard and current_dashboard.key != session_data['active_dashboard']:
-            session_data['active_dashboard'] = current_dashboard.key
-            self._write_session_data(session_data)
-
-        dashboards = self._update_dashboards()
-
-        # collect data
-        sidebar = []
-        if current_dashboard:
-            for category in current_dashboard:
-                for view in category:
-                    try:
-                        url = dashboards[current_dashboard.key][category.key][view.key]
-                    except KeyError:
-                        continue
-                    sidebar.append({
-                        'category': category.name,
-                        'view': view,
-                        'url': url,
-                        'active': current_view == view.key,
-                    })
-
-        navigation_dashboard = []
-        for key in dashboards.keys():
-            obj = self.request.djangobmf_site.get_dashboard(key)
-            url = reverse(
-                'djangobmf:dashboard',
-                kwargs={
-                    'dashboard': key,
-                },
-            )
-            navigation_dashboard.append({
-                'name': obj.name,
-                'url': url,
-                'active': current_dashboard == obj,
-            })
-
         # update context with session data
         kwargs.update({
             'djangobmf': self._read_session_data(),
-            'sidebar': sidebar,
-            'navigation_dashboard': navigation_dashboard,
-            'active_dashboard': current_dashboard,
-            'active_dashboard_view': current_view,
         })
-        # TODO check above this line ----------------------------------------
 
         # always read current version, if in DEBUG mode
         if settings.DEBUG:

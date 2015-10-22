@@ -6,22 +6,9 @@
 
 {% block title %}{{ view_name }}{% endblock %}
 
-{% block content_container %} ng-app="bmfApp" ng-controller="bmfListCtrl" ng-init="apicall='{{ get_data_url }}'"{% endblock %}
+{% block content_container %} ng-controller="bmfListCtrl"{% endblock %}
 
 {% block full_content %}
-
-{% block angular %}{% addtoblock "js" %}<script type="text/javascript"><!--
-    var bmfApp = angular.module('bmfApp', []);
-    bmfApp.config(['$httpProvider', function($httpProvider) {
-        $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-    }]);
-    bmfApp.controller('bmfListCtrl', function($scope, $window, $http) {
-            $http.get('{{ get_data_url }}').then(function(artResponse) {
-                $scope.data = artResponse.data;
-                $scope.django = $window.django;
-            });
-    });
---></script>{% endaddtoblock %}{% endblock %}
 
 {% block infobar %}
 {% if debug %}
