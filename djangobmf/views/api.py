@@ -59,18 +59,21 @@ class APIMixin(BaseMixin):
         return self.model._bmfmeta.serializer_class
 
 
-class APIModuleOverView(BaseMixin, APIView):
+class APIOverView(BaseMixin, APIView):
     """
-    All registered modules which are viewable by the current user
+    All registered modules and views which are viewable by the current user
     """
 
     def get_view_name(self):
-        return 'Modules'
+        return 'BMF'
 
     def get(self, request, format=None):
         """
         """
         site = request.djangobmf_site
+
+        # === Modules ---------------------------------------------------------
+
         modules = []
         for ct, model in site.models.items():
 
@@ -85,7 +88,57 @@ class APIModuleOverView(BaseMixin, APIView):
                     }),
                     'only_related': model._bmfmeta.only_related,
                 })
-        return Response(modules)
+
+        # === Dashboards ------------------------------------------------------
+
+        dashboards = []
+        for dashboard in site.dashboards:
+            categories = []
+
+            for category in dashboard:
+                views = []
+
+                for view in category:
+                    # parse the function name
+                    name = 'djangobmf:dashboard_%s:view_%s_%s' % (
+                        dashboard.key,
+                        category.key,
+                        view.key,
+                    )
+
+                    # add the view if the user has the permissions to view it
+                    if view().check_permissions(self.request):
+                        views.append({
+                            'name': view.name,
+                            'key': view.key,
+                            'url': reverse(name),
+                            'api': reverse('djangobmf:api-view', request=request, format=format, kwargs={
+                                'db': dashboard.key,
+                                'cat': category.key,
+                                'view': view.key,
+                            }),
+                        })
+
+                if views:
+                    categories.append({
+                        'name': category.name,
+                        'key': category.key,
+                        'views': views,
+                    })
+
+            if categories:
+                dashboards.append({
+                    'name': dashboard.name,
+                    'key': dashboard.key,
+                    'categories': categories,
+                })
+
+        # === Response --------------------------------------------------------
+
+        return Response({
+            'dashboards': dashboards,
+            'modules': modules,
+        })
 
 
 class APIViewList(BaseMixin, APIView):
