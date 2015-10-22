@@ -17,7 +17,7 @@
             <div id="sidebar">
                 <p class="switch"><a href="#"><img src="{% static "djangobmf/logo.png" %}"></a></p>
                 <ul class="sidebar-nav" ng-controller="SidebarCtrl">{% verbatim %}
-                    <li ng-repeat="d in data" ng-class="d.class ? d.class : ''">
+                    <li ng-cloak ng-repeat="d in data" ng-class="d.class ? d.class : ''">
                         <a ng-if="d.url != undefined" href="{{ d.url }}">{{ d.name }}</a>
                         <p ng-if="d.url == undefined">{{ d.name }}</p>
                     </li>
@@ -36,15 +36,18 @@
                             <a class="navbar-brand" href="{% url 'djangobmf:dashboard' %}">django BMF</a>
                         </div><!--/.nav-header -->
                         <div class="collapse navbar-collapse navbar-ex1-collapse">
-                            <ul class="nav navbar-nav dashboards">
+                            <ul class="nav navbar-nav dashboards" ng-controller="DashboardCtrl">
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-dashboard"></span> {% trans "Dashboards" %} <b class="caret"></b></a>
-                                    <ul class="dropdown-menu" ng-controller="DashboardCtrl">{% verbatim %}
+                                    <ul class="dropdown-menu">{% verbatim %}
                                         <li ng-repeat="d in data | orderBy:'name'" ng-class="d.active ? 'active' : ''">
-                                            <a href="{{ d.url }}">{{ d.name }}</a>
+                                            <a ng-click="load_dashboard(d.key)" href>{{ d.name }}</a>
                                         </li>
-                                    </ul>{% endverbatim %}
+                                    </ul>
                                 </li>
+                                <li ng-if="current_dashboard" ng-cloak>
+                                    <a ng-click="load_dashboard(current_dashboard.key)" href>{{ current_dashboard.name }}</a>
+                                </li>{% endverbatim %}
                             </ul>
                             <ul class="nav navbar-nav navbar-right">
                                 {% block navbar %}
@@ -125,7 +128,7 @@
                             {% endfor %}
                         </div>
                     </div>{% endif %}
-                    <div{% block content_container %}{% endblock %}>
+                    <div ng-cloak{% block content_container %}{% endblock %}>
                         {% block full_content %}{% endblock %}
                     </div>
                 </div> <!-- /container -->

@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 from django.apps import apps
+from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
 
 from djangobmf.filters import ViewFilterBackend
@@ -80,8 +81,12 @@ class APIOverView(BaseMixin, APIView):
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
+                ct = ContentType.objects.get_for_model(model)
                 modules.append({
                     'name': model._meta.verbose_name_plural,
+                    'app': model._meta.app_label,
+                    'model': model._meta.model_name,
+                    'ct': ct.pk,
                     'url': reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
