@@ -39,14 +39,14 @@
                             <ul class="nav navbar-nav dashboards" ng-controller="DashboardCtrl">
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-dashboard"></span> {% trans "Dashboards" %} <b class="caret"></b></a>
-                                    <ul class="dropdown-menu">{% verbatim %}
+                                    <ul class="dropdown-menu" ng-cloak>{% verbatim %}
                                         <li ng-repeat="d in data | orderBy:'name'" ng-class="d.active ? 'active' : ''">
                                             <a ng-click="load_dashboard(d.key)" href>{{ d.name }}</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li ng-if="current_dashboard" ng-cloak>
-                                    <a ng-click="load_dashboard(current_dashboard.key)" href>{{ current_dashboard.name }}</a>
+                                    <p class="navbar-text">{{ current_dashboard.name }}</p>
                                 </li>{% endverbatim %}
                             </ul>
                             <ul class="nav navbar-nav navbar-right">
