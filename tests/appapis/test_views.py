@@ -20,7 +20,6 @@ from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
 from djangobmf.views import ModuleWorkflowView
 from djangobmf.views import ModuleFormAPI
-from djangobmf.views import ModuleOverviewView
 from djangobmf.views.defaults import bad_request
 from djangobmf.views.defaults import permission_denied
 from djangobmf.views.defaults import page_not_found
@@ -94,10 +93,6 @@ class ViewsTests(TestCase):
 
     @expectedFailure
     def test_views_ModuleFormAPI(self):
-        self.assertTrue(False)  # TODO NOT IMPLEMENTED
-
-    @expectedFailure
-    def test_views_ModuleOverviewView(self):
         self.assertTrue(False)  # TODO NOT IMPLEMENTED
 
 

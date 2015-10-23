@@ -8,6 +8,7 @@
         <meta name="author" content="Django BMF" />
         <meta name="Content-Language" content="{{ LANGUAGE_CODE }}" />
         <meta name="language" content="{{ LANGUAGE_CODE }}" />
+        <base href="/">
         <link rel="shortcut icon" type="image/x-icon" href="{% static "djangobmf/favicon.ico" %}">
         <link href="{% static "djangobmf/css/djangobmf.min.css" %}?v={{ djangobmf.version }}" rel="stylesheet">{% render_block "css" %}
     </head>
@@ -39,15 +40,19 @@
                             <ul class="nav navbar-nav dashboards" ng-controller="DashboardCtrl">
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-dashboard"></span> {% trans "Dashboards" %} <b class="caret"></b></a>
-                                    <ul class="dropdown-menu" ng-cloak>{% verbatim %}
+                                    {% verbatim %}
+                                    <ul class="dropdown-menu" ng-cloak>
                                         <li ng-repeat="d in data | orderBy:'name'" ng-class="d.active ? 'active' : ''">
                                             <a ng-click="load_dashboard(d.key)" href>{{ d.name }}</a>
                                         </li>
                                     </ul>
+                                    {% endverbatim %}
                                 </li>
-                                <li ng-if="current_dashboard" ng-cloak>
+                                {% verbatim %}
+                                <li ng-if="current_dashboard" ng-cloak class="hidden-xs">
                                     <p class="navbar-text">{{ current_dashboard.name }}</p>
-                                </li>{% endverbatim %}
+                                </li>
+                                {% endverbatim %}
                             </ul>
                             <ul class="nav navbar-nav navbar-right">
                                 {% block navbar %}
@@ -87,9 +92,6 @@
                                         {{ request.user }}<b class="caret"></b>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li>
-                                            <a href="{% url 'djangobmf:modules' %}">{% trans "Module overview" %}</a>
-                                        </li>
                                         {% if request.user.is_staff %}
                                         <li>
                                             <a href="{% url 'djangobmf:configuration' %}">{% trans "Configuration" %}</a>

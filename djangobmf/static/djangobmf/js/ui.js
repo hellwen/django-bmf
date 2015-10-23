@@ -1,18 +1,21 @@
 var app = angular.module('djangoBMF', []);
-app.config(['$httpProvider', function($httpProvider) {
+app.config(function($locationProvider) {
+    $locationProvider.html5Mode(true).hashPrefix('!');
+});
+app.config(function($httpProvider) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-}]);
+});
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-app.controller('FrameworkCtrl', function($http, $window, $scope) {
+app.controller('FrameworkCtrl', function($http, $window, $scope, $location) {
 
     $scope.django = $window.django;
 
     // TODO: MOVE TO FACTORY/SERVICE/ETC
     $scope.get_view = function(url) {
         if (url == undefined) {
-            url = location.pathname;
+            url = $location.path();
         }
 
         var current = null;

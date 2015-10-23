@@ -13,8 +13,6 @@ from .module import ModuleReportView
 from .module import ModuleUpdateView
 from .module import ModuleWorkflowView
 
-from .interface import ModuleOverviewView
-
 from .mixins import ModuleViewMixin
 
 
@@ -29,5 +27,4 @@ __all__ = (
     'ModuleUpdateView',
     'ModuleWorkflowView',
     'ModuleViewMixin',
-    'ModuleOverviewView',
 )

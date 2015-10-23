@@ -16,7 +16,6 @@ from django.views.decorators.http import last_modified
 
 from djangobmf import get_version
 from djangobmf.sites import site
-from djangobmf.views import ModuleOverviewView
 from djangobmf.views.api import APIViewDetail
 from djangobmf.views.api import APIOverView
 from djangobmf.views.api import APIModuleListView
@@ -102,7 +101,6 @@ urlpatterns = patterns(
     url(r'^document/', include('djangobmf.document.urls')),
     url(r'^i18n/', i18n_javascript, name="jsi18n"),
     #  url(r'^messages/', include('djangobmf.message.urls')),
-    url(r'^modules/$', ModuleOverviewView.as_view(), name="modules"),
     url(r'^notifications/', include('djangobmf.notification.urls')),
     url(r'^wizard/', include('djangobmf.wizard.urls')),
 )
