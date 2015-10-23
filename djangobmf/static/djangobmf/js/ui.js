@@ -35,6 +35,44 @@ app.controller('FrameworkCtrl', function($http, $window, $scope, $location) {
         return current
     }
 
+    $scope.$on('$locationChangeStart', function(event, next, current, ostate, nstate) {
+        if (next == current) {
+            return true;
+        }
+        console.log(event, next, current, ostate, nstate);
+
+        if ($location.protocol() == 'http' && $location.port() == 80) {
+            var prefix = 'http://'+ $location.host();
+        }
+        else if ($location.protocol() == 'https' && $location.port() == 443) {
+            var prefix = 'https://'+ $location.host();
+        }
+        else {
+            var prefix = $location.protocol() + '://' + $location.host() + ':' + $location.port()
+        }
+
+        // find if the url is managed by the framework
+        var found = false;
+        $scope.BMFrameworkViewData.dashboards.forEach(function(d, dindex) {
+            d.categories.forEach(function(c, cindex) {
+                c.views.forEach(function(v, vindex) {
+                    if (prefix + v.url == next) {
+                        found = true
+                    }
+                });
+            });
+        });
+        if (found) {
+            // return true;
+        }
+
+        // prevent the default action, when leaving to a page which is not managed
+        // by the framework. using this will make the url reload on an history-back
+        // event
+        event.preventDefault(true);
+        $window.location = next;
+    });
+
     var url = $('body').data('api');
     var current_view = null;
     $http.get(url).then(function(response) {
