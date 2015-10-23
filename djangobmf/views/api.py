@@ -155,8 +155,24 @@ class APIViewDetail(BaseMixin, APIView):
     def get(self, request, view=None, cat=None, db=None, format=None):
         """
         """
-        usernames = [1, 2, 3, 4, 5, 6, 7, 8]
-        return Response(usernames)
+
+        try:
+            view = request.djangobmf_site.get_dashboard(db)[cat][view]
+        except KeyError:
+            raise Http404
+
+        context = {}
+        if view().check_permissions(self.request):
+            context['api'] = reverse('djangobmf:api', request=request, format=format, kwargs={
+                'app': view.model._meta.app_label,
+                'model': view.model._meta.model_name,
+            })
+            context['html'] = '<h1>Test</h1><p>%s %s</p>' % (
+                view.model._meta.app_label,
+                view.model._meta.model_name,
+            )
+
+        return Response(context)
 
 
 class ViewSet(APIMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):

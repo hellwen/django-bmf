@@ -130,8 +130,8 @@
                             {% endfor %}
                         </div>
                     </div>{% endif %}
-                    <div ng-cloak{% block content_container %}{% endblock %}>
-                        {% block full_content %}{% endblock %}
+                    {% block content_container %}{% endblock %}
+                    <div bmf-content ng-cloak>{% block full_content %}{% endblock %}</div>
                     </div>
                 </div> <!-- /container -->
             </div> <!-- /page-container -->

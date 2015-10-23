@@ -6,11 +6,18 @@ app.config(function($httpProvider) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 });
 
+app.directive('bmfContent', function() {
+    return {
+        template: '<h1>Test</h1><p>asdadasdasd</p>'
+    };
+});
+
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
 app.controller('FrameworkCtrl', function($http, $window, $scope, $location) {
 
     $scope.django = $window.django;
+    console.log($window.django);
 
     // TODO: MOVE TO FACTORY/SERVICE/ETC
     $scope.get_view = function(url) {
@@ -39,7 +46,7 @@ app.controller('FrameworkCtrl', function($http, $window, $scope, $location) {
         if (next == current) {
             return true;
         }
-        console.log(event, next, current, ostate, nstate);
+        console.log(event, next, current);
 
         if ($location.protocol() == 'http' && $location.port() == 80) {
             var prefix = 'http://'+ $location.host();
@@ -52,18 +59,19 @@ app.controller('FrameworkCtrl', function($http, $window, $scope, $location) {
         }
 
         // find if the url is managed by the framework
-        var found = false;
+        var url = null;
         $scope.BMFrameworkViewData.dashboards.forEach(function(d, dindex) {
             d.categories.forEach(function(c, cindex) {
                 c.views.forEach(function(v, vindex) {
                     if (prefix + v.url == next) {
-                        found = true
+                        url = v.api;
                     }
                 });
             });
         });
-        if (found) {
-            // return true;
+        if (url) {
+            $scope.$broadcast('BMFrameworkLoadView', url);
+            return true;
         }
 
         // prevent the default action, when leaving to a page which is not managed
@@ -73,11 +81,20 @@ app.controller('FrameworkCtrl', function($http, $window, $scope, $location) {
         $window.location = next;
     });
 
+    $scope.$on('BMFrameworkLoadView', function(event, url) {
+        $http.get(url).then(function(response) {
+            console.log('LOADVIEW', response, response.data.html);
+        });
+    });
+
     var url = $('body').data('api');
-    var current_view = null;
     $http.get(url).then(function(response) {
         $scope.BMFrameworkViewData = response.data;
-        $scope.$broadcast('BMFrameworkLoaded', $scope.get_view());
+        var current = $scope.get_view();
+        $scope.$broadcast('BMFrameworkLoaded', current);
+        if (current) {
+            $scope.$broadcast('BMFrameworkLoadView', current.view.api);
+        }
     });
 });
 
