@@ -340,7 +340,7 @@ class ModuleDetailView(
             return self.get_related_views()[self.request.GET["open"]]["objects"]
 
     def get_template_names(self, related=True):
-        self.update_notification()
+        # self.update_notification()
         if related and "open" in self.request.GET.keys() and \
                 self.request.GET["open"] in self.get_related_views().keys():
             return self.get_related_views()[self.request.GET["open"]]["template"]

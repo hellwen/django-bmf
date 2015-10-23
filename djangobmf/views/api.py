@@ -150,63 +150,6 @@ class APIOverView(BaseMixin, APIView):
         })
 
 
-class APIViewList(BaseMixin, APIView):
-    """
-    All registered Views which are viewable by the current user
-    """
-
-    def get_view_name(self):
-        return 'Views'
-
-    def get(self, request, format=None):
-        """
-        """
-        dashboards = []
-
-        for dashboard in self.request.djangobmf_site.dashboards:
-            categories = []
-
-            for category in dashboard:
-                views = []
-
-                for view in category:
-                    # parse the function name
-                    name = 'djangobmf:dashboard_%s:view_%s_%s' % (
-                        dashboard.key,
-                        category.key,
-                        view.key,
-                    )
-
-                    # add the view if the user has the permissions to view it
-                    if view().check_permissions(self.request):
-                        views.append({
-                            'name': view.name,
-                            'key': view.key,
-                            'url': reverse(name),
-                            'api': reverse('djangobmf:api-view', request=request, format=format, kwargs={
-                                'db': dashboard.key,
-                                'cat': category.key,
-                                'view': view.key,
-                            }),
-                        })
-
-                if views:
-                    categories.append({
-                        'name': category.name,
-                        'key': category.key,
-                        'views': views,
-                    })
-
-            if categories:
-                dashboards.append({
-                    'name': dashboard.name,
-                    'key': dashboard.key,
-                    'categories': categories,
-                })
-
-        return Response(dashboards)
-
-
 class APIViewDetail(BaseMixin, APIView):
 
     def get(self, request, view=None, cat=None, db=None, format=None):

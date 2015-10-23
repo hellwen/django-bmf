@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from django.dispatch.dispatcher import Signal
 
+
 activity_create = Signal(providing_args=['instance'])
 activity_update = Signal(providing_args=['instance'])
 activity_comment = Signal(providing_args=['instance'])

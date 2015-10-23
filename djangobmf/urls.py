@@ -25,6 +25,7 @@ from djangobmf.views.configuration import ConfigurationEdit
 from djangobmf.views.dashboard import DashboardIndex
 # from djangobmf.views.dashboard import DashboardCategory
 # from djangobmf.views.dashboard import DashboardView
+from djangobmf.views.wizard import WizardView
 
 
 @cache_page(86400, key_prefix='bmf-js18n-%s' % get_version())
@@ -102,5 +103,5 @@ urlpatterns = patterns(
     url(r'^i18n/', i18n_javascript, name="jsi18n"),
     #  url(r'^messages/', include('djangobmf.message.urls')),
     url(r'^notifications/', include('djangobmf.notification.urls')),
-    url(r'^wizard/', include('djangobmf.wizard.urls')),
+    url(r'^wizard/$', WizardView.as_view(), name="wizard"),
 )

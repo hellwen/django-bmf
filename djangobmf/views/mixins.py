@@ -33,7 +33,6 @@ from djangobmf.views.defaults import page_not_found
 from djangobmf.views.defaults import server_error
 
 import json
-import datetime
 import re
 try:
     from urllib import parse
@@ -50,10 +49,6 @@ class BaseMixin(object):
     this provides us with more flexibility and removes the need to define
     a middleware.
     """
-    # TODO move this to a setting
-    # Timeout for caching dashboards
-    _bmf_cache_timeout = 600
-
     # permission classes
     # TODO: Check if we need to add "default" permissions and combine them (simpler api)
     permission_classes = []
@@ -86,9 +81,6 @@ class BaseMixin(object):
         """
         return self.request.session.get("djangobmf", {
             'version': get_version(),
-            'active_dashboard': None,
-            'active_category': None,
-            'active_view': None,
         })
 
     def _write_session_data(self, data):
@@ -158,40 +150,29 @@ class BaseMixin(object):
 
         return response
 
-    def _update_dashboards(self):
-        return self.get_dashboards()
+#   # TODO check this function, maybe we can move it to a separate class
+#   def update_notification(self, count=None):
+#       """
+#       This function is used by django BMF to update the notifications
+#       used in the BMF-Framework
+#       """
+#       logger.debug("Updating notifications for %s" % self.request.user)
 
-    def get_current_view(self):
-        if hasattr(self, '_bmf_view'):
-            return self._bmf_view
-        return None
+#       # get all session data
+#       session_data = self._read_session_data()
 
-    def get_dashboards(self):
-        return {}
+#       # manipulate session
+#       session_data["notification_last_update"] = datetime.datetime.utcnow().isoformat()
+#       if count is None:
+#           session_data["notification_count"] = Notification.objects.filter(
+#               unread=True,
+#               user=self.request.user,
+#           ).count()
+#       else:
+#           session_data["notification_count"] = count
 
-    # TODO check this function, maybe we can move it to a separate class
-    def update_notification(self, count=None):
-        """
-        This function is used by django BMF to update the notifications
-        used in the BMF-Framework
-        """
-        logger.debug("Updating notifications for %s" % self.request.user)
-
-        # get all session data
-        session_data = self._read_session_data()
-
-        # manipulate session
-        session_data["notification_last_update"] = datetime.datetime.utcnow().isoformat()
-        if count is None:
-            session_data["notification_count"] = Notification.objects.filter(
-                unread=True,
-                user=self.request.user,
-            ).count()
-        else:
-            session_data["notification_count"] = count
-
-        # update session
-        self._write_session_data(session_data)
+#       # update session
+#       self._write_session_data(session_data)
 
 
 class BaseAPIMixin(BaseMixin):
