@@ -12,19 +12,6 @@ overwrites bmf settings from django's settings
 from django.conf import settings
 from django.core.files.storage import get_storage_class  # TODO OLD
 
-# TODO CHECK IF USED AND DELETE THIS CODE
-bmf_modules = getattr(settings, 'BMF_MODULES', {})
-BASE_MODULE = {
-    'ADDRESS': 'djangobmf_address.Address',
-    'EMPLOYEE': 'djangobmf_employee.Employee',
-    'CUSTOMER': 'djangobmf_customer.Customer',
-    'INVOICE': 'djangobmf_invoice.Invoice',
-    'PRODUCT': 'djangobmf_product.Product',
-    'PROJECT': 'djangobmf_project.Project',
-    'TRANSACTION': 'djangobmf_accounting.Transaction',
-}
-BASE_MODULE.update(bmf_modules)
-
 # === storage =================================================================
 
 bmf_storage = getattr(settings, 'BMF_STORAGE', {})

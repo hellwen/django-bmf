@@ -5,15 +5,14 @@ from django.db import models, migrations
 import django.db.models.deletion
 from django.conf import settings
 import djangobmf.fields
-from djangobmf.settings import BASE_MODULE
 
 class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        migrations.swappable_dependency(BASE_MODULE["TRANSACTION"]),
-        migrations.swappable_dependency(BASE_MODULE["ADDRESS"]),
-        migrations.swappable_dependency(BASE_MODULE["PRODUCT"]),
+        migrations.swappable_dependency(settings.BMF_CONTRIB_TRANSACTION),
+        migrations.swappable_dependency(settings.BMF_CONTRIB_ADDRESS),
+        migrations.swappable_dependency(settings.BMF_CONTRIB_PRODUCT),
     ]
 
     operations = [
@@ -32,10 +31,10 @@ class Migration(migrations.Migration):
                 ('notes', models.TextField(null=True, verbose_name='Notes', blank=True)),
                 ('term_of_payment', models.TextField(null=True, verbose_name='Term of payment', blank=True)),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, related_name="+")),
-                ('invoice_address', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, to=BASE_MODULE["ADDRESS"], null=True, related_name="quotation_invoice")),
+                ('invoice_address', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, to=settings.BMF_CONTRIB_ADDRESS, null=True, related_name="quotation_invoice")),
                 ('modified_by', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, related_name="+")),
-                ('shipping_address', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, to=BASE_MODULE["ADDRESS"], null=True, related_name="shipping_invoice")),
-                ('transaction', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, blank=True, editable=False, to=BASE_MODULE["TRANSACTION"], null=True, related_name="transation_invoice")),
+                ('shipping_address', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, to=settings.BMF_CONTRIB_ADDRESS, null=True, related_name="shipping_invoice")),
+                ('transaction', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, blank=True, editable=False, to=settings.BMF_CONTRIB_TRANSACTION, null=True, related_name="transation_invoice")),
             ],
             options={
                 'ordering': ['invoice_number'],
@@ -63,7 +62,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='invoice',
             name='products',
-            field=models.ManyToManyField(to=BASE_MODULE["PRODUCT"], through='djangobmf_invoice.InvoiceProduct'),
+            field=models.ManyToManyField(to=settings.BMF_CONTRIB_PRODUCT, through='djangobmf_invoice.InvoiceProduct'),
             preserve_default=True,
         ),
         migrations.AddField(
