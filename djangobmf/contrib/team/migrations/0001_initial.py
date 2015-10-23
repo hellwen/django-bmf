@@ -5,13 +5,11 @@ from django.db import models, migrations
 from django.conf import settings
 import django.db.models.deletion
 
-from djangobmf.settings import BASE_MODULE
-
 class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        migrations.swappable_dependency(BASE_MODULE["EMPLOYEE"]),
+        migrations.swappable_dependency(settings.BMF_CONTRIB_EMPLOYEE),
     ]
 
     operations = [
@@ -39,7 +37,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
                 ('is_manager', models.BooleanField(default=False, verbose_name='Is manager')),
-                ('employee', models.ForeignKey(blank=True, related_name='+', to=BASE_MODULE["EMPLOYEE"], null=True)),
+                ('employee', models.ForeignKey(blank=True, related_name='+', to=settings.BMF_CONTRIB_EMPLOYEE, null=True)),
                 ('team', models.ForeignKey(blank=True, related_name='+', to='djangobmf_team.Team', null=True)),
             ],
             options={
@@ -53,7 +51,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='team',
             name='members',
-            field=models.ManyToManyField(blank=True, through='djangobmf_team.TeamMember', to=BASE_MODULE["EMPLOYEE"], related_name='teams'),
+            field=models.ManyToManyField(blank=True, through='djangobmf_team.TeamMember', to=settings.BMF_CONTRIB_EMPLOYEE, related_name='teams'),
             preserve_default=True,
         ),
     ]

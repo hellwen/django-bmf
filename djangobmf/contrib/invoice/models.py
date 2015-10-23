@@ -7,14 +7,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 
+from djangobmf.conf import settings
 from djangobmf.models import BMFModel
-from djangobmf.settings import CONTRIB_CUSTOMER
-from djangobmf.settings import CONTRIB_PRODUCT
-from djangobmf.settings import CONTRIB_PROJECT
-from djangobmf.settings import CONTRIB_EMPLOYEE
-from djangobmf.settings import CONTRIB_INVOICE
-from djangobmf.settings import CONTRIB_ADDRESS
-from djangobmf.settings import CONTRIB_TRANSACTION
 from djangobmf.numbering.utils import numbercycle_get_name, numbercycle_delete_object
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
@@ -31,21 +25,21 @@ from .workflows import InvoiceWorkflow
 class BaseInvoice(BMFModel):
 
     shipping_address = models.ForeignKey(
-        CONTRIB_ADDRESS, related_name="shipping_invoice",
+        settings.CONTRIB_ADDRESS, related_name="shipping_invoice",
         blank=False, null=True, on_delete=models.SET_NULL,
     )
     invoice_address = models.ForeignKey(
-        CONTRIB_ADDRESS, related_name="quotation_invoice", blank=False,
+        settings.CONTRIB_ADDRESS, related_name="quotation_invoice", blank=False,
         null=True, on_delete=models.SET_NULL,
     )
     invoice_number = models.CharField(_('Invoice number'), max_length=255, null=True, blank=False)
     invoice = FileField(verbose_name=_('Invoice'), null=True)
-    products = models.ManyToManyField(CONTRIB_PRODUCT, through='InvoiceProduct', editable=False)
+    products = models.ManyToManyField(settings.CONTRIB_PRODUCT, through='InvoiceProduct', editable=False)
     net = models.FloatField(editable=False, blank=True, null=True)
     date = models.DateField(_("Date"), null=True, blank=False)
 
     transaction = models.ForeignKey(
-        CONTRIB_TRANSACTION, null=True, blank=True, related_name="transation_invoice",
+        settings.CONTRIB_TRANSACTION, null=True, blank=True, related_name="transation_invoice",
         editable=False, on_delete=models.PROTECT,
     )
 
@@ -75,16 +69,16 @@ class AbstractInvoice(BaseInvoice):
     """
     """
     customer = models.ForeignKey(  # TODO: make optional
-        CONTRIB_CUSTOMER,
+        settings.CONTRIB_CUSTOMER,
         null=True,
         blank=False,
         on_delete=models.SET_NULL,
     )
     project = models.ForeignKey(  # TODO: make optional
-        CONTRIB_PROJECT, null=True, blank=False, on_delete=models.SET_NULL,
+        settings.CONTRIB_PROJECT, null=True, blank=False, on_delete=models.SET_NULL,
     )
     employee = models.ForeignKey(  # TODO: make optional
-        CONTRIB_EMPLOYEE, null=True, blank=False, on_delete=models.SET_NULL,
+        settings.CONTRIB_EMPLOYEE, null=True, blank=False, on_delete=models.SET_NULL,
     )
 
     due = models.DateField(_("Due"), null=True, blank=True)
@@ -173,11 +167,11 @@ class Invoice(AbstractInvoice):
 
 class InvoiceProduct(BMFModel):
     invoice = models.ForeignKey(
-        CONTRIB_INVOICE, null=True, blank=True,
+        settings.CONTRIB_INVOICE, null=True, blank=True,
         related_name="invoice_products", on_delete=models.CASCADE,
     )
     product = models.ForeignKey(
-        CONTRIB_PRODUCT, null=True, blank=True,
+        settings.CONTRIB_PRODUCT, null=True, blank=True,
         related_name="invoice_products", on_delete=models.PROTECT,
     )
     name = models.CharField(_("Name"), max_length=255, null=True, blank=False)

@@ -13,12 +13,10 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.currency import Wallet
+from djangobmf.conf import settings
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
 from djangobmf.models import BMFModel
-from djangobmf.settings import CONTRIB_ACCOUNT
-from djangobmf.settings import CONTRIB_PROJECT
-from djangobmf.settings import CONTRIB_TRANSACTION
 
 from .workflows import TransactionWorkflow
 
@@ -166,7 +164,7 @@ class BaseTransaction(BMFModel):
     Transaction
     """
     project = models.ForeignKey(  # TODO optional
-        CONTRIB_PROJECT, null=True, blank=True, on_delete=models.SET_NULL,
+        settings.CONTRIB_PROJECT, null=True, blank=True, on_delete=models.SET_NULL,
     )
     text = models.CharField(
         _('Posting text'), max_length=255, null=False, blank=False,
@@ -236,11 +234,11 @@ class BaseTransactionItem(BMFModel):
     """
     """
     account = models.ForeignKey(
-        CONTRIB_ACCOUNT, null=True, blank=False,
+        settings.CONTRIB_ACCOUNT, null=True, blank=False,
         related_name="transactions", on_delete=models.PROTECT,
     )
     transaction = models.ForeignKey(
-        CONTRIB_TRANSACTION, null=True, blank=False,
+        settings.CONTRIB_TRANSACTION, null=True, blank=False,
         related_name="items", on_delete=models.CASCADE,
     )
 

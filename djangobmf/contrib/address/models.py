@@ -7,15 +7,15 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
+from djangobmf.conf import settings
 from djangobmf.models import BMFModel
-from djangobmf.settings import CONTRIB_CUSTOMER
 
 from .serializers import AddressSerializer
 
 
 class BaseAddress(BMFModel):
     customer = models.ForeignKey(
-        CONTRIB_CUSTOMER, null=False, blank=False,
+        settings.CONTRIB_CUSTOMER, null=False, blank=False,
         related_name="customer_address", on_delete=models.CASCADE,
     )
 
