@@ -1,19 +1,6 @@
 /*
  * AngularJS UI for django BMF
  *
- * Events:
- * --------------------------------------------------------
- *
- * All events listed here are fired upon $rootScope
- *
- * bmfRender(event, controller, html):
- * Instruction to load a Viewfunction via the (api/view)
- * needs to be fired with the API url of the targeted view
- *
- * bmfLoadView:
- * Instruction to load a Viewfunction via the (api/view)
- * needs to be fired with the API url of the targeted view
- *
  */
 
 var app = angular.module('djangoBMF', []);
@@ -27,6 +14,7 @@ app.config(['$httpProvider', '$locationProvider', function($httpProvider, $locat
     $locationProvider.html5Mode(true).hashPrefix('!');
 }]);
 
+/*
 app.directive('bmfContent', ['$compile', function($compile) {
     return {
         restrict: 'A',
@@ -46,21 +34,26 @@ app.directive('bmfContent', ['$compile', function($compile) {
         }
     };
 }]);
+*/
 
 /*
  * Services
  */
 
 app.factory('CurrentView', ['$rootScope', '$location', function($rootScope, $location) {
-    function update(url, prefix) {
-        var current = get(url, prefix)
-        $rootScope.bmf_current_view = current;
-        if (current && current.type == "list") {
+    function go(next) {
+        $rootScope.bmf_current_view = next;
+        if (next && next.type == "list") {
             $rootScope.bmf_current_dashboard = {
-                key: current.dashboard.key,
-                name: current.dashboard.name
+                key: next.dashboard.key,
+                name: next.dashboard.name
             };
         }
+    }
+
+    function update(url, prefix) {
+        var current = get(url, prefix);
+        go(current);
         return current
     }
 
@@ -79,11 +72,14 @@ app.factory('CurrentView', ['$rootScope', '$location', function($rootScope, $loc
                 prefix = $location.protocol() + '://' + $location.host() + ':' + $location.port()
             }
         }
+        else {
+            prefix = ''
+        }
         var current = undefined;
         $rootScope.bmf_dashboards.forEach(function(d, di) {
             d.categories.forEach(function(c, ci) {
                 c.views.forEach(function(v, vi) {
-                    if (v.url == url) {
+                    if (prefix + v.url == url) {
                         current = {
                             type: 'list',
                             view: v,
@@ -99,9 +95,8 @@ app.factory('CurrentView', ['$rootScope', '$location', function($rootScope, $loc
         }
         return current
     }
-    return {get: get, update: update}
+    return {get: get, go: go, update: update}
 }]);
-
 
 /*
  * Controller
@@ -109,7 +104,7 @@ app.factory('CurrentView', ['$rootScope', '$location', function($rootScope, $loc
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-app.controller('FrameworkCtrl', ['$http', '$rootScope', 'CurrentView', function($http, $rootScope, CurrentView) {
+app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', function($http, $rootScope, $scope, $window, CurrentView) {
 
     // pace to store basic templates
     $rootScope.bmf_templates = {
@@ -149,42 +144,22 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', 'CurrentView', function(
     });
 
 
-  //$scope.$on('$locationChangeStart', function(event, next, current) {
-  //    console.log(event, next, current);
-  //    if (next == current) {
-  //        return true;
-  //    }
+    $scope.$on('$locationChangeStart', function(event, next, current) {
+//      // only invoke if dashboards are present (and the ui is loaded propperly)
+//      if ($rootScope.bmf_dashboards) {
+//          var next_view = CurrentView.get(next, true);
+//          if (next_view) {
+//              CurrentView.go(next_view);
+//              return true
+//          };
+//      }
 
-
-////    // find if the url is managed by the framework
-////    var url = null;
-////    $scope.BMFrameworkViewData.dashboards.forEach(function(d, dindex) {
-////        d.categories.forEach(function(c, cindex) {
-////            c.views.forEach(function(v, vindex) {
-////                if (prefix + v.url == next) {
-////                    url = v.api;
-////                }
-////            });
-////        });
-////    });
-////    if (url) {
-////        $scope.$broadcast('BMFrameworkLoadView', url);
-////        return true;
-////    }
-////
-////    // prevent the default action, when leaving to a page which is not managed
-////    // by the framework. using this will make the url reload on an history-back
-////    // event
-
-  //    event.preventDefault(true);
-  //    $window.location = next;
-  //});
-
-//  $scope.$on('BMFrameworkLoadView', function(event, url) {
-//      $http.get(url).then(function(response) {
-//          console.log('LOADVIEW', response, response.data.html);
-//      });
-//  });
+        // Case when the target url is not managed by the ui
+        event.preventDefault(true);
+        if (next != current) {
+            $window.location = next;
+        }
+    });
 }]);
 
 // This controller updates the dashboard dropdown menu
@@ -251,6 +226,10 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
     $scope.data = [];
 
     $scope.$watch(
+        function(scope) {return scope.bmf_current_view},
+        function(newValue) {if (newValue != undefined) update_sidebar()}
+    );
+    $scope.$watch(
         function(scope) {return scope.bmf_current_dashboard},
         function(newValue) {if (newValue != undefined) update_sidebar()}
     );
@@ -267,7 +246,6 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
         $scope.bmf_sidebars[key].forEach(function(c, ci) {
             response.push({'name': c.name});
             c.views.forEach(function(v, vi) {
-                response.push({'name': v.name, 'url': v.url});
                 if ($scope.bmf_current_view && $scope.bmf_current_view.type == "list" && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
                     response.push({'name': v.name, 'url': v.url, 'class': 'active'});
                 }
@@ -283,10 +261,18 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
 
 // TODO OLD
 app.controller('bmfListCtrl', function($scope, $http) {
-    $scope.$on('BMFrameworkUpdateView', function(event, view, category, dashboard) {
-        var url = view.dataapi + '?d=' + dashboard.key + '&c=' + category.key + '&v=' + view.key
+
+    $scope.data = [];
+
+    $scope.$watch(
+        function(scope) {return scope.bmf_current_view},
+        function(newValue) {if (newValue != undefined) get_data()}
+    );
+
+    get_data = function() {
+        var url = $scope.bmf_current_view.view.dataapi + '?d=' + $scope.bmf_current_view.dashboard.key + '&c=' + $scope.bmf_current_view.category.key + '&v=' + $scope.bmf_current_view.view.key
         $http.get(url).then(function(response) {
             $scope.data = response.data;
         });
-    });
+    }
 });
