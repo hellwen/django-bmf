@@ -17,12 +17,14 @@
         <div id="wrap">
             <div id="sidebar">
                 <p class="switch"><a href="#"><img src="{% static "djangobmf/logo.png" %}"></a></p>
-                <ul class="sidebar-nav" ng-controller="SidebarCtrl">{% verbatim %}
+                {% verbatim %}
+                <ul class="sidebar-nav" ng-controller="SidebarCtrl">
                     <li ng-cloak ng-repeat="d in data" ng-class="d.class ? d.class : ''">
                         <a ng-if="d.url != undefined" href="{{ d.url }}">{{ d.name }}</a>
                         <p ng-if="d.url == undefined">{{ d.name }}</p>
                     </li>
-                </ul>{% endverbatim %}
+                </ul>
+                {% endverbatim %}
             </div>
             <div class="page-container">
                 <nav class="navbar navbar-inverse navbar-static-top" role="navigation">

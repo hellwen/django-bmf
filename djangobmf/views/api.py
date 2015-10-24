@@ -142,11 +142,23 @@ class APIOverView(BaseMixin, APIView):
                     'categories': categories,
                 })
 
+        # === Templates -------------------------------------------------------
+
+        templates = {
+            'list': '<h1>List-Template from API</h1> {{ testing }}',
+        }
+
+        # === Navigation ------------------------------------------------------
+
+        navigation = []
+
         # === Response --------------------------------------------------------
 
         return Response({
             'dashboards': dashboards,
             'modules': modules,
+            'navigation': navigation,
+            'templates': templates,
         })
 
 
