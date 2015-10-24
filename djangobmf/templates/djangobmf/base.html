@@ -45,7 +45,7 @@
                                     {% verbatim %}
                                     <ul class="dropdown-menu" ng-cloak>
                                         <li ng-repeat="d in data | orderBy:'name'" ng-class="d.active ? 'active' : ''">
-                                            <a ng-click="load_dashboard(d.key)" href>{{ d.name }}</a>
+                                            <a ng-click="update(d.key)" href>{{ d.name }}</a>
                                         </li>
                                     </ul>
                                     {% endverbatim %}

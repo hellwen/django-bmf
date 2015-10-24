@@ -51,33 +51,57 @@ app.directive('bmfContent', ['$compile', function($compile) {
  * Services
  */
 
-/*
- * Unused
- */
-/*
-app.factory('bmfFindView', ['$location', '$rootScope', function bmfFindView($location, $rootScope) {
-    return function(url) {
+app.factory('CurrentView', ['$rootScope', '$location', function($rootScope, $location) {
+    function update(url, prefix) {
+        var current = get(url, prefix)
+        $rootScope.bmf_current_view = current;
+        if (current && current.type == "list") {
+            $rootScope.bmf_current_dashboard = {
+                key: current.dashboard.key,
+                name: current.dashboard.name
+            };
+        }
+        return current
+    }
+
+    function get(url, prefix) {
         if (url == undefined) {
             url = $location.path();
         }
-        var current = null;
-        $scope.BMFrameworkViewData.dashboards.forEach(function(d, dindex) {
-            d.categories.forEach(function(c, cindex) {
-                c.views.forEach(function(v, vindex) {
-                    if (v.url == location.pathname) {
+        if (prefix) {
+            if ($location.protocol() == 'http' && $location.port() == 80) {
+                prefix = 'http://'+ $location.host();
+            }
+            else if ($location.protocol() == 'https' && $location.port() == 443) {
+                prefix = 'https://'+ $location.host();
+            }
+            else {
+                prefix = $location.protocol() + '://' + $location.host() + ':' + $location.port()
+            }
+        }
+        var current = undefined;
+        $rootScope.bmf_dashboards.forEach(function(d, di) {
+            d.categories.forEach(function(c, ci) {
+                c.views.forEach(function(v, vi) {
+                    if (v.url == url) {
                         current = {
-                            'view': v,
-                            'category': c,
-                            'dashboard': d
+                            type: 'list',
+                            view: v,
+                            category: c,
+                            dashboard: d
                         };
                     }
                 });
             });
         });
+        if (current) {
+            return current;
+        }
         return current
-  }
+    }
+    return {get: get, update: update}
 }]);
-*/
+
 
 /*
  * Controller
@@ -85,7 +109,7 @@ app.factory('bmfFindView', ['$location', '$rootScope', function bmfFindView($loc
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-app.controller('FrameworkCtrl', ['$http', '$rootScope', function($http, $rootScope) {
+app.controller('FrameworkCtrl', ['$http', '$rootScope', 'CurrentView', function($http, $rootScope, CurrentView) {
 
     // pace to store basic templates
     $rootScope.bmf_templates = {
@@ -121,36 +145,9 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', function($http, $rootSco
         $rootScope.bmf_sidebars = sidebar;
         $rootScope.bmf_templates = response.data.templates;
 
-        // TODO: DEBUG
-        $rootScope.bmf_current_dashboard = {key: 'sales', name:'SALES'};
+        CurrentView.update();
     });
 
-
-//  // TODO: MOVE TO FACTORY/SERVICE/ETC
-//  $scope.get_view = function(url) {
-//      if (url == undefined) {
-//          url = $location.path();
-//      }
-//
-//      var current = null;
-//      $scope.BMFrameworkViewData.dashboards.forEach(function(d, dindex) {
-//          d.categories.forEach(function(c, cindex) {
-//              c.views.forEach(function(v, vindex) {
-//                  if (v.url == location.pathname) {
-//                      current = {
-//                          'view': v,
-//                          'category': c,
-//                          'dashboard': d
-//                      };
-//                  }
-//              });
-//          });
-//      });
-//      if (current) {
-//          $rootScope.bmf_current_dashboard = d.key;
-//      }
-//      return current
-//  }
 
   //$scope.$on('$locationChangeStart', function(event, next, current) {
   //    console.log(event, next, current);
@@ -158,15 +155,6 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', function($http, $rootSco
   //        return true;
   //    }
 
-  //    if ($location.protocol() == 'http' && $location.port() == 80) {
-  //        var prefix = 'http://'+ $location.host();
-  //    }
-  //    else if ($location.protocol() == 'https' && $location.port() == 443) {
-  //        var prefix = 'https://'+ $location.host();
-  //    }
-  //    else {
-  //        var prefix = $location.protocol() + '://' + $location.host() + ':' + $location.port()
-  //    }
 
 ////    // find if the url is managed by the framework
 ////    var url = null;
@@ -200,24 +188,28 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', function($http, $rootSco
 }]);
 
 // This controller updates the dashboard dropdown menu
-app.controller('DashboardCtrl', ['$scope', function($scope) {
+app.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
 
     $scope.data = [];
     $scope.current_dashboard = null;
 
     $scope.$watch(
+        function(scope) {return scope.bmf_dashboards},
+        function(newValue) {if (newValue != undefined) update_dashboard()}
+    );
+    $scope.$watch(
         function(scope) {return scope.bmf_current_dashboard},
         function(newValue) {if (newValue != undefined) update_dashboard()}
     );
 
-    function update_dashboard() {
+    function update_dashboard(key) {
         var response = [];
         var current_dashboard = [];
-        var key = $scope.bmf_current_dashboard.key;
+        var current = $scope.bmf_current_dashboard;
 
         $scope.bmf_dashboards.forEach(function(d, di) {
             var active = false
-            if (key == d.key) {
+            if (current && current.key == d.key || key && key == d.key) {
                 active = true
             }
 
@@ -230,7 +222,28 @@ app.controller('DashboardCtrl', ['$scope', function($scope) {
 
         $scope.data = response;
         $scope.current_dashboard = $scope.bmf_current_dashboard;
+
     }
+
+    $scope.update = function(key) {
+        var name;
+        $scope.bmf_dashboards.forEach(function(d, di) {
+            if (key && key == d.key) {
+                name = d.name;
+            }
+        });
+
+        if (name) {
+            $rootScope.bmf_current_dashboard = {
+                key: key,
+                name: name
+            };
+        }
+        else {
+            $rootScope.bmf_current_dashboard = undefined;
+        }
+    };
+
 }]);
 
 // This controller updates the dashboard dropdown menu
