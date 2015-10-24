@@ -268,14 +268,12 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
             response.push({'name': c.name});
             c.views.forEach(function(v, vi) {
                 response.push({'name': v.name, 'url': v.url});
-                // TODO: Read if view is active
-//              if (current_view && c.key == current_view.category.key && v.key == current_view.view.key) {
-//                  response.push({'name': v.name, 'url': v.url, 'class': 'active'});
-//                  $scope.$parent.$broadcast('BMFrameworkUpdateView', v, c, d);
-//              }
-//              else {
-//                  response.push({'name': v.name, 'url': v.url});
-//              }
+                if ($scope.bmf_current_view && $scope.bmf_current_view.type == "list" && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
+                    response.push({'name': v.name, 'url': v.url, 'class': 'active'});
+                }
+                else {
+                    response.push({'name': v.name, 'url': v.url});
+                }
             });
         });
 
