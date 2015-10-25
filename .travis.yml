@@ -12,7 +12,7 @@ python:
 before_script:
     - psql -c 'create database djangobmf;' -U postgres
 install:
-    - pip install . django$DJANGO_VERSION
+    - pip install django$DJANGO_VERSION . -rrequirements/develop.txt
 script:
     - python runtests.py -v2
 
