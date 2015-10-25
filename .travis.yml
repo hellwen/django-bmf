@@ -1,21 +1,32 @@
+sudo: false
+# services:
+#   - redis-server
+# addons:
+#   postgresql: "9.3"
+
 language: python
+python:
+  - "2.7"
+  - "3.4"
+
 install:
-    - pip install tox 
+  - pip install $DJANGO_VERSION $PIP_ADDITIONAL
+  - pip install . 
+  - pip install -rrequirements/develop.txt
+  - pip install psycopg2 celery
 script:
-    - tox
+  - python runtests.py -v2
+
 env:
-    - TOXENV=py27-1.8
-    - TOXENV=py34-1.8
-    - TOXENV=py27-1.9
-    - TOXENV=py34-1.9
-#   - TOXENV=py27-1.10
-#   - TOXENV=py34-1.10
-    - TOXENV=docs
+  global:
+    - DJANGO_SETTINGS_MODULE=sandbox.settings_travis
+    - PIP_ADDITIONAL=""
+  matrix:
+    - DJANGO_VERSION=django>1.8,<1.8.999
+    - DJANGO_VERSION=django==1.9a1
+    - DJANGO_VERSION=django==1.9a1 PIP_ADDITIONAL=https://github.com/ojii/django-sekizai/archive/master.zip#egg=sekizai
+
 matrix:
-    allow_failures:
-        - env: TOXENV=py27-1.9
-        - env: TOXENV=py34-1.9
-#       - env: TOXENV=py27-1.10
-#       - env: TOXENV=py34-1.10
-git:
-    submodules: false
+  fast_finish: true
+  allow_failures:
+    - env: DJANGO_VERSION=django==1.9a1
