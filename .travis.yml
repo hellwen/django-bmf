@@ -10,23 +10,25 @@ python:
   - "3.4"
 
 install:
-    - pip install django$DJANGO_VERSION
-    - pip install . 
-    - pip install -rrequirements/develop.txt
-    - pip install psycopg2 celery
+  - pip install django$DJANGO_VERSION $PIP_ADDITIONAL
+  - pip install . 
+  - pip install -rrequirements/develop.txt
+  - pip install psycopg2 celery
 script:
-    - python runtests.py -v2
+  - python runtests.py -v2
 
 env:
   global:
     - DJANGO_SETTINGS_MODULE=sandbox.settings_travis
   matrix:
-    - DJANGO_VERSION=">1.8,<1.8.999"
-    - DJANGO_VERSION="==1.9a1"
+    - DJANGO_VERSION=">1.8,<1.8.999" PIP_ADDITIONAL=""
+    - DJANGO_VERSION="==1.9a1" PIP_ADDITIONAL=""
+    - DJANGO_VERSION="==1.9a1" PIP_ADDITIONAL=https://github.com/ojii/django-sekizai/archive/master.zip#egg=sekizai
 
 matrix:
-    allow_failures:
-        - env: DJANGO_VERSION=1.9a1
-
-git:
-    submodules: false
+  fast_finish: true
+  allow_failures:
+    - env: DJANGO_VERSION=1.9a1
+      python: 2.7
+    - env: DJANGO_VERSION=1.9a1
+      python: 3.4
