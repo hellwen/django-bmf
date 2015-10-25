@@ -20,15 +20,16 @@ script:
 env:
   global:
     - DJANGO_SETTINGS_MODULE=sandbox.settings_travis
+    - PIP_ADDITIONAL=""
   matrix:
-    - DJANGO_VERSION=">1.8,<1.8.999" PIP_ADDITIONAL=""
-    - DJANGO_VERSION="==1.9a1" PIP_ADDITIONAL=""
-    - DJANGO_VERSION="==1.9a1" PIP_ADDITIONAL=https://github.com/ojii/django-sekizai/archive/master.zip#egg=sekizai
+    - DJANGO_VERSION=">1.8,<1.8.999"
+    - DJANGO_VERSION="==1.9a1"
+    - DJANGO_VERSION="==1.9a1" PIP_ADDITIONAL="https://github.com/ojii/django-sekizai/archive/master.zip#egg=sekizai"
 
 matrix:
   fast_finish: true
   allow_failures:
-    - env: DJANGO_VERSION=1.9a1
+    - env: DJANGO_VERSION="==1.9a1" 
       python: 2.7
-    - env: DJANGO_VERSION=1.9a1
+    - env: DJANGO_VERSION="==1.9a1"
       python: 3.4
