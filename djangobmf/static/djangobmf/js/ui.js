@@ -14,27 +14,71 @@ app.config(['$httpProvider', '$locationProvider', function($httpProvider, $locat
     $locationProvider.html5Mode(true).hashPrefix('!');
 }]);
 
-/*
 app.directive('bmfContent', ['$compile', function($compile) {
     return {
         restrict: 'A',
-        priority: -500,
+        priority: -90,
         link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {
+                    if (scope.bmf_current_view) {
+                        return scope.bmf_current_view.type
+                    }
+                    return undefined
+                },
+                function(newValue) {if (newValue != undefined) update(newValue)}
+            );
 
-            scope.$on('bmfRender', update);
-
-            function update(event, controller, html) {
-                if (controller && html) {
-                    console.log("EVENT", controller, html, $element);
-                    $element.html(html + ' [{{ testing }}]').show();
-                    $compile($element.contents())(scope);
-                }
+            function update(type) {
+                $element.html(scope.bmf_templates[type]).show();
+                $compile($element.contents())(scope);
             }
-            update();
         }
     };
 }]);
-*/
+
+app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
+    return {
+        restrict: 'A',
+        priority: -80,
+        link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {return scope.bmf_current_view},
+                function(newValue) {if (newValue != undefined) update(newValue)}
+            );
+
+            function update(view) {
+                // cleanup
+                $element.html("");
+                scope.data = [];
+                scope.pagination = undefined;
+
+                // update vars
+                scope.view_name = view.view.name;
+                scope.category_name = view.category.name;
+                scope.dashboard_name = view.dashboard.name;
+
+                // get new template
+                $http.get(view.view.api).then(function(response) {
+                    console.log("DATA", response.data)
+                    $element.html(response.data.html).show();
+                    $compile($element.contents())(scope);
+                    if (scope.bmf_debug) {
+                        console.log("VIEW", scope)
+                    }
+
+                    // get new data
+                    var url = view.view.dataapi + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
+  
+                    $http.get(url).then(function(response) {
+                        scope.data = response.data.items;
+                        scope.pagination = response.data.pagination;
+                    });
+                });
+            }
+        }
+    };
+}]);
 
 /*
  * Services
@@ -84,7 +128,7 @@ app.factory('CurrentView', ['$rootScope', '$location', function($rootScope, $loc
                             type: 'list',
                             view: v,
                             category: c,
-                            dashboard: d
+                            dashboard: d,
                         };
                     }
                 });
@@ -139,20 +183,21 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
         $rootScope.bmf_dashboards = response.data.dashboards;
         $rootScope.bmf_sidebars = sidebar;
         $rootScope.bmf_templates = response.data.templates;
+        $rootScope.bmf_debug = response.data.debug;
 
         CurrentView.update();
     });
 
 
     $scope.$on('$locationChangeStart', function(event, next, current) {
-//      // only invoke if dashboards are present (and the ui is loaded propperly)
-//      if ($rootScope.bmf_dashboards) {
-//          var next_view = CurrentView.get(next, true);
-//          if (next_view) {
-//              CurrentView.go(next_view);
-//              return true
-//          };
-//      }
+        // only invoke if dashboards are present (and the ui is loaded propperly)
+        if ($rootScope.bmf_dashboards) {
+            var next_view = CurrentView.get(next, true);
+            if (next_view) {
+                CurrentView.go(next_view);
+                return true
+            };
+        }
 
         // Case when the target url is not managed by the ui
         event.preventDefault(true);
@@ -261,18 +306,4 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
 
 // TODO OLD
 app.controller('bmfListCtrl', function($scope, $http) {
-
-    $scope.data = [];
-
-    $scope.$watch(
-        function(scope) {return scope.bmf_current_view},
-        function(newValue) {if (newValue != undefined) get_data()}
-    );
-
-    get_data = function() {
-        var url = $scope.bmf_current_view.view.dataapi + '?d=' + $scope.bmf_current_view.dashboard.key + '&c=' + $scope.bmf_current_view.category.key + '&v=' + $scope.bmf_current_view.view.key
-        $http.get(url).then(function(response) {
-            $scope.data = response.data;
-        });
-    }
 });

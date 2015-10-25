@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n %}{% spaceless %}
 <table class="table table-striped table-condensed table-hover">
     <thead>
         <tr>
@@ -10,7 +10,7 @@
     </thead>
     <tbody>
     {% verbatim %}
-        <tr ng-repeat="obj in data.items">
+        <tr ng-repeat="obj in data">
             <td>
                 <a href="{{ obj.bmfdetail }}">{{ obj.transaction_name }}</a>
             </td>
@@ -27,3 +27,4 @@
     {% endverbatim %}
     </tbody>
 </table>
+{% endspaceless %}

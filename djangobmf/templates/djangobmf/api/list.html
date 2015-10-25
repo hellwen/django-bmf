@@ -1,0 +1,39 @@
+{% spaceless %}{% verbatim %}
+<div class="input-group">
+    <div class="input-group-btn">
+        <button class="btn btn-default disabled" type="button">
+            <span class="glyphicon glyphicon-search"></span>
+        </button>
+    </div>
+    <input type="text" class="form-control">
+    <div class="input-group-btn">
+        &nbsp;
+        <a class="btn btn-success bmf-edit" href="/de/api/module/18/create/default/">
+        <span class="glyphicon glyphicon-plus"></span> Hinzufügen
+        </a>
+     </div>
+</div><!-- /input-group -->
+<hr>
+
+<div bmf-view-list=""></div>
+
+<nav ng-if="data.pagination.enabled" class="text-center">
+<ul class="pagination">
+<li ng-if="data.pagination.previous">
+<a href="#" aria-label="Zurück">
+<span aria-hidden="true">&laquo;</span>
+</a>
+</li>
+
+<li ng-repeat="page in data.pagination.pages" ng-class="{active: page==data.pagination.page, disabled: data.pagination.num_pages==1}" class="pagination">
+<a href="?page={{ page }}">{{ page }}</a>
+</li>
+
+<li ng-if="data.pagination.next">
+<a href="#" aria-label="Weiter">
+<span aria-hidden="true">&raquo;</span>
+</a>
+</li>
+</ul>
+</nav>
+{% endverbatim %}{% endspaceless %}

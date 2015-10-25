@@ -4,8 +4,11 @@
 from __future__ import unicode_literals
 
 from django.apps import apps
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
+from django.template.loader import get_template
+from django.template.loader import select_template
 
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
@@ -145,7 +148,7 @@ class APIOverView(BaseMixin, APIView):
         # === Templates -------------------------------------------------------
 
         templates = {
-            'list': '<h1>List-Template from API</h1> {{ testing }}',
+            'list': get_template('djangobmf/api/list.html').render().strip(),
         }
 
         # === Navigation ------------------------------------------------------
@@ -159,6 +162,7 @@ class APIOverView(BaseMixin, APIView):
             'modules': modules,
             'navigation': navigation,
             'templates': templates,
+            'debug': settings.DEBUG,
         })
 
 
@@ -169,21 +173,22 @@ class APIViewDetail(BaseMixin, APIView):
         """
 
         try:
-            view = request.djangobmf_site.get_dashboard(db)[cat][view]
+            view_cls = request.djangobmf_site.get_dashboard(db)[cat][view]
         except KeyError:
             raise Http404
 
         context = {}
-        if view().check_permissions(self.request):
-            context['api'] = reverse('djangobmf:api', request=request, format=format, kwargs={
-                'app': view.model._meta.app_label,
-                'model': view.model._meta.model_name,
-            })
-            context['html'] = '<h1>Test</h1><p>%s %s</p>' % (
-                view.model._meta.app_label,
-                view.model._meta.model_name,
-            )
 
+        view = view_cls()
+        if view.check_permissions(self.request):
+            html = select_template([
+                '%s/%s_bmflist.html' % (
+                    view.model._meta.app_label,
+                    view.model._meta.model_name
+                ),
+                'djangobmf/api/default-table.html',
+            ]).render().strip(),
+            context['html'] = html
         return Response(context)
 
 
