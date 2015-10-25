@@ -17,9 +17,12 @@ script:
     - python runtests.py -v2
 
 env:
+  - global:
     - DJANGO_SETTINGS_MODULE=sandbox.settings_travis
+  - matrix:
     - DJANGO_VERSION=">1.8,<1.8.999"
     - DJANGO_VERSION="==1.9a1"
+
 matrix:
     allow_failures:
         - env: DJANGO_VERSION=1.9a1
