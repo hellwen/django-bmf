@@ -9,13 +9,11 @@ python:
   - "2.7"
   - "3.4"
 
-before_script:
-    - psql -c 'create database test_djangobmf;' -U postgres
 install:
     - pip install django$DJANGO_VERSION
     - pip install . 
     - pip install -rrequirements/develop.txt
-    - pip install psycopg2
+    - pip install psycopg2 celery
 script:
     - python runtests.py -v2
 
