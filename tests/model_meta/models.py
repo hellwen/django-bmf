@@ -7,6 +7,7 @@ from django.db import models
 
 from djangobmf.models import BMFModel
 
+
 class Category(BMFModel):
     field1 = models.BooleanField(default=True)
 
