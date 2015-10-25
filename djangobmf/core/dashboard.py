@@ -4,13 +4,11 @@
 from __future__ import unicode_literals
 
 from django.conf.urls import patterns
-from django.conf.urls import url
+# from django.conf.urls import url
 from django.contrib.admin.sites import AlreadyRegistered
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 from django.utils.text import slugify
-
-from djangobmf.views.module import ModuleListView
 
 from collections import OrderedDict
 
@@ -96,29 +94,29 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
     def get_urls(self):
         urlpatterns = patterns('')
 
-        for category in self:
-            for view in category:
+        # for category in self:
+        #     for view in category:
 
-                class ViewFactory(view, ModuleListView):
-                    pass
+        #         class ViewFactory(view, ModuleListView):
+        #             pass
 
-                ViewFactory._bmf_view_class = view
-                ViewFactory._bmf_category = category
-                ViewFactory._bmf_dashboard = self
+        #         ViewFactory._bmf_view_class = view
+        #         ViewFactory._bmf_category = category
+        #         ViewFactory._bmf_dashboard = self
 
-                urlpatterns += patterns(
-                    '',
-                    url(
-                        r'^view/%s/%s/' % (category.slug, view.slug),
-                        ViewFactory.as_view(
-                        ),
-                        name='view_%s_%s' % (category.key, view.key),
-                        kwargs={
-                            'category': category.key,
-                            'view': view.key,
-                        },
-                    ),
-                )
+        #         urlpatterns += patterns(
+        #             '',
+        #             url(
+        #                 r'^view/%s/%s/' % (category.slug, view.slug),
+        #                 ViewFactory.as_view(
+        #                 ),
+        #                 name='view_%s_%s' % (category.key, view.key),
+        #                 kwargs={
+        #                     'category': category.key,
+        #                     'view': view.key,
+        #                 },
+        #             ),
+        #         )
         return urlpatterns
 
     def add_report(self, report_class):

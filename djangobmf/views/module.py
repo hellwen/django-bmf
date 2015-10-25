@@ -24,13 +24,11 @@ from django.views.generic import CreateView
 from django.views.generic import DeleteView
 from django.views.generic import DetailView
 from django.views.generic import UpdateView
-from django.views.generic.base import TemplateView
 from django.views.generic.edit import BaseFormView
 from django.views.generic.detail import SingleObjectMixin
 from django.template.loader import get_template
 from django.template.loader import select_template
 from django.template import TemplateDoesNotExist
-from django.utils import six
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 # from django.utils.timezone import make_aware
@@ -61,7 +59,6 @@ import copy
 import logging
 import operator
 import types
-import urllib
 # import warnings
 
 from functools import reduce
@@ -69,222 +66,6 @@ from functools import reduce
 
 logger = logging.getLogger(__name__)
 
-
-# --- list views --------------------------------------------------------------
-
-
-class ModuleListView(ModuleViewMixin, TemplateView):
-    """
-    """
-    permission_classes = [ModuleViewPermission]
-
-    # set by views.dashboard
-    model = None
-    dashboard = None
-    dashboard_view = None
-
-    allow_empty = True
-    paginate_by = None
-
-    date_field = 'modified'
-    date_resolution = 'year'
-    allow_future = False
-
-    # Use a different manager function, when available
-    manager = None
-
-    # use pagination
-    paginate = True
-
-    # we are providing the view with the list of objects
-    # even if the data sould be streamed via angular/json
-    # because django querysets are lazy
-    context_object_name = 'objects'
-
-    template_name = None
-
-    def get_dashboard_view(self):
-        return self.dashboard_view
-
-    def get_dashboard(self):
-        return self.dashboard
-
-    def get_template_names(self):
-        """
-        Return a list of template names to be used for the request. Must return
-        a list. May not be called if render_to_response is overridden.
-        """
-        if self.template_name:
-            return [self.template_name]
-
-        names = []
-        names.append("%s/%s_bmfgeneric.html" % (
-            self.model._meta.app_label,
-            self.model._meta.model_name
-        ))
-        names.append("djangobmf/module_generic.html")
-
-        return names
-
-    def get_view_name(self):
-        if self.dashboard:
-            return self.dashboard_view.name
-        else:
-            return self.model._meta.verbose_name_plural
-
-    def get_data_url(self):
-        url = reverse('djangobmf:api', kwargs={
-            'app': self.model._meta.app_label,
-            'model': self.model._meta.model_name,
-        })
-
-        kwargs = {
-            'd': self._bmf_dashboard.key,
-            'c': self._bmf_category.key,
-            'v': self._bmf_view_class.key,
-        }
-
-        page = self.request.GET.get('page')
-
-        if page:
-            try:
-                kwargs['page'] = int(page)
-            except ValueError:
-                pass
-
-        if not self.paginate:
-            kwargs['paginate'] = 'no'
-
-        if kwargs:
-            if six.PY2:
-                return url + '?' + urllib.urlencode(kwargs)
-            else:
-                return url + '?' + urllib.parse.urlencode(kwargs)
-        else:
-            return url
-
-    def get_data_template(self):
-        return "%s/%s_bmflist.html" % (
-            self.model._meta.app_label,
-            self.model._meta.model_name
-        )
-
-    def get_context_data(self, **kwargs):
-        kwargs.update({
-            'view_name': self.get_view_name(),
-            'data_template': select_template([
-                self.get_data_template(),
-                "djangobmf/module_list.html",
-            ]),
-            'get_data_url': self.get_data_url(),
-        })
-        return super(ModuleListView, self).get_context_data(**kwargs)
-
-
-'''
-class ModuleArchiveView(ModuleGenericBaseView, YearMixin, MonthMixin, WeekMixin, DayMixin,
-                        MultipleObjectTemplateResponseMixin, BaseDateListView):
-    """
-    This view generates a parginated list for a time intervall
-    """
-    template_name_suffix = 'archive'
-    date_field = 'modified'
-    date_resolution = 'year'
-    allow_empty = True
-    allow_future = False
-
-    def get(self, request, *args, **kwargs):
-        self.date_list, self.object_list, extra_context = self.get_dated_items()
-        context = self.get_context_data(object_list=self.object_list, date_list=self.date_list)
-        context.update(extra_context)
-        return self.render_to_response(context)
-
-    def get_week_format(self):
-        return '%W' if get_format('FIRST_DAY_OF_WEEK') else '%U'
-
-    def get_dated_items(self):
-        """
-        Return (date_list, items, extra_context) for this request.
-        """
-
-        year = self.request.GET.get('year', None)
-        month = self.request.GET.get('month', None)
-        day = self.request.GET.get('day', None)
-        week = self.request.GET.get('week', None)
-
-        year_format = '%Y'
-        month_format = '%m'
-        day_format = '%d'
-        week_format = self.get_week_format()
-
-        date_now = now()
-
-        if not year:
-            year = date_now.strftime(year_format)
-
-        if not month and not week and self.date_resolution in ["month", "day"]:
-            month = date_now.strftime(month_format)
-
-        if not week and not month and self.date_resolution in ["week"]:
-            week = date_now.strftime(week_format)
-
-        if not day and self.date_resolution in ["day"]:
-            day = date_now.strftime(day_format)
-
-        date_field = self.get_date_field()
-
-        if month and not week:
-            if day:
-                date = _date_from_string(year, year_format, month, month_format, day, day_format)
-                period = "day"
-                until = self._make_date_lookup_arg(self._get_next_day(date))
-            else:
-                date = _date_from_string(year, year_format, month, month_format)
-                period = "month"
-                until = self._make_date_lookup_arg(self._get_next_month(date))
-        elif week and not month:
-            if week_format == '%W':
-                date = _date_from_string(year, year_format, week, week_format, '1', '%w')
-            else:
-                date = _date_from_string(year, year_format, week, week_format, '0', '%w')
-            period = "week"
-            until = self._make_date_lookup_arg(self._get_next_week(date))
-        else:
-            date = _date_from_string(year, year_format)
-            period = "year"
-            until = self._make_date_lookup_arg(self._get_next_year(date))
-        since = self._make_date_lookup_arg(date)
-
-        lookup_kwargs = {
-            '%s__gte' % date_field: since,
-            '%s__lt' % date_field: until,
-        }
-
-        qs = self.get_dated_queryset(**lookup_kwargs)
-        date_list = self.get_date_list(qs)
-
-        return (date_list, qs, {
-            'current_period': period,
-            'current_period_start': date,
-            'current_period_end': until - datetime.timedelta(1),
-            'next_period': _get_next_prev(self, date, False, period),
-            'previous_period': _get_next_prev(self, date, True, period),
-            'dateformat': {
-                'year': year_format[1:],
-                'month': month_format[1:],
-                'day': day_format[1:],
-                'week': week_format[1:],
-            }
-        })
-
-
-class ModuleLetterView(ModuleGenericBaseView, FilterView):
-    """
-    This view generates a parginated list and a "A-Z 0-9"
-    navigation
-    """
-    template_name_suffix = 'letter'
-'''
 
 # --- detail, forms and api ---------------------------------------------------
 

@@ -179,16 +179,19 @@ class ModuleTestFactory(SuperuserMixin, BaseTestCase):
                             views.append((model, view, dashboard.key, category.key, view.key))
 
         for v in views:
-            url = reverse('%s:dashboard_%s:view_%s_%s' % (
-                settings.APP_LABEL,
-                v[2],
-                v[3],
-                v[4],
-            ))
+            url = reverse('%s:dashboard' % settings.APP_LABEL, kwargs={
+                'dashboard': v[2],
+                'category': v[3],
+                'view': v[4],
+            })
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 
-            url = response.context['get_data_url']
+            url = reverse('%s:api-view' % settings.APP_LABEL, kwargs={
+                'db': v[2],
+                'cat': v[3],
+                'view': v[4],
+            })
 
             response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
             self.assertEqual(response.status_code, 200)

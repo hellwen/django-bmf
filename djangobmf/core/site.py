@@ -208,15 +208,15 @@ class Site(object):
             # pattern - the urls are not needed during migrations.
             return patterns('')
 
-        for dashboard in self.dashboards:
-            urlpatterns += patterns(
-                '',
-                url(
-                    r'^dashboard/%s/' % dashboard.slug,
-                    include((dashboard.get_urls(), self.app_name, "dashboard_%s" % dashboard.key)),
-                    kwargs={'dashboard': dashboard.key},
-                ),
-            )
+#       for dashboard in self.dashboards:
+#           urlpatterns += patterns(
+#               '',
+#               url(
+#                   r'^dashboard/%s/' % dashboard.slug,
+#                   include((dashboard.get_urls(), self.app_name, "dashboard_%s" % dashboard.key)),
+#                   kwargs={'dashboard': dashboard.key},
+#               ),
+#           )
 
         for module, data in self.modules.items():
             info = (module._meta.app_label, module._meta.model_name)

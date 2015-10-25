@@ -78,24 +78,22 @@ class APIOverView(BaseMixin, APIView):
 
         # === Modules ---------------------------------------------------------
 
-        modules = []
+        modules = {}
         for ct, model in site.models.items():
 
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
-                ct = ContentType.objects.get_for_model(model)
-                modules.append({
+                modules[ct] = {
                     'name': model._meta.verbose_name_plural,
                     'app': model._meta.app_label,
                     'model': model._meta.model_name,
-                    'ct': ct.pk,
                     'url': reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
                     }),
                     'only_related': model._bmfmeta.only_related,
-                })
+                }
 
         # === Dashboards ------------------------------------------------------
 
@@ -107,19 +105,20 @@ class APIOverView(BaseMixin, APIView):
                 views = []
 
                 for view in category:
-                    # parse the function name
-                    name = 'djangobmf:dashboard_%s:view_%s_%s' % (
-                        dashboard.key,
-                        category.key,
-                        view.key,
-                    )
-
                     # add the view if the user has the permissions to view it
-                    if view().check_permissions(self.request):
+                    if view().check_permissions(self.request):  # pragma: no branch
+
+                        ct = ContentType.objects.get_for_model(view.model)
+
                         views.append({
                             'name': view.name,
                             'key': view.key,
-                            'url': reverse(name),
+                            'url': reverse("djangobmf:dashboard", kwargs={
+                                'dashboard': dashboard.key,
+                                'category': category.key,
+                                'view': view.key,
+                            }),
+                            'ct': ct.pk,
                             'api': reverse('djangobmf:api-view', request=request, format=format, kwargs={
                                 'db': dashboard.key,
                                 'cat': category.key,
@@ -131,14 +130,14 @@ class APIOverView(BaseMixin, APIView):
                             }),
                         })
 
-                if views:
+                if views:  # pragma: no branch
                     categories.append({
                         'name': category.name,
                         'key': category.key,
                         'views': views,
                     })
 
-            if categories:
+            if categories:  # pragma: no branch
                 dashboards.append({
                     'name': dashboard.name,
                     'key': dashboard.key,
@@ -180,7 +179,7 @@ class APIViewDetail(BaseMixin, APIView):
         context = {}
 
         view = view_cls()
-        if view.check_permissions(self.request):
+        if view.check_permissions(self.request):  # pragma: no branch
             html = select_template([
                 '%s/%s_bmflist.html' % (
                     view.model._meta.app_label,

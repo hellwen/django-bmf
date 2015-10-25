@@ -84,10 +84,11 @@ app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
  * Services
  */
 
-app.factory('CurrentView', ['$rootScope', '$location', function($rootScope, $location) {
+app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
     function go(next) {
         $rootScope.bmf_current_view = next;
         if (next && next.type == "list") {
+            PageTitle.set(next.dashboard.name + ' - ' + next.category.name + ' - ' + next.view.name);
             $rootScope.bmf_current_dashboard = {
                 key: next.dashboard.key,
                 name: next.dashboard.name
@@ -142,6 +143,14 @@ app.factory('CurrentView', ['$rootScope', '$location', function($rootScope, $loc
     return {get: get, go: go, update: update}
 }]);
 
+app.factory('PageTitle', function() {
+    var title = '';
+    return {
+        get: function() { return title; },
+        set: function(newTitle) { title = newTitle }
+    };
+});
+
 /*
  * Controller
  */
@@ -162,6 +171,9 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
     // place to store all sitemaps
     $rootScope.bmf_sidebars = undefined;
 
+    // place to store all sitemaps
+    $rootScope.bmf_modules = undefined;
+
     // holds the current dashboard
     $rootScope.bmf_current_dashboard = undefined;
 
@@ -180,6 +192,7 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
         response.data.dashboards.forEach(function(d, i) {
             sidebar[d.key] = d.categories;
         });
+        $rootScope.bmf_modules = response.data.modules;
         $rootScope.bmf_dashboards = response.data.dashboards;
         $rootScope.bmf_sidebars = sidebar;
         $rootScope.bmf_templates = response.data.templates;
