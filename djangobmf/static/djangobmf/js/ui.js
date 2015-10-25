@@ -157,13 +157,16 @@ app.factory('PageTitle', function() {
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', function($http, $rootScope, $scope, $window, CurrentView) {
+app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
 
     // pace to store basic templates
     $rootScope.bmf_templates = {
         // template used to display items from the data api as a list
         'list': '',
     };
+
+    // place to store all dashboards
+    $rootScope.PageTitle = PageTitle;
 
     // place to store all dashboards
     $rootScope.bmf_dashboards = undefined;
