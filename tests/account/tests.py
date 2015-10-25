@@ -9,7 +9,6 @@ from django.test import TestCase
 
 
 class AccountTests(TestCase):
-# fixtures = ["fixtures/users.json", ]
 
     def setUp(self):  # noqa
         self.user = User(username="admin", is_staff=True, is_active=True, is_superuser=True)
