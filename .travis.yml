@@ -29,7 +29,7 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-    - env: DJANGO_VERSION="==1.9a1" 
-      python: 2.7
-    - env: DJANGO_VERSION="==1.9a1"
-      python: 3.4
+    - python: 2.7
+      env: DJANGO_VERSION="==1.9a1"
+    - python: 3.4
+      env: DJANGO_VERSION="==1.9a1"
