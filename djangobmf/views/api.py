@@ -93,6 +93,7 @@ class APIOverView(BaseMixin, APIView):
                         'model': model._meta.model_name,
                     }),
                     'only_related': model._bmfmeta.only_related,
+                    'creates': [{"key": i[0], "label": i[1]} for i in model._bmfmeta.create_views],
                 }
 
         # === Dashboards ------------------------------------------------------

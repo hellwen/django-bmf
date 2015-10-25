@@ -1,18 +1,26 @@
 /*
  * AngularJS UI for django BMF
- *
  */
 
+
 var app = angular.module('djangoBMF', []);
+
 
 /*
  * Config
  */
 
+
 app.config(['$httpProvider', '$locationProvider', function($httpProvider, $locationProvider) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     $locationProvider.html5Mode(true).hashPrefix('!');
 }]);
+
+
+/*
+ * Directives
+ */
+
 
 app.directive('bmfContent', ['$compile', function($compile) {
     return {
@@ -60,7 +68,6 @@ app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
 
                 // get new template
                 $http.get(view.view.api).then(function(response) {
-                    console.log("DATA", response.data)
                     $element.html(response.data.html).show();
                     $compile($element.contents())(scope);
                     if (scope.bmf_debug) {
@@ -80,9 +87,11 @@ app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
     };
 }]);
 
+
 /*
  * Services
  */
+
 
 app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
     function go(next) {
@@ -151,9 +160,11 @@ app.factory('PageTitle', function() {
     };
 });
 
+
 /*
  * Controller
  */
+
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
