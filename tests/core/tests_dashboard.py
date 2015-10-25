@@ -3,13 +3,13 @@
 
 from __future__ import unicode_literals
 
-from django.test import TestCase
-from django.utils.translation import ugettext_lazy as _
+# from django.test import TestCase
+# from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.core.dashboard import Dashboard
-from djangobmf.core.category import Category
+# from djangobmf.core.dashboard import Dashboard
+# from djangobmf.core.category import Category
 
-from collections import OrderedDict
+# from collections import OrderedDict
 
 
 # class ClassTests(TestCase):

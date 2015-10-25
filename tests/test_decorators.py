@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.test.utils import override_settings
 
-#from djangobmf.decorators import login_required
+# from djangobmf.decorators import login_required
 from djangobmf.decorators import optional_celery
 from djangobmf.conf import settings
 

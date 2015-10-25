@@ -51,8 +51,8 @@ def main(modules, verbosity=2, failfast=False, contrib=None, nocontrib=False):
     )
     styleguide.options.report.start()
     styleguide.input_dir("djangobmf")
+    styleguide.input_dir("tests")
     # styleguide.input_dir("sandbox")
-    # styleguide.input_dir("tests")
     # styleguide.input_dir("docs")
     styleguide.options.report.stop()
     if styleguide.options.report.get_count() > 0:
