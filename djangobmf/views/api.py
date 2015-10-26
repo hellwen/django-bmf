@@ -78,14 +78,15 @@ class APIOverView(BaseMixin, APIView):
 
         # === Modules ---------------------------------------------------------
 
-        modules = {}
+        modules = []
         for ct, model in site.models.items():
 
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
-                modules[ct] = {
+                modules.append({
                     'name': model._meta.verbose_name_plural,
+                    'ct': ct,
                     'app': model._meta.app_label,
                     'model': model._meta.model_name,
                     'url': reverse('djangobmf:api', request=request, format=format, kwargs={
@@ -93,8 +94,14 @@ class APIOverView(BaseMixin, APIView):
                         'model': model._meta.model_name,
                     }),
                     'only_related': model._bmfmeta.only_related,
-                    'creates': [{"key": i[0], "label": i[1]} for i in model._bmfmeta.create_views],
-                }
+                    'creates': [
+                        {
+                            "name": i[1],
+                            "url": reverse(model._bmfmeta.namespace_api + ':create', kwargs={
+                                "key": i[0],
+                            }),
+                        } for i in model._bmfmeta.create_views],
+                })
 
         # === Dashboards ------------------------------------------------------
 
@@ -124,10 +131,6 @@ class APIOverView(BaseMixin, APIView):
                                 'db': dashboard.key,
                                 'cat': category.key,
                                 'view': view.key,
-                            }),
-                            'dataapi': reverse('djangobmf:api', request=request, format=format, kwargs={
-                                'app': view.model._meta.app_label,
-                                'model': view.model._meta.model_name,
                             }),
                         })
 
@@ -177,9 +180,12 @@ class APIViewDetail(BaseMixin, APIView):
         except KeyError:
             raise Http404
 
-        context = {}
 
         view = view_cls()
+        ct = ContentType.objects.get_for_model(view.model)
+        context = {
+            'ct': ct.pk,
+        }
         if view.check_permissions(self.request):  # pragma: no branch
             html = select_template([
                 '%s/%s_bmflist.html' % (
@@ -187,8 +193,9 @@ class APIViewDetail(BaseMixin, APIView):
                     view.model._meta.model_name
                 ),
                 'djangobmf/api/default-table.html',
-            ]).render().strip(),
+            ]).render().strip()
             context['html'] = html
+
         return Response(context)
 
 

@@ -68,14 +68,20 @@ app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
 
                 // get new template
                 $http.get(view.view.api).then(function(response) {
+
+                    var ct = response.data.ct;
+                    var module = scope.$parent.bmf_modules[ct];
+
+                    scope.creates = module.creates;
                     $element.html(response.data.html).show();
                     $compile($element.contents())(scope);
+
                     if (scope.bmf_debug) {
                         console.log("VIEW", scope)
                     }
 
                     // get new data
-                    var url = view.view.dataapi + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
+                    var url = module.url + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
   
                     $http.get(url).then(function(response) {
                         scope.data = response.data.items;
@@ -203,14 +209,21 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
 
         // Update sidebar and Dashboard objects
         var sidebar = {}
-        response.data.dashboards.forEach(function(d, i) {
-            sidebar[d.key] = d.categories;
+        response.data.dashboards.forEach(function(element, index) {
+            sidebar[element.key] = element.categories;
         });
-        $rootScope.bmf_modules = response.data.modules;
-        $rootScope.bmf_dashboards = response.data.dashboards;
+
+        var modules = {}
+        response.data.modules.forEach(function(element, index) {
+            modules[element.ct] = element;
+        });
+
+        $rootScope.bmf_modules = modules;
         $rootScope.bmf_sidebars = sidebar;
-        $rootScope.bmf_templates = response.data.templates;
+
+        $rootScope.bmf_dashboards = response.data.dashboards;
         $rootScope.bmf_debug = response.data.debug;
+        $rootScope.bmf_templates = response.data.templates;
 
         CurrentView.update();
     });

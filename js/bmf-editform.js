@@ -143,6 +143,7 @@
         });
     };
 })(jQuery);
+
 $(document).ready(function() {
     $('.bmf-edit').bmf_editform();
     $('.btn-bmfdelete').bmf_editform();
