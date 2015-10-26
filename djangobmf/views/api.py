@@ -180,7 +180,6 @@ class APIViewDetail(BaseMixin, APIView):
         except KeyError:
             raise Http404
 
-
         view = view_cls()
         ct = ContentType.objects.get_for_model(view.model)
         context = {
