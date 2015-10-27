@@ -118,6 +118,9 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
     // place to store all sitemaps
     $rootScope.bmf_sidebars = undefined;
 
+    // place to store navigation
+    $rootScope.bmf_navigation = undefined;
+
     // holds the current dashboard
     $rootScope.bmf_current_dashboard = undefined;
 
@@ -139,6 +142,7 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
         $rootScope.bmf_dashboards = response.data.dashboards;
         $rootScope.bmf_sidebars = sidebar;
         $rootScope.bmf_templates = response.data.templates;
+        $rootScope.bmf_navigation = response.data.navigation;
 
         CurrentView.update();
     });
@@ -256,6 +260,45 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
         });
 
         $scope.data = response;
+    }
+}]);
+
+// This controller updates the dashboard dropdown menu
+app.controller('NavigationCtrl', ['$scope', function($scope) {
+    $scope.data = undefined;
+
+    $scope.$watch(
+        function(scope) {return scope.bmf_navigation && scope.bmf_navigation.length || 0},
+        function(newValue) {if (newValue != undefined) init_navigation()}
+    );
+//  $scope.$watch(
+//      function(scope) {return scope.bmf_current_dashboard},
+//      function(newValue) {if (newValue != undefined) update_sidebar()}
+//  );
+//
+    function init_navigation() {
+//      var response = [];
+//      var key = $scope.bmf_current_dashboard.key;
+//
+//      response.push({
+//          'class': 'sidebar-board',
+//          'name': $scope.bmf_current_dashboard.name
+//      });
+//
+//      $scope.bmf_sidebars[key].forEach(function(c, ci) {
+//          response.push({'name': c.name});
+//          c.views.forEach(function(v, vi) {
+//              if ($scope.bmf_current_view && $scope.bmf_current_view.type == "list" && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
+//                  response.push({'name': v.name, 'url': v.url, 'class': 'active'});
+//              }
+//              else {
+//                  response.push({'name': v.name, 'url': v.url});
+//              }
+//          });
+//      });
+//
+        $scope.data = $scope.bmf_navigation;
+        console.log($scope.bmf_navigation);
     }
 }]);
 

@@ -150,7 +150,26 @@ class APIOverView(BaseMixin, APIView):
 
         # === Navigation ------------------------------------------------------
 
-        navigation = []
+        navigation = [
+            {
+                # verbose (req)
+                'name': 'Notifications',
+                'symbol': "glyphicon glyphicon-comment",
+
+                # fallback, when api is unset or does not return html (req) (req)
+                'url': reverse('djangobmf:notification'),
+
+                # API call for updates (opt)
+                'api': reverse('djangobmf:notification'),
+
+                # check every n seconds for changes (req, when api)
+                'intervall': 10,
+
+                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
+                'active': False,
+                'html': '<h1>TEST</h1>',
+            },
+        ]
 
         # === Response --------------------------------------------------------
 
