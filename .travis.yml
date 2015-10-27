@@ -15,7 +15,8 @@ install:
   - pip install -rrequirements/develop.txt
   - pip install psycopg2 celery
 script:
-  - python runtests.py -v2
+  - coverage run runtests.py -v2
+  - coverage report -m --skip-covered
 
 env:
   global:
