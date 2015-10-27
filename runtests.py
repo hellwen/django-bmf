@@ -28,8 +28,9 @@ def get_installed():
 
 def main(modules, verbosity=2, failfast=False, contrib=None, nocontrib=False):
 
+    print('python ' + sys.version)
     print('django ' + django.get_version())
-    print('*'*80)
+    print('*' * 80)
 
     # run flake8 first
     styleguide = get_style_guide(
@@ -48,12 +49,13 @@ def main(modules, verbosity=2, failfast=False, contrib=None, nocontrib=False):
             '*egg',
             'migrations',
         ],
+        paths = [
+            "djangobmf",
+            "tests",
+        ]
     )
+
     styleguide.options.report.start()
-    styleguide.input_dir("djangobmf")
-    styleguide.input_dir("tests")
-    # styleguide.input_dir("sandbox")
-    # styleguide.input_dir("docs")
     styleguide.options.report.stop()
     if styleguide.options.report.get_count() > 0:
         sys.exit(True)

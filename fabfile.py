@@ -98,21 +98,21 @@ def test(fast=False):
             local('virtenv/bin/coverage run runtests.py -v2 --failfast')
         else:
             local('virtenv/bin/coverage run runtests.py -v2')
-        local('virtenv/bin/coverage report -m')
+        local('virtenv/bin/coverage report -m --skip-covered')
 
 
 @task
 def test_mod(app):
     with lcd(BASEDIR):
         local('virtenv/bin/coverage run runtests.py -v2 --contrib %(app)s' % {'app': app})
-        local('virtenv/bin/coverage report -m --include="djangobmf/contrib/%(app)s/*"' % {'app': app})
+        local('virtenv/bin/coverage report -m --skip-covered --include="djangobmf/contrib/%(app)s/*"' % {'app': app})
 
 
 @task
 def test_core(module=""):
     with lcd(BASEDIR):
         local('virtenv/bin/coverage run runtests.py %s -v2 --nocontrib' % module)
-        local('virtenv/bin/coverage report -m --omit="djangobmf/contrib/*"')
+        local('virtenv/bin/coverage report -m --skip-covered --omit="djangobmf/contrib/*"')
 
 
 @task
