@@ -19,7 +19,7 @@ script:
 
 env:
   global:
-    - DJANGO_SETTINGS_MODULE=sandbox.settings_travis
+    - DJANGO_SETTINGS_MODULE=sandbox.settings
     - PIP_ADDITIONAL=""
   matrix:
     - DJANGO_VERSION=django>1.8,<1.8.999

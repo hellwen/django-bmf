@@ -18,5 +18,4 @@
 /docs/build
 /sandbox/static/
 /sandbox/database\.sqlite
-/sandbox/settings.py
 /sandbox/local_settings.py
