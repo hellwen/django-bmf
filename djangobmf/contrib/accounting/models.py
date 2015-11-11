@@ -241,6 +241,11 @@ class BaseTransactionItem(BMFModel):
         settings.CONTRIB_TRANSACTION, null=True, blank=False,
         related_name="items", on_delete=models.CASCADE,
     )
+    date = models.DateField(
+        _('Date'),
+        null=True,
+        blank=False,
+    )
 
     amount_currency = CurrencyField()
     amount = MoneyField(blank=False)
@@ -256,6 +261,7 @@ class BaseTransactionItem(BMFModel):
     class Meta:
         abstract = True
         swappable = "BMF_CONTRIB_TRANSACTIONITEM"
+        ordering = ('-date', '-draft', 'credit', 'transaction__text')
 
     class BMFMeta:
         serializer = TransactionItemSerializer

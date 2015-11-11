@@ -2,15 +2,19 @@
 <table class="table table-striped table-condensed table-hover">
     <thead>
         <tr>
-            <th width="25%">{% trans "Text" %}</th>
-            <th width="25%">{% trans "Account" %}</th>
-            <th width="25%">{% trans "Credit" %}</th>
-            <th width="25%">{% trans "Value" %}</th>
+            <th width="20%">{% trans "Date" %}</th>
+            <th width="20%">{% trans "Text" %}</th>
+            <th width="20%">{% trans "Account" %}</th>
+            <th width="20%">{% trans "Credit" %}</th>
+            <th width="20%">{% trans "Value" %}</th>
         </tr>
     </thead>
     <tbody>
     {% verbatim %}
         <tr ng-repeat="obj in data.items">
+            <td>
+                {{ obj.date_localized }}
+            </td>
             <td>
                 <a href="{{ obj.bmfdetail }}">{{ obj.transaction_name }}</a>
             </td>
