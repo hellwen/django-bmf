@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.test.client import RequestFactory
 
-from djangobmf.views import ModuleListView
+# from djangobmf.views import ModuleListView
 # from djangobmf.views import ModuleActivityMixin
 # from djangobmf.views import ModuleFilesMixin
 # from djangobmf.views import ModuleFormMixin
@@ -32,20 +32,16 @@ from .models import TestView
 
 class ViewsTests(TestCase):
 
-    def test_views_ModuleListView_get_template_names_default(self):
-        obj = ModuleListView()
-        obj.model = TestView
-        self.assertEqual(obj.get_template_names(), ['appapis/testview_bmfgeneric.html', 'djangobmf/module_generic.html'])
+#   def test_views_ModuleListView_get_template_names_default(self):
+#       obj = ModuleListView()
+#       obj.model = TestView
+#       self.assertEqual(obj.get_template_names(), ['appapis/testview_bmfgeneric.html', 'djangobmf/module_generic.html'])
 
-    def test_views_ModuleListView_get_template_names_fixed(self):
-        obj = ModuleListView()
-        obj.model = TestView
-        obj.template_name = 'test.html'
-        self.assertEqual(obj.get_template_names(), ['test.html'])
-
-    @expectedFailure
-    def test_views_ModuleListView(self):
-        self.assertTrue(False)  # TODO NOT IMPLEMENTED
+#   def test_views_ModuleListView_get_template_names_fixed(self):
+#       obj = ModuleListView()
+#       obj.model = TestView
+#       obj.template_name = 'test.html'
+#       self.assertEqual(obj.get_template_names(), ['test.html'])
 
     @expectedFailure
     def test_views_ModuleActivityMixin(self):

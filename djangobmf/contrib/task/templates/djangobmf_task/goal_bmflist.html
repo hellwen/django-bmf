@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n %}{% spaceless %}
 <table class="table table-striped table-condensed table-hover">
     <thead>
         <tr>
@@ -9,11 +9,11 @@
     </thead>
     <tbody>
     {% verbatim %}
-        <tr ng-repeat="obj in data.items">
+        <tr ng-repeat="obj in data">
             <td>
                 <span ng-if="obj.completed == false" class="glyphicon glyphicon-unchecked"></span>
                 <span ng-if="obj.completed == true" class="glyphicon glyphicon-check"></span>
-                <a href="{{ obj.bmfdetail }}">{{ obj.summary }}</a>
+                <span>&nbsp;<a href="{{ obj.bmfdetail }}">{{ obj.summary }}</a></span>
             </td>
             <td>
                 {{ obj.referee_name || "---" }}
@@ -40,3 +40,4 @@
 TODO: Try to reenable grouping by projects with angular
 {% regroup object_list by project as projects %}
 {% endcomment %}
+{% endspaceless %}
