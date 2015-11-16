@@ -21,7 +21,24 @@ app.config(['$httpProvider', '$locationProvider', function($httpProvider, $locat
  * Directives
  */
 
+// manages form modal calls
+app.directive('bmfForm', [function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            // TODO: Rewrite js/bmf-editform info angular
+            //  element.on('click', function(event) {
+            //      event.preventDefault();
+            //      console.log(this);
+            //      console.log(element);
+            //  });
+            $(element).bmf_editform({href: attr.href});
+        }
+    };
+}]);
 
+
+// manages the content-area
 app.directive('bmfContent', ['$compile', function($compile) {
     return {
         restrict: 'A',
@@ -45,6 +62,7 @@ app.directive('bmfContent', ['$compile', function($compile) {
     };
 }]);
 
+// manages the list view
 app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
     return {
         restrict: 'A',
@@ -343,7 +361,3 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
         $scope.data = response;
     }
 }]);
-
-// TODO OLD
-app.controller('bmfListCtrl', function($scope, $http) {
-});

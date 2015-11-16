@@ -1,13 +1,13 @@
 {% load i18n %}{% spaceless %}{% verbatim %}
 <div class="input-group" ng-if="creates.length == 1">
-    <a class="btn btn-success bmf-edit" href="{{ creates[0].url }}">
+    <a class="btn btn-success" bmf-form="create" href="{{ creates[0].url }}">
     <span class="glyphicon glyphicon-plus"></span> {% endverbatim %}{% trans "Add" %}{% verbatim %}</a>
 </div>
 <div class="input-group" ng-if="creates.length > 1">
     <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
     <span class="glyphicon glyphicon-plus"></span> {% endverbatim %}{% trans "Add" %}{% verbatim %}</a></button>
     <ul class="dropdown-menu" role="menu">
-        <li ng-repeat="c in creates"><a class="bmf-edit" href="{{ c.url }}">{{ c.name }}</a></li>
+        <li ng-repeat="c in creates"><a bmf-form="create" href="{{ c.url }}">{{ c.name }}</a></li>
     </ul>
 </div>
 
