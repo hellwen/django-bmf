@@ -13,7 +13,11 @@ class ModuleSerializer(serializers.ModelSerializer):
 
     bmfdetail = serializers.SerializerMethodField()
 
+    # TODO apply different serializer to only_related models
     def get_bmfdetail(self, obj):
+        if obj._bmfmeta.only_related:
+            return '#'
+
         return obj.bmfmodule_detail()
 
 

@@ -1,8 +1,11 @@
 #!/bin/bash
 
-python develop.py migrate --noinput
+# Give the database time to spin up
+sleep 5
 
-python develop.py loaddata \
+python manage.py migrate --noinput || exit 1
+
+python manage.py loaddata \
     fixtures/sites.json \
     fixtures/users.json \
     fixtures/demodata.json \
@@ -12,8 +15,18 @@ python develop.py loaddata \
     fixtures/contrib_quotation.json \
     fixtures/contrib_task.json \
     fixtures/contrib_team.json \
-    fixtures/admin_dashboard.json 
+    fixtures/admin_dashboard.json \
+    || exit 1
 
-python develop.py runserver rebuild_index --noinput
-
-python develop.py runserver 0.0.0.0:8000
+uwsgi \
+  --http :8000 \
+  --module sandbox.wsgi \
+  --enable-threads \
+  --master \
+  --workers 4 \
+  --threads 2 \
+  --vacuum \
+  --die-on-term \
+  --need-app \
+  --disable-logging \
+  --python-autoreload 5

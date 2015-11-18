@@ -126,8 +126,12 @@ TEST_PROJECT_APPS = (
     'djangobmf.contrib.timesheet',
     'djangobmf.currency.EUR',
     'djangobmf.currency.USD',
-    'tests.appapis',
 )
+
+# TODO CHECK IF THIS IS NEEDED
+# TEST_APPS = (
+#     'tests.appapis',
+# )
 
 INSTALLED_APPS = (
     'django.contrib.auth',

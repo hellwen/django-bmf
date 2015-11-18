@@ -500,6 +500,7 @@ $.extend($.fn.treegrid.defaults, {
 
 (function($){
     $.bmf.editform = function(el, options){
+        console.log("OPTIONS", options);
         // To avoid scope issues, use 'base' instead of 'this'
         // to reference this class from internal events and functions.
         var base = this;
@@ -519,8 +520,8 @@ $.extend($.fn.treegrid.defaults, {
             if (base.options.href == null) {
                 // load target from the elements href attribute
                 base.options.href = base.$el.attr('href');
-
             }
+
             base.$el.on('click', function (event) {
                 event.preventDefault();
                 base.open_formular();
@@ -641,6 +642,7 @@ $.extend($.fn.treegrid.defaults, {
         });
     };
 })(jQuery);
+
 $(document).ready(function() {
     $('.bmf-edit').bmf_editform();
     $('.btn-bmfdelete').bmf_editform();

@@ -15,7 +15,6 @@ from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
 from djangobmf.views import ModuleDetailView
 from djangobmf.views import ModuleFormAPI
-from djangobmf.views import ModuleListView
 # from djangobmf.views import ModuleReportView
 from djangobmf.views import ModuleUpdateView
 from djangobmf.views import ModuleWorkflowView
@@ -158,14 +157,6 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
 
         urlpatterns = patterns(
             '',
-            url(
-                r'^$',
-                ModuleListView.as_view(
-                    module=self,
-                    model=self.model
-                ),
-                name='list',
-            ),
             url(
                 r'^update/(?P<pk>[0-9]+)/$',
                 self.update.as_view(

@@ -3,7 +3,6 @@
 
 from __future__ import unicode_literals
 
-from .module import ModuleListView
 from .module import ModuleCloneView
 from .module import ModuleCreateView
 from .module import ModuleDeleteView
@@ -17,7 +16,6 @@ from .mixins import ModuleViewMixin
 
 
 __all__ = (
-    'ModuleListView',
     'ModuleCloneView',
     'ModuleCreateView',
     'ModuleDeleteView',

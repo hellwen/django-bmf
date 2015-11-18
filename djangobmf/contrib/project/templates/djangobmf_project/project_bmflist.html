@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n %}{% spaceless %}
 <table class="table table-striped table-condensed table-hover">
     <thead>
         <tr>
@@ -9,11 +9,11 @@
     </thead>
     <tbody>
     {% verbatim %}
-        <tr ng-repeat="obj in data.items">
+        <tr ng-repeat="obj in data">
             <td>
                 <span ng-if="obj.is_active == true" class="glyphicon glyphicon-unchecked"></span>
                 <span ng-if="obj.is_active == false" class="glyphicon glyphicon-check"></span>
-                <a href="{{ obj.bmfdetail }}">{{ obj.name }}</a>
+                <span>&nbsp;<a href="{{ obj.bmfdetail }}">{{ obj.name }}</a></span>
             </td>
             <td>{{ obj.customer_name }}</td>
             <td class="text-right">
@@ -25,3 +25,4 @@
     {% endverbatim %}
     </tbody>
 </table>
+{% endspaceless %}

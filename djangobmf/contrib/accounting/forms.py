@@ -4,10 +4,12 @@
 from __future__ import unicode_literals
 
 from django.apps import apps
-from django.forms import ModelForm
-from django.forms import ModelChoiceField
-from django.forms import FloatField
 from django.forms import BooleanField
+from django.forms import DateField
+from django.forms import FloatField
+from django.forms import ModelChoiceField
+from django.forms import ModelForm
+from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.conf import settings
@@ -28,6 +30,8 @@ class TransactionUpdateForm(ModelForm):
 
 
 class TransactionCreateForm(ModelForm):
+
+    date = DateField(label=_("Date"), initial=now)
 
     debit = ModelChoiceField(queryset=account_cls.objects.filter(read_only=False), empty_label=None)
     credit = ModelChoiceField(queryset=account_cls.objects.filter(read_only=False), empty_label=None)

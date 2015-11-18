@@ -4,8 +4,11 @@
 from __future__ import unicode_literals
 
 from django.apps import apps
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
+from django.template.loader import get_template
+from django.template.loader import select_template
 
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
@@ -81,17 +84,23 @@ class APIOverView(BaseMixin, APIView):
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
-                ct = ContentType.objects.get_for_model(model)
                 modules.append({
                     'name': model._meta.verbose_name_plural,
+                    'ct': ct,
                     'app': model._meta.app_label,
                     'model': model._meta.model_name,
-                    'ct': ct.pk,
                     'url': reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
                     }),
                     'only_related': model._bmfmeta.only_related,
+                    'creates': [
+                        {
+                            "name": i[1],
+                            "url": reverse(model._bmfmeta.namespace_api + ':create', kwargs={
+                                "key": i[0],
+                            }),
+                        } for i in model._bmfmeta.create_views],
                 })
 
         # === Dashboards ------------------------------------------------------
@@ -104,38 +113,35 @@ class APIOverView(BaseMixin, APIView):
                 views = []
 
                 for view in category:
-                    # parse the function name
-                    name = 'djangobmf:dashboard_%s:view_%s_%s' % (
-                        dashboard.key,
-                        category.key,
-                        view.key,
-                    )
-
                     # add the view if the user has the permissions to view it
-                    if view().check_permissions(self.request):
+                    if view().check_permissions(self.request):  # pragma: no branch
+
+                        ct = ContentType.objects.get_for_model(view.model)
+
                         views.append({
                             'name': view.name,
                             'key': view.key,
-                            'url': reverse(name),
+                            'url': reverse("djangobmf:dashboard", kwargs={
+                                'dashboard': dashboard.key,
+                                'category': category.key,
+                                'view': view.key,
+                            }),
+                            'ct': ct.pk,
                             'api': reverse('djangobmf:api-view', request=request, format=format, kwargs={
                                 'db': dashboard.key,
                                 'cat': category.key,
                                 'view': view.key,
                             }),
-                            'dataapi': reverse('djangobmf:api', request=request, format=format, kwargs={
-                                'app': view.model._meta.app_label,
-                                'model': view.model._meta.model_name,
-                            }),
                         })
 
-                if views:
+                if views:  # pragma: no branch
                     categories.append({
                         'name': category.name,
                         'key': category.key,
                         'views': views,
                     })
 
-            if categories:
+            if categories:  # pragma: no branch
                 dashboards.append({
                     'name': dashboard.name,
                     'key': dashboard.key,
@@ -145,7 +151,7 @@ class APIOverView(BaseMixin, APIView):
         # === Templates -------------------------------------------------------
 
         templates = {
-            'list': '<h1>List-Template from API</h1> {{ testing }}',
+            'list': get_template('djangobmf/api/list.html').render().strip(),
         }
 
         # === Navigation ------------------------------------------------------
@@ -178,6 +184,7 @@ class APIOverView(BaseMixin, APIView):
             'modules': modules,
             'navigation': navigation,
             'templates': templates,
+            'debug': settings.DEBUG,
         })
 
 
@@ -188,20 +195,24 @@ class APIViewDetail(BaseMixin, APIView):
         """
 
         try:
-            view = request.djangobmf_site.get_dashboard(db)[cat][view]
+            view_cls = request.djangobmf_site.get_dashboard(db)[cat][view]
         except KeyError:
             raise Http404
 
-        context = {}
-        if view().check_permissions(self.request):
-            context['api'] = reverse('djangobmf:api', request=request, format=format, kwargs={
-                'app': view.model._meta.app_label,
-                'model': view.model._meta.model_name,
-            })
-            context['html'] = '<h1>Test</h1><p>%s %s</p>' % (
-                view.model._meta.app_label,
-                view.model._meta.model_name,
-            )
+        view = view_cls()
+        ct = ContentType.objects.get_for_model(view.model)
+        context = {
+            'ct': ct.pk,
+        }
+        if view.check_permissions(self.request):  # pragma: no branch
+            html = select_template([
+                '%s/%s_bmflist.html' % (
+                    view.model._meta.app_label,
+                    view.model._meta.model_name
+                ),
+                'djangobmf/api/default-table.html',
+            ]).render().strip()
+            context['html'] = html
 
         return Response(context)
 

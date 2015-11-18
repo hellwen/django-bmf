@@ -1,0 +1,4 @@
+djangobmf/*pyc
+djangobmf/*/*pyc
+djangobmf/*/*/*pyc
+djangobmf/*/*/*/*pyc

@@ -3,6 +3,8 @@
 
 from __future__ import unicode_literals
 
+from django.utils.formats import date_format
+
 from djangobmf.serializers import ModuleSerializer
 
 from rest_framework import serializers
@@ -33,11 +35,12 @@ class TransactionSerializer(ModuleSerializer):
 class TransactionItemSerializer(ModuleSerializer):
     transaction_name = serializers.SerializerMethodField()
     account_name = serializers.SerializerMethodField()
+    date_localized = serializers.SerializerMethodField()
 
     class Meta:
         fields = [
-            'credit', 'amount', 'amount_currency', 'account_name',
-            'transaction_name', 'bmfdetail',
+            'date', 'credit', 'amount', 'amount_currency', 'account_name',
+            'transaction_name', 'bmfdetail', 'date_localized'
         ]
 
     def get_account_name(self, obj):
@@ -45,3 +48,6 @@ class TransactionItemSerializer(ModuleSerializer):
 
     def get_transaction_name(self, obj):
         return '%s' % obj.transaction
+
+    def get_date_localized(self, obj):
+        return date_format(obj.date, "SHORT_DATE_FORMAT")
