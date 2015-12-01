@@ -9,17 +9,15 @@ outline the steps necessary for you to follow the tutorial.
 Requirements
 ************
 
-* `Python`_ 2.7, 3.3 or 3.4
-* `Django`_ 1.7
-* `django-mptt`_
-* `celery`_ (can be disabled)
+* `Python`_ 2.7, or 3.4
+* `Django`_ 1.8
+* `celery`_ (optional)
 * An installed and working instance of one of the databases listed in the `Databases`_ section.
 
 .. note:: When installing the django BMF using pip all requirements are installed automatically.
 
 .. _Python: http://www.python.org
 .. _Django: http://www.djangoproject.com
-.. _django-mptt: https://github.com/django-mptt/django-mptt
 .. _celery: http://www.celeryproject.org/
 
 Recommended
@@ -29,16 +27,16 @@ These packages are not *required*, but they provide useful functionality with
 minimal additional configuration and are well-proven.
 
 ************************************
-Installing using docker and fig
+Installing using docker-compose
 ************************************
 
 You can deploy django BMF in a production-mimicing development stack using
-`fig`_ and `docker`_.
+`docker-compose`_.
 
 .. code-block:: bash
 
   #!/bin/sh
-  fig up
+  docker-compose up
 
 This command installs and runs `PostgreSQL`_, a web and a worker instance of django-bmf,
 reddis, elasticsearch and the celery monitoring tool flower, each inside their own
@@ -104,7 +102,7 @@ and install libmysqlclient-dev (on Debian-based distro)
 
 .. _virtualenv: http://www.virtualenv.org
 .. _fig: http://www.fig.sh
-.. _docker: http://www.docker.io
+.. _docker-compose: https://docs.docker.com/compose/
 .. _pip: http://www.pip-installer.org
 .. _tox: http://tox.readthedocs.org/en/latest/
 .. _requirements.txt: http://www.pip-installer.org/en/latest/cookbook.html#requirements-files
@@ -125,3 +123,60 @@ To use django BMF efficiently, we recommend:
 .. _PostgreSQL: http://www.postgresql.org/
 .. _MySQL: http://www.mysql.com
 
+
+***********************
+Configuration and setup
+***********************
+
+Open the ``settings.py`` file and add the following apps to your ``INSTALLED_APPS``:
+
+.. code-block:: python
+
+    'djangobmf',
+    'sekizai',
+    'rest_framework',
+    'celery',  # optional
+
+And if you want to add the ERP included in the Framework you should also include:
+
+.. code-block:: python
+
+    'djangobmf.contrib.accounting',
+    'djangobmf.contrib.address',
+    'djangobmf.contrib.customer',
+    'djangobmf.contrib.employee',
+    'djangobmf.contrib.invoice',
+    'djangobmf.contrib.position',
+    'djangobmf.contrib.product',
+    'djangobmf.contrib.project',
+    'djangobmf.contrib.quotation',
+    'djangobmf.contrib.task',
+    'djangobmf.contrib.taxing',
+    'djangobmf.contrib.team',
+    'djangobmf.contrib.timesheet',
+    'djangobmf.currency.EUR',
+    'djangobmf.currency.USD',
+
+You also need to update your ``urls.py`` with:
+
+.. code-block:: python
+
+    from djangobmf import sites as djangobmf
+
+and update your ``urlpattern`` with
+
+.. code-block:: python
+
+    url(r'^', include(djangobmf.site.urls)),
+
+if you want to run the framework under the webservers root path or
+
+.. code-block:: python
+
+    url(r'^my_prefix/', include(djangobmf.site.urls)),
+
+to reach the framework via ``/my_prefix/``.
+
+Django BMF has several settings, but you only need to define ``BMF_DOCUMENT_ROOT`` with
+the path where the Framework is going to store your Documents and ``BMF_DOCKUMENT_URL``
+with the url under which you're application serves the Documents.
