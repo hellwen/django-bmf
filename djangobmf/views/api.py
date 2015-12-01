@@ -159,10 +159,10 @@ class APIOverView(BaseMixin, APIView):
         navigation = [
             {
                 # verbose (req)
-                'name': 'Notifications',
+                'name': 'Notifications 1',
                 'symbol': "glyphicon glyphicon-comment",
 
-                # fallback, when api is unset or does not return html (req) (req)
+                # fallback, when api is unset or does not return html (req)
                 'url': reverse('djangobmf:notification'),
 
                 # API call for updates (opt)
@@ -173,6 +173,49 @@ class APIOverView(BaseMixin, APIView):
 
                 # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
                 'active': False,
+                'count': 0,
+                'html': '<h1>TEST</h1>',
+            },
+            {
+                # verbose (req)
+                'name': 'Notifications 2',
+                'symbol': "glyphicon glyphicon-plus",
+
+                # fallback, when api is unset or does not return html (req)
+                'url': reverse('djangobmf:notification'),
+
+                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
+                'active': False,
+                'count': 0,
+                'html': '<h1>TEST</h1>',
+            },
+            {
+                # verbose (req)
+                'name': 'Notifications 3',
+                'symbol': "glyphicon glyphicon-search",
+
+                # fallback, when api is unset or does not return html (req)
+                'url': reverse('djangobmf:notification'),
+
+                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
+                'active': False,
+                'count': 0,
+                'html': '<h1>TEST</h1>',
+            },
+            {
+                # verbose (req)
+                'name': 'Notifications 4',
+                'symbol': "glyphicon glyphicon-heart",
+
+                # API call for updates (opt)
+                'api': reverse('djangobmf:notification'),
+
+                # check every n seconds for changes (req, when api)
+                'intervall': 10,
+
+                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
+                'active': True,
+                'count': 12,
                 'html': '<h1>TEST</h1>',
             },
         ]

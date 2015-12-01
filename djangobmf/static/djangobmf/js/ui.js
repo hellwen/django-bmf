@@ -367,18 +367,24 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
 }]);
 
 // This controller updates the dashboards navigation
-app.controller('NavigationCtrl', ['$scope', function($scope) {
+app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $interval) {
     $scope.data = undefined;
 
     $scope.$watch(
         function(scope) {return scope.bmf_navigation && scope.bmf_navigation.length || 0},
         function(newValue) {if (newValue != undefined) init_navigation()}
     );
-//  $scope.$watch(
-//      function(scope) {return scope.bmf_current_dashboard},
-//      function(newValue) {if (newValue != undefined) update_sidebar()}
-//  );
-//
+
+    var stop;
+    $scope.$on('$destroy', function() {
+        // Make sure that the interval is destroyed too
+        // $scope.stopFight();
+        if (angular.isDefined(stop)) {
+            $interval.cancel(stop);
+            stop = undefined;
+        }
+    });
+
     function init_navigation() {
 //      var response = [];
 //      var key = $scope.bmf_current_dashboard.key;
