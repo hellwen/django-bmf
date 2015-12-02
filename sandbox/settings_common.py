@@ -56,8 +56,9 @@ STATICFILES_FINDERS = (
 
 LANGUAGE_CODE = 'en'
 LANGUAGES = (
-    (u'de', 'Deutsch'),
+    (u'de', 'German'),
     (u'en', 'English'),
+    (u'ru', 'Russian'),
 )
 
 # List of callables that know how to import templates from various sources.
