@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-15 17:22+0200\n"
+"POT-Creation-Date: 2015-12-02 19:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,18 +17,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:28
+#: bmf_module.py:26
 msgid "All Taxes"
 msgstr ""
 
-#: categories.py:13 models.py:35
+#: categories.py:13 models.py:37
 msgid "Taxes"
 msgstr ""
 
-#: models.py:28
+#: models.py:30
 msgid "Is active"
 msgstr ""
 
-#: models.py:34
+#: models.py:36
 msgid "Tax"
 msgstr ""

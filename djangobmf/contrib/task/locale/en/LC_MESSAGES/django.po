@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-15 17:22+0200\n"
+"POT-Creation-Date: 2015-12-02 19:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,11 +46,11 @@ msgstr ""
 msgid "Open tasks"
 msgstr ""
 
-#: categories.py:13 models.py:58
+#: categories.py:13 models.py:60
 msgid "Goals"
 msgstr ""
 
-#: categories.py:19 models.py:173
+#: categories.py:19 models.py:176
 msgid "Tasks"
 msgstr ""
 
@@ -62,27 +62,27 @@ msgstr ""
 msgid "When copying unset the task's employee"
 msgstr ""
 
-#: models.py:33 models.py:150
+#: models.py:35 models.py:153
 msgid "Title"
 msgstr ""
 
-#: models.py:34 models.py:151
+#: models.py:36 models.py:154
 msgid "Description"
 msgstr ""
 
-#: models.py:52 models.py:167 workflows.py:23
+#: models.py:54 models.py:170 workflows.py:23
 msgid "Completed"
 msgstr ""
 
-#: models.py:57
+#: models.py:59
 msgid "Goal"
 msgstr ""
 
-#: models.py:152
+#: models.py:155
 msgid "Due date"
 msgstr ""
 
-#: models.py:172
+#: models.py:175
 msgid "Task"
 msgstr ""
 

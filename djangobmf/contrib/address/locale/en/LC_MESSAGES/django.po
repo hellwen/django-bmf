@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-15 17:22+0200\n"
+"POT-Creation-Date: 2015-12-02 19:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,67 +17,67 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:28
+#: bmf_module.py:26
 msgid "All Addresses"
 msgstr ""
 
-#: categories.py:13 models.py:32
+#: categories.py:13 models.py:29
 msgid "Address"
 msgstr ""
 
-#: models.py:20
+#: models.py:22
 msgid "Is active"
 msgstr ""
 
-#: models.py:21
+#: models.py:23
 msgid "Is billing"
 msgstr ""
 
-#: models.py:22
+#: models.py:24
 msgid "Is shipping"
 msgstr ""
 
-#: models.py:23
+#: models.py:25
 msgid "Default billing"
 msgstr ""
 
-#: models.py:24
+#: models.py:26
 msgid "Default shipping"
 msgstr ""
 
-#: models.py:33
+#: models.py:30
 msgid "Addresses"
 msgstr ""
 
-#: models.py:46
+#: models.py:48
 msgid "Name"
 msgstr ""
 
-#: models.py:47
+#: models.py:49
 msgid "Name2"
 msgstr ""
 
-#: models.py:48
+#: models.py:50
 msgid "Street"
 msgstr ""
 
-#: models.py:49
+#: models.py:51
 msgid "Zipcode"
 msgstr ""
 
-#: models.py:50
+#: models.py:52
 msgid "City"
 msgstr ""
 
-#: models.py:51
+#: models.py:53
 msgid "State"
 msgstr ""
 
-#: models.py:52
+#: models.py:54
 msgid "Country"
 msgstr ""
 
-#: models.py:59
+#: models.py:65
 #, python-format
 msgid ""
 "%(name)s %(name2)s\n"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-15 17:22+0200\n"
+"POT-Creation-Date: 2015-12-02 19:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,38 +17,38 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:30
+#: bmf_module.py:28
 msgid "All Employees"
 msgstr ""
 
-#: categories.py:13 models.py:30
+#: categories.py:13 models.py:31
 msgid "Employees"
 msgstr ""
 
-#: models.py:29
+#: models.py:30
 msgid "Employee"
 msgstr ""
 
-#: models.py:58
+#: models.py:59
 msgid "Name"
 msgstr ""
 
-#: models.py:59
+#: models.py:60
 msgid "Email"
 msgstr ""
 
-#: models.py:61
+#: models.py:62
 msgid "Phone office"
 msgstr ""
 
-#: models.py:64
+#: models.py:65
 msgid "Phone mobile"
 msgstr ""
 
-#: models.py:67
+#: models.py:68
 msgid "Fax"
 msgstr ""
 
-#: models.py:73
+#: models.py:74
 msgid "Supervisor"
 msgstr ""
