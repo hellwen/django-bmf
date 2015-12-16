@@ -70,7 +70,7 @@ app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
         link: function(scope, $element) {
             scope.$watch(
                 function(scope) {return scope.bmf_current_view},
-                function(newValue) {if (newValue != undefined) update(newValue)}
+                function(newValue) {if (newValue != undefined && newValue.type == "list") update(newValue)}
             );
 
             function update(view) {
@@ -95,13 +95,17 @@ app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
                     $compile($element.contents())(scope);
 
                     if (scope.bmf_debug) {
-                        console.log("VIEW", scope)
+                        console.log("LIST-SCOPE", scope)
                     }
 
                     // get new data
-                    var url = module.url + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
+                    var url = module.api + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
   
                     $http.get(url).then(function(response) {
+                        if (scope.bmf_debug) {
+                            console.log("LIST-DATA", url, response.data)
+                        }
+
                         scope.data = response.data.items;
                         scope.pagination = response.data.pagination;
                     });
@@ -154,6 +158,8 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
             prefix = ''
         }
         var current = undefined;
+
+        // LIST
         $rootScope.bmf_dashboards.forEach(function(d, di) {
             d.categories.forEach(function(c, ci) {
                 c.views.forEach(function(v, vi) {
@@ -164,6 +170,7 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
                             category: c,
                             dashboard: d,
                         };
+                        $rootScope.bmf_current_category = current;
                     }
                 });
             });
@@ -171,6 +178,23 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
         if (current) {
             return current;
         }
+
+        // DETAIL
+        for (var key in $rootScope.bmf_modules) {
+            var module = $rootScope.bmf_modules[key];
+            var regex = new RegExp('^' + prefix + module.url + '[0-9]+/$');
+            if (regex.test(url)) {
+                console.log(module, regex, url);
+                current = {
+                    type: 'detail',
+                    module: module,
+                };
+            }
+        }
+        if (current) {
+            return current;
+        }
+
         return current
     }
     return {get: get, go: go, update: update}
@@ -215,6 +239,9 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
     // holds the current dashboard
     $rootScope.bmf_current_dashboard = undefined;
 
+    // holds all informations about the current category
+    $rootScope.bmf_current_category = undefined
+
     // holds all informations about the current view
     $rootScope.bmf_current_view = undefined
 
@@ -242,6 +269,10 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
         $rootScope.bmf_dashboards = response.data.dashboards;
         $rootScope.bmf_debug = response.data.debug;
         $rootScope.bmf_templates = response.data.templates;
+
+        if (response.data.debug) {
+            console.log("BMF-API", response.data);
+        }
 
         CurrentView.update();
     });
@@ -329,7 +360,7 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
     $scope.data = [];
 
     $scope.$watch(
-        function(scope) {return scope.bmf_current_view},
+        function(scope) {return scope.bmf_current_category},
         function(newValue) {if (newValue != undefined) update_sidebar()}
     );
     $scope.$watch(
@@ -349,11 +380,13 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
         $scope.bmf_sidebars[key].forEach(function(c, ci) {
             response.push({'name': c.name});
             c.views.forEach(function(v, vi) {
-                if ($scope.bmf_current_view && $scope.bmf_current_view.type == "list" && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
-                    response.push({'name': v.name, 'url': v.url, 'class': 'active'});
-                }
-                else {
-                    response.push({'name': v.name, 'url': v.url});
+                if ($scope.bmf_current_category) {
+                    if (c.key == $scope.bmf_current_category.category.key && v.key == $scope.bmf_current_category.view.key) {
+                        response.push({'name': v.name, 'url': v.url, 'class': 'active'});
+                    }
+                    else {
+                        response.push({'name': v.name, 'url': v.url});
+                    }
                 }
             });
         });

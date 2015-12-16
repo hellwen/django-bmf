@@ -25,6 +25,7 @@ from djangobmf.views.api import APIModuleDetailView
 from djangobmf.views.configuration import ConfigurationView
 from djangobmf.views.configuration import ConfigurationEdit
 from djangobmf.views.dashboard import DashboardIndex
+from djangobmf.views.dashboard import Redirect
 # from djangobmf.views.dashboard import DashboardCategory
 # from djangobmf.views.dashboard import DashboardView
 from djangobmf.views.wizard import WizardView
@@ -97,6 +98,18 @@ urlpatterns = patterns(
         ConfigurationEdit.as_view(), name="configuration",
     ),
 
+    url(
+        r'^detail/$',
+        Redirect.as_view(), name="detail",
+    ),
+    url(
+        r'^detail/(?P<model_name>[\w_]+)/$',
+        Redirect.as_view(), name="detail",
+    ),
+    url(
+        r'^detail/(?P<model_name>[\w_]+)/(?P<app_label>[\w_]+)/$',
+        Redirect.as_view(), name="detail",
+    ),
     #   r'^detail/' via sites
 
     # --- Dashboard

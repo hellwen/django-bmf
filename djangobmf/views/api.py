@@ -89,7 +89,11 @@ class APIOverView(BaseMixin, APIView):
                     'ct': ct,
                     'app': model._meta.app_label,
                     'model': model._meta.model_name,
-                    'url': reverse('djangobmf:api', request=request, format=format, kwargs={
+                    'url': reverse('djangobmf:detail', kwargs={
+                        'app_label': model._meta.app_label,
+                        'model_name': model._meta.model_name,
+                    }),
+                    'api': reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
                     }),
@@ -152,6 +156,7 @@ class APIOverView(BaseMixin, APIView):
 
         templates = {
             'list': get_template('djangobmf/api/list.html').render().strip(),
+            'detail': 'DETAILS',
         }
 
         # === Navigation ------------------------------------------------------
