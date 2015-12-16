@@ -156,7 +156,7 @@ class APIOverView(BaseMixin, APIView):
 
         templates = {
             'list': get_template('djangobmf/api/list.html').render().strip(),
-            'detail': 'DETAILS',
+            'detail': get_template('djangobmf/api/detail.html').render().strip(),
         }
 
         # === Navigation ------------------------------------------------------
