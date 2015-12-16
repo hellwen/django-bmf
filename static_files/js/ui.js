@@ -78,7 +78,6 @@ app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
                 function(newValue) {if (newValue != undefined && newValue.type == "list") update(newValue)}
             );
 
-
             function update(view) {
                 // cleanup
                 $element.html("");
@@ -102,6 +101,9 @@ app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
 
                     // get new data
                     var url = module.api + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
+
+                    console.log(url);
+                    console.log($element.html());
   
                     $http.get(url).then(function(response) {
                         if (scope.bmf_debug) {

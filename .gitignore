@@ -12,6 +12,8 @@
 /static
 /reports
 /bower_components
+/node_modules
+/static_files/build
 /htmlcov
 /django_bmf\.egg-info
 /virtenv

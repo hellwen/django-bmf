@@ -1,4 +1,6 @@
-/*! django BMF */
+/*!
+django BMF
+*/
 
 (function($){
     if(!$.bmf){

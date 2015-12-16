@@ -42,5 +42,7 @@ class DashboardIndex(ViewMixin, DetailView):
 
 
 class Redirect(RedirectView):
+    permanent = True
+
     def get_redirect_url(self, *args, **kwargs):
         return reverse_lazy('%s:dashboard' % site.namespace)

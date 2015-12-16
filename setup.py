@@ -45,9 +45,9 @@ setup(
       'postgres': ['psycopg2'],
     },
     install_requires=[
-        'django>=1.8',
+        'django>=1.8,<1.9',
+        'djangorestframework>=3.1,<3.3',
         'django-sekizai',
-        'djangorestframework>=3.1',
         'markdown',
         'pytz',
     ],

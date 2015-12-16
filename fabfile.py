@@ -31,64 +31,6 @@ APPS = [
 
 
 @task
-def static():
-    """
-    update static files
-    """
-    js()
-    css()
-    with lcd(BASEDIR):
-        local('cp bower_components/bootstrap/fonts/glyphicons* djangobmf/static/djangobmf/fonts/')
-
-
-@task
-def css():
-    """
-    recreate css files - with lessc and yui-compressor
-    """
-    with lcd(BASEDIR):
-        local('lessc less/djangobmf.less > bootstrap.css')
-        local('yui-compressor --type css -o djangobmf/static/djangobmf/css/djangobmf.min.css bootstrap.css')
-        local('rm bootstrap.css')
-
-
-@task
-def js():
-    """
-    recreate js files for development and production
-    """
-    with lcd(BASEDIR):
-        js_ext = (
-            'bower_components/jquery-cookie/jquery.cookie.js',
-            'bower_components/jquery-treegrid/js/jquery.treegrid.js',
-            'bower_components/bootstrap/dist/js/bootstrap.js',
-        )
-        js_own = (
-            'js/variables.js',
-            'js/bmf-autocomplete.js',
-            'js/bmf-calendar.js',
-            'js/bmf-editform.js',
-            'js/bmf-buildform.js',
-            'js/menu.js',
-        )
-
-        local('cp bower_components/jquery/dist/jquery.min.js djangobmf/static/djangobmf/js/')
-        local('cp bower_components/jquery/dist/jquery.min.map djangobmf/static/djangobmf/js/')
-        local('cp bower_components/angular/angular.min.js djangobmf/static/djangobmf/js/')
-        local('cp bower_components/angular/angular.min.js.map djangobmf/static/djangobmf/js/')
-        local('cp bower_components/d3/d3.min.js djangobmf/static/djangobmf/js/')
-
-        local('cp bower_components/bootstrap/dist/js/bootstrap.min.js djangobmf/static/djangobmf/js/')
-
-        local('yui-compressor --type js -o djangobmf/static/djangobmf/js/jquery.cookie.min.js bower_components/jquery-cookie/jquery.cookie.js')
-        local('yui-compressor --type js -o djangobmf/static/djangobmf/js/jquery.treegrid.min.js bower_components/jquery-treegrid/js/jquery.treegrid.js')
-
-        local('cat %s > djangobmf/static/djangobmf/js/djangobmf.js' % ' '.join(js_ext + js_own))
-        local('yui-compressor --type js -o djangobmf/static/djangobmf/js/djangobmf.min.js djangobmf/static/djangobmf/js/djangobmf.js')
-        local('cat %s > djangobmf/static/djangobmf/js/djangobmf.js' % ' '.join(js_own))
-
-
-@task
 def test(fast=False):
     """
     Tests code with django unittests
