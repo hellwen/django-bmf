@@ -28,7 +28,6 @@ module.exports = (grunt) ->
                 'jquery/dist/jquery.min.js',
                 'angular/angular.min.js',
                 'd3/d3.min.js',
-                'd3/d3.min.js',
                 'bootstrap/dist/js/bootstrap.min.js',
               ]
               dest: 'djangobmf/static/djangobmf/js/'
@@ -48,8 +47,8 @@ module.exports = (grunt) ->
         dest: 'djangobmf/static/djangobmf/js/jquery.cookie.min.js'
       djangobmf:
         src: [
-            'bower_components/bootstrap/dist/js/bootstrap.js',
             'bower_components/jquery-cookie/jquery.cookie.js',
+            'bower_components/bootstrap/dist/js/bootstrap.js',
             'djangobmf/static/djangobmf/js/djangobmf.js',
         ]
         dest: 'djangobmf/static/djangobmf/js/djangobmf.min.js'
