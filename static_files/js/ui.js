@@ -333,20 +333,20 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
             return current;
         }
 
-        // DETAIL
-        for (var key in $rootScope.bmf_modules) {
-            var module = $rootScope.bmf_modules[key];
-            var regex = new RegExp('^' + prefix + module.url + '[0-9]+/$');
-            if (regex.test(url)) {
-                current = {
-                    type: 'detail',
-                    module: module,
-                };
-            }
-        }
-        if (current) {
-            return current;
-        }
+//      // DETAIL
+//      for (var key in $rootScope.bmf_modules) {
+//          var module = $rootScope.bmf_modules[key];
+//          var regex = new RegExp('^' + prefix + module.url + '[0-9]+/$');
+//          if (regex.test(url)) {
+//              current = {
+//                  type: 'detail',
+//                  module: module,
+//              };
+//          }
+//      }
+//      if (current) {
+//          return current;
+//      }
 
         return current
     }
