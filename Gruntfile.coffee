@@ -64,7 +64,11 @@ module.exports = (grunt) ->
           'static_files/js/bmf-editform.js',
           'static_files/js/bmf-buildform.js',
           'static_files/js/menu.js',
-          'static_files/js/ui.js',
+          'static_files/js/ui-init.js',
+          'static_files/js/ui-config.js',
+          'static_files/js/ui-directive.js',
+          'static_files/js/ui-factory.js',
+          'static_files/js/ui-controller.js',
         ]
         dest: 'djangobmf/static/djangobmf/js/djangobmf.js'
 

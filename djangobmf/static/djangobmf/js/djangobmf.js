@@ -655,27 +655,23 @@ $(document).ready(function() {
     });
 });
 
-/*
- * AngularJS UI for django BMF
+/*!
+ * django BMF Angular UI
  */
-
 
 var app = angular.module('djangoBMF', []);
 
-
 /*
- * Config
+ * ui-config
  */
-
 
 app.config(['$httpProvider', '$locationProvider', function($httpProvider, $locationProvider) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     $locationProvider.html5Mode(true).hashPrefix('!');
 }]);
 
-
 /*
- * Directives
+ * ui-directive
  */
 
 // manages form modal calls
@@ -927,11 +923,9 @@ app.directive('bmfViewDetail', ['$compile', '$http', '$location', function($comp
     };
 }]);
 
-
 /*
- * Services
+ * ui-factory
  */
-
 
 app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
     function go(next) {
@@ -990,20 +984,20 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
             return current;
         }
 
-//      // DETAIL
-//      for (var key in $rootScope.bmf_modules) {
-//          var module = $rootScope.bmf_modules[key];
-//          var regex = new RegExp('^' + prefix + module.url + '[0-9]+/$');
-//          if (regex.test(url)) {
-//              current = {
-//                  type: 'detail',
-//                  module: module,
-//              };
-//          }
-//      }
-//      if (current) {
-//          return current;
-//      }
+        // DETAIL
+        for (var key in $rootScope.bmf_modules) {
+            var module = $rootScope.bmf_modules[key];
+            var regex = new RegExp('^' + prefix + module.url + '[0-9]+/$');
+            if (regex.test(url)) {
+                current = {
+                    type: 'detail',
+                    module: module,
+                };
+            }
+        }
+        if (current) {
+            return current;
+        }
 
         return current
     }
@@ -1018,11 +1012,9 @@ app.factory('PageTitle', function() {
     };
 });
 
-
 /*
- * Controller
+ * ui-controller
  */
-
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
