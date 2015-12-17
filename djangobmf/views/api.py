@@ -84,6 +84,22 @@ class APIOverView(BaseMixin, APIView):
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
+                related = dict(
+                    [
+                        (
+                            i.name,
+                            ContentType.objects.get_for_model(i.related_model).pk
+                        )
+                        for i in model._meta.get_fields()
+                        if hasattr(i.related_model, '_bmfmeta')
+                        and self.request.user.has_perms([
+                            '%s.view_%s' % (
+                                i.related_model._meta.app_label,
+                                i.related_model._meta.model_name,
+                            )
+                        ])
+                    ]
+                )
                 modules.append({
                     'name': model._meta.verbose_name_plural,
                     'ct': ct,
@@ -98,13 +114,15 @@ class APIOverView(BaseMixin, APIView):
                         'model': model._meta.model_name,
                     }),
                     'only_related': model._bmfmeta.only_related,
+                    'related': related,
                     'creates': [
                         {
                             "name": i[1],
                             "url": reverse(model._bmfmeta.namespace_api + ':create', kwargs={
                                 "key": i[0],
                             }),
-                        } for i in model._bmfmeta.create_views],
+                        } for i in model._bmfmeta.create_views
+                    ],
                 })
 
         # === Dashboards ------------------------------------------------------
