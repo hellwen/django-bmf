@@ -26,7 +26,9 @@ module.exports = (grunt) ->
               cwd: 'bower_components'
               src: [
                 'jquery/dist/jquery.min.js',
+                'jquery/dist/jquery.min.map',
                 'angular/angular.min.js',
+                'angular/angular.min.js.map',
                 'd3/d3.min.js',
                 'bootstrap/dist/js/bootstrap.min.js',
               ]
