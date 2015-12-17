@@ -496,7 +496,6 @@ django BMF
     };
 })(jQuery);
 
-/* editform */
 
 /* buildform */
 (function($){
