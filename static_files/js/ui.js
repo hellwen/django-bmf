@@ -121,7 +121,7 @@ app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
 
 
 // manages the list view
-app.directive('bmfViewDetail', ['$compile', '$http', function($compile, $http) {
+app.directive('bmfViewDetail', ['$compile', '$http', '$location', function($compile, $http, $location) {
     return {
         restrict: 'A',
         priority: -80,
@@ -135,8 +135,8 @@ app.directive('bmfViewDetail', ['$compile', '$http', function($compile, $http) {
             );
   
             function update(view) {
-                console.log("UPDATE DETAIL");
-//              // cleanup
+                var url = $location.path();
+                // cleanup
 //              $element.html("");
 //              scope.data = [];
 //              scope.pagination = undefined;
@@ -146,8 +146,9 @@ app.directive('bmfViewDetail', ['$compile', '$http', function($compile, $http) {
 //              scope.category_name = view.category.name;
 //              scope.dashboard_name = view.dashboard.name;
 //
-//              // get new template
-//              $http.get(view.view.api).then(function(response) {
+                // get new template
+                $http.get(url).then(function(response) {
+                    console.log(response);
 //
 //                  var ct = response.data.ct;
 //                  var module = scope.$parent.bmf_modules[ct];
@@ -171,7 +172,7 @@ app.directive('bmfViewDetail', ['$compile', '$http', function($compile, $http) {
 //                      scope.data = response.data.items;
 //                      scope.pagination = response.data.pagination;
 //                  });
-//              });
+                });
             }
         }
     };
