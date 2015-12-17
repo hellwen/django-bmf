@@ -26,7 +26,7 @@
 
         base.init = function() {
             // load options
-            base.options = $.extend({}, $.bmf.editform.defaultOptions, options);
+            base.options = $.extend({}, $.bmf.calendar.defaultOptions, options);
 
             base.container = base.$el.parent();
 //          base.container.append('<div class="row" style="position: relative; z-index:5; display:hidden"><div class="col-sm-6"></div><div class="col-sm-6"></div></div>');
@@ -124,7 +124,7 @@
 
         base.init = function(el) {
             // load options
-            base.options = $.extend({}, $.bmf.editform.defaultOptions, options);
+            base.options = $.extend({}, $.bmf.calendar.defaultOptions, options);
 
             // initialization logic
             var table = $('<table class="table-condensed">');
