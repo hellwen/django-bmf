@@ -847,7 +847,7 @@ app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
                     $compile($element.contents())(scope);
 
                     // get new data
-                    var url = module.api + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
+                    var url = module.data + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
 
                     $http.get(url).then(function(response) {
                     //  if (scope.bmf_debug) {

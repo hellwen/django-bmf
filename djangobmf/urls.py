@@ -110,6 +110,10 @@ urlpatterns = patterns(
         r'^detail/(?P<model_name>[\w_]+)/(?P<app_label>[\w_]+)/$',
         Redirect.as_view(), name="detail",
     ),
+    url(
+        r'^detail/(?P<model_name>[\w_]+)/(?P<app_label>[\w_]+)/(?P<pk>[0-9]+)/$',
+        DashboardIndex.as_view(), name="detail",
+    ),
     #   r'^detail/' via sites
 
     # --- Dashboard
@@ -120,6 +124,11 @@ urlpatterns = patterns(
     ),
     url(
         r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/(?P<view>[\w-]+)/$',
+        DashboardIndex.as_view(),
+        name="dashboard",
+    ),
+    url(
+        r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/(?P<view>[\w-]+)/(?P<pk>[0-9]+)/$',
         DashboardIndex.as_view(),
         name="dashboard",
     ),

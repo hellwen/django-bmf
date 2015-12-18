@@ -36,7 +36,6 @@ class TimesheetSerializer(ModuleSerializer):
             'project_name',
             'task',
             'task_name',
-            'bmfdetail',
         )
 
     def get_date(self, obj):

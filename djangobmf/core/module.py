@@ -11,6 +11,7 @@ from django.utils.text import slugify
 
 from djangobmf.permissions import ModulePermission
 # from djangobmf.views import ModuleCloneView
+from djangobmf.views import ModuleDetailView
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
 from djangobmf.views import ModuleDetailView
@@ -53,6 +54,7 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
     """
     Object internally used to register modules
     """
+    detail = ModuleDetailView
     create = ModuleCreateView
     delete = ModuleDeleteView
     detail = ModuleDetailView
@@ -71,6 +73,7 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
         self.dashboards = []
         self.manager = {}
 
+        self.detail_view = self.detail
         self.create_view = self.create
         self.delete_view = self.delete
         self.detail_view = self.detail
@@ -127,29 +130,10 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
         return self.listed_creates
 
     def get_detail_urls(self):
-        reports = self.list_reports()
-
-        if self.model._bmfmeta.only_related:
-            return patterns('')
-
-        urlpatterns = patterns(
-            '',
-            url(
-                r'^$',
-                self.detail.as_view(
-                    module=self,
-                    model=self.model,
-                    reports=reports
-                ),
-                name='detail',
-            ),
-        )
-
         # add custom url patterns
         if self.detail_urlpatterns:
-            urlpatterns += self.detail_urlpatterns
-
-        return urlpatterns
+            return self.detail_urlpatterns
+        return patterns('')
 
     def get_api_urls(self):
         reports = self.list_reports()
@@ -157,6 +141,14 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
 
         urlpatterns = patterns(
             '',
+            url(
+                r'^detail/(?P<pk>[0-9]+)/$',
+                self.detail.as_view(
+                    module=self,
+                    model=self.model
+                ),
+                name='detail',
+            ),
             url(
                 r'^update/(?P<pk>[0-9]+)/$',
                 self.update.as_view(

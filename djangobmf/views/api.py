@@ -27,6 +27,8 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
+from collections import OrderedDict
+
 
 class APIMixin(BaseMixin):
 
@@ -84,7 +86,7 @@ class APIOverView(BaseMixin, APIView):
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
-                related = dict(
+                related = OrderedDict(
                     [
                         (
                             i.name,
@@ -109,7 +111,7 @@ class APIOverView(BaseMixin, APIView):
                         'app_label': model._meta.app_label,
                         'model_name': model._meta.model_name,
                     }),
-                    'api': reverse('djangobmf:api', request=request, format=format, kwargs={
+                    'data': reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
                     }),
@@ -183,13 +185,13 @@ class APIOverView(BaseMixin, APIView):
 
         # === Response --------------------------------------------------------
 
-        return Response({
-            'dashboards': dashboards,
-            'modules': modules,
-            'navigation': navigation,
-            'templates': templates,
-            'debug': settings.DEBUG,
-        })
+        return Response(OrderedDict([
+            ('dashboards', dashboards),
+            ('modules', modules),
+            ('navigation', navigation),
+            ('templates', templates),
+            ('debug', settings.DEBUG),
+        ]))
 
 
 class APIViewDetail(BaseMixin, APIView):

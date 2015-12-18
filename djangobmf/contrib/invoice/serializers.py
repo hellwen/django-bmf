@@ -19,5 +19,4 @@ class InvoiceSerializer(ModuleSerializer):
             'state_name',
             'project',
             'project_name',
-            'bmfdetail',
         )
