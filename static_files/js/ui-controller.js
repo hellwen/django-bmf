@@ -10,6 +10,7 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
     $rootScope.bmf_templates = {
         // template used to display items from the data api as a list
         'list': '',
+        'detail': '',
     };
 
     // place to store all dashboards
@@ -115,7 +116,6 @@ app.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootS
 
         $scope.data = response;
         $scope.current_dashboard = $scope.bmf_current_dashboard;
-
     }
 
     $scope.update = function(key) {
@@ -145,7 +145,7 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
 
     $scope.$watch(
         function(scope) {return scope.bmf_current_view},
-        function(newValue) {if (newValue != undefined && newValue.type == "list") update_sidebar()}
+        function(newValue) {if (newValue != undefined && (newValue.type == "list" || newValue.type == "detail")) update_sidebar()}
     );
     $scope.$watch(
         function(scope) {return scope.bmf_current_dashboard},
@@ -164,7 +164,7 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
         $scope.bmf_sidebars[key].forEach(function(c, ci) {
             response.push({'name': c.name});
             c.views.forEach(function(v, vi) {
-                if ($scope.bmf_current_view && $scope.bmf_current_view.type == "list" && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
+                if ($scope.bmf_current_view && ($scope.bmf_current_view.type == "list" || $scope.bmf_current_view.type == "detail") && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
                     response.push({'name': v.name, 'url': v.url, 'class': 'active'});
                 }
                 else {

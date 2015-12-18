@@ -785,14 +785,27 @@ app.directive('bmfForm', [function() {
 }]);
 
 
+// manages links vom list views to detail views
+app.directive('bmfDetail', ["$location", function($location) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            element.on('click', function(event) {
+                var next = $location.path() + attr.bmfDetail + '/';
+                $location.path(next);
+                window.scrollTo(0,0);
+            });
+        }
+    };
+}]);
+
+
 // manages the content-area
-app.directive('bmfContent', ['$compile', function($compile) {
+app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
     return {
         restrict: 'A',
         priority: -90,
         link: function(scope, $element) {
-            scope.watcher = undefined
-
             scope.$watch(
                 function(scope) {
                     if (scope.bmf_current_view) {
@@ -803,7 +816,95 @@ app.directive('bmfContent', ['$compile', function($compile) {
                 function(newValue) {if (newValue != undefined) update(newValue)}
             );
 
+            // clear all variables not in common use
+            // by views
+            function clear() {
+                scope.pk = undefined;
+                scope.data = [];
+                scope.module = undefined;
+                scope.pagination = undefined;
+                scope.template_html = undefined;
+
+                scope.creates = undefined;
+
+                scope.dashboard_name = undefined;
+                scope.category_name = undefined;
+                scope.view_name = undefined;
+
+                // views may define a watch on scope values, the watcher
+                // stores the destroy-function which is called with the
+                // cleanup
+                if (scope.content_watcher != undefined) {
+                    scope.content_watcher();
+                }
+                scope.content_watcher = undefined;
+            }
+            scope.template_watcher = undefined;
+
+            // call when the view type got updated
             function update(type) {
+                clear()
+                if (type == "list") {
+                    view_list()
+                }
+                if (type == "detail") {
+                    view_detail()
+                }
+            }
+
+            function view_list(type) {
+                scope.content_watcher = scope.$watch(
+                    function(scope) {return scope.bmf_current_view},
+                    function(newValue) {if (newValue != undefined && newValue.type == "list") upd(newValue)}
+                );
+
+                function upd(view) {
+                    // update vars
+                    scope.view_name = view.view.name;
+                    scope.category_name = view.category.name;
+                    scope.dashboard_name = view.dashboard.name;
+
+                    // get new template
+                    $http.get(view.view.api).then(function(response) {
+
+                        var ct = response.data.ct;
+                        var module = scope.$parent.bmf_modules[ct];
+
+                        scope.creates = module.creates;
+                        scope.template_html = response.data.html;
+
+                        // get new data
+                        var url = module.data + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
+
+                        $http.get(url).then(function(response) {
+                            scope.data = response.data.items;
+                            scope.pagination = response.data.pagination;
+                        });
+                    });
+                }
+                update_html("list");
+            }
+
+            function view_detail(type) {
+                scope.content_watcher = scope.$watch(
+                    function(scope) {return scope.bmf_current_view},
+                    function(newValue) {if (newValue != undefined && newValue.type == "detail") upd(newValue)}
+                );
+
+                function upd(view) {
+                    // update vars
+                    scope.view_name = view.view.name;
+                    scope.category_name = view.category.name;
+                    scope.dashboard_name = view.dashboard.name;
+
+                    scope.test = "DETAIL"
+                    scope.template_html = "<b>{{ test }}</b>"
+                }
+
+                update_html("detail");
+            }
+
+            function update_html(type) {
                 $element.html(scope.bmf_templates[type]).show();
                 $compile($element.contents())(scope);
             }
@@ -811,113 +912,27 @@ app.directive('bmfContent', ['$compile', function($compile) {
     };
 }]);
 
-// manages the list view
-app.directive('bmfViewList', ['$compile', '$http', function($compile, $http) {
+
+// compiles the content of a scope variable
+app.directive('bmfTemplate', ['$compile', function($compile) {
     return {
-        restrict: 'A',
+        restrict: 'E',
         priority: -80,
         link: function(scope, $element) {
-            if (scope.watcher != undefined) {
-                scope.watcher();
+
+            if (scope.$parent.template_watcher != undefined) {
+                scope.$parent.template_watcher();
             }
-            scope.watcher = scope.$watch(
-                function(scope) {return scope.bmf_current_view},
-                function(newValue) {if (newValue != undefined && newValue.type == "list") update(newValue)}
+
+            scope.$parent.template_watcher = scope.$watch(
+                function(scope) {return scope.template_html},
+                function(newValue) {
+                    if (newValue != undefined) {
+                        $element.html(newValue).show();
+                        $compile($element.contents())(scope);
+                    }
+                }
             );
-
-            function update(view) {
-                // cleanup
-                $element.html("");
-                scope.data = [];
-                scope.pagination = undefined;
-
-                // update vars
-                scope.view_name = view.view.name;
-                scope.category_name = view.category.name;
-                scope.dashboard_name = view.dashboard.name;
-
-                // get new template
-                $http.get(view.view.api).then(function(response) {
-
-                    var ct = response.data.ct;
-                    var module = scope.$parent.bmf_modules[ct];
-
-                    scope.creates = module.creates;
-                    $element.html(response.data.html).show();
-                    $compile($element.contents())(scope);
-
-                    // get new data
-                    var url = module.data + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
-
-                    $http.get(url).then(function(response) {
-                    //  if (scope.bmf_debug) {
-                    //      console.log("LIST-DATA", url, response.data)
-                    //  }
-
-                        scope.data = response.data.items;
-                        scope.pagination = response.data.pagination;
-                    });
-                });
-            }
-        }
-    };
-}]);
-
-
-// manages the list view
-app.directive('bmfViewDetail', ['$compile', '$http', '$location', function($compile, $http, $location) {
-    return {
-        restrict: 'A',
-        priority: -80,
-        link: function(scope, $element) {
-            if (scope.watcher != undefined) {
-                scope.watcher();
-            }
-            scope.watcher = scope.$watch(
-                function(scope) {return scope.bmf_current_view},
-                function(newValue) {if (newValue != undefined && newValue.type == "detail") update(newValue)}
-            );
-  
-            function update(view) {
-                var url = $location.path();
-                // cleanup
-//              $element.html("");
-//              scope.data = [];
-//              scope.pagination = undefined;
-//
-//              // update vars
-//              scope.view_name = view.view.name;
-//              scope.category_name = view.category.name;
-//              scope.dashboard_name = view.dashboard.name;
-//
-                // get new template
-                $http.get(url).then(function(response) {
-                    console.log(response);
-//
-//                  var ct = response.data.ct;
-//                  var module = scope.$parent.bmf_modules[ct];
-//
-//                  scope.creates = module.creates;
-//                  $element.html(response.data.html).show();
-//                  $compile($element.contents())(scope);
-//
-//                  if (scope.bmf_debug) {
-//                      console.log("LIST-SCOPE", scope)
-//                  }
-//
-//                  // get new data
-//                  var url = module.api + '?d=' + view.dashboard.key + '&c=' + view.category.key + '&v=' + view.view.key;
-//
-//                  $http.get(url).then(function(response) {
-//                      if (scope.bmf_debug) {
-//                          console.log("LIST-DATA", url, response.data)
-//                      }
-//
-//                      scope.data = response.data.items;
-//                      scope.pagination = response.data.pagination;
-//                  });
-                });
-            }
         }
     };
 }]);
@@ -929,7 +944,7 @@ app.directive('bmfViewDetail', ['$compile', '$http', '$location', function($comp
 app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
     function go(next) {
         $rootScope.bmf_current_view = next;
-        if (next && next.type == "list") {
+        if (next && ["list", "detail"].indexOf(next.type) >= 0) {
             PageTitle.set(next.dashboard.name + ' - ' + next.category.name + ' - ' + next.view.name);
             $rootScope.bmf_current_dashboard = {
                 key: next.dashboard.key,
@@ -964,13 +979,28 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
         }
         var current = undefined;
 
-        // LIST
+        // LIST AND DETAIL
         $rootScope.bmf_dashboards.forEach(function(d, di) {
             d.categories.forEach(function(c, ci) {
                 c.views.forEach(function(v, vi) {
+                    var regex = new RegExp('^' + prefix + v.url + '([0-9]+)/$');
+
+                    // check if the view relates to a list view
                     if (prefix + v.url == url) {
                         current = {
                             type: 'list',
+                            view: v,
+                            category: c,
+                            dashboard: d,
+                        };
+                    }
+
+                    // check if the view relates to a detail view
+                    if (regex.test(url)) {
+                        current = {
+                            type: 'detail',
+                            module: $rootScope.bmf_modules[v.ct],
+                            pk: regex.exec(url)[1],
                             view: v,
                             category: c,
                             dashboard: d,
@@ -982,23 +1012,6 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
         if (current) {
             return current;
         }
-
-        // DETAIL
-        for (var key in $rootScope.bmf_modules) {
-            var module = $rootScope.bmf_modules[key];
-            var regex = new RegExp('^' + prefix + module.url + '[0-9]+/$');
-            if (regex.test(url)) {
-                current = {
-                    type: 'detail',
-                    module: module,
-                };
-            }
-        }
-        if (current) {
-            return current;
-        }
-
-        return current
     }
     return {get: get, go: go, update: update}
 }]);
@@ -1023,6 +1036,7 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
     $rootScope.bmf_templates = {
         // template used to display items from the data api as a list
         'list': '',
+        'detail': '',
     };
 
     // place to store all dashboards
@@ -1128,7 +1142,6 @@ app.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootS
 
         $scope.data = response;
         $scope.current_dashboard = $scope.bmf_current_dashboard;
-
     }
 
     $scope.update = function(key) {
@@ -1158,7 +1171,7 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
 
     $scope.$watch(
         function(scope) {return scope.bmf_current_view},
-        function(newValue) {if (newValue != undefined && newValue.type == "list") update_sidebar()}
+        function(newValue) {if (newValue != undefined && (newValue.type == "list" || newValue.type == "detail")) update_sidebar()}
     );
     $scope.$watch(
         function(scope) {return scope.bmf_current_dashboard},
@@ -1177,7 +1190,7 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
         $scope.bmf_sidebars[key].forEach(function(c, ci) {
             response.push({'name': c.name});
             c.views.forEach(function(v, vi) {
-                if ($scope.bmf_current_view && $scope.bmf_current_view.type == "list" && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
+                if ($scope.bmf_current_view && ($scope.bmf_current_view.type == "list" || $scope.bmf_current_view.type == "detail") && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
                     response.push({'name': v.name, 'url': v.url, 'class': 'active'});
                 }
                 else {

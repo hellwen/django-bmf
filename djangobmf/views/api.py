@@ -102,30 +102,30 @@ class APIOverView(BaseMixin, APIView):
                         ])
                     ]
                 )
-                modules.append({
-                    'name': model._meta.verbose_name_plural,
-                    'ct': ct,
-                    'app': model._meta.app_label,
-                    'model': model._meta.model_name,
-                    'url': reverse('djangobmf:detail', kwargs={
+                modules.append(OrderedDict([
+                    ('app', model._meta.app_label),
+                    ('model', model._meta.model_name),
+                    ('ct', ct),
+                    ('name', model._meta.verbose_name_plural),
+                    ('base', reverse('djangobmf:detail', kwargs={
                         'app_label': model._meta.app_label,
                         'model_name': model._meta.model_name,
-                    }),
-                    'data': reverse('djangobmf:api', request=request, format=format, kwargs={
+                    })),
+                    ('data', reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
-                    }),
-                    'only_related': model._bmfmeta.only_related,
-                    'related': related,
-                    'creates': [
+                    })),
+                    ('only_related', model._bmfmeta.only_related),
+                    ('related', related),
+                    ('creates', [
                         {
                             "name": i[1],
                             "url": reverse(model._bmfmeta.namespace_api + ':create', kwargs={
                                 "key": i[0],
                             }),
                         } for i in model._bmfmeta.create_views
-                    ],
-                })
+                    ]),
+                ]))
 
         # === Dashboards ------------------------------------------------------
 

@@ -16,6 +16,7 @@ class AccountSerializer(ModuleSerializer):
 
     class Meta:
         fields = [
+            'pk',
             'parent', 'number', 'name', 'balance', 'balance_currency',
             'balance_formatted', 'type_name',
         ]

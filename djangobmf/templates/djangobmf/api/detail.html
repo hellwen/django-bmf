@@ -1,4 +1,33 @@
 {% load i18n %}{% spaceless %}{% verbatim %}
-<h1>DETAIL</h1>
-<div bmf-view-detail=""></div>
+<h1>Detail View</h1>
+
+<h2>Header:</h2>
+<ul>
+    <li>clone-view</li>
+    <li>report-view(s)</li>
+    <li>workflow change</li>
+    <li>edit-view</li>
+    <li>notifications</li>
+    <li>files (?)</li>
+    <li>delete-view</li>
+</ul>
+
+<h2>Template:</h2>
+<bmf-template></bmf-template>
+
+<h2>Html:</h2>
+
+<p>pk {{ bmf_current_view.pk }}</p>
+<p>pk {{ pk }}</p>
+<p>type {{ bmf_current_view.type }}</p>
+<p>module {{ bmf_current_view.module }}</p>
+
+<h2>Footer:</h2>
+<ul>
+    <li>write comments</li>
+    <li>upload files</li>
+    <li>activity report</li>
+    <li>paginated</li>
+</ul>
+
 {% endverbatim %}{% endspaceless %}

@@ -5,7 +5,7 @@
 app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
     function go(next) {
         $rootScope.bmf_current_view = next;
-        if (next && next.type == "list") {
+        if (next && ["list", "detail"].indexOf(next.type) >= 0) {
             PageTitle.set(next.dashboard.name + ' - ' + next.category.name + ' - ' + next.view.name);
             $rootScope.bmf_current_dashboard = {
                 key: next.dashboard.key,
@@ -40,13 +40,28 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
         }
         var current = undefined;
 
-        // LIST
+        // LIST AND DETAIL
         $rootScope.bmf_dashboards.forEach(function(d, di) {
             d.categories.forEach(function(c, ci) {
                 c.views.forEach(function(v, vi) {
+                    var regex = new RegExp('^' + prefix + v.url + '([0-9]+)/$');
+
+                    // check if the view relates to a list view
                     if (prefix + v.url == url) {
                         current = {
                             type: 'list',
+                            view: v,
+                            category: c,
+                            dashboard: d,
+                        };
+                    }
+
+                    // check if the view relates to a detail view
+                    if (regex.test(url)) {
+                        current = {
+                            type: 'detail',
+                            module: $rootScope.bmf_modules[v.ct],
+                            pk: regex.exec(url)[1],
                             view: v,
                             category: c,
                             dashboard: d,
@@ -58,23 +73,6 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
         if (current) {
             return current;
         }
-
-        // DETAIL
-        for (var key in $rootScope.bmf_modules) {
-            var module = $rootScope.bmf_modules[key];
-            var regex = new RegExp('^' + prefix + module.url + '[0-9]+/$');
-            if (regex.test(url)) {
-                current = {
-                    type: 'detail',
-                    module: module,
-                };
-            }
-        }
-        if (current) {
-            return current;
-        }
-
-        return current
     }
     return {get: get, go: go, update: update}
 }]);
