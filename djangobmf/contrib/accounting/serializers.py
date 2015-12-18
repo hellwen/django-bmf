@@ -40,6 +40,7 @@ class TransactionItemSerializer(ModuleSerializer):
 
     class Meta:
         fields = [
+            'pk',
             'date', 'credit', 'amount', 'amount_currency', 'account_name',
             'transaction_name', 'date_localized'
         ]

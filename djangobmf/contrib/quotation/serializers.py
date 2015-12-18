@@ -14,6 +14,7 @@ class QuotationSerializer(ModuleSerializer):
 
     class Meta:
         fields = (
+            'pk',
             'quotation_number',
             'state',
             'state_name',

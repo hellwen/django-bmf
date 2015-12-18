@@ -13,6 +13,7 @@ class ProjectSerializer(ModuleSerializer):
 
     class Meta:
         fields = (
+            'pk',
             'name',
             'is_active',
             'customer',

@@ -13,7 +13,7 @@
             <td>
                 <span ng-if="obj.completed == false" class="glyphicon glyphicon-unchecked"></span>
                 <span ng-if="obj.completed == true" class="glyphicon glyphicon-check"></span>
-                <span>&nbsp;<a href="{{ obj.bmfdetail }}">{{ obj.summary }}</a></span>
+                <span>&nbsp;<a bmf-detail="{{ obj.pk }}" href="#">{{ obj.summary }}</a></span>
             </td>
             <td>
                 {{ obj.referee_name || "---" }}

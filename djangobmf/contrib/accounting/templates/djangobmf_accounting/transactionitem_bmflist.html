@@ -16,7 +16,7 @@
                 {{ obj.date_localized }}
             </td>
             <td>
-                <a href="{{ obj.bmfdetail }}">{{ obj.transaction_name }}</a>
+                <a bmf-detail="{{ obj.pk }}" href="#">{{ obj.transaction_name }}</a>
             </td>
             <td>
                 {{ obj.account_name }}

@@ -28,7 +28,7 @@
                 <span ng-if="obj.completed == false" class="glyphicon glyphicon-unchecked"></span>
                 <span ng-if="obj.completed == true" class="glyphicon glyphicon-check"></span>
                 <span>&nbsp;</span>
-                <a href="{{ obj.bmfdetail }}">{{ obj.summary }}</a>
+                <a bmf-detail="{{ obj.pk }}" href="#">{{ obj.summary }}</a>
                 <span>&nbsp;</span>
                 <span ng-if="obj.state == 'review'" class="label label-info">{{ obj.state_name }}</span>
                 <span ng-if="obj.state == 'started'" class="label label-primary">{{ obj.state_name }}</span>

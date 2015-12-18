@@ -6,7 +6,6 @@
             <th width="40%">{% trans "Subject" %}</th>
             <th width="20%">{% trans "Employee" %}</th>
             <th width="20%">{% trans "Time" %}</th>
-            <th width="5%"></th>
         </tr>
     </thead>
     {% verbatim %}
@@ -21,13 +20,12 @@
                     {{ obj.task_name }}
                 </div>
             </td>
-            <td>{{ obj.employee_name }}</td>
-            <td>{{ obj.timesince }}
+            <td>
+                <a bmf-detail="{{ obj.pk }}" href="#">
+                    {{ obj.employee_name | default: '---' }}
+                </a>
             </td>
-            <td class="text-right">
-              <a class="btn btn-xs btn-primary" href="{{ obj.bmfdetail }}">
-                <span class="glyphicon glyphicon-list"></span>
-              </a>
+            <td>{{ obj.timesince }}
             </td>
         </tr>
     </tbody>

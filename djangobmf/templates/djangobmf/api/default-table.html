@@ -1,6 +1,8 @@
-{% spaceless %}{% verbatim %}
-<h1>Test</h1><p>%s %s</p>
+{% spaceless %}
+<h1>List View</h1>
+{% verbatim %}
 <ul ng-repeat="obj in data">
-  <li><a href="{{ obj.bmfdetail }}">{{ obj.__str__ }} (object)</a></li>
+  <li><a bmf-detail="{{ obj.pk }}" href="#">{{ obj.__str__ }} (object)</a></li>
 </ul>
-{% endverbatim %}{% endspaceless %}
+{% endverbatim %}
+{% endspaceless %}
