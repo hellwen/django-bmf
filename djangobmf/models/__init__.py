@@ -105,7 +105,7 @@ class Report(AbstractReport):
 
 @receiver(activity_create)
 def object_created(sender, instance, **kwargs):
-    if instance._bmfmeta.has_history:
+    if instance._bmfmeta.has_logging:
         history = Activity(
             user=instance.created_by,
             parent_ct=ContentType.objects.get_for_model(sender),
@@ -118,7 +118,7 @@ def object_created(sender, instance, **kwargs):
 @receiver(activity_update)
 def object_changed(sender, instance, **kwargs):
 
-    if instance._bmfmeta.has_history and len(instance._bmfmeta.observed_fields) > 0:
+    if instance._bmfmeta.has_logging and len(instance._bmfmeta.observed_fields) > 0:
         changes = []
         for key in instance._bmfmeta.observed_fields:
             try:
@@ -156,7 +156,7 @@ def new_state(sender, instance, **kwargs):
 
 @receiver(activity_addfile)
 def new_file(sender, instance, file, **kwargs):
-    if instance._bmfmeta.has_history:
+    if instance._bmfmeta.has_logging:
         history = Activity(
             user=instance.modified_by,
             parent_ct=ContentType.objects.get_for_model(sender),
