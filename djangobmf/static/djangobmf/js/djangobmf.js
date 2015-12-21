@@ -819,8 +819,13 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
             // clear all variables not in common use
             // by views
             function clear() {
+                // objects primary key
                 scope.pk = undefined;
+                // ui informations
+                scope.ui = undefined;
+                // data array
                 scope.data = [];
+
                 scope.module = undefined;
                 scope.pagination = undefined;
                 scope.template_html = undefined;
@@ -898,13 +903,15 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                     scope.dashboard_name = view.dashboard.name;
                     scope.module = view.module;
 
-                    console.log(scope);
-                    scope.test = "DETAIL"
+                    scope.ui = {
+                        workflow: null,
+                    };
 
                     var url = view.module.base + view.pk  + '/';
                     $http.get(url).then(function(response) {
-                        console.log(response);
+                        scope.ui.workflow = response.data.workflow;
                         scope.template_html = response.data.html
+                        console.log(response);
                     });
                 }
 
