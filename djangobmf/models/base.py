@@ -201,8 +201,6 @@ class BMFOptions(object):
         # determines if the model has an activity
         self.has_activity = self.has_logging or self.has_comments or self.has_files
 
-        self.has_history = self.has_logging  # TODO OLD REMOVE ME
-
 
 class BMFModelBase(ModelBase):
     """

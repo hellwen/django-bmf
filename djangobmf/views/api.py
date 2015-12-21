@@ -65,7 +65,7 @@ class APIMixin(BaseMixin):
         return self.model._bmfmeta.serializer_class
 
 
-class APIOverView(BaseMixin, APIView):
+class APIIndex(BaseMixin, APIView):
     """
     All registered modules and views which are viewable by the current user
     """
@@ -107,10 +107,10 @@ class APIOverView(BaseMixin, APIView):
                     ('model', model._meta.model_name),
                     ('ct', ct),
                     ('name', model._meta.verbose_name_plural),
-                    ('base', reverse('djangobmf:detail', kwargs={
-                        'app_label': model._meta.app_label,
-                        'model_name': model._meta.model_name,
-                    })),
+                    ('base', reverse('djangobmf:moduleapi_%s_%s:index' % (
+                        model._meta.app_label,
+                        model._meta.model_name,
+                    ))),
                     ('data', reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
@@ -216,7 +216,7 @@ class APIViewDetail(BaseMixin, APIView):
                     view.model._meta.app_label,
                     view.model._meta.model_name
                 ),
-                'djangobmf/api/default-table.html',
+                'djangobmf/api/list-table-default.html',
             ]).render().strip()
             context['html'] = html
 

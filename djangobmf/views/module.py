@@ -36,7 +36,9 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
+from .mixins import AjaxMixin
 from .mixins import ModuleSearchMixin
+from .mixins import ModuleBaseMixin
 from .mixins import ModuleAjaxMixin
 from .mixins import ModuleViewMixin
 from .mixins import ModuleActivityMixin
@@ -70,7 +72,52 @@ logger = logging.getLogger(__name__)
 # --- detail, forms and api ---------------------------------------------------
 
 
-class ModuleDetailView(
+class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
+    """
+    show the details of an entry
+    """
+    default_permission_classes = [ModuleViewPermission, AjaxPermission]
+    context_object_name = 'object'
+    template_name_suffix = '_bmfdetail'
+    reports = []
+
+    def get_ajax_context(self, **context):
+        # shortcut
+        meta = self.object._bmfmeta
+
+        # TODO watch status of user is missing
+        print(dir(self.object._bmfmeta.workflow))
+        print(dir(self.object))
+        context.update({
+            'views': {
+            #   'clone': [],
+            #   'report': [],
+            #   'update': False,
+            #   'delete': False,
+            },
+            'workflow': meta.workflow.serialize(self.request) if meta.workflow else None,
+            'object': {
+                # 'name': self.model._meta.verbose_name,
+                # 'name_plural': self.model._meta.verbose_name_plural,
+                # 'has_workflow': meta.has_workflow,
+                # 'has_files': meta.has_files,
+                # 'has_history': meta.has_comments or meta.has_history,
+                # 'has_comments': meta.has_comments,
+            }
+        })
+        return context
+
+    def get_template_names(self, related=True):
+#       # self.update_notification()
+#       if related and "open" in self.request.GET.keys() and \
+#               self.request.GET["open"] in self.get_related_views().keys():
+#           return self.get_related_views()[self.request.GET["open"]]["template"]
+#       return super(ModuleDetailView, self).get_template_names() \
+#           + ["djangobmf/module_detail_default.html"]
+        return ["djangobmf/api/detail-default.html"]
+
+
+class ModuleDetailViewOld(
         ModuleFilesMixin, ModuleActivityMixin, ModuleViewMixin, DetailView):
     """
     show the details of an entry
@@ -158,7 +205,7 @@ class ModuleCloneView(ModuleFormMixin, ModuleAjaxMixin, UpdateView):
     """
     clone a object
     """
-    permission_classes = [ModuleClonePermission, AjaxPermission]
+    default_permission_classes = [ModuleClonePermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfclone'
     fields = []

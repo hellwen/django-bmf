@@ -10,6 +10,8 @@ from django.utils.encoding import force_text
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
+from rest_framework.reverse import reverse
+
 from djangobmf.core.employee import Employee
 from djangobmf.signals import activity_workflow
 
@@ -320,6 +322,27 @@ class WorkflowContainer(object):
         Returns the default state key
         """
         return self.obj._default_state_key
+
+    def serialize(self, request):
+        """
+        Return a serialized value of the workflow state for the api access
+        """
+        return OrderedDict([
+            ('name', force_text(self.name)),
+            ('transitions', list(
+                [
+                    OrderedDict((
+                        ('name', force_text(s.name)),
+                        ('url', reverse('djangobmf:moduleapi_%s_%s:workflow' % (
+                            self.django_object._meta.app_label,
+                            self.django_object._meta.model_name,
+                            ), kwargs={'pk': self.django_object.pk, 'transition': k}
+                        )),
+                    ))
+                    for k, s in self.transitions(request.user)
+                ]
+            )),
+        ])
 
     def transitions(self, user):
         """

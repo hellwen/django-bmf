@@ -141,8 +141,17 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
 
         urlpatterns = patterns(
             '',
+            # TODO: Replace me with dummy view
             url(
-                r'^detail/(?P<pk>[0-9]+)/$',
+                r'^$',
+                self.detail.as_view(  
+                    module=self,
+                    model=self.model
+                ),
+                name='index',
+            ),
+            url(
+                r'^(?P<pk>[0-9]+)/$',
                 self.detail.as_view(
                     module=self,
                     model=self.model

@@ -49,15 +49,20 @@ class BaseMixin(object):
     this provides us with more flexibility and removes the need to define
     a middleware.
     """
-    # permission classes
-    # TODO: Check if we need to add "default" permissions and combine them (simpler api)
+    # use permission classes to overwrite the permissions for a specific view
     permission_classes = []
+
+    # default permission classes
+    default_permission_classes = []
 
     # Function name and parameters are identical to the django rest framework
     def check_permissions(self, request):
         """
-        checks all the permissions given in permission_classes
+        checks all the permissions given in permission_classes and default_permission_classes
         """
+        for permission in self.default_permission_classes:
+            if not permission().has_permission(request, self):
+                return False
         for permission in self.permission_classes:
             if not permission().has_permission(request, self):
                 return False
@@ -68,9 +73,15 @@ class BaseMixin(object):
         """
         checks all the permissions given in permission_classes
         """
+
+        for permission in self.default_permission_classes:
+            if not permission().has_object_permission(request, self, obj):
+                return False
+
         for permission in self.permission_classes:
             if not permission().has_object_permission(request, self, obj):
                 return False
+
         return True
 
     def _read_session_data(self):
@@ -218,13 +229,17 @@ class AjaxMixin(BaseMixin):
         response_kwargs['content_type'] = 'application/json'
         return HttpResponse(data, **response_kwargs)
 
-    def get_ajax_context(self, context={}):
-        return context
+    def get_ajax_context(self, **context):
+        return contex
 
     def render_to_response(self, context, **response_kwargs):
+        """
+        If the view calls a render_to_response, the context is rendered and added
+        to the json-response object as a html attribute
+        """
         response = super(AjaxMixin, self).render_to_response(context, **response_kwargs)
         response.render()
-        ctx = self.get_ajax_context({
+        ctx = self.get_ajax_context(**{
             'html': response.rendered_content,
         })
         return self.render_to_json_response(ctx)
@@ -369,7 +384,7 @@ class ModuleAjaxMixin(ModuleBaseMixin, AjaxMixin):
     base mixin for update, clone, delete and create views (ajax-forms)
     """
 
-    def get_ajax_context(self, context):
+    def get_ajax_context(self, **context):
         ctx = {
             # if an object is created or changed return the object's pk on success
             'object_pk': 0,

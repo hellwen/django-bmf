@@ -225,9 +225,16 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                     scope.view_name = view.view.name;
                     scope.category_name = view.category.name;
                     scope.dashboard_name = view.dashboard.name;
+                    scope.module = view.module;
 
+                    console.log(scope);
                     scope.test = "DETAIL"
-                    scope.template_html = "<b>{{ test }}</b>"
+
+                    var url = view.module.base + view.pk  + '/';
+                    $http.get(url).then(function(response) {
+                        console.log(response);
+                        scope.template_html = response.data.html
+                    });
                 }
 
                 update_html("detail");

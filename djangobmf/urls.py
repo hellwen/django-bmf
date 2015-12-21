@@ -18,8 +18,8 @@ from django.views.decorators.http import last_modified
 
 from djangobmf import get_version
 from djangobmf.sites import site
+from djangobmf.views.api import APIIndex
 from djangobmf.views.api import APIViewDetail
-from djangobmf.views.api import APIOverView
 from djangobmf.views.api import APIModuleListView
 from djangobmf.views.api import APIModuleDetailView
 from djangobmf.views.configuration import ConfigurationView
@@ -66,7 +66,7 @@ urlpatterns = patterns(
     url(
         r'^api/$',
         never_cache(
-            APIOverView.as_view()
+            APIIndex.as_view()
         ),
         name="api",
     ),
