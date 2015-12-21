@@ -234,11 +234,13 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
 
                     scope.ui = {
                         workflow: null,
+                        views: null,
                     };
 
                     var url = view.module.base + view.pk  + '/';
                     $http.get(url).then(function(response) {
                         scope.ui.workflow = response.data.workflow;
+                        scope.ui.views = response.data.views;
                         scope.template_html = response.data.html
                         console.log(response);
                     });

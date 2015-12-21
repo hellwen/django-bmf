@@ -140,7 +140,7 @@ def object_changed(sender, instance, **kwargs):
 
 @receiver(activity_workflow)
 def new_state(sender, instance, **kwargs):
-    if instance._bmfmeta.has_history:
+    if instance._bmfmeta.has_logging:
         history = Activity(
             user=instance.modified_by,
             parent_ct=ContentType.objects.get_for_model(sender),

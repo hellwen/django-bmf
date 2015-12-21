@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 # from django.core.paginator import EmptyPage
 # from django.core.paginator import PageNotAnInteger
 # from django.core.paginator import Paginator
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse as django_reverse
 from django.db import router
 from django.db.models import Q
 from django.forms.fields import CharField
@@ -45,6 +45,7 @@ from .mixins import ModuleActivityMixin
 from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
+
 from djangobmf.models import Report
 from djangobmf.permissions import AjaxPermission
 from djangobmf.permissions import ModuleViewPermission
@@ -55,6 +56,8 @@ from djangobmf.permissions import ModuleUpdatePermission
 from djangobmf.signals import activity_create
 from djangobmf.signals import activity_update
 # from djangobmf.utils.deprecation import RemovedInNextBMFVersionWarning
+
+from rest_framework.reverse import reverse
 
 import copy
 # import datetime
@@ -85,26 +88,30 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
         # shortcut
         meta = self.object._bmfmeta
 
-        # TODO watch status of user is missing
-        print(dir(self.object._bmfmeta.workflow))
-        print(dir(self.object))
         context.update({
             'views': {
-            #   'clone': [],
-            #   'report': [],
-            #   'update': False,
-            #   'delete': False,
+                'update': reverse(
+                    'djangobmf:moduleapi_%s_%s:update' % (
+                        self.object._meta.app_label,
+                        self.object._meta.model_name,
+                    ), 
+                    format=None,
+                    request=self.request,
+                    kwargs={'pk': self.object.pk},
+                ),
+                'delete': reverse(
+                    'djangobmf:moduleapi_%s_%s:delete' % (
+                        self.object._meta.app_label,
+                        self.object._meta.model_name,
+                    ), 
+                    format=None,
+                    request=self.request,
+                    kwargs={'pk': self.object.pk},
+                ),
             },
             'workflow': meta.workflow.serialize(self.request) if meta.workflow else None,
-            'object': {
-                # 'name': self.model._meta.verbose_name,
-                # 'name_plural': self.model._meta.verbose_name_plural,
-                # 'has_workflow': meta.has_workflow,
-                # 'has_files': meta.has_files,
-                # 'has_history': meta.has_comments or meta.has_history,
-                # 'has_comments': meta.has_comments,
-            }
         })
+        print(context)
         return context
 
     def get_template_names(self, related=True):
@@ -382,7 +389,7 @@ class ModuleDeleteView(ModuleAjaxMixin, DeleteView):
 
     def get_success_url(self):
         # TODO redirect to active dashboard
-        return reverse('djangobmf:dashboard', kwargs={
+        return django_reverse('djangobmf:dashboard', kwargs={
             'dashboard': None,
         })
 

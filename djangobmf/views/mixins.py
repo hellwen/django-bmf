@@ -483,9 +483,10 @@ class ModuleActivityMixin(object):
         kwargs.update({
             'bmfactivity': {
                 'qs': Activity.objects.filter(parent_ct=ct, parent_id=self.object.pk),
-                'enabled': (self.model._bmfmeta.has_comments or self.model._bmfmeta.has_history),
+                'enabled': (self.model._bmfmeta.has_comments),
+#               'enabled': (self.model._bmfmeta.has_comments or self.model._bmfmeta.has_history),
                 'comments': self.model._bmfmeta.has_comments,
-                'log': self.model._bmfmeta.has_history,
+#               'log': self.model._bmfmeta.has_history,
                 'pk': self.object.pk,
                 'ct': ct.pk,
                 'notification': notification,
