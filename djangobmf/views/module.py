@@ -111,7 +111,6 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
             },
             'workflow': meta.workflow.serialize(self.request) if meta.workflow else None,
         })
-        print(context)
         return context
 
     def get_template_names(self, related=True):
@@ -119,9 +118,9 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
 #       if related and "open" in self.request.GET.keys() and \
 #               self.request.GET["open"] in self.get_related_views().keys():
 #           return self.get_related_views()[self.request.GET["open"]]["template"]
-#       return super(ModuleDetailView, self).get_template_names() \
-#           + ["djangobmf/module_detail_default.html"]
-        return ["djangobmf/api/detail-default.html"]
+
+        return super(ModuleDetailView, self).get_template_names() \
+            + ["djangobmf/api/detail-default.html"]
 
 
 class ModuleDetailViewOld(
@@ -349,19 +348,11 @@ class ModuleDeleteView(ModuleAjaxMixin, DeleteView):
             if not registered:
                 return None
 
-            if hasattr(obj, '_bmfmeta') and obj._bmfmeta.only_related:
-                return format_html(
-                    '{0}: {1}',
-                    obj._meta.verbose_name,
-                    obj
-                )
-            else:
-                return format_html(
-                    '{0}: <a href="{1}">{2}</a>',
-                    obj._meta.verbose_name,
-                    obj.bmfmodule_detail(),
-                    obj
-                )
+            return format_html(
+                '{0}: {1}',
+                obj._meta.verbose_name,
+                obj
+            )
 
         def format_protected_callback(obj):
 

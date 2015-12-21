@@ -1,11 +1,4 @@
-{% extends "djangobmf/module_detail.html" %}
-
-{% load i18n %}
-{% load djangobmf_core %}
-
-{% block title %}{% trans "Transaction" %}: {{ object.text }}{% endblock %}
-
-{% block base_content %}
+{% load i18n %}{% spaceless %}
 <h1>{% trans "Transaction" %}: {{ object.text }}</h1>
 <ol class="breadcrumb">
     <li>{% trans "Project" %}</li>
@@ -73,5 +66,4 @@
       {% endfor %}
     </tbody>
 </table>
-{{ block.super }}
-{% endblock %}
+{% endspaceless %}

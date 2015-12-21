@@ -1,11 +1,4 @@
-{% extends "djangobmf/module_detail.html" %}
-
-{% load i18n %}
-{% load djangobmf_core %}
-
-{% block title %}{% trans "Account" %}: {{ object.number }} {{ object.name }}{% endblock %}
-
-{% block base_content %}
+{% load i18n %}{% spaceless %}
 <h1>{% trans "Account" %}: {{ object.number }} {{ object.name }} <small>{{ object.get_type_display }}</small></h1>
 {% if object.parent %}
 <ol class="breadcrumb">
@@ -14,9 +7,5 @@
     {% endfor %}
 </ol>
 {% endif %}
-
 Balance: {{ object.balance }}
-
-
-{{ block.super }}
-{% endblock %}
+{% endspaceless %}

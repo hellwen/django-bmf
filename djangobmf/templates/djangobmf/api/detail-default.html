@@ -1,1 +1,5 @@
-DEFAULT DETAIL VIEW
+{% load i18n %}{% spaceless %}
+<div class="alert alert-danger" role="alert">
+    <p><b>{% trans "Caution" %}</b>: {% trans "The template to render a page for this object is missing" %}
+</div>
+{% endspaceless %}

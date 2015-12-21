@@ -30,7 +30,7 @@ class AccountSerializer(ModuleSerializer):
 
 class TransactionSerializer(ModuleSerializer):
     class Meta:
-        fields = ['text', 'project']
+        fields = ['pk', 'text', 'project']
 
 
 class TransactionItemSerializer(ModuleSerializer):

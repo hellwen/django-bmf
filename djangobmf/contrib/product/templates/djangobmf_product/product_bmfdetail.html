@@ -1,10 +1,4 @@
-{% extends "djangobmf/module_detail.html" %}
-
-{% load i18n djangobmf_markup djangobmf_core %}
-
-{% block title %}{% trans "Product" %}: {{ object.name }}{% endblock %}
-
-{% block base_content %}
+{% load i18n djangobmf_markup %}
 <h1>{% trans "Product" %}: {{ object.name }}
     {% if object.code %}<small>{{ object.code }}</small>{% endif %}
 </h1>
@@ -79,5 +73,3 @@
         </p>
     </div>
 </div>
-{{ block.super }}
-{% endblock %}

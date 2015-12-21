@@ -1,9 +1,4 @@
-{% extends "djangobmf/module_detail.html" %}
-{% load i18n djangobmf_markup djangobmf_core %}
-
-{% block title %}{% trans "Quotation" %}: {{ object.quotation_number }}{% endblock %}
-
-{% block base_content %}
+{% load i18n djangobmf_markup %}
 <h1>{% trans "Quotation" %}: {{ object.quotation_number }} <small>{{ object.date|date:"SHORT_DATE_FORMAT" }}</small></h1>
 
 <ol class="breadcrumb">
@@ -110,7 +105,3 @@
   <div class="panel-body">{{ object.term_of_payment|bmfmarkup }}</div>
 </div>
 {% endif %}
-
-{{ block.super }}
-
-{% endblock %}
