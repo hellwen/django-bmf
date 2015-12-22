@@ -230,7 +230,7 @@ class AjaxMixin(BaseMixin):
         return HttpResponse(data, **response_kwargs)
 
     def get_ajax_context(self, **context):
-        return contex
+        return context
 
     def render_to_response(self, context, **response_kwargs):
         """
