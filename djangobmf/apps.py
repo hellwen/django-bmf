@@ -23,11 +23,13 @@ class BMFConfig(AppConfig):
     label = bmfsettings.APP_LABEL
     verbose_name = "Django BMF"
 
-    def ready(self):
-        self.bmf_modules = []
-
+    def __init__(self, *args, **kwargs):
+        super(BMFConfig, self).__init__(*args, **kwargs)
         from djangobmf.core.site import Site
         self.site = Site(namespace=self.label, app_name=self.label)
+
+    def ready(self):
+        self.bmf_modules = []
 
 
 class ModuleTemplate(AppConfig):
