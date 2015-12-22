@@ -8,4 +8,4 @@ from djangobmf.serializers import ModuleSerializer
 
 class EmployeeSerializer(ModuleSerializer):
     class Meta:
-        fields = ['pk', 'name']
+        fields = ['name']

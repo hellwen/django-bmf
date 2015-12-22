@@ -18,7 +18,6 @@ class GoalSerializer(ModuleSerializer):
 
     class Meta:
         fields = (
-            'pk',
             'completed',
             'summary',
             'referee',
@@ -43,7 +42,6 @@ class TaskSerializer(ModuleSerializer):
 
     class Meta:
         fields = (
-            'pk',
             'state',
             'state_name',
             'summary',

@@ -16,7 +16,6 @@ class AccountSerializer(ModuleSerializer):
 
     class Meta:
         fields = [
-            'pk',
             'parent', 'number', 'name', 'balance', 'balance_currency',
             'balance_formatted', 'type_name',
         ]
@@ -30,7 +29,7 @@ class AccountSerializer(ModuleSerializer):
 
 class TransactionSerializer(ModuleSerializer):
     class Meta:
-        fields = ['pk', 'text', 'project']
+        fields = ['text', 'project']
 
 
 class TransactionItemSerializer(ModuleSerializer):
@@ -40,7 +39,6 @@ class TransactionItemSerializer(ModuleSerializer):
 
     class Meta:
         fields = [
-            'pk',
             'date', 'credit', 'amount', 'amount_currency', 'account_name',
             'transaction_name', 'date_localized'
         ]

@@ -22,7 +22,6 @@ class TimesheetSerializer(ModuleSerializer):
 
     class Meta:
         fields = (
-            'pk',
             'date',
             'time',
             'timesince',

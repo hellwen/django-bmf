@@ -14,7 +14,6 @@ class InvoiceSerializer(ModuleSerializer):
 
     class Meta:
         fields = (
-            'pk',
             'invoice_number',
             'state',
             'state_name',

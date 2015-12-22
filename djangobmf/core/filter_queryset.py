@@ -27,7 +27,7 @@ from __future__ import unicode_literals
 # class FilterQueryset(six.with_metaclass(FilterQuerysetMetaclass, object)):
 class FilterQueryset(object):
     """
-    The easiest way to provvide object based access control is via
+    The easiest way to provide object based access control is via
     a queryset filter. We provide an easy mechanism to add queryset filter
     to your model with the `FilterQueryset` class.
     """
