@@ -55,11 +55,7 @@ class ModulePermission(BasePermission):
         Given a view and a HTTP method, return the list of permission
         codes that the user is required to have.
         """
-        model_cls = getattr(view, 'model', None)
-        assert model_cls is not None, (
-            'Cannot apply Permissions on a view that '
-            'does not have a `model` property.'
-        )
+        model_cls = view.get_bmfmodel()
         kwargs = {
             'app': model_cls._meta.app_label,
             'model': model_cls._meta.model_name,

@@ -10,10 +10,13 @@ from django.http import Http404
 from django.template.loader import get_template
 from django.template.loader import select_template
 
+from djangobmf.models import Activity
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
 from djangobmf.filters import RelatedFilterBackend
+from djangobmf.permissions import ModuleViewPermission
 from djangobmf.pagination import ModulePagination
+from djangobmf.core.serializers import ActivitySerializer
 from djangobmf.views.mixins import BaseMixin
 
 from rest_framework.generics import GenericAPIView
@@ -30,30 +33,11 @@ from rest_framework.viewsets import GenericViewSet
 from collections import OrderedDict
 
 
-class APIMixin(BaseMixin):
-
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
-    pagination_class = ModulePagination
-    paginate_by = 100
-
-    @property
-    def model(self):
-        if getattr(self, '_model', None):
-            return self._model
-
-        try:
-            self._model = apps.get_model(self.kwargs.get('app'), self.kwargs.get('model'))
-        except LookupError:
-            raise Http404
-
-        if not hasattr(self._model, '_bmfmeta'):
-            raise Http404
-
-        return self._model
+class ModelMixin(object):
 
     def get_queryset(self):
-        qs = self.model._bmfmeta.filter_queryset(
-            self.model.objects.all(),
+        qs = self.get_bmfmodel()._bmfmeta.filter_queryset(
+            self.get_bmfmodel().objects.all(),
             self.request.user,
         )
         return qs
@@ -62,7 +46,7 @@ class APIMixin(BaseMixin):
         """
         return the serializer which is registered with the model
         """
-        return self.model._bmfmeta.serializer_class
+        return self.get_bmfmodel()._bmfmeta.serializer_class
 
 
 class APIIndex(BaseMixin, APIView):
@@ -223,17 +207,42 @@ class APIViewDetail(BaseMixin, APIView):
         return Response(context)
 
 
-class ViewSet(APIMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    pass
+class ViewSet(ModelMixin, BaseMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
+    permission_classes = [ModuleViewPermission,]
+    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    pagination_class = ModulePagination
+    paginate_by = 100
 
 
-class APIModuleListView(APIMixin, ListModelMixin, CreateModelMixin, GenericAPIView):
+class APIModuleListView(ModelMixin, BaseMixin, ListModelMixin, CreateModelMixin, GenericAPIView):
+    permission_classes = [ModuleViewPermission,]
+    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    pagination_class = ModulePagination
+    paginate_by = 100
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
 
-class APIModuleDetailView(APIMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
+class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
+    permission_classes = [ModuleViewPermission,]
+    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    pagination_class = ModulePagination
+    paginate_by = 100
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+
+class APIActivityListView(BaseMixin, ListModelMixin, GenericAPIView):
+    permission_classes = [ModuleViewPermission,]
+    serializer_class = ActivitySerializer
+
+    def get_queryset(self):
+        model = self.get_bmfmodel()
+        # TODO test object permissions
+        ct = ContentType.objects.get_for_model(model)
+        return Activity.objects.filter(parent_id=self.kwargs.get('pk', None), parent_ct=ct)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)

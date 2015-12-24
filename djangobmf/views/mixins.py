@@ -84,6 +84,18 @@ class BaseMixin(object):
 
         return True
 
+    def get_bmfmodel(self):
+        """
+        return the model property or loads the model dynamically
+        via the url kwargs (app, model) or throws a LookupError
+        """
+        if getattr(self, 'model', None):
+            return self.model
+
+        # Raises a LookupError, when it does not find a model
+        self.model = apps.get_model(self.kwargs.get('app'), self.kwargs.get('model'))
+        return self.model
+
     def _read_session_data(self):
         """
         returns the data saved in the session or an

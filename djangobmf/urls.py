@@ -22,6 +22,7 @@ from djangobmf.views.api import APIIndex
 from djangobmf.views.api import APIViewDetail
 from djangobmf.views.api import APIModuleListView
 from djangobmf.views.api import APIModuleDetailView
+from djangobmf.views.api import APIActivityListView
 from djangobmf.views.configuration import ConfigurationView
 from djangobmf.views.configuration import ConfigurationEdit
 from djangobmf.views.dashboard import DashboardIndex
@@ -83,6 +84,13 @@ urlpatterns = patterns(
             APIModuleDetailView.as_view()
         ),
         name="api",
+    ),
+    url(
+        r'^api/activity/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        never_cache(
+            APIActivityListView.as_view()
+        ),
+        name="api-activity",
     ),
     url(
         r'^api/view/(?P<db>[\w_]+)/(?P<cat>[\w_]+)/(?P<view>[\w_]+)/$',

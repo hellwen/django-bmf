@@ -108,6 +108,19 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
                     request=self.request,
                     kwargs={'pk': self.object.pk},
                 ),
+                'activity': {
+                    'enabled': self.object._bmfmeta.has_activity,
+                    'url': reverse(
+                        'djangobmf:api-activity',
+                        format=None,
+                        request=self.request,
+                        kwargs={
+                            'pk': self.object.pk,
+                            'app': self.object._meta.app_label,
+                            'model': self.object._meta.model_name,
+                        },
+                    ),
+                },
             },
             'workflow': meta.workflow.serialize(self.request) if meta.workflow else None,
         })

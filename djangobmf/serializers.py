@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 from djangobmf import fields
+
 from rest_framework.fields import CharField
 from rest_framework.fields import DecimalField
 from rest_framework.reverse import reverse

@@ -831,6 +831,7 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                 scope.template_html = undefined;
 
                 scope.creates = undefined;
+                scope.activity = undefined;
 
                 scope.dashboard_name = undefined;
                 scope.category_name = undefined;
@@ -914,6 +915,13 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                         scope.ui.views = response.data.views;
                         scope.template_html = response.data.html
                         console.log(response);
+
+                        if (response.data.views.activity.enabled) {
+                            var url = view.module.base + view.pk  + '/';
+                            $http.get(url).then(function(response) {
+                                console.log(response);
+                            });
+                        }
                     });
                 }
 
