@@ -36,11 +36,7 @@ from collections import OrderedDict
 class ModelMixin(object):
 
     def get_queryset(self):
-        qs = self.get_bmfmodel()._bmfmeta.filter_queryset(
-            self.get_bmfmodel().objects.all(),
-            self.request.user,
-        )
-        return qs
+        return get_bmfqueryset()
 
     def get_serializer_class(self):
         """
@@ -240,9 +236,9 @@ class APIActivityListView(BaseMixin, ListModelMixin, GenericAPIView):
 
     def get_queryset(self):
         model = self.get_bmfmodel()
-        # TODO test object permissions
+        obj = self.get_bmfobject(self.kwargs.get('pk', None))
         ct = ContentType.objects.get_for_model(model)
-        return Activity.objects.filter(parent_id=self.kwargs.get('pk', None), parent_ct=ct)
+        return Activity.objects.filter(parent_id=self.kwargs.get('pk', None), parent_ct=ct).select_related('user')
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

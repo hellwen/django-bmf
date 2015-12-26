@@ -7,6 +7,7 @@ from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
 from django.db.models.query import QuerySet
 from django.forms.models import modelform_factory
@@ -95,6 +96,22 @@ class BaseMixin(object):
         # Raises a LookupError, when it does not find a model
         self.model = apps.get_model(self.kwargs.get('app'), self.kwargs.get('model'))
         return self.model
+
+    def get_bmfqueryset(self, filter=True):
+        if filter:
+            return self.get_bmfmodel()._bmfmeta.filter_queryset(
+                self.get_bmfqueryset(filter=False),
+                self.request.user,
+            )
+        return self.get_bmfmodel().objects.all()
+
+    def get_bmfobject(self, pk):
+        try:
+            return self.get_bmfqueryset().get(pk=pk)
+        except self.get_bmfmodel().DoesNotExist:
+            if self.get_bmfqueryset(filter=False).filter(pk=pk).count():
+                raise PermissionDenied
+            raise Http404
 
     def _read_session_data(self):
         """

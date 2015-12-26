@@ -50,5 +50,14 @@
     <li>activity report</li>
     <li>paginated</li>
 </ul>
+<div ng-repeat="activity in activities">
+    <strong ng-if="activity.title">{{ activity.title }}<br></strong>
 
+    <div ng-bind-html="activity.text | mark_safe"></div>
+
+    <small class="text-muted">
+        {{ activity.user }} <span bmf-time-ago="activity.modified"></span>
+    </small>
+    <hr ng-if="!$last">
+</div>
 {% endverbatim %}{% endspaceless %}

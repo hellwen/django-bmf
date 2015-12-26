@@ -658,6 +658,83 @@ $(document).ready(function() {
  * django BMF Angular UI
  */
 
+//-----------------------------------------------------------------------------
+// Date object extensions from django/contrib/admin/js/core.js
+// ----------------------------------------------------------------------------
+
+Date.prototype.getTwelveHours = function() {
+    hours = this.getHours();
+    if (hours == 0) {
+        return 12;
+    }
+    else {
+        return hours <= 12 ? hours : hours-12
+    }
+}
+
+Date.prototype.getTwoDigitMonth = function() {
+    return (this.getMonth() < 9) ? '0' + (this.getMonth()+1) : (this.getMonth()+1);
+}
+
+Date.prototype.getTwoDigitDate = function() {
+    return (this.getDate() < 10) ? '0' + this.getDate() : this.getDate();
+}
+
+Date.prototype.getTwoDigitTwelveHour = function() {
+    return (this.getTwelveHours() < 10) ? '0' + this.getTwelveHours() : this.getTwelveHours();
+}
+
+Date.prototype.getTwoDigitHour = function() {
+    return (this.getHours() < 10) ? '0' + this.getHours() : this.getHours();
+}
+
+Date.prototype.getTwoDigitMinute = function() {
+    return (this.getMinutes() < 10) ? '0' + this.getMinutes() : this.getMinutes();
+}
+
+Date.prototype.getTwoDigitSecond = function() {
+    return (this.getSeconds() < 10) ? '0' + this.getSeconds() : this.getSeconds();
+}
+
+Date.prototype.getHourMinute = function() {
+    return this.getTwoDigitHour() + ':' + this.getTwoDigitMinute();
+}
+
+Date.prototype.getHourMinuteSecond = function() {
+    return this.getTwoDigitHour() + ':' + this.getTwoDigitMinute() + ':' + this.getTwoDigitSecond();
+}
+
+Date.prototype.strftime = function(format) {
+    var fields = {
+        c: this.toString(),
+        d: this.getTwoDigitDate(),
+        H: this.getTwoDigitHour(),
+        I: this.getTwoDigitTwelveHour(),
+        m: this.getTwoDigitMonth(),
+        M: this.getTwoDigitMinute(),
+        p: (this.getHours() >= 12) ? 'PM' : 'AM',
+        S: this.getTwoDigitSecond(),
+        w: '0' + this.getDay(),
+        x: this.toLocaleDateString(),
+        X: this.toLocaleTimeString(),
+        y: ('' + this.getFullYear()).substr(2, 4),
+        Y: '' + this.getFullYear(),
+        '%' : '%'
+    };
+    var result = '', i = 0;
+    while (i < format.length) {
+        if (format.charAt(i) === '%') {
+            result = result + fields[format.charAt(i + 1)];
+            ++i;
+        }
+        else {
+            result = result + format.charAt(i);
+        }
+        ++i;
+    }
+    return result;
+}
+
 var app = angular.module('djangoBMF', []);
 
 /*
@@ -667,6 +744,12 @@ var app = angular.module('djangoBMF', []);
 app.config(['$httpProvider', '$locationProvider', function($httpProvider, $locationProvider) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     $locationProvider.html5Mode(true).hashPrefix('!');
+}]);
+
+app.filter('mark_safe', ['$sce', function($sce) {
+    return function(value) {
+        return $sce.trustAsHtml(value);
+    }
 }]);
 
 /*
@@ -800,6 +883,19 @@ app.directive('bmfDetail', ["$location", function($location) {
 }]);
 
 
+// 
+app.directive('bmfTimeAgo', [function() {
+    return {
+        restrict: 'A',
+        template: '{{ timeago | date:"medium" }}',
+        link: function(scope, element, attr) {
+            var d = new Date(scope.$eval(attr.bmfTimeAgo));
+            scope.timeago = d.strftime(get_format("DATETIME_INPUT_FORMATS")[0]);
+        }
+    };
+}]);
+
+
 // manages the content-area
 app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
     return {
@@ -831,7 +927,7 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                 scope.template_html = undefined;
 
                 scope.creates = undefined;
-                scope.activity = undefined;
+                scope.activities = undefined;
 
                 scope.dashboard_name = undefined;
                 scope.category_name = undefined;
@@ -914,12 +1010,12 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                         scope.ui.workflow = response.data.workflow;
                         scope.ui.views = response.data.views;
                         scope.template_html = response.data.html
-                        console.log(response);
 
                         if (response.data.views.activity.enabled) {
-                            var url = view.module.base + view.pk  + '/';
+                            var url = response.data.views.activity.url;
                             $http.get(url).then(function(response) {
-                                console.log(response);
+                                scope.activities = response.data;
+                                console.log(response.data[0].text);
                             });
                         }
                     });

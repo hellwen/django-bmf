@@ -66,6 +66,7 @@ module.exports = (grunt) ->
           'static_files/js/menu.js',
           'static_files/js/ui-init.js',
           'static_files/js/ui-config.js',
+          'static_files/js/ui-filter.js',
           'static_files/js/ui-directive.js',
           'static_files/js/ui-factory.js',
           'static_files/js/ui-controller.js',
