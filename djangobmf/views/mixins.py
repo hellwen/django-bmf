@@ -85,6 +85,9 @@ class BaseMixin(object):
 
         return True
 
+    def get_bmfcontenttype(self):
+        return ContentType.objects.get_for_model(self.get_bmfmodel())
+
     def get_bmfmodel(self):
         """
         return the model property or loads the model dynamically

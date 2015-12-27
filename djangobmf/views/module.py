@@ -108,6 +108,7 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
                     request=self.request,
                     kwargs={'pk': self.object.pk},
                 ),
+                'comments': self.object._bmfmeta.has_comments,
                 'activity': {
                     'enabled': self.object._bmfmeta.has_activity,
                     'url': reverse(

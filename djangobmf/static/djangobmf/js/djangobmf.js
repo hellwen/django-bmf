@@ -658,6 +658,15 @@ $(document).ready(function() {
  * django BMF Angular UI
  */
 
+// Event send, when the activity list needs to be reloaded
+var BMFEVENT_ACTIVITY = "bmf.event.activity";
+
+// Event send, when the model details need to be updated
+var BMFEVENT_MODELDETAIL = "bmf.event.modeldetail";
+
+// Event send, when the model details need to be updated
+var BMFEVENT_MODELLIST = "bmf.event.modellist";
+
 //-----------------------------------------------------------------------------
 // Date object extensions from django/contrib/admin/js/core.js
 // ----------------------------------------------------------------------------
@@ -743,6 +752,8 @@ var app = angular.module('djangoBMF', []);
 
 app.config(['$httpProvider', '$locationProvider', function($httpProvider, $locationProvider) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $locationProvider.html5Mode(true).hashPrefix('!');
 }]);
 
@@ -887,7 +898,8 @@ app.directive('bmfDetail', ["$location", function($location) {
 app.directive('bmfTimeAgo', [function() {
     return {
         restrict: 'A',
-        template: '{{ timeago | date:"medium" }}',
+        template: '<span title="{{ timeago }}">{{ timeago }}</span>',
+        replace: true,
         link: function(scope, element, attr) {
             var d = new Date(scope.$eval(attr.bmfTimeAgo));
             scope.timeago = d.strftime(get_format("DATETIME_INPUT_FORMATS")[0]);
@@ -1015,7 +1027,7 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                             var url = response.data.views.activity.url;
                             $http.get(url).then(function(response) {
                                 scope.activities = response.data;
-                                console.log(response.data[0].text);
+                                console.log(response.data);
                             });
                         }
                     });
@@ -1320,5 +1332,30 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
         });
 
         $scope.data = response;
+    }
+}]);
+
+// This controller manages the activity form
+app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
+    $scope.data = {};
+    console.log($scope);
+    $scope.processForm = function() {
+        var url = $scope.$parent.$parent.ui.views.activity.url;
+        $http({
+            method: 'POST',
+            data: $scope.data,
+            url: url,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function (response) {
+            // success callback
+            // console.log("success", this, response);
+            window.location.reload(); 
+        }, function (response) {
+            // error callback
+            console.log("ActivityForm - Error", response);
+            alert(response.data.non_field_errors[0]);
+        })
     }
 }]);

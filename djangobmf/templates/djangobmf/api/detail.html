@@ -43,21 +43,46 @@
 <hr>
 <bmf-template></bmf-template>
 <hr>
+<!--
 <h2>Footer: (todo)</h2>
 <ul>
     <li>write comments</li>
     <li>upload files</li>
-    <li>activity report</li>
     <li>paginated</li>
 </ul>
-<div ng-repeat="activity in activities">
-    <strong ng-if="activity.title">{{ activity.title }}<br></strong>
+-->
+<div class="panel panel-default" id="bmf_message_box">
+    <div ng-if="ui.views.comments" class="panel-heading text-right">
+        <button type="button" data-toggle="collapse" data-target="#bmf_message_form" data-parent="#bmf_message_box" class="btn btn-default">
+            <span class="glyphicon glyphicon-pencil"></span> {% endverbatim %}{% trans "Write message" %}{% verbatim %}
+        </button>
+    </div>
+    <div class="panel-body">
 
-    <div ng-bind-html="activity.text | mark_safe"></div>
+        <div ng-if="ui.views.comments" id="bmf_message_form" class="collapse out">
+            <form class="form" role="form" ng-controller="ActivityFormCtrl" ng-submit="processForm()">
+                <div class="form-group">
+                    <input type="text" name="topic" class="form-control" placeholder="{% endverbatim %}{% trans "Topic" %}{% verbatim %}" ng-model="data.topic">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" name="text" rows="8" placeholder="{% endverbatim %}{% trans "Text" %}{% verbatim %}" ng-model="data.text"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">{% endverbatim %}{% trans "Write message" %}{% verbatim %}</button>
+                </div>
+            </form>
+            <hr />
+        </div>
 
-    <small class="text-muted">
-        {{ activity.user }} <span bmf-time-ago="activity.modified"></span>
-    </small>
-    <hr ng-if="!$last">
+        <div ng-repeat="activity in activities">
+            <h4 ng-if="activity.action=='created'">{% endverbatim %}{% trans "Item created"%}{% verbatim %}</h4>
+            <h4 ng-if="activity.action=='changed'">{% endverbatim %}{% trans "Item changed"%}{% verbatim %}</h4>
+            <strong ng-if="activity.action=='workflow'">{% endverbatim %}{% trans "State"%}{% verbatim %}: {{ activity.json.new }} &larr; {{ activity.json.old }} <br></strong>
+            <h4 ng-if="activity.topic">{{ activity.topic }}</h4>
+            <div ng-if="activity.formatted" ng-bind-html="activity.formatted | mark_safe"></div>
+            <small class="text-muted">{{ activity.user }} <span bmf-time-ago="activity.modified"></span></small>
+            <hr ng-if="!$last">
+        </div>
+    </div>
 </div>
 {% endverbatim %}{% endspaceless %}

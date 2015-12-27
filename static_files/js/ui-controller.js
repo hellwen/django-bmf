@@ -176,3 +176,28 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
         $scope.data = response;
     }
 }]);
+
+// This controller manages the activity form
+app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
+    $scope.data = {};
+    console.log($scope);
+    $scope.processForm = function() {
+        var url = $scope.$parent.$parent.ui.views.activity.url;
+        $http({
+            method: 'POST',
+            data: $scope.data,
+            url: url,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function (response) {
+            // success callback
+            // console.log("success", this, response);
+            window.location.reload(); 
+        }, function (response) {
+            // error callback
+            console.log("ActivityForm - Error", response);
+            alert(response.data.non_field_errors[0]);
+        })
+    }
+}]);

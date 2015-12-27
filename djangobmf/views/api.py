@@ -15,6 +15,7 @@ from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
 from djangobmf.filters import RelatedFilterBackend
 from djangobmf.permissions import ModuleViewPermission
+from djangobmf.permissions import ActivityPermission
 from djangobmf.pagination import ModulePagination
 from djangobmf.core.serializers import ActivitySerializer
 from djangobmf.views.mixins import BaseMixin
@@ -36,7 +37,7 @@ from collections import OrderedDict
 class ModelMixin(object):
 
     def get_queryset(self):
-        return get_bmfqueryset()
+        return self.get_bmfqueryset()
 
     def get_serializer_class(self):
         """
@@ -230,8 +231,8 @@ class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, UpdateModel
         return self.retrieve(request, *args, **kwargs)
 
 
-class APIActivityListView(BaseMixin, ListModelMixin, GenericAPIView):
-    permission_classes = [ModuleViewPermission,]
+class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAPIView):
+    permission_classes = [ActivityPermission,]
     serializer_class = ActivitySerializer
 
     def get_queryset(self):
@@ -239,6 +240,9 @@ class APIActivityListView(BaseMixin, ListModelMixin, GenericAPIView):
         obj = self.get_bmfobject(self.kwargs.get('pk', None))
         ct = ContentType.objects.get_for_model(model)
         return Activity.objects.filter(parent_id=self.kwargs.get('pk', None), parent_ct=ct).select_related('user')
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
