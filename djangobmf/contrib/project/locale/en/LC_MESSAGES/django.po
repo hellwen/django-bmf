@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-02 19:42+0100\n"
+"POT-Creation-Date: 2015-12-27 18:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,20 +38,19 @@ msgstr ""
 msgid "Is active"
 msgstr ""
 
-#: models.py:32 templates/djangobmf_project/project_bmfdetail.html:5
-#: templates/djangobmf_project/project_bmfdetail.html:8
+#: models.py:32 templates/djangobmf_project/project_bmfdetail.html:2
 msgid "Project"
 msgstr ""
 
-#: templates/djangobmf_project/project_bmfdetail.html:10
+#: templates/djangobmf_project/project_bmfdetail.html:4
 msgid "Active"
 msgstr ""
 
-#: templates/djangobmf_project/project_bmfdetail.html:10
+#: templates/djangobmf_project/project_bmfdetail.html:4
 msgid "Inactive"
 msgstr ""
 
-#: templates/djangobmf_project/project_bmfdetail.html:11
+#: templates/djangobmf_project/project_bmfdetail.html:5
 #: templates/djangobmf_project/project_bmflist.html:6
 msgid "Customer"
 msgstr ""

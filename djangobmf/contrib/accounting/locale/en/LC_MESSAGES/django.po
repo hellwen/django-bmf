@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-02 19:42+0100\n"
+"POT-Creation-Date: 2015-12-27 18:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +38,7 @@ msgid "Transactions"
 msgstr ""
 
 #: forms.py:34 models.py:245
-#: templates/djangobmf_accounting/transaction_bmfdetail.html:23
+#: templates/djangobmf_accounting/transaction_bmfdetail.html:16
 #: templates/djangobmf_accounting/transaction_bmflist.html:5
 #: templates/djangobmf_accounting/transactionitem_bmflist.html:5
 msgid "Date"
@@ -88,9 +88,8 @@ msgstr ""
 msgid "Read-only"
 msgstr ""
 
-#: models.py:87 templates/djangobmf_accounting/account_bmfdetail.html:6
-#: templates/djangobmf_accounting/account_bmfdetail.html:9
-#: templates/djangobmf_accounting/transaction_bmfdetail.html:25
+#: models.py:87 templates/djangobmf_accounting/account_bmfdetail.html:2
+#: templates/djangobmf_accounting/transaction_bmfdetail.html:18
 #: templates/djangobmf_accounting/transactionitem_bmflist.html:7
 msgid "Account"
 msgstr ""
@@ -119,17 +118,16 @@ msgstr ""
 msgid "Draft"
 msgstr ""
 
-#: models.py:179 templates/djangobmf_accounting/transaction_bmfdetail.html:6
-#: templates/djangobmf_accounting/transaction_bmfdetail.html:9
+#: models.py:179 templates/djangobmf_accounting/transaction_bmfdetail.html:2
 msgid "Transaction"
 msgstr ""
 
-#: models.py:254 templates/djangobmf_accounting/transaction_bmfdetail.html:27
+#: models.py:254 templates/djangobmf_accounting/transaction_bmfdetail.html:20
 #: templates/djangobmf_accounting/transactionitem_bmflist.html:8
 msgid "Credit"
 msgstr ""
 
-#: models.py:254 templates/djangobmf_accounting/transaction_bmfdetail.html:26
+#: models.py:254 templates/djangobmf_accounting/transaction_bmfdetail.html:19
 msgid "Debit"
 msgstr ""
 
@@ -137,12 +135,12 @@ msgstr ""
 msgid "Balance"
 msgstr ""
 
-#: templates/djangobmf_accounting/transaction_bmfdetail.html:11
+#: templates/djangobmf_accounting/transaction_bmfdetail.html:4
 #: templates/djangobmf_accounting/transaction_bmflist.html:7
 msgid "Project"
 msgstr ""
 
-#: templates/djangobmf_accounting/transaction_bmfdetail.html:15
+#: templates/djangobmf_accounting/transaction_bmfdetail.html:8
 msgid "None"
 msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-08 04:15+0100\n"
+"POT-Creation-Date: 2015-12-27 18:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,43 +17,43 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/djangobmf/js/djangobmf.js:28 static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:30 static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 403\n"
 " You don't have permission to view this page"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:31 static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:33 static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 404\n"
 " Page not found"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:34 static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:36 static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 405\n"
 " Method not allowed"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:38 static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:40 static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 500\n"
 " An Error occured while rendering the page"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:251 static/djangobmf/js/djangobmf.js:371
-#: static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:250 static/djangobmf/js/djangobmf.js:370
+#: static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "January February March April May June July August September October November "
 "December"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:252 static/djangobmf/js/djangobmf.js:372
-#: static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:251 static/djangobmf/js/djangobmf.js:371
+#: static/djangobmf/js/djangobmf.min.js:17
 msgid "Su Mo Tu We Th Fr Sa"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:253 static/djangobmf/js/djangobmf.js:373
-#: static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:252 static/djangobmf/js/djangobmf.js:372
+#: static/djangobmf/js/djangobmf.min.js:17
 msgid "Sunday Monday Tuesday Wednesday Thursday Friday Saturday"
 msgstr ""
