@@ -13,7 +13,7 @@
             <td>
                 <span ng-if="obj.is_active == true" class="glyphicon glyphicon-unchecked"></span>
                 <span ng-if="obj.is_active == false" class="glyphicon glyphicon-check"></span>
-                <span>&nbsp;<a href="{{ obj.bmfdetail }}">{{ obj.name }}</a></span>
+                <span>&nbsp;<a bmf-detail="{{ obj.pk }}" href="#">{{ obj.name }}</a></span>
             </td>
             <td>{{ obj.customer_name }}</td>
             <td class="text-right">

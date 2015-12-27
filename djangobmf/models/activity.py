@@ -129,6 +129,9 @@ class Activity(models.Model):
             return data
         return self.text
 
+    def get_json(self):
+        return ''
+
     def changes(self):
         if self.action == ACTION_UPDATED:
             data = json.loads(self.text)

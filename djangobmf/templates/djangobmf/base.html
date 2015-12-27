@@ -29,14 +29,14 @@
             <div class="page-container">
                 <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
                     <div class="container">
-                        <div class="navbar-header">
+                        <div class="navbar-header visible-xs">
                             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                                 <span class="sr-only">{% trans "Toogle navigation" %}</span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="{% url 'djangobmf:dashboard' %}">django BMF</a>
+                            <a class="navbar-brand" href="#">django BMF</a>
                         </div><!--/.nav-header -->
                         <div class="collapse navbar-collapse navbar-ex1-collapse">
                             <ul class="nav navbar-nav dashboards" ng-controller="DashboardCtrl">
@@ -56,7 +56,16 @@
                                 </li>
                                 {% endverbatim %}
                             </ul>
-                            <ul class="nav navbar-nav navbar-right">
+                            <ul ng-controller="NavigationCtrl" class="nav navbar-nav navbar-right">
+                                {% verbatim %}
+                                <li ng-repeat="n in data" class="bmf-navigation">
+                                    <a href="{{ n.url }}" ng-class="n.active ? 'active' : ''">
+                                        <span class="{{ n.symbol }}"></span>
+                                        <span class="nav-text">{{ n.name }}</span>
+                                        <span class="label label-primary">{{ n.count }}</span>
+                                    </a>
+                                </li>
+                                {% endverbatim %}
                                 {% block navbar %}
                                 <li data-count="{{ djangobmf.notification_count }}" id="bmf_notification">
                                     <a href="{% url 'djangobmf:notification' %}">

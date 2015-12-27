@@ -1,0 +1,37 @@
+/* Dropdown at mouseover
+-------------------------------------------------- */
+@media (min-width: @screen-sm) {
+    ul.nav.dashboards {
+        & > li.dropdown:hover .dropdown-menu {
+            display: block;
+        }
+    }
+}
+
+/* Navigation
+-------------------------------------------------- */
+.navbar-inverse {
+    span.nav-text {
+        display: none;
+    }
+
+    li.bmf-navigation {
+        & > a > span.glyphicon {
+            color: @navbar-inverse-link-disabled-color;
+        }
+        @media (max-width: @screen-xs-max) {
+            span.nav-text {
+                display: inline;
+            }
+        }
+        & > a > span.glyphicon {
+            color: @navbar-inverse-link-disabled-color;
+        }
+        & > a.active > span.glyphicon {
+            color: @brand-primary;
+        }
+        & > a:hover > span.glyphicon {
+            color: @navbar-inverse-link-hover-color;
+        }
+    }
+}

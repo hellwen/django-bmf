@@ -1,6 +1,3 @@
-{% extends "djangobmf/module_detail.html" %}
-
-{% block base_content %}
 <ul>
     <li>name {{ object.summary }}</li>
     <li>desc {{ object.description }}</li>
@@ -14,5 +11,3 @@
     <li>project {{ object.project }}</li>
     <li>task {{ object.task }}</li>
 </ul>
-{{ block.super }}
-{% endblock %}

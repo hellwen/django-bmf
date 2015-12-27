@@ -17,5 +17,4 @@ class ProjectSerializer(ModuleSerializer):
             'is_active',
             'customer',
             'customer_name',
-            'bmfdetail',
         )

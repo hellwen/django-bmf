@@ -18,10 +18,11 @@ from django.views.decorators.http import last_modified
 
 from djangobmf import get_version
 from djangobmf.sites import site
+from djangobmf.views.api import APIIndex
 from djangobmf.views.api import APIViewDetail
-from djangobmf.views.api import APIOverView
 from djangobmf.views.api import APIModuleListView
 from djangobmf.views.api import APIModuleDetailView
+from djangobmf.views.api import APIActivityListView
 from djangobmf.views.configuration import ConfigurationView
 from djangobmf.views.configuration import ConfigurationEdit
 from djangobmf.views.dashboard import DashboardIndex
@@ -33,8 +34,13 @@ from djangobmf.views.wizard import WizardView
 
 VERSION = get_version()
 
+if settings.DEBUG:
+    CACHE_TIME = 1
+else:
+    CACHE_TIME = 86400  # 24h
 
-@cache_page(86400, key_prefix=VERSION)
+
+@cache_page(CACHE_TIME, key_prefix=VERSION)
 @last_modified(lambda req, **kw: now())
 def i18n_javascript(request):
     """
@@ -61,7 +67,7 @@ urlpatterns = patterns(
     url(
         r'^api/$',
         never_cache(
-            APIOverView.as_view()
+            APIIndex.as_view()
         ),
         name="api",
     ),
@@ -80,8 +86,15 @@ urlpatterns = patterns(
         name="api",
     ),
     url(
+        r'^api/activity/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        never_cache(
+            APIActivityListView.as_view()
+        ),
+        name="api-activity",
+    ),
+    url(
         r'^api/view/(?P<db>[\w_]+)/(?P<cat>[\w_]+)/(?P<view>[\w_]+)/$',
-        cache_page(86400, key_prefix=VERSION)(
+        cache_page(CACHE_TIME, key_prefix=VERSION)(
             last_modified(lambda req, **kw: now())(
                 APIViewDetail.as_view()
             )
@@ -120,6 +133,11 @@ urlpatterns = patterns(
     ),
     url(
         r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/(?P<view>[\w-]+)/$',
+        DashboardIndex.as_view(),
+        name="dashboard",
+    ),
+    url(
+        r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/(?P<view>[\w-]+)/(?P<pk>[0-9]+)/$',
         DashboardIndex.as_view(),
         name="dashboard",
     ),

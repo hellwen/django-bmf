@@ -4,22 +4,22 @@
 from __future__ import unicode_literals
 
 from djangobmf import fields
-from rest_framework import serializers
+
 from rest_framework.fields import CharField
 from rest_framework.fields import DecimalField
+from rest_framework.reverse import reverse
+from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import SerializerMethodField
 
 
-class ModuleSerializer(serializers.ModelSerializer):
+class ModuleSerializer(ModelSerializer):
 
-    bmfdetail = serializers.SerializerMethodField()
+    def get_field_names(self, *args, **kwargs):
+        names = super(ModuleSerializer, self).get_field_names(*args, **kwargs)
 
-    # TODO apply different serializer to only_related models
-    def get_bmfdetail(self, obj):
-        if obj._bmfmeta.only_related:
-            return '#'
-
-        return obj.bmfmodule_detail()
-
+        if 'pk' not in names:
+            names = ('pk',) + tuple(names)
+        return names
 
 class MoneyField(DecimalField):
     def to_representation(self, value):

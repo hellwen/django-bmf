@@ -12,7 +12,7 @@
     <tbody>
         <tr ng-repeat="obj in data">
             <td>
-                <a href="{{ obj.bmfdetail }}">
+                <a bmf-detail="{{ obj.pk }}" href="#">
                     {{ obj.invoice_number }}
                 </a>
             </td>

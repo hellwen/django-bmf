@@ -10,10 +10,14 @@ from django.http import Http404
 from django.template.loader import get_template
 from django.template.loader import select_template
 
+from djangobmf.models import Activity
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
 from djangobmf.filters import RelatedFilterBackend
+from djangobmf.permissions import ModuleViewPermission
+from djangobmf.permissions import ActivityPermission
 from djangobmf.pagination import ModulePagination
+from djangobmf.core.serializers import ActivitySerializer
 from djangobmf.views.mixins import BaseMixin
 
 from rest_framework.generics import GenericAPIView
@@ -27,43 +31,22 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
+from collections import OrderedDict
 
-class APIMixin(BaseMixin):
 
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
-    pagination_class = ModulePagination
-    paginate_by = 100
-
-    @property
-    def model(self):
-        if getattr(self, '_model', None):
-            return self._model
-
-        try:
-            self._model = apps.get_model(self.kwargs.get('app'), self.kwargs.get('model'))
-        except LookupError:
-            raise Http404
-
-        if not hasattr(self._model, '_bmfmeta'):
-            raise Http404
-
-        return self._model
+class ModelMixin(object):
 
     def get_queryset(self):
-        qs = self.model._bmfmeta.filter_queryset(
-            self.model.objects.all(),
-            self.request.user,
-        )
-        return qs
+        return self.get_bmfqueryset()
 
     def get_serializer_class(self):
         """
         return the serializer which is registered with the model
         """
-        return self.model._bmfmeta.serializer_class
+        return self.get_bmfmodel()._bmfmeta.serializer_class
 
 
-class APIOverView(BaseMixin, APIView):
+class APIIndex(BaseMixin, APIView):
     """
     All registered modules and views which are viewable by the current user
     """
@@ -84,28 +67,46 @@ class APIOverView(BaseMixin, APIView):
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
-                modules.append({
-                    'name': model._meta.verbose_name_plural,
-                    'ct': ct,
-                    'app': model._meta.app_label,
-                    'model': model._meta.model_name,
-                    'url': reverse('djangobmf:detail', kwargs={
-                        'app_label': model._meta.app_label,
-                        'model_name': model._meta.model_name,
-                    }),
-                    'api': reverse('djangobmf:api', request=request, format=format, kwargs={
+                related = OrderedDict(
+                    [
+                        (
+                            i.name,
+                            ContentType.objects.get_for_model(i.related_model).pk
+                        )
+                        for i in model._meta.get_fields()
+                        if hasattr(i.related_model, '_bmfmeta')
+                        and self.request.user.has_perms([
+                            '%s.view_%s' % (
+                                i.related_model._meta.app_label,
+                                i.related_model._meta.model_name,
+                            )
+                        ])
+                    ]
+                )
+                modules.append(OrderedDict([
+                    ('app', model._meta.app_label),
+                    ('model', model._meta.model_name),
+                    ('ct', ct),
+                    ('name', model._meta.verbose_name_plural),
+                    ('base', reverse('djangobmf:moduleapi_%s_%s:index' % (
+                        model._meta.app_label,
+                        model._meta.model_name,
+                    ))),
+                    ('data', reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
-                    }),
-                    'only_related': model._bmfmeta.only_related,
-                    'creates': [
+                    })),
+                    ('only_related', model._bmfmeta.only_related),
+                    ('related', related),
+                    ('creates', [
                         {
                             "name": i[1],
                             "url": reverse(model._bmfmeta.namespace_api + ':create', kwargs={
                                 "key": i[0],
                             }),
-                        } for i in model._bmfmeta.create_views],
-                })
+                        } for i in model._bmfmeta.create_views
+                    ]),
+                ]))
 
         # === Dashboards ------------------------------------------------------
 
@@ -161,17 +162,79 @@ class APIOverView(BaseMixin, APIView):
 
         # === Navigation ------------------------------------------------------
 
-        navigation = []
+        navigation = [
+            {
+                # verbose (req)
+                'name': 'Notifications 1',
+                'symbol': "glyphicon glyphicon-comment",
+
+                # fallback, when api is unset or does not return html (req)
+                'url': reverse('djangobmf:notification'),
+
+                # API call for updates (opt)
+                'api': reverse('djangobmf:notification'),
+
+                # check every n seconds for changes (req, when api)
+                'intervall': 10,
+
+                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
+                'active': False,
+                'count': 0,
+                'html': '<h1>TEST</h1>',
+            },
+            {
+                # verbose (req)
+                'name': 'Notifications 2',
+                'symbol': "glyphicon glyphicon-plus",
+
+                # fallback, when api is unset or does not return html (req)
+                'url': reverse('djangobmf:notification'),
+
+                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
+                'active': False,
+                'count': 0,
+                'html': '<h1>TEST</h1>',
+            },
+            {
+                # verbose (req)
+                'name': 'Notifications 3',
+                'symbol': "glyphicon glyphicon-search",
+
+                # fallback, when api is unset or does not return html (req)
+                'url': reverse('djangobmf:notification'),
+
+                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
+                'active': False,
+                'count': 0,
+                'html': '<h1>TEST</h1>',
+            },
+            {
+                # verbose (req)
+                'name': 'Notifications 4',
+                'symbol': "glyphicon glyphicon-heart",
+
+                # API call for updates (opt)
+                'api': reverse('djangobmf:notification'),
+
+                # check every n seconds for changes (req, when api)
+                'intervall': 10,
+
+                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
+                'active': True,
+                'count': 12,
+                'html': '<h1>TEST</h1>',
+            },
+        ]
 
         # === Response --------------------------------------------------------
 
-        return Response({
-            'dashboards': dashboards,
-            'modules': modules,
-            'navigation': navigation,
-            'templates': templates,
-            'debug': settings.DEBUG,
-        })
+        return Response(OrderedDict([
+            ('dashboards', dashboards),
+            ('modules', modules),
+            ('navigation', navigation),
+            ('templates', templates),
+            ('debug', settings.DEBUG),
+        ]))
 
 
 class APIViewDetail(BaseMixin, APIView):
@@ -196,24 +259,52 @@ class APIViewDetail(BaseMixin, APIView):
                     view.model._meta.app_label,
                     view.model._meta.model_name
                 ),
-                'djangobmf/api/default-table.html',
+                'djangobmf/api/list-table-default.html',
             ]).render().strip()
             context['html'] = html
 
         return Response(context)
 
 
-class ViewSet(APIMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    pass
+class ViewSet(ModelMixin, BaseMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
+    permission_classes = [ModuleViewPermission,]
+    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    pagination_class = ModulePagination
+    paginate_by = 100
 
 
-class APIModuleListView(APIMixin, ListModelMixin, CreateModelMixin, GenericAPIView):
+class APIModuleListView(ModelMixin, BaseMixin, ListModelMixin, CreateModelMixin, GenericAPIView):
+    permission_classes = [ModuleViewPermission,]
+    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    pagination_class = ModulePagination
+    paginate_by = 100
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
 
-class APIModuleDetailView(APIMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
+class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
+    permission_classes = [ModuleViewPermission,]
+    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    pagination_class = ModulePagination
+    paginate_by = 100
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+
+class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAPIView):
+    permission_classes = [ActivityPermission,]
+    serializer_class = ActivitySerializer
+
+    def get_queryset(self):
+        model = self.get_bmfmodel()
+        obj = self.get_bmfobject(self.kwargs.get('pk', None))
+        ct = ContentType.objects.get_for_model(model)
+        return Activity.objects.filter(parent_id=self.kwargs.get('pk', None), parent_ct=ct).select_related('user')
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)

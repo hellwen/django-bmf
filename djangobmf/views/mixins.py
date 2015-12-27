@@ -7,6 +7,7 @@ from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
 from django.db.models.query import QuerySet
 from django.forms.models import modelform_factory
@@ -49,15 +50,20 @@ class BaseMixin(object):
     this provides us with more flexibility and removes the need to define
     a middleware.
     """
-    # permission classes
-    # TODO: Check if we need to add "default" permissions and combine them (simpler api)
+    # use permission classes to overwrite the permissions for a specific view
     permission_classes = []
+
+    # default permission classes
+    default_permission_classes = []
 
     # Function name and parameters are identical to the django rest framework
     def check_permissions(self, request):
         """
-        checks all the permissions given in permission_classes
+        checks all the permissions given in permission_classes and default_permission_classes
         """
+        for permission in self.default_permission_classes:
+            if not permission().has_permission(request, self):
+                return False
         for permission in self.permission_classes:
             if not permission().has_permission(request, self):
                 return False
@@ -68,10 +74,47 @@ class BaseMixin(object):
         """
         checks all the permissions given in permission_classes
         """
+
+        for permission in self.default_permission_classes:
+            if not permission().has_object_permission(request, self, obj):
+                return False
+
         for permission in self.permission_classes:
             if not permission().has_object_permission(request, self, obj):
                 return False
+
         return True
+
+    def get_bmfcontenttype(self):
+        return ContentType.objects.get_for_model(self.get_bmfmodel())
+
+    def get_bmfmodel(self):
+        """
+        return the model property or loads the model dynamically
+        via the url kwargs (app, model) or throws a LookupError
+        """
+        if getattr(self, 'model', None):
+            return self.model
+
+        # Raises a LookupError, when it does not find a model
+        self.model = apps.get_model(self.kwargs.get('app'), self.kwargs.get('model'))
+        return self.model
+
+    def get_bmfqueryset(self, filter=True):
+        if filter:
+            return self.get_bmfmodel()._bmfmeta.filter_queryset(
+                self.get_bmfqueryset(filter=False),
+                self.request.user,
+            )
+        return self.get_bmfmodel().objects.all()
+
+    def get_bmfobject(self, pk):
+        try:
+            return self.get_bmfqueryset().get(pk=pk)
+        except self.get_bmfmodel().DoesNotExist:
+            if self.get_bmfqueryset(filter=False).filter(pk=pk).count():
+                raise PermissionDenied
+            raise Http404
 
     def _read_session_data(self):
         """
@@ -218,13 +261,17 @@ class AjaxMixin(BaseMixin):
         response_kwargs['content_type'] = 'application/json'
         return HttpResponse(data, **response_kwargs)
 
-    def get_ajax_context(self, context={}):
+    def get_ajax_context(self, **context):
         return context
 
     def render_to_response(self, context, **response_kwargs):
+        """
+        If the view calls a render_to_response, the context is rendered and added
+        to the json-response object as a html attribute
+        """
         response = super(AjaxMixin, self).render_to_response(context, **response_kwargs)
         response.render()
-        ctx = self.get_ajax_context({
+        ctx = self.get_ajax_context(**{
             'html': response.rendered_content,
         })
         return self.render_to_json_response(ctx)
@@ -369,7 +416,7 @@ class ModuleAjaxMixin(ModuleBaseMixin, AjaxMixin):
     base mixin for update, clone, delete and create views (ajax-forms)
     """
 
-    def get_ajax_context(self, context):
+    def get_ajax_context(self, **context):
         ctx = {
             # if an object is created or changed return the object's pk on success
             'object_pk': 0,
@@ -396,10 +443,10 @@ class ModuleAjaxMixin(ModuleBaseMixin, AjaxMixin):
         return ctx
 
     def render_valid_form(self, context):
-        if 'redirect' not in context and not self.model._bmfmeta.only_related:
-            context.update({
-                'redirect': self.get_success_url(),
-            })
+    #   if 'redirect' not in context and not self.model._bmfmeta.only_related:
+    #       context.update({
+    #           'redirect': self.get_success_url(),
+    #       })
         return super(ModuleAjaxMixin, self).render_valid_form(context)
 
 
@@ -468,9 +515,10 @@ class ModuleActivityMixin(object):
         kwargs.update({
             'bmfactivity': {
                 'qs': Activity.objects.filter(parent_ct=ct, parent_id=self.object.pk),
-                'enabled': (self.model._bmfmeta.has_comments or self.model._bmfmeta.has_history),
+                'enabled': (self.model._bmfmeta.has_comments),
+#               'enabled': (self.model._bmfmeta.has_comments or self.model._bmfmeta.has_history),
                 'comments': self.model._bmfmeta.has_comments,
-                'log': self.model._bmfmeta.has_history,
+#               'log': self.model._bmfmeta.has_history,
                 'pk': self.object.pk,
                 'ct': ct.pk,
                 'notification': notification,

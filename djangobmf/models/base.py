@@ -201,8 +201,6 @@ class BMFOptions(object):
         # determines if the model has an activity
         self.has_activity = self.has_logging or self.has_comments or self.has_files
 
-        self.has_history = self.has_logging  # TODO OLD REMOVE ME
-
 
 class BMFModelBase(ModelBase):
     """
@@ -250,7 +248,7 @@ class BMFModelBase(ModelBase):
         else:
             class MetaFactory:
                 model = cls
-                fields = ['pk', '__str__', 'bmfdetail']
+                fields = ['pk', '__str__']
             cls._bmfmeta.serializer_class.Meta = MetaFactory
 
         # add field: workflow field
@@ -364,29 +362,6 @@ class BMFModelBase(ModelBase):
             return None
 
         setattr(cls, 'bmfget_customer', bmfget_customer)
-
-        # instancemethod: bmfmodule_detail
-        def bmfmodule_detail(self):
-            """
-            A permalink to the default view of this model in the BMF-System
-            """
-            return ('%s:detail' % self._bmfmeta.namespace_detail, (), {"pk": self.pk})
-
-        setattr(cls, 'bmfmodule_detail', models.permalink(bmfmodule_detail))
-
-        # instancemethod: get_absolute_url
-        def get_absolute_url(self):
-            return self.bmfmodule_detail()
-
-        setattr(cls, 'get_absolute_url', get_absolute_url)
-
-        # classmethod: bmfmodule_list
-        def bmfmodule_list(cls, manager="all"):
-            """
-            """
-            return ('%s:get' % cls._bmfmeta.namespace_api, (), {"manager": manager})
-
-        setattr(cls, 'bmfmodule_list', classmethod(models.permalink(bmfmodule_list)))
 
         if cls._bmfmeta.clean:
             if not hasattr(cls, 'bmf_clean') and not cls._meta.abstract:

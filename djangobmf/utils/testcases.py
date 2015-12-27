@@ -164,10 +164,14 @@ class ModuleTestFactory(SuperuserMixin, BaseTestCase):
 
     def test_module_detail(self):
         for model in self.models:
-            if hasattr(model, '_bmfmeta') and not model._bmfmeta.only_related:
-                for obj in model.objects.all():
-                    response = self.client.get(obj.bmfmodule_detail())
-                    self.assertEqual(response.status_code, 200)
+            ns = model._bmfmeta.namespace_api
+
+            for obj in model.objects.all():
+                url = reverse('%s:detail' % ns, kwargs={
+                    'pk': obj.pk,
+                })
+                response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+                self.assertTrue(response.status_code in [200])
 
     def test_module_api_data(self):
         for model in self.models:

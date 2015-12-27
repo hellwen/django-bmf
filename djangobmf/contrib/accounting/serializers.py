@@ -17,7 +17,7 @@ class AccountSerializer(ModuleSerializer):
     class Meta:
         fields = [
             'parent', 'number', 'name', 'balance', 'balance_currency',
-            'balance_formatted', 'type_name', 'bmfdetail',
+            'balance_formatted', 'type_name',
         ]
 
     def get_balance_formatted(self, obj):
@@ -29,7 +29,7 @@ class AccountSerializer(ModuleSerializer):
 
 class TransactionSerializer(ModuleSerializer):
     class Meta:
-        fields = ['text', 'project', 'bmfdetail']
+        fields = ['text', 'project']
 
 
 class TransactionItemSerializer(ModuleSerializer):
@@ -40,7 +40,7 @@ class TransactionItemSerializer(ModuleSerializer):
     class Meta:
         fields = [
             'date', 'credit', 'amount', 'amount_currency', 'account_name',
-            'transaction_name', 'bmfdetail', 'date_localized'
+            'transaction_name', 'date_localized'
         ]
 
     def get_account_name(self, obj):

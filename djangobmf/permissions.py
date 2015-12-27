@@ -20,30 +20,13 @@ class AjaxPermission(BasePermission):
         return request.is_ajax()
 
 
-class ModulePermission(BasePermission):
+class BaseModulePermission(BasePermission):
     """
     Permission object to check the module's permissions
     """
-
     _action = None
-
-    _actions_map = {
-        'view': ['%(app)s.view_%(model)s'],
-        'clone': ['%(app)s.view_%(model)s', '%(app)s.clone_%(model)s'],
-        'create': ['%(app)s.view_%(model)s', '%(app)s.add_%(model)s'],
-        'update': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
-        'delete': ['%(app)s.view_%(model)s', '%(app)s.delete_%(model)s'],
-    }
-
-    _methods_map = {
-        'GET': ['%(app)s.view_%(model)s'],
-        'OPTIONS': ['%(app)s.view_%(model)s'],
-        'HEAD': ['%(app)s.view_%(model)s'],
-        'POST': ['%(app)s.view_%(model)s', '%(app)s.add_%(model)s'],
-        'PUT': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
-        'PATCH': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
-        'DELETE': ['%(app)s.view_%(model)s', '%(app)s.delete_%(model)s'],
-    }
+    _actions_map = {}
+    _methods_map = {}
 
     def _map_perms(self, method):
         if self._action in self._actions_map:
@@ -55,11 +38,7 @@ class ModulePermission(BasePermission):
         Given a view and a HTTP method, return the list of permission
         codes that the user is required to have.
         """
-        model_cls = getattr(view, 'model', None)
-        assert model_cls is not None, (
-            'Cannot apply Permissions on a view that '
-            'does not have a `model` property.'
-        )
+        model_cls = view.get_bmfmodel()
         kwargs = {
             'app': model_cls._meta.app_label,
             'model': model_cls._meta.model_name,
@@ -70,18 +49,14 @@ class ModulePermission(BasePermission):
         perms = self._get_default_permissions(request.method, view)
         return request.user.has_perms(perms)
 
+    def has_module_permission(self, request, obj):
+        return True
+
     def has_object_permission(self, request, view, obj):
         perms = self._get_default_permissions(request.method, view)
 
-        # generate a 403 response if the object's state does not allow it to be updated
-        if request.method in ["PUT", "PATCH"] or self._action in ["update"]:
-            if obj._bmfmeta.workflow and not obj._bmfmeta.workflow.object.update:
-                return False
-
-        # generate a 403 response if the object's state does not allow it to be deleted
-        if request.method in ["DELETE"] or self._action in ["delete"]:
-            if obj._bmfmeta.workflow and not obj._bmfmeta.workflow.object.delete:
-                return False
+        if not self.has_module_permission(request, obj):
+            return False
 
         if request.user.has_perms(perms, obj):
             return True
@@ -103,6 +78,60 @@ class ModulePermission(BasePermission):
 
     def filter_queryset(self, qs, user):
         return qs
+
+
+class ActivityPermission(BaseModulePermission):
+    _methods_map = {
+        'GET': ['%(app)s.view_%(model)s'],
+        'OPTIONS': ['%(app)s.view_%(model)s'],
+        'HEAD': ['%(app)s.view_%(model)s'],
+        'POST': ['%(app)s.view_%(model)s', '%(app)s.comment_%(model)s'],
+    }
+
+
+class FilePermission(BaseModulePermission):
+    _methods_map = {
+        'GET': ['%(app)s.view_%(model)s'],
+        'OPTIONS': ['%(app)s.view_%(model)s'],
+        'HEAD': ['%(app)s.view_%(model)s'],
+        'POST': ['%(app)s.view_%(model)s', '%(app)s.addfile_%(model)s'],
+    }
+
+
+class ModulePermission(BaseModulePermission):
+    """
+    Permission object to check the module's permissions
+    """
+    _actions_map = {
+        'view': ['%(app)s.view_%(model)s'],
+        'clone': ['%(app)s.view_%(model)s', '%(app)s.clone_%(model)s'],
+        'create': ['%(app)s.view_%(model)s', '%(app)s.add_%(model)s'],
+        'update': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
+        'delete': ['%(app)s.view_%(model)s', '%(app)s.delete_%(model)s'],
+    }
+    _methods_map = {
+        'GET': ['%(app)s.view_%(model)s'],
+        'OPTIONS': ['%(app)s.view_%(model)s'],
+        'HEAD': ['%(app)s.view_%(model)s'],
+        'POST': ['%(app)s.view_%(model)s', '%(app)s.add_%(model)s'],
+        'PUT': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
+        'PATCH': ['%(app)s.view_%(model)s', '%(app)s.change_%(model)s'],
+        'DELETE': ['%(app)s.view_%(model)s', '%(app)s.delete_%(model)s'],
+    }
+
+    def has_module_permission(self, request, obj):
+
+        # generate a 403 response if the object's state does not allow it to be updated
+        if request.method in ["PUT", "PATCH"] or self._action in ["update"]:
+            if obj._bmfmeta.workflow and not obj._bmfmeta.workflow.object.update:
+                return False
+
+        # generate a 403 response if the object's state does not allow it to be deleted
+        if request.method in ["DELETE"] or self._action in ["delete"]:
+            if obj._bmfmeta.workflow and not obj._bmfmeta.workflow.object.delete:
+                return False
+
+        return True
 
 
 class ModuleViewPermission(ModulePermission):
