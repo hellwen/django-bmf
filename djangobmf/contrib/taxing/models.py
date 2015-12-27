@@ -13,6 +13,8 @@ from djangobmf.models import BMFModel
 
 from decimal import Decimal
 
+from .serializers import TaxSerializer
+
 
 @python_2_unicode_compatible
 class AbstractTax(BMFModel):
@@ -39,6 +41,7 @@ class AbstractTax(BMFModel):
 
     class BMFMeta:
         observed_fields = ['name', 'invoice_name', 'rate']
+        serializer = TaxSerializer
 
     def __str__(self):
         return self.name

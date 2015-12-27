@@ -1,104 +1,70 @@
 {% load sekizai_tags i18n staticfiles %}<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ LANGUAGE_CODE }}" ng-app="djangoBMF" ng-controller="FrameworkCtrl">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <title>django BMF - {% block title %}{% endblock %}</title>
+        <title>django BMF - {% block title %}{% verbatim %}{{ PageTitle.get() }}{% endverbatim %}{% endblock %}</title>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <meta name="author" content="Igelware" />
+        <meta name="author" content="Django BMF" />
         <meta name="Content-Language" content="{{ LANGUAGE_CODE }}" />
         <meta name="language" content="{{ LANGUAGE_CODE }}" />
+        <base href="/">{# make the html5 url rewriting work #}
         <link rel="shortcut icon" type="image/x-icon" href="{% static "djangobmf/favicon.ico" %}">
         <link href="{% static "djangobmf/css/djangobmf.min.css" %}?v={{ djangobmf.version }}" rel="stylesheet">{% render_block "css" %}
     </head>
-    <body>
+    <body data-api="{% url 'djangobmf:api' %}">
         {% block full_body %}
         <div id="wrap">
             <div id="sidebar">
                 <p class="switch"><a href="#"><img src="{% static "djangobmf/logo.png" %}"></a></p>
-                <ul class="sidebar-nav">
-                    {% if active_dashboard %}
-                    <li class="sidebar-board">
-                        <a href="{% url "djangobmf:dashboard" dashboard=active_dashboard.key %}">{{ active_dashboard.name }}</a>
+                {% verbatim %}
+                <ul class="sidebar-nav" ng-controller="SidebarCtrl">
+                    <li ng-cloak ng-repeat="d in data" ng-class="d.class ? d.class : ''">
+                        <a ng-if="d.url != undefined" href="{{ d.url }}">{{ d.name }}</a>
+                        <p ng-if="d.url == undefined">{{ d.name }}</p>
                     </li>
-                    {% for item in sidebar %}
-                    {% ifchanged %}
-                    <li>
-                        <p>{{ item.category }}</p>
-                    </li>
-                    {% endifchanged %}
-                    <li{% if item.active %} class="active"{% endif %}>
-                        <a href="{{ item.url }}">{{ item.view.name }}</a>
-                    </li>
-                    {% endfor %}
-                    {% else %}
-                    <li class="sidebar-board">
-                        <p>{% trans "Dashboards" %}</p>
-                    </li>
-                    {% for item in navigation_dashboard|dictsort:"name" %}
-                    <li>
-                        <a href="{{ item.url }}">{{ item.name }}</a>
-                    </li>
-                    {% endfor %}
-                    {% endif %}
                 </ul>
+                {% endverbatim %}
             </div>
             <div class="page-container">
                 <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
                     <div class="container">
-                        <div class="navbar-header">
+                        <div class="navbar-header visible-xs">
                             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                                 <span class="sr-only">{% trans "Toogle navigation" %}</span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="{% url 'djangobmf:dashboard' %}">django BMF</a>
+                            <a class="navbar-brand" href="#">django BMF</a>
                         </div><!--/.nav-header -->
                         <div class="collapse navbar-collapse navbar-ex1-collapse">
-                            <ul class="nav navbar-nav dashboards">
+                            <ul class="nav navbar-nav dashboards" ng-controller="DashboardCtrl">
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-dashboard"></span> {% trans "Dashboards" %} <b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                        {% for item in navigation_dashboard|dictsort:"name" %}
-                                        <li{% if item.active %} class="active"{% endif %}>
-                                            <a href="{{ item.url }}">{{ item.name }}</a>
+                                    {% verbatim %}
+                                    <ul class="dropdown-menu" ng-cloak>
+                                        <li ng-repeat="d in data | orderBy:'name'" ng-class="d.active ? 'active' : ''">
+                                            <a ng-click="update(d.key)" href>{{ d.name }}</a>
                                         </li>
-                                        {% endfor %}
                                     </ul>
+                                    {% endverbatim %}
                                 </li>
+                                {% verbatim %}
+                                <li ng-if="current_dashboard" ng-cloak class="hidden-xs">
+                                    <p class="navbar-text">{{ current_dashboard.name }}</p>
+                                </li>
+                                {% endverbatim %}
                             </ul>
-                            <ul class="nav navbar-nav navbar-right">
-                                {% block navbar %}
-                                <li data-count="{{ djangobmf.notification_count }}" id="bmf_notification">
-                                    <a href="{% url 'djangobmf:notification' %}">
-                                        <span class="glyphicon glyphicon-comment"></span>
-                                        <span class="nav-text">{% trans "Notifications" %}</span>
+                            <ul ng-controller="NavigationCtrl" class="nav navbar-nav navbar-right">
+                                {% verbatim %}
+                                <li ng-repeat="n in data" class="bmf-navigation">
+                                    <a href="{{ n.url }}" ng-class="n.active ? 'active' : ''">
+                                        <span class="{{ n.symbol }}"></span>
+                                        <span class="nav-text">{{ n.name }}</span>
                                     </a>
                                 </li>
-                                {% comment %}
-                                <li data-count="{{ djangobmf.message_count }}" id="bmf_message">
-                                    <a href="{% url 'djangobmf:message' %}">
-                                        <span class="glyphicon glyphicon-envelope"></span>
-                                        <span class="nav-text">{% trans "Messages" %}</span>
-                                    </a>
-                                </li>
-                                {% endcomment %}
-                                {% comment %}
-                                <li class="disabled" id="bmf_calendar">
-                                    <a href="#">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                        <span class="nav-text">{% trans "Calendar" %}</span>
-                                    </a>
-                                </li>
-                                {% endcomment %}
-                                <li class="disabled" id="bmf_timesheet">
-                                    <a href="#">
-                                        <span class="glyphicon glyphicon-time"></span>
-                                        <span class="nav-text">{% trans "Timesheet" %}</span>
-                                    </a>
-                                </li>
-                                {% endblock %}
+                                {% endverbatim %}
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                         <span class="glyphicon glyphicon-user"></span>
@@ -106,9 +72,6 @@
                                         {{ request.user }}<b class="caret"></b>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li>
-                                            <a href="{% url 'djangobmf:modules' %}">{% trans "Module overview" %}</a>
-                                        </li>
                                         {% if request.user.is_staff %}
                                         <li>
                                             <a href="{% url 'djangobmf:configuration' %}">{% trans "Configuration" %}</a>
@@ -147,16 +110,16 @@
                             {% endfor %}
                         </div>
                     </div>{% endif %}
-                    <div{% block content_container %}{% endblock %}>
-                        {% block full_content %}{% endblock %}
-                    </div>
+                    <div bmf-content ng-cloak{% block content_container %}{% endblock %}>{% block full_content %}{% endblock %}</div>
                 </div> <!-- /container -->
             </div> <!-- /page-container -->
         </div>
         <footer>
             <div class="container">
+                {% block bmf-footer %}
                 <p><a href="http://www.django-bmf.org">django BMF</a> v{{ djangobmf.version }}</small></p>
-            </div> <!-- /container -->
+                {% endblock %}
+            </div>
         </footer>
         {% endblock %}
         <script src="{% url "djangobmf:jsi18n" %}?v={{ djangobmf.version }}"></script>
@@ -165,7 +128,6 @@
         <script src="{% static "djangobmf/js/d3.min.js" %}"></script>
         {% if debug %}
         <script src="{% static "djangobmf/js/jquery.cookie.min.js" %}?v={{ djangobmf.version }}"></script>
-        <script src="{% static "djangobmf/js/jquery.treegrid.min.js" %}?v={{ djangobmf.version }}"></script>
         <script src="{% static "djangobmf/js/bootstrap.min.js" %}?v={{ djangobmf.version }}"></script>
         <script src="{% static "djangobmf/js/djangobmf.js" %}?v={{ djangobmf.version }}"></script>
         {% else %}

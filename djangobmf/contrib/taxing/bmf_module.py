@@ -12,14 +12,12 @@ from djangobmf.sites import register
 
 from .categories import TaxCategory
 from .models import Tax
-from .serializers import TaxSerializer
 
 
 @register(dashboard=Accounting)
 class TaxModule(Module):
     model = Tax
     default = True
-    serializer = TaxSerializer
 
 
 @register(category=TaxCategory)

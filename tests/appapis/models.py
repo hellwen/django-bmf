@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 from djangobmf.models import BMFModel
-from djangobmf.fields import WorkflowField
+# from djangobmf.fields import WorkflowField
 from djangobmf.workflow import Workflow
 from djangobmf.workflow import State
 from djangobmf.workflow import Transition

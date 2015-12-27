@@ -17,6 +17,8 @@ from djangobmf.models import Configuration
 from djangobmf.models import NumberCycle
 from djangobmf.models import Report
 
+from rest_framework.routers import DefaultRouter
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -29,6 +31,7 @@ class Site(object):
     def __init__(self, namespace=None, app_name=None):
         self.namespace = namespace or "djangobmf"
         self.app_name = app_name or "djangobmf"
+        self.router = DefaultRouter()
         self.clear()
 
     def clear(self):
@@ -204,16 +207,6 @@ class Site(object):
             # and raise a Runtime error. We ignore that error and return an empty
             # pattern - the urls are not needed during migrations.
             return patterns('')
-
-        for dashboard in self.dashboards:
-            urlpatterns += patterns(
-                '',
-                url(
-                    r'^dashboard/%s/' % dashboard.slug,
-                    include((dashboard.get_urls(), self.app_name, "dashboard_%s" % dashboard.key)),
-                    kwargs={'dashboard': dashboard.key},
-                ),
-            )
 
         for module, data in self.modules.items():
             info = (module._meta.app_label, module._meta.model_name)

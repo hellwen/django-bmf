@@ -164,33 +164,51 @@ class ModuleTestFactory(SuperuserMixin, BaseTestCase):
 
     def test_module_detail(self):
         for model in self.models:
-            if hasattr(model, '_bmfmeta') and not model._bmfmeta.only_related:
-                for obj in model.objects.all():
-                    response = self.client.get(obj.bmfmodule_detail())
-                    self.assertEqual(response.status_code, 200)
+            ns = model._bmfmeta.namespace_api
 
-    def test_module_lists_and_gets(self):
-        views = []
+            for obj in model.objects.all():
+                url = reverse('%s:detail' % ns, kwargs={
+                    'pk': obj.pk,
+                })
+                response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+                self.assertTrue(response.status_code in [200])
+
+    def test_module_api_data(self):
+        for model in self.models:
+
+            url = reverse('%s:api' % settings.APP_LABEL, kwargs={
+                'app': model._meta.app_label,
+                'model': model._meta.model_name,
+            })
+            response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            self.assertEqual(response.status_code, 200)
+
+    def get_views(self):
         for model in self.models:
             for dashboard in site.dashboards:
                 for category in dashboard:
                     for view in category:
                         if view.model == model:
-                            views.append((model, view, dashboard.key, category.key, view.key))
+                            yield (model, view, dashboard.key, category.key, view.key)
 
-        for v in views:
-            url = reverse('%s:dashboard_%s:view_%s_%s' % (
-                settings.APP_LABEL,
-                v[2],
-                v[3],
-                v[4],
-            ))
-            response = self.client.get(url)
+    def test_module_api_view(self):
+        for v in self.get_views():
+            url = reverse('%s:api-view' % settings.APP_LABEL, kwargs={
+                'db': v[2],
+                'cat': v[3],
+                'view': v[4],
+            })
+            response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
             self.assertEqual(response.status_code, 200)
 
-            url = response.context['get_data_url']
-
-            response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+    def test_module_dashboard_views(self):
+        for v in self.get_views():
+            url = reverse('%s:dashboard' % settings.APP_LABEL, kwargs={
+                'dashboard': v[2],
+                'category': v[3],
+                'view': v[4],
+            })
+            response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 
 

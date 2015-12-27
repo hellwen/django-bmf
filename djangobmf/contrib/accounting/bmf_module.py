@@ -20,9 +20,6 @@ from .models import ACCOUNTING_LIABILITY
 from .models import Account
 from .models import Transaction
 from .models import TransactionItem
-from .serializers import AccountSerializer
-from .serializers import TransactionSerializer
-from .serializers import TransactionItemSerializer
 from .views import TransactionCreateView
 from .views import TransactionUpdateView
 
@@ -31,7 +28,6 @@ from .views import TransactionUpdateView
 class AccountModule(Module):
     model = Account
     default = True
-    serializer = AccountSerializer
 
 
 @register(dashboard=Accounting)
@@ -40,14 +36,12 @@ class TransactionModule(Module):
     default = True
     create = TransactionCreateView
     update = TransactionUpdateView
-    serializer = TransactionSerializer
 
 
 @register(dashboard=Accounting)
 class TransactionItemModule(Module):
     model = TransactionItem
     default = True
-    serializer = TransactionItemSerializer
 
 
 site.register_settings('bmfcontrib_accounting', {

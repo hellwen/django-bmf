@@ -7,17 +7,17 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 
+from djangobmf.conf import settings
 from djangobmf.currency import BaseCurrency
 from djangobmf.models import BMFModel
-from djangobmf.settings import CONTRIB_ACCOUNT
-from djangobmf.settings import CONTRIB_TAX
-from djangobmf.settings import CONTRIB_PRODUCT
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
 
 from djangobmf.contrib.accounting.models import ACCOUNTING_INCOME, ACCOUNTING_EXPENSE
 
 from decimal import Decimal
+
+from .serializers import ProductSerializer
 
 
 PRODUCT_SERVICE = 1
@@ -76,7 +76,7 @@ class AbstractProduct(BMFModel):
     )
     price = MoneyField(_("Price"), blank=False)
     taxes = models.ManyToManyField(
-        CONTRIB_TAX,
+        settings.CONTRIB_TAX,
         blank=True,
         related_name="product_taxes",
         limit_choices_to={'is_active': True},
@@ -86,7 +86,7 @@ class AbstractProduct(BMFModel):
     # discount = models.FloatField(_('Max. discount'), default=0.0)
     # Accounting
     income_account = models.ForeignKey(
-        CONTRIB_ACCOUNT,
+        settings.CONTRIB_ACCOUNT,
         null=False,
         blank=False,
         related_name="product_income",
@@ -94,7 +94,7 @@ class AbstractProduct(BMFModel):
         on_delete=models.PROTECT,
     )
     expense_account = models.ForeignKey(
-        CONTRIB_ACCOUNT,
+        settings.CONTRIB_ACCOUNT,
         null=False,
         blank=False,
         related_name="product_expense",
@@ -162,6 +162,7 @@ class AbstractProduct(BMFModel):
 
     class BMFMeta:
         search_fields = ['name', 'code']
+        serializer = ProductSerializer
 
     def __str__(self):
         return self.name
@@ -211,14 +212,14 @@ class Product(AbstractProduct):
 
 class ProductTax(BMFModel):
     product = models.ForeignKey(
-        CONTRIB_PRODUCT,
+        settings.CONTRIB_PRODUCT,
         null=True,
         blank=True,
         related_name="product_tax",
         on_delete=models.CASCADE,
     )
     tax = models.ForeignKey(
-        CONTRIB_TAX,
+        settings.CONTRIB_TAX,
         null=True,
         blank=True,
         related_name="product_tax",

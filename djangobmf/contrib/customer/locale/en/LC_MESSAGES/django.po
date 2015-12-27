@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-15 17:22+0200\n"
+"POT-Creation-Date: 2015-12-02 19:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,100 +17,100 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:27
+#: bmf_module.py:25
 msgid "Company"
 msgstr ""
 
-#: bmf_module.py:28 bmf_module.py:36 categories.py:13 models.py:73
+#: bmf_module.py:26 bmf_module.py:34 categories.py:13 models.py:75
 msgid "Customer"
 msgstr ""
 
-#: bmf_module.py:49
+#: bmf_module.py:47
 msgid "Supplier"
 msgstr ""
 
-#: bmf_module.py:62
+#: bmf_module.py:60
 msgid "All"
 msgstr ""
 
-#: models.py:18
+#: models.py:20
 msgid "Name"
 msgstr ""
 
-#: models.py:19
+#: models.py:21
 msgid "Number"
 msgstr ""
 
-#: models.py:34
+#: models.py:36
 msgid ""
 "Projects function as cost-centers. This setting defines a default project "
 "for this customer."
 msgstr ""
 
-#: models.py:43
+#: models.py:45
 msgid "Is Company"
 msgstr ""
 
-#: models.py:44
+#: models.py:46
 msgid "Taxvat"
 msgstr ""
 
-#: models.py:45
+#: models.py:47
 msgid "Can use company adresses"
 msgstr ""
 
-#: models.py:46
+#: models.py:48
 msgid "Is active"
 msgstr ""
 
-#: models.py:47
+#: models.py:49
 msgid "Is customer"
 msgstr ""
 
-#: models.py:48
+#: models.py:50
 msgid "Is supplier"
 msgstr ""
 
-#: models.py:74
+#: models.py:76
 msgid "Customers"
 msgstr ""
 
-#: models.py:116
+#: models.py:119
 msgid "Name 2"
 msgstr ""
 
-#: models.py:117
+#: models.py:120
 msgid "Job position"
 msgstr ""
 
-#: models.py:118
+#: models.py:121
 msgid "Title"
 msgstr ""
 
-#: models.py:119
+#: models.py:122
 msgid "Phone office"
 msgstr ""
 
-#: models.py:120
+#: models.py:123
 msgid "Phone privat"
 msgstr ""
 
-#: models.py:121
+#: models.py:124
 msgid "Phone mobile"
 msgstr ""
 
-#: models.py:122
+#: models.py:125
 msgid "Email"
 msgstr ""
 
-#: models.py:123
+#: models.py:126
 msgid "Fax"
 msgstr ""
 
-#: models.py:124
+#: models.py:127
 msgid "Website"
 msgstr ""
 
-#: models.py:125
+#: models.py:128
 msgid "Notes"
 msgstr ""

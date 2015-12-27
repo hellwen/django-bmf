@@ -56,8 +56,9 @@ STATICFILES_FINDERS = (
 
 LANGUAGE_CODE = 'en'
 LANGUAGES = (
-    (u'de', 'Deutsch'),
+    (u'de', 'German'),
     (u'en', 'English'),
+    (u'ru', 'Russian'),
 )
 
 # List of callables that know how to import templates from various sources.
@@ -126,8 +127,12 @@ TEST_PROJECT_APPS = (
     'djangobmf.contrib.timesheet',
     'djangobmf.currency.EUR',
     'djangobmf.currency.USD',
-    'tests.appapis',
 )
+
+# TODO CHECK IF THIS IS NEEDED
+# TEST_APPS = (
+#     'tests.appapis',
+# )
 
 INSTALLED_APPS = (
     'django.contrib.auth',

@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 
-VERSION = ((0, 2, 4), ('a', 2))  # all alpha versions
+VERSION = ((0, 2, 5), ('a', 1))  # all alpha versions
 # VERSION = ((0, 9, 0), ('b', 0)) # first beta
 # VERSION = ((1, 0, 0), ('rc', 0)) # first official release canidate
 # VERSION = ((1, 0, 0), ('final', 0)) # first final version
@@ -48,7 +48,9 @@ def get_version(dev=True):
 
     return version
 
+
 __version__ = get_version(dev=False)
 __docformat__ = 'restructuredtext'
+
 
 default_app_config = 'djangobmf.apps.BMFConfig'

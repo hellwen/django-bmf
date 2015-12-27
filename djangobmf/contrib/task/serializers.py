@@ -27,7 +27,6 @@ class GoalSerializer(ModuleSerializer):
             'state',
             'state_name',
             'state_summary',
-            'bmfdetail',
         )
 
     def get_state_summary(self, obj):
@@ -55,7 +54,6 @@ class TaskSerializer(ModuleSerializer):
             'employee_name',
             'modified',
             'modified_date',
-            'bmfdetail',
         )
 
     def get_modified_date(self, obj):

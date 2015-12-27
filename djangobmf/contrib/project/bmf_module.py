@@ -13,7 +13,6 @@ from djangobmf.sites import register
 from .categories import ProjectCategory
 from .models import Project
 from .permissions import ProjectPermission
-from .serializers import ProjectSerializer
 from .views import ProjectUpdateView
 
 
@@ -21,7 +20,6 @@ from .views import ProjectUpdateView
 class ProjectModule(Module):
     model = Project
     default = True
-    serializer = ProjectSerializer
     update = ProjectUpdateView
     permissions = ProjectPermission
 

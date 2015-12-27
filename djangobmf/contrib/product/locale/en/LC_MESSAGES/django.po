@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-15 17:22+0200\n"
+"POT-Creation-Date: 2015-12-27 18:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:49
+#: bmf_module.py:47
 msgid "Sellable products"
 msgstr ""
 
-#: bmf_module.py:61
+#: bmf_module.py:59
 msgid "Purchaseable products"
 msgstr ""
 
-#: bmf_module.py:73
+#: bmf_module.py:71
 msgid "All products"
 msgstr ""
 
@@ -65,7 +65,7 @@ msgstr ""
 msgid "Can be purchased"
 msgstr ""
 
-#: models.py:72 templates/djangobmf_product/product_bmfdetail.html:30
+#: models.py:72 templates/djangobmf_product/product_bmfdetail.html:24
 msgid "Description"
 msgstr ""
 
@@ -73,35 +73,34 @@ msgstr ""
 msgid "Price"
 msgstr ""
 
-#: models.py:157 templates/djangobmf_product/product_bmfdetail.html:5
-#: templates/djangobmf_product/product_bmfdetail.html:8
+#: models.py:157 templates/djangobmf_product/product_bmfdetail.html:2
 msgid "Product"
 msgstr ""
 
-#: models.py:227
+#: models.py:228
 msgid "Is the tax included in the price?"
 msgstr ""
 
-#: templates/djangobmf_product/product_bmfdetail.html:13
+#: templates/djangobmf_product/product_bmfdetail.html:7
 msgid "sellable"
 msgstr ""
 
-#: templates/djangobmf_product/product_bmfdetail.html:14
+#: templates/djangobmf_product/product_bmfdetail.html:8
 msgid "purchaseable"
 msgstr ""
 
-#: templates/djangobmf_product/product_bmfdetail.html:35
+#: templates/djangobmf_product/product_bmfdetail.html:29
 msgid "Taxes"
 msgstr ""
 
-#: templates/djangobmf_product/product_bmfdetail.html:59
+#: templates/djangobmf_product/product_bmfdetail.html:53
 msgid "Add"
 msgstr ""
 
-#: templates/djangobmf_product/product_bmfdetail.html:70
+#: templates/djangobmf_product/product_bmfdetail.html:64
 msgid "Income"
 msgstr ""
 
-#: templates/djangobmf_product/product_bmfdetail.html:76
+#: templates/djangobmf_product/product_bmfdetail.html:70
 msgid "Expense account"
 msgstr ""

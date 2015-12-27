@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-15 17:22+0200\n"
+"POT-Creation-Date: 2015-12-02 19:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,18 +17,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:39
+#: bmf_module.py:37
 msgid "All Teams"
 msgstr ""
 
-#: categories.py:13 models.py:28
+#: categories.py:13 models.py:30
 msgid "Teams"
 msgstr ""
 
-#: models.py:27
+#: models.py:29
 msgid "Team"
 msgstr ""
 
-#: models.py:48
+#: models.py:51
 msgid "Is manager"
 msgstr ""

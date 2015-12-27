@@ -10,17 +10,15 @@ from django.utils import six
 from django.utils.text import slugify
 
 from djangobmf.permissions import ModulePermission
-from djangobmf.serializers import ModuleSerializer
 # from djangobmf.views import ModuleCloneView
+from djangobmf.views import ModuleDetailView
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
 from djangobmf.views import ModuleDetailView
 from djangobmf.views import ModuleFormAPI
-from djangobmf.views import ModuleListView
 # from djangobmf.views import ModuleReportView
 from djangobmf.views import ModuleUpdateView
 from djangobmf.views import ModuleWorkflowView
-from djangobmf.views.api import ModuleListAPIView
 
 import logging
 logger = logging.getLogger(__name__)
@@ -56,6 +54,7 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
     """
     Object internally used to register modules
     """
+    detail = ModuleDetailView
     create = ModuleCreateView
     delete = ModuleDeleteView
     detail = ModuleDetailView
@@ -64,7 +63,6 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
 
     clone = None
     primary = True
-    serializer = None
     report = None
     default = False
 
@@ -75,19 +73,11 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
         self.dashboards = []
         self.manager = {}
 
+        self.detail_view = self.detail
         self.create_view = self.create
         self.delete_view = self.delete
         self.detail_view = self.detail
         self.update_view = self.update
-
-        # create a default serializer
-        if not self.serializer and not self.model._bmfmeta.only_related:
-            class AutoSerializer(ModuleSerializer):
-                class Meta:
-                    pass
-            AutoSerializer.Meta.model = self.model
-            logger.info('Creating a serializer for module %s' % self.model.__name__)
-            self.serializer = AutoSerializer
 
     def list_reports(self):
         if hasattr(self, 'listed_reports'):
@@ -140,29 +130,10 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
         return self.listed_creates
 
     def get_detail_urls(self):
-        reports = self.list_reports()
-
-        if self.model._bmfmeta.only_related:
-            return patterns('')
-
-        urlpatterns = patterns(
-            '',
-            url(
-                r'^$',
-                self.detail.as_view(
-                    module=self,
-                    model=self.model,
-                    reports=reports
-                ),
-                name='detail',
-            ),
-        )
-
         # add custom url patterns
         if self.detail_urlpatterns:
-            urlpatterns += self.detail_urlpatterns
-
-        return urlpatterns
+            return self.detail_urlpatterns
+        return patterns('')
 
     def get_api_urls(self):
         reports = self.list_reports()
@@ -170,23 +141,22 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
 
         urlpatterns = patterns(
             '',
+            # TODO: Replace me with dummy view
             url(
                 r'^$',
-                ModuleListView.as_view(
+                self.detail.as_view(  
                     module=self,
                     model=self.model
                 ),
-                name='list',
+                name='index',
             ),
             url(
-                r'^get/(?P<manager>\w+)/$',
-                ModuleListAPIView.as_view(
+                r'^(?P<pk>[0-9]+)/$',
+                self.detail.as_view(
                     module=self,
-                    model=self.model,
-                    permissions=self.permissions,
-                    serializer_class=self.serializer,
+                    model=self.model
                 ),
-                name='get',
+                name='detail',
             ),
             url(
                 r'^update/(?P<pk>[0-9]+)/$',

@@ -8,11 +8,12 @@ from django.conf import settings
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
+from djangobmf.conf import settings as bmfsettings
 from djangobmf.models import BMFModel
-from djangobmf.settings import CONTRIB_CUSTOMER
-from djangobmf.settings import CONTRIB_PRODUCT
 
 from djangobmf.contrib.product.models import PRODUCT_SERVICE
+
+from .serializers import EmployeeSerializer
 
 
 class BaseEmployee(BMFModel):
@@ -37,7 +38,7 @@ class AbstractEmployee(BaseEmployee):
     """
     """
     contact = models.ForeignKey(  # TODO: make optional
-        CONTRIB_CUSTOMER,
+        bmfsettings.CONTRIB_CUSTOMER,
         verbose_name=("Contact"),
         blank=True,
         null=True,
@@ -46,7 +47,7 @@ class AbstractEmployee(BaseEmployee):
         on_delete=models.PROTECT,
     )
     product = models.ForeignKey(  # TODO: make optional
-        CONTRIB_PRODUCT,
+        bmfsettings.CONTRIB_PRODUCT,
         verbose_name=("Product"),
         null=True,
         blank=True,
@@ -82,6 +83,7 @@ class AbstractEmployee(BaseEmployee):
 
     class BMFMeta:
         search_fields = ['name', 'email', 'user__username']
+        serializer = EmployeeSerializer
 
     def __str__(self):
         return self.name or '%s' % self.user

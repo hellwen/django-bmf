@@ -7,13 +7,15 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
+from djangobmf.conf import settings
 from djangobmf.models import BMFModel
-from djangobmf.settings import CONTRIB_CUSTOMER
+
+from .serializers import AddressSerializer
 
 
 class BaseAddress(BMFModel):
     customer = models.ForeignKey(
-        CONTRIB_CUSTOMER, null=False, blank=False,
+        settings.CONTRIB_CUSTOMER, null=False, blank=False,
         related_name="customer_address", on_delete=models.CASCADE,
     )
 
@@ -23,17 +25,17 @@ class BaseAddress(BMFModel):
     default_billing = models.BooleanField(_('Default billing'), default=False)
     default_shipping = models.BooleanField(_('Default shipping'), default=False)
 
-    def as_report(self):
-        raise NotImplementedError(
-            'You need to implement a function to print your address in a report'
-        )
-
     class Meta:
         verbose_name = _('Address')
         verbose_name_plural = _('Addresses')
         ordering = ['name']
         abstract = True
         swappable = "BMF_CONTRIB_ADDRESS"
+
+    def as_report(self):
+        raise NotImplementedError(
+            'You need to implement a function to print your address in a report'
+        )
 
     def bmfget_customer(self):
         return self.customer
@@ -54,6 +56,10 @@ class AbstractAddress(BaseAddress):
     class Meta(BaseAddress.Meta):
         abstract = True
 
+    class BMFMeta:
+        observed_fields = ['name', 'name2', 'street', 'zip', 'city', 'state', 'country']
+        serializer = AddressSerializer
+
     def as_report(self):
         return _(
             "%(name)s %(name2)s\n%(street)s\n%(city)s, %(state)s, %(zip)s, %(country)s" % {
@@ -66,9 +72,6 @@ class AbstractAddress(BaseAddress):
                 'country': self.country,
             }
         )
-
-    class BMFMeta:
-        observed_fields = ['name', 'name2', 'street', 'zip', 'city', 'state', 'country']
 
     def __str__(self):
         if self.name2:

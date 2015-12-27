@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n %}{% spaceless %}
 <table class="table table-striped table-condensed table-hover">
     <thead>
         <tr>
@@ -8,9 +8,9 @@
     </thead>
     <tbody>
     {% verbatim %}
-        <tr ng-repeat="obj in data.items" ng-class="obj.parent ? '' : 'info'">
+        <tr ng-repeat="obj in data" ng-class="obj.parent ? '' : 'info'">
             <td>
-                <a href="{{ obj.bmfdetail }}">{{ obj.number }}: {{ obj.name }}</a>
+                <a bmf-detail="{{ obj.pk }}" href="#">{{ obj.number }}: {{ obj.name }}</a>
                 <small ng-if="obj.parent == null"><br>{{ obj.type_name }}</small>
             </td>
             <td class="text-right">{{ obj.balance_formatted }}</td>
@@ -18,3 +18,4 @@
     {% endverbatim %}
     </tbody>
 </table>
+{% endspaceless %}

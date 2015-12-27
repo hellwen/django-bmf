@@ -13,6 +13,8 @@ from djangobmf.models import BMFModel
 
 from djangobmf.contrib.accounting.models import ACCOUNTING_ASSET, ACCOUNTING_LIABILITY
 
+from .serializers import CustomerSerializer
+
 
 class BaseCustomer(BMFModel):
     name = models.CharField(_("Name"), max_length=255, null=True, blank=False, )
@@ -81,6 +83,7 @@ class BaseCustomer(BMFModel):
         has_logging = True
         has_comments = True
         has_files = True
+        serializer = CustomerSerializer
 
     def __init__(self, *args, **kwargs):
         super(BaseCustomer, self).__init__(*args, **kwargs)

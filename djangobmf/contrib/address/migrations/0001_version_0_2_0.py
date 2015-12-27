@@ -8,8 +8,6 @@ from django.conf import settings
 
 class Migration(migrations.Migration):
 
-    replaces = [('djangobmf_address', '0001_initial'), ('djangobmf_address', '0002_version_0_2_0')]
-
     dependencies = [
         migrations.swappable_dependency(settings.BMF_CONTRIB_CUSTOMER),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

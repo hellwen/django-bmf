@@ -1,11 +1,4 @@
-{% extends "djangobmf/module_detail.html" %}
-
-{% load i18n %}
-{% load djangobmf_core %}
-
-{% block title %}{% trans "Transaction" %}: {{ object.text }}{% endblock %}
-
-{% block base_content %}
+{% load i18n %}{% spaceless %}
 <h1>{% trans "Transaction" %}: {{ object.text }}</h1>
 <ol class="breadcrumb">
     <li>{% trans "Project" %}</li>
@@ -51,7 +44,7 @@
             {% else %}
             <span class="glyphicon glyphicon-check"></span>
             {% endif %}
-            {{ obj.modified|date:"SHORT_DATE_FORMAT" }}
+            {{ obj.date|date:"SHORT_DATE_FORMAT" }}
         </td>
         <td><a href="{{ obj.account.bmfmodule_detail }}">{{ obj.account }}</a></td>
         <td class="text-right">{% if not obj.credit %}{{ obj.amount }}{% endif %}</td>
@@ -73,5 +66,4 @@
       {% endfor %}
     </tbody>
 </table>
-{{ block.super }}
-{% endblock %}
+{% endspaceless %}

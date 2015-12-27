@@ -12,11 +12,12 @@
 /static
 /reports
 /bower_components
+/node_modules
+/static_files/build
 /htmlcov
 /django_bmf\.egg-info
 /virtenv
 /docs/build
 /sandbox/static/
 /sandbox/database\.sqlite
-/sandbox/settings.py
 /sandbox/local_settings.py

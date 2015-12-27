@@ -1,7 +1,4 @@
-{% extends "djangobmf/module_detail.html" %}
 {% load djangobmf_markup %}
-
-{% block base_content %}
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">{{ object.summary }}</h3>
@@ -26,5 +23,3 @@
     {% endif %}
   </div>
 </div>
-{{ block.super }}
-{% endblock %}

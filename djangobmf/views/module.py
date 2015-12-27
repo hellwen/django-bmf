@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 # from django.core.paginator import EmptyPage
 # from django.core.paginator import PageNotAnInteger
 # from django.core.paginator import Paginator
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse as django_reverse
 from django.db import router
 from django.db.models import Q
 from django.forms.fields import CharField
@@ -24,13 +24,11 @@ from django.views.generic import CreateView
 from django.views.generic import DeleteView
 from django.views.generic import DetailView
 from django.views.generic import UpdateView
-from django.views.generic.base import TemplateView
 from django.views.generic.edit import BaseFormView
 from django.views.generic.detail import SingleObjectMixin
 from django.template.loader import get_template
 from django.template.loader import select_template
 from django.template import TemplateDoesNotExist
-from django.utils import six
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 # from django.utils.timezone import make_aware
@@ -38,13 +36,16 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
+from .mixins import AjaxMixin
 from .mixins import ModuleSearchMixin
+from .mixins import ModuleBaseMixin
 from .mixins import ModuleAjaxMixin
 from .mixins import ModuleViewMixin
 from .mixins import ModuleActivityMixin
 from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
+
 from djangobmf.models import Report
 from djangobmf.permissions import AjaxPermission
 from djangobmf.permissions import ModuleViewPermission
@@ -56,12 +57,13 @@ from djangobmf.signals import activity_create
 from djangobmf.signals import activity_update
 # from djangobmf.utils.deprecation import RemovedInNextBMFVersionWarning
 
+from rest_framework.reverse import reverse
+
 import copy
 # import datetime
 import logging
 import operator
 import types
-import urllib
 # import warnings
 
 from functools import reduce
@@ -70,282 +72,128 @@ from functools import reduce
 logger = logging.getLogger(__name__)
 
 
-# --- list views --------------------------------------------------------------
-
-
-class ModuleListView(ModuleViewMixin, TemplateView):
-    """
-    """
-    permission_classes = [ModuleViewPermission]
-
-    # set by views.dashboard
-    model = None
-    dashboard = None
-    dashboard_view = None
-
-    allow_empty = True
-    paginate_by = None
-
-    date_field = 'modified'
-    date_resolution = 'year'
-    allow_future = False
-
-    # Use a different manager function, when available
-    manager = None
-
-    # use pagination
-    paginate = True
-
-    # we are providing the view with the list of objects
-    # even if the data sould be streamed via angular/json
-    # because django querysets are lazy
-    context_object_name = 'objects'
-
-    template_name = None
-
-    def get_dashboard_view(self):
-        return self.dashboard_view
-
-    def get_dashboard(self):
-        return self.dashboard
-
-    def get_template_names(self):
-        """
-        Return a list of template names to be used for the request. Must return
-        a list. May not be called if render_to_response is overridden.
-        """
-        if self.template_name:
-            return [self.template_name]
-
-        names = []
-        names.append("%s/%s_bmfgeneric.html" % (
-            self.model._meta.app_label,
-            self.model._meta.model_name
-        ))
-        names.append("djangobmf/module_generic.html")
-
-        return names
-
-    def get_view_name(self):
-        if self.dashboard:
-            return self.dashboard_view.name
-        else:
-            return self.model._meta.verbose_name_plural
-
-    def get_data_url(self):
-        url = reverse('djangobmf:api', kwargs={
-            'app': self.model._meta.app_label,
-            'model': self.model._meta.model_name,
-        })
-
-        kwargs = {
-            'd': self._bmf_dashboard.key,
-            'c': self._bmf_category.key,
-            'v': self._bmf_view_class.key,
-        }
-
-        page = self.request.GET.get('page')
-
-        if page:
-            try:
-                kwargs['page'] = int(page)
-            except ValueError:
-                pass
-
-        if not self.paginate:
-            kwargs['paginate'] = 'no'
-
-        if kwargs:
-            if six.PY2:
-                return url + '?' + urllib.urlencode(kwargs)
-            else:
-                return url + '?' + urllib.parse.urlencode(kwargs)
-        else:
-            return url
-
-    def get_data_template(self):
-        return "%s/%s_bmflist.html" % (
-            self.model._meta.app_label,
-            self.model._meta.model_name
-        )
-
-    def get_context_data(self, **kwargs):
-        kwargs.update({
-            'view_name': self.get_view_name(),
-            'data_template': select_template([
-                self.get_data_template(),
-                "djangobmf/module_list.html",
-            ]),
-            'get_data_url': self.get_data_url(),
-        })
-        return super(ModuleListView, self).get_context_data(**kwargs)
-
-
-'''
-class ModuleArchiveView(ModuleGenericBaseView, YearMixin, MonthMixin, WeekMixin, DayMixin,
-                        MultipleObjectTemplateResponseMixin, BaseDateListView):
-    """
-    This view generates a parginated list for a time intervall
-    """
-    template_name_suffix = 'archive'
-    date_field = 'modified'
-    date_resolution = 'year'
-    allow_empty = True
-    allow_future = False
-
-    def get(self, request, *args, **kwargs):
-        self.date_list, self.object_list, extra_context = self.get_dated_items()
-        context = self.get_context_data(object_list=self.object_list, date_list=self.date_list)
-        context.update(extra_context)
-        return self.render_to_response(context)
-
-    def get_week_format(self):
-        return '%W' if get_format('FIRST_DAY_OF_WEEK') else '%U'
-
-    def get_dated_items(self):
-        """
-        Return (date_list, items, extra_context) for this request.
-        """
-
-        year = self.request.GET.get('year', None)
-        month = self.request.GET.get('month', None)
-        day = self.request.GET.get('day', None)
-        week = self.request.GET.get('week', None)
-
-        year_format = '%Y'
-        month_format = '%m'
-        day_format = '%d'
-        week_format = self.get_week_format()
-
-        date_now = now()
-
-        if not year:
-            year = date_now.strftime(year_format)
-
-        if not month and not week and self.date_resolution in ["month", "day"]:
-            month = date_now.strftime(month_format)
-
-        if not week and not month and self.date_resolution in ["week"]:
-            week = date_now.strftime(week_format)
-
-        if not day and self.date_resolution in ["day"]:
-            day = date_now.strftime(day_format)
-
-        date_field = self.get_date_field()
-
-        if month and not week:
-            if day:
-                date = _date_from_string(year, year_format, month, month_format, day, day_format)
-                period = "day"
-                until = self._make_date_lookup_arg(self._get_next_day(date))
-            else:
-                date = _date_from_string(year, year_format, month, month_format)
-                period = "month"
-                until = self._make_date_lookup_arg(self._get_next_month(date))
-        elif week and not month:
-            if week_format == '%W':
-                date = _date_from_string(year, year_format, week, week_format, '1', '%w')
-            else:
-                date = _date_from_string(year, year_format, week, week_format, '0', '%w')
-            period = "week"
-            until = self._make_date_lookup_arg(self._get_next_week(date))
-        else:
-            date = _date_from_string(year, year_format)
-            period = "year"
-            until = self._make_date_lookup_arg(self._get_next_year(date))
-        since = self._make_date_lookup_arg(date)
-
-        lookup_kwargs = {
-            '%s__gte' % date_field: since,
-            '%s__lt' % date_field: until,
-        }
-
-        qs = self.get_dated_queryset(**lookup_kwargs)
-        date_list = self.get_date_list(qs)
-
-        return (date_list, qs, {
-            'current_period': period,
-            'current_period_start': date,
-            'current_period_end': until - datetime.timedelta(1),
-            'next_period': _get_next_prev(self, date, False, period),
-            'previous_period': _get_next_prev(self, date, True, period),
-            'dateformat': {
-                'year': year_format[1:],
-                'month': month_format[1:],
-                'day': day_format[1:],
-                'week': week_format[1:],
-            }
-        })
-
-
-class ModuleLetterView(ModuleGenericBaseView, FilterView):
-    """
-    This view generates a parginated list and a "A-Z 0-9"
-    navigation
-    """
-    template_name_suffix = 'letter'
-'''
-
 # --- detail, forms and api ---------------------------------------------------
 
 
-class ModuleDetailView(
-        ModuleFilesMixin, ModuleActivityMixin, ModuleViewMixin, DetailView):
+class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
     """
     show the details of an entry
     """
-    permission_classes = [ModuleViewPermission]
+    default_permission_classes = [ModuleViewPermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfdetail'
     reports = []
 
-    def get_related_views(self):
-        # TODO: maybe cache this
-        if hasattr(self, '_related_views'):
-            return self._related_views
-        open = self.request.GET.get("open", None)
-        self._related_views = {}
-        for rel in self.model._meta.get_all_related_objects():
-            # TODO add rel.field.name to reponse
-            template = '%s/%s_bmfrelated_%s.html' % (
-                rel.model._meta.app_label,
-                rel.model._meta.model_name,
-                self.model._meta.model_name,
-            )
-            qs = getattr(self.object, rel.get_accessor_name())
-            qs_mod = getattr(rel.model, 'bmfrelated_%s_queryset' % self.model._meta.model_name, None)
-            try:
-                self._related_views[rel.model._meta.model_name] = {
-                    'name': '%s' % rel.model._meta.verbose_name_plural,
-                    'key': rel.model._meta.model_name,
-                    'active': open == rel.model._meta.model_name,
-                    'objects': qs if not isinstance(qs_mod, types.FunctionType) else qs_mod(qs),
-                    'template': get_template(template),
-                }
-            except TemplateDoesNotExist:
-                continue
-        return self._related_views
+    def get_ajax_context(self, **context):
+        # shortcut
+        meta = self.object._bmfmeta
 
-    def get_context_data(self, **kwargs):
-        kwargs.update({
-            'open_view': self.request.GET.get("open", None),
-            'related_views': self.get_related_views(),
-            'parent_template': select_template(self.get_template_names(related=False)),
-            'related_objects': self.get_related_objects(),  # TODO add pagination
+        context.update({
+            'views': {
+                'update': reverse(
+                    'djangobmf:moduleapi_%s_%s:update' % (
+                        self.object._meta.app_label,
+                        self.object._meta.model_name,
+                    ), 
+                    format=None,
+                    request=self.request,
+                    kwargs={'pk': self.object.pk},
+                ),
+                'delete': reverse(
+                    'djangobmf:moduleapi_%s_%s:delete' % (
+                        self.object._meta.app_label,
+                        self.object._meta.model_name,
+                    ), 
+                    format=None,
+                    request=self.request,
+                    kwargs={'pk': self.object.pk},
+                ),
+                'comments': self.object._bmfmeta.has_comments,
+                'activity': {
+                    'enabled': self.object._bmfmeta.has_activity,
+                    'url': reverse(
+                        'djangobmf:api-activity',
+                        format=None,
+                        request=self.request,
+                        kwargs={
+                            'pk': self.object.pk,
+                            'app': self.object._meta.app_label,
+                            'model': self.object._meta.model_name,
+                        },
+                    ),
+                },
+            },
+            'workflow': meta.workflow.serialize(self.request) if meta.workflow else None,
         })
-        return super(ModuleDetailView, self).get_context_data(**kwargs)
-
-    def get_related_objects(self):
-        if "open" in self.request.GET.keys() and self.request.GET["open"] in self.get_related_views().keys():
-            return self.get_related_views()[self.request.GET["open"]]["objects"]
+        return context
 
     def get_template_names(self, related=True):
-        self.update_notification()
-        if related and "open" in self.request.GET.keys() and \
-                self.request.GET["open"] in self.get_related_views().keys():
-            return self.get_related_views()[self.request.GET["open"]]["template"]
+#       # self.update_notification()
+#       if related and "open" in self.request.GET.keys() and \
+#               self.request.GET["open"] in self.get_related_views().keys():
+#           return self.get_related_views()[self.request.GET["open"]]["template"]
+
         return super(ModuleDetailView, self).get_template_names() \
-            + ["djangobmf/module_detail_default.html"]
+            + ["djangobmf/api/detail-default.html"]
+
+
+#lass ModuleDetailViewOld(
+#       ModuleFilesMixin, ModuleActivityMixin, ModuleViewMixin, DetailView):
+#   """
+#   show the details of an entry
+#   """
+#   permission_classes = [ModuleViewPermission]
+#   context_object_name = 'object'
+#   template_name_suffix = '_bmfdetail'
+#   reports = []
+
+#   def get_related_views(self):
+#       # TODO: maybe cache this
+#       if hasattr(self, '_related_views'):
+#           return self._related_views
+#       open = self.request.GET.get("open", None)
+#       self._related_views = {}
+#       for rel in self.model._meta.get_all_related_objects():
+#           # TODO add rel.field.name to reponse
+#           template = '%s/%s_bmfrelated_%s.html' % (
+#               rel.model._meta.app_label,
+#               rel.model._meta.model_name,
+#               self.model._meta.model_name,
+#           )
+#           qs = getattr(self.object, rel.get_accessor_name())
+#           qs_mod = getattr(rel.model, 'bmfrelated_%s_queryset' % self.model._meta.model_name, None)
+#           try:
+#               self._related_views[rel.model._meta.model_name] = {
+#                   'name': '%s' % rel.model._meta.verbose_name_plural,
+#                   'key': rel.model._meta.model_name,
+#                   'active': open == rel.model._meta.model_name,
+#                   'objects': qs if not isinstance(qs_mod, types.FunctionType) else qs_mod(qs),
+#                   'template': get_template(template),
+#               }
+#           except TemplateDoesNotExist:
+#               continue
+#       return self._related_views
+
+#   def get_context_data(self, **kwargs):
+#       kwargs.update({
+#           'open_view': self.request.GET.get("open", None),
+#           'related_views': self.get_related_views(),
+#           'parent_template': select_template(self.get_template_names(related=False)),
+#           'related_objects': self.get_related_objects(),  # TODO add pagination
+#       })
+#       return super(ModuleDetailView, self).get_context_data(**kwargs)
+
+#   def get_related_objects(self):
+#       if "open" in self.request.GET.keys() and self.request.GET["open"] in self.get_related_views().keys():
+#           return self.get_related_views()[self.request.GET["open"]]["objects"]
+
+#   def get_template_names(self, related=True):
+#       # self.update_notification()
+#       if related and "open" in self.request.GET.keys() and \
+#               self.request.GET["open"] in self.get_related_views().keys():
+#           return self.get_related_views()[self.request.GET["open"]]["template"]
+#       return super(ModuleDetailView, self).get_template_names() \
+#           + ["djangobmf/module_detail_default.html"]
 
 
 class ModuleReportView(ModuleViewMixin, DetailView):
@@ -377,7 +225,7 @@ class ModuleCloneView(ModuleFormMixin, ModuleAjaxMixin, UpdateView):
     """
     clone a object
     """
-    permission_classes = [ModuleClonePermission, AjaxPermission]
+    default_permission_classes = [ModuleClonePermission, AjaxPermission]
     context_object_name = 'object'
     template_name_suffix = '_bmfclone'
     fields = []
@@ -413,8 +261,9 @@ class ModuleCloneView(ModuleFormMixin, ModuleAjaxMixin, UpdateView):
         activity_create.send(sender=self.object.__class__, instance=self.object)
         return self.render_valid_form({
             'object_pk': self.object.pk,
-            'redirect': self.object.bmfmodule_detail(),
+        #   'redirect': self.object.bmfmodule_detail(),
             'message': True,
+            'reload': True,
         })
 
 
@@ -448,8 +297,9 @@ class ModuleUpdateView(ModuleFormMixin, ModuleAjaxMixin, ReadOnlyMixin, UpdateVi
         else:
             return self.render_valid_form({
                 'object_pk': self.object.pk,
-                'redirect': self.object.bmfmodule_detail(),
+            #   'redirect': self.object.bmfmodule_detail(),
                 'message': True,
+                'reload': True,
             })
 
 
@@ -478,6 +328,7 @@ class ModuleCreateView(ModuleFormMixin, ModuleAjaxMixin, ReadOnlyMixin, CreateVi
         return self.render_valid_form({
             'object_pk': self.object.pk,
             'message': True,
+            'reload': True,
         })
 
 
@@ -514,35 +365,27 @@ class ModuleDeleteView(ModuleAjaxMixin, DeleteView):
             if not registered:
                 return None
 
-            if hasattr(obj, '_bmfmeta') and obj._bmfmeta.only_related:
-                return format_html(
-                    '{0}: {1}',
-                    obj._meta.verbose_name,
-                    obj
-                )
-            else:
-                return format_html(
-                    '{0}: <a href="{1}">{2}</a>',
-                    obj._meta.verbose_name,
-                    obj.bmfmodule_detail(),
-                    obj
-                )
+            return format_html(
+                '{0}: {1}',
+                obj._meta.verbose_name,
+                obj
+            )
 
         def format_protected_callback(obj):
 
-            if obj.__class__ in self.request.djangobmf_site.modules and not obj._bmfmeta.only_related:
-                return format_html(
-                    '{0}: <a href="{1}">{2}</a>',
-                    obj._meta.verbose_name,
-                    obj.bmfmodule_detail(),
-                    obj
-                )
-            else:
-                return format_html(
-                    '{0}: {1}',
-                    obj._meta.verbose_name,
-                    obj
-                )
+        #   if obj.__class__ in self.request.djangobmf_site.modules and not obj._bmfmeta.only_related:
+        #       return format_html(
+        #           '{0}: <a href="{1}">{2}</a>',
+        #           obj._meta.verbose_name,
+        #           obj.bmfmodule_detail(),
+        #           obj
+        #       )
+        #   else:
+            return format_html(
+                '{0}: {1}',
+                obj._meta.verbose_name,
+                obj
+            )
 
         to_delete = collector.nested(format_callback)
 
@@ -554,7 +397,7 @@ class ModuleDeleteView(ModuleAjaxMixin, DeleteView):
 
     def get_success_url(self):
         # TODO redirect to active dashboard
-        return reverse('djangobmf:dashboard', kwargs={
+        return django_reverse('djangobmf:dashboard', kwargs={
             'dashboard': None,
         })
 

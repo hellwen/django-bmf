@@ -7,13 +7,12 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 
+from djangobmf.conf import settings
 from djangobmf.models import BMFModel
-from djangobmf.settings import CONTRIB_EMPLOYEE
-from djangobmf.settings import CONTRIB_PROJECT
-from djangobmf.settings import CONTRIB_INVOICE
-from djangobmf.settings import CONTRIB_PRODUCT
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
+
+from .serializers import PositionSerializer
 
 
 RATE_CHOICES = (
@@ -35,21 +34,21 @@ class AbstractPosition(BMFModel):
     """
     """
     project = models.ForeignKey(  # TODO: make optional
-        CONTRIB_PROJECT, null=True, blank=False,
+        settings.CONTRIB_PROJECT, null=True, blank=False,
         related_name="+", on_delete=models.SET_NULL,
     )
     employee = models.ForeignKey(  # TODO: make optional
-        CONTRIB_EMPLOYEE, null=True, blank=False, on_delete=models.SET_NULL,
+        settings.CONTRIB_EMPLOYEE, null=True, blank=False, on_delete=models.SET_NULL,
     )
 
     date = models.DateField(_("Date"), null=True, blank=False)
     name = models.CharField(_("Name"), max_length=255, null=True, blank=False)
     invoice = models.ForeignKey(
-        CONTRIB_INVOICE, null=True, blank=True, related_name="+",
+        settings.CONTRIB_INVOICE, null=True, blank=True, related_name="+",
         editable=False, on_delete=models.PROTECT,
     )
     product = models.ForeignKey(
-        CONTRIB_PRODUCT, null=True, blank=False, on_delete=models.PROTECT,
+        settings.CONTRIB_PRODUCT, null=True, blank=False, on_delete=models.PROTECT,
     )
 
     invoiceable = models.PositiveSmallIntegerField(
@@ -95,6 +94,7 @@ class AbstractPosition(BMFModel):
 
     class BMFMeta:
         has_logging = False
+        serializer = PositionSerializer
 
 
 class Position(AbstractPosition):

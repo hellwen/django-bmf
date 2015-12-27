@@ -1,9 +1,4 @@
-{% extends "djangobmf/module_detail.html" %}
-{% load i18n djangobmf_markup djangobmf_core %}
-
-{% block title %}{% trans "Quotation" %}: {{ object.quotation_number }}{% endblock %}
-
-{% block base_content %}
+{% load i18n djangobmf_markup %}
 <h1>{% trans "Quotation" %}: {{ object.quotation_number }} <small>{{ object.date|date:"SHORT_DATE_FORMAT" }}</small></h1>
 
 <ol class="breadcrumb">
@@ -89,10 +84,10 @@
           {{ obj.calc_gross }}
       </td>
       <td class="text-right">
-          <a class="btn btn-xs bmfedit btn-bmfupdate" href="{% get_bmf_url obj "update" %}?set-quotation={{ object.pk }}">
-            <span class="glyphicon glyphicon-wrench"></span>
+          <a class="btn btn-xs bmfedit btn-bmfupdate" href="#?set-quotation={{ object.pk }}">
+            <span class="glyphicon glyphicon-wrench"></span>#
           </a>
-          <a class="btn btn-xs bmfedit btn-bmfdelete" href="{% get_bmf_url obj "delete" %}">
+          <a class="btn btn-xs bmfedit btn-bmfdelete" href="#">
             <span class="glyphicon glyphicon-trash"></span>
           </a>
         </a>
@@ -110,7 +105,3 @@
   <div class="panel-body">{{ object.term_of_payment|bmfmarkup }}</div>
 </div>
 {% endif %}
-
-{{ block.super }}
-
-{% endblock %}

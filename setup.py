@@ -36,7 +36,7 @@ setup(
     description='Business Management Framework with integrated ERP solution written for django',
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author="Sebastian Braun",
-    author_email="sebastian@elmnt.de",
+    author_email="sbraun@django-bmf.org",
     packages=find_packages(exclude=['sandbox', 'tests']),
     classifiers=CLASSIFIERS,
     extras_require={
@@ -45,9 +45,9 @@ setup(
       'postgres': ['psycopg2'],
     },
     install_requires=[
-        'django>=1.8',
+        'django>=1.8,<1.9',
+        'djangorestframework>=3.1,<3.4',
         'django-sekizai',
-        'djangorestframework>=3.1',
         'markdown',
         'pytz',
     ],

@@ -5,15 +5,14 @@ from django.db import models, migrations
 import django.db.models.deletion
 from django.conf import settings
 import djangobmf.fields
-from djangobmf.settings import BASE_MODULE
 
 class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        migrations.swappable_dependency(BASE_MODULE["ADDRESS"]),
-        migrations.swappable_dependency(BASE_MODULE["INVOICE"]),
-        migrations.swappable_dependency(BASE_MODULE["PRODUCT"]),
+        migrations.swappable_dependency(settings.BMF_CONTRIB_ADDRESS),
+        migrations.swappable_dependency(settings.BMF_CONTRIB_INVOICE),
+        migrations.swappable_dependency(settings.BMF_CONTRIB_PRODUCT),
     ]
 
     operations = [
@@ -32,10 +31,10 @@ class Migration(migrations.Migration):
                 ('notes', models.TextField(null=True, verbose_name='Notes', blank=True)),
                 ('term_of_payment', models.TextField(null=True, verbose_name='Term of payment', blank=True)),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, related_name="+")),
-                ('invoice', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, null=True, blank=True, editable=False, to=BASE_MODULE["INVOICE"], related_name="quotation")),
-                ('invoice_address', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, blank=True, to=BASE_MODULE["ADDRESS"], null=True, related_name="invoice_quotation")),
+                ('invoice', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, null=True, blank=True, editable=False, to=settings.BMF_CONTRIB_INVOICE, related_name="quotation")),
+                ('invoice_address', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, blank=True, to=settings.BMF_CONTRIB_ADDRESS, null=True, related_name="invoice_quotation")),
                 ('modified_by', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, editable=False, to=settings.AUTH_USER_MODEL, null=True, related_name="+")),
-                ('shipping_address', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, blank=True, to=BASE_MODULE["ADDRESS"], null=True, related_name="shipping_quotation")),
+                ('shipping_address', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, blank=True, to=settings.BMF_CONTRIB_ADDRESS, null=True, related_name="shipping_quotation")),
             ],
             options={
                 'ordering': ['-pk'],
@@ -55,7 +54,7 @@ class Migration(migrations.Migration):
                 ('price_precision', models.PositiveSmallIntegerField(default=0, null=True, editable=False, blank=True)),
                 ('amount', models.FloatField(default=1.0, null=True, verbose_name='Amount')),
                 ('description', models.TextField(null=True, verbose_name='Description', blank=True)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, blank=True, to=BASE_MODULE["PRODUCT"], null=True, related_name="quotation_products")),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, blank=True, to=settings.BMF_CONTRIB_PRODUCT, null=True, related_name="quotation_products")),
             ],
             options={
             },
@@ -64,7 +63,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='quotation',
             name='products',
-            field=models.ManyToManyField(to=BASE_MODULE["PRODUCT"], through='djangobmf_quotation.QuotationProduct'),
+            field=models.ManyToManyField(to=settings.BMF_CONTRIB_PRODUCT, through='djangobmf_quotation.QuotationProduct'),
             preserve_default=True,
         ),
         migrations.AddField(

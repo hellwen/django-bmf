@@ -12,7 +12,6 @@ from djangobmf.sites import register
 
 from .categories import EmployeeCategory
 from .models import Employee
-from .serializers import EmployeeSerializer
 from .views import EmployeeCreateView
 
 
@@ -20,7 +19,6 @@ from .views import EmployeeCreateView
 class EmployeeModule(Module):
     model = Employee
     default = True
-    serializer = EmployeeSerializer
     create = EmployeeCreateView
 
 

@@ -1,10 +1,4 @@
-{% extends "djangobmf/module_detail.html" %}
-
-{% load i18n djangobmf_markup djangobmf_core %}
-
-{% block title %}{% trans "Product" %}: {{ object.name }}{% endblock %}
-
-{% block base_content %}
+{% load i18n djangobmf_markup %}
 <h1>{% trans "Product" %}: {{ object.name }}
     {% if object.code %}<small>{{ object.code }}</small>{% endif %}
 </h1>
@@ -40,10 +34,10 @@
             <td>{{ obj.name }}</td>
             <td class="text-right">{{ value }}</td>
             <td class="text-right">
-                <a class="btn btn-xs bmfedit btn-bmfupdate" href="{% get_bmf_url related "update" %}?set-product={{ object.pk }}&amp;set-tax={{ obj.pk }}">
+                <a class="btn btn-xs bmfedit btn-bmfupdate" href="#?set-product={{ object.pk }}&amp;set-tax={{ obj.pk }}">
                   <span class="glyphicon glyphicon-wrench"></span>
                 </a>
-                <a class="btn btn-xs bmfedit btn-bmfdelete" href="{% get_bmf_url related "delete" %}">
+                <a class="btn btn-xs bmfedit btn-bmfdelete" href="#">
                   <span class="glyphicon glyphicon-trash"></span>
                 </a>
               </a>
@@ -79,5 +73,3 @@
         </p>
     </div>
 </div>
-{{ block.super }}
-{% endblock %}

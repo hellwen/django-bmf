@@ -3,8 +3,10 @@
 
 from __future__ import unicode_literals
 
+from django.core.urlresolvers import reverse_lazy
 from django.http import Http404
 from django.views.generic import DetailView
+from django.views.generic import RedirectView
 # from django.utils import six
 # from django.utils.encoding import force_text
 
@@ -37,3 +39,10 @@ class DashboardIndex(ViewMixin, DetailView):
         )
 
         return self.object
+
+
+class Redirect(RedirectView):
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse_lazy('%s:dashboard' % site.namespace)

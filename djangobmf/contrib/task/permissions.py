@@ -5,10 +5,11 @@ from __future__ import unicode_literals
 
 from django.db.models import Q
 
-from djangobmf.permissions import ModulePermission
+# from djangobmf.permissions import ModulePermission
+from djangobmf.utils import FilterQueryset
 
 
-class GoalPermission(ModulePermission):
+class GoalFilter(FilterQueryset):
 
     def filter_queryset(self, qs, user):
         if user.has_perm('%s.can_manage' % qs.model._meta.app_label, qs.model):
@@ -28,7 +29,7 @@ class GoalPermission(ModulePermission):
         return qs.filter(qs_filter)
 
 
-class TaskPermission(ModulePermission):
+class TaskFilter(FilterQueryset):
 
     def filter_queryset(self, qs, user):
         qs_filter = Q(project__isnull=True, goal__isnull=True)

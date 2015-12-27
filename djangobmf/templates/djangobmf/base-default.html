@@ -1,0 +1,7 @@
+{% load staticfiles %}
+
+{% block bmf-footer %}<p><a href="http://www.django-bmf.org">django BMF</a> v{{ djangobmf.version }}</small></p>{% endblock %}
+
+{% block bmf-favicon %}<link rel="shortcut icon" type="image/x-icon" href="{% static "djangobmf/favicon.ico" %}">{% endblock %}
+
+{% block bmf-logo %}<img src="{% static "djangobmf/logo.png" %}">{% endblock %}
