@@ -75,10 +75,10 @@
           {{ obj.calc_gross }}
       </td>
       <td class="text-right">
-          <a class="btn btn-xs bmfedit btn-bmfupdate" href="{% get_bmf_url obj "update" %}?set-invoice={{ object.pk }}">
+          <a class="btn btn-xs bmfedit btn-bmfupdate" href="#?set-invoice={{ object.pk }}">
             <span class="glyphicon glyphicon-wrench"></span>
           </a>
-          <a class="btn btn-xs bmfedit btn-bmfdelete" href="{% get_bmf_url obj "delete" %}">
+          <a class="btn btn-xs bmfedit btn-bmfdelete" href="#">
             <span class="glyphicon glyphicon-trash"></span>
           </a>
         </a>

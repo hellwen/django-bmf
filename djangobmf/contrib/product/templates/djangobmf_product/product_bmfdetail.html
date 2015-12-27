@@ -34,10 +34,10 @@
             <td>{{ obj.name }}</td>
             <td class="text-right">{{ value }}</td>
             <td class="text-right">
-                <a class="btn btn-xs bmfedit btn-bmfupdate" href="{% get_bmf_url related "update" %}?set-product={{ object.pk }}&amp;set-tax={{ obj.pk }}">
+                <a class="btn btn-xs bmfedit btn-bmfupdate" href="#?set-product={{ object.pk }}&amp;set-tax={{ obj.pk }}">
                   <span class="glyphicon glyphicon-wrench"></span>
                 </a>
-                <a class="btn btn-xs bmfedit btn-bmfdelete" href="{% get_bmf_url related "delete" %}">
+                <a class="btn btn-xs bmfedit btn-bmfdelete" href="#">
                   <span class="glyphicon glyphicon-trash"></span>
                 </a>
               </a>
