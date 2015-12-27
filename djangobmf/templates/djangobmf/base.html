@@ -56,7 +56,16 @@
                                 </li>
                                 {% endverbatim %}
                             </ul>
-                            <ul class="nav navbar-nav navbar-right">
+                            <ul ng-controller="NavigationCtrl" class="nav navbar-nav navbar-right">
+                                {% verbatim %}
+                                <li ng-repeat="n in data" class="bmf-navigation">
+                                    <a href="{{ n.url }}" ng-class="n.active ? 'active' : ''">
+                                        <span class="{{ n.symbol }}"></span>
+                                        <span class="nav-text">{{ n.name }}</span>
+                                        <span class="label label-primary">{{ n.count }}</span>
+                                    </a>
+                                </li>
+                                {% endverbatim %}
                                 {% block navbar %}
                                 <li data-count="{{ djangobmf.notification_count }}" id="bmf_notification">
                                     <a href="{% url 'djangobmf:notification' %}">
