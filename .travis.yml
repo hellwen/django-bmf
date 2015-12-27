@@ -24,8 +24,8 @@ env:
     - DJANGO_SETTINGS_MODULE=sandbox.settings
     - PIP_ADDITIONAL=""
   matrix:
-    - DJANGO_VERSION="django>1.8,<1.8.999"
-    - DJANGO_VERSION="django>1.9,<1.9.999"
+    - DJANGO_VERSION="django>=1.8,<1.8.999"
+    - DJANGO_VERSION="django>=1.9,<1.9.999"
 #   - DJANGO_VERSION=django==1.9 PIP_ADDITIONAL=https://github.com/ojii/django-sekizai/archive/master.zip#egg=sekizai
 
 matrix:
