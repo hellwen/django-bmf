@@ -261,8 +261,9 @@ class ModuleCloneView(ModuleFormMixin, ModuleAjaxMixin, UpdateView):
         activity_create.send(sender=self.object.__class__, instance=self.object)
         return self.render_valid_form({
             'object_pk': self.object.pk,
-            'redirect': self.object.bmfmodule_detail(),
+        #   'redirect': self.object.bmfmodule_detail(),
             'message': True,
+            'reload': True,
         })
 
 
@@ -296,8 +297,9 @@ class ModuleUpdateView(ModuleFormMixin, ModuleAjaxMixin, ReadOnlyMixin, UpdateVi
         else:
             return self.render_valid_form({
                 'object_pk': self.object.pk,
-                'redirect': self.object.bmfmodule_detail(),
+            #   'redirect': self.object.bmfmodule_detail(),
                 'message': True,
+                'reload': True,
             })
 
 
@@ -326,6 +328,7 @@ class ModuleCreateView(ModuleFormMixin, ModuleAjaxMixin, ReadOnlyMixin, CreateVi
         return self.render_valid_form({
             'object_pk': self.object.pk,
             'message': True,
+            'reload': True,
         })
 
 

@@ -443,10 +443,10 @@ class ModuleAjaxMixin(ModuleBaseMixin, AjaxMixin):
         return ctx
 
     def render_valid_form(self, context):
-        if 'redirect' not in context and not self.model._bmfmeta.only_related:
-            context.update({
-                'redirect': self.get_success_url(),
-            })
+    #   if 'redirect' not in context and not self.model._bmfmeta.only_related:
+    #       context.update({
+    #           'redirect': self.get_success_url(),
+    #       })
         return super(ModuleAjaxMixin, self).render_valid_form(context)
 
 
