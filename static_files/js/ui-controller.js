@@ -201,3 +201,49 @@ app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
         })
     }
 }]);
+
+
+// This controller updates the dashboards navigation
+app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $interval) {
+    $scope.data = undefined;
+
+    $scope.$watch(
+        function(scope) {return scope.bmf_navigation && scope.bmf_navigation.length || 0},
+        function(newValue) {if (newValue != undefined) init_navigation()}
+    );
+
+    var stop;
+    $scope.$on('$destroy', function() {
+        // Make sure that the interval is destroyed too
+        // $scope.stopFight();
+        if (angular.isDefined(stop)) {
+            $interval.cancel(stop);
+            stop = undefined;
+        }
+    });
+
+    function init_navigation() {
+//      var response = [];
+//      var key = $scope.bmf_current_dashboard.key;
+//
+//      response.push({
+//          'class': 'sidebar-board',
+//          'name': $scope.bmf_current_dashboard.name
+//      });
+//
+//      $scope.bmf_sidebars[key].forEach(function(c, ci) {
+//          response.push({'name': c.name});
+//          c.views.forEach(function(v, vi) {
+//              if ($scope.bmf_current_view && $scope.bmf_current_view.type == "list" && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
+//                  response.push({'name': v.name, 'url': v.url, 'class': 'active'});
+//              }
+//              else {
+//                  response.push({'name': v.name, 'url': v.url});
+//              }
+//          });
+//      });
+//
+        $scope.data = $scope.bmf_navigation;
+        console.log($scope.bmf_navigation);
+    }
+}]);
