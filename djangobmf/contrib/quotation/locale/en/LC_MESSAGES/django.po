@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-02 19:42+0100\n"
+"POT-Creation-Date: 2015-12-27 18:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,15 +37,15 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: models.py:75 templates/djangobmf_quotation/quotation_bmfdetail.html:21
+#: models.py:75 templates/djangobmf_quotation/quotation_bmfdetail.html:16
 msgid "Valid until"
 msgstr ""
 
-#: models.py:76 templates/djangobmf_quotation/quotation_bmfdetail.html:28
+#: models.py:76 templates/djangobmf_quotation/quotation_bmfdetail.html:23
 msgid "Notes"
 msgstr ""
 
-#: models.py:77 templates/djangobmf_quotation/quotation_bmfdetail.html:108
+#: models.py:77 templates/djangobmf_quotation/quotation_bmfdetail.html:103
 msgid "Term of payment"
 msgstr ""
 
@@ -53,20 +53,19 @@ msgstr ""
 msgid "Completed"
 msgstr ""
 
-#: models.py:82 templates/djangobmf_quotation/quotation_bmfdetail.html:4
-#: templates/djangobmf_quotation/quotation_bmfdetail.html:7
+#: models.py:82 templates/djangobmf_quotation/quotation_bmfdetail.html:2
 msgid "Quotation"
 msgstr ""
 
-#: models.py:192 templates/djangobmf_quotation/quotation_bmfdetail.html:46
+#: models.py:192 templates/djangobmf_quotation/quotation_bmfdetail.html:41
 msgid "Name"
 msgstr ""
 
-#: models.py:197 templates/djangobmf_quotation/quotation_bmfdetail.html:47
+#: models.py:197 templates/djangobmf_quotation/quotation_bmfdetail.html:42
 msgid "Price"
 msgstr ""
 
-#: models.py:198 templates/djangobmf_quotation/quotation_bmfdetail.html:48
+#: models.py:198 templates/djangobmf_quotation/quotation_bmfdetail.html:43
 msgid "Amount"
 msgstr ""
 
@@ -74,27 +73,27 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_bmfdetail.html:10
+#: templates/djangobmf_quotation/quotation_bmfdetail.html:5
 msgid "Project"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_bmfdetail.html:11
+#: templates/djangobmf_quotation/quotation_bmfdetail.html:6
 msgid "Customer"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_bmfdetail.html:12
+#: templates/djangobmf_quotation/quotation_bmfdetail.html:7
 msgid "Employee"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_bmfdetail.html:17
+#: templates/djangobmf_quotation/quotation_bmfdetail.html:12
 msgid "Invoice"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_bmfdetail.html:49
+#: templates/djangobmf_quotation/quotation_bmfdetail.html:44
 msgid "Net"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_bmfdetail.html:50
+#: templates/djangobmf_quotation/quotation_bmfdetail.html:45
 msgid "Gross"
 msgstr ""
 

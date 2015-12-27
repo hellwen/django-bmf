@@ -222,7 +222,7 @@ app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $inter
             if (nav.timer) {
                 $interval.cancel(nav.timer);
             }
-        }
+        });
     });
 
     function init_navigation() {

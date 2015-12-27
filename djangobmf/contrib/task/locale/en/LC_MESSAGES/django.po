@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-02 19:42+0100\n"
+"POT-Creation-Date: 2015-12-27 18:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Availalbe tasks"
 msgstr ""
 
-#: bmf_module.py:113 templates/djangobmf_task/goal_bmfdetail.html:26
+#: bmf_module.py:113 templates/djangobmf_task/goal_bmfdetail.html:22
 #: templates/djangobmf_task/task_bmfrelated_project.html:9
 msgid "Open tasks"
 msgstr ""
@@ -86,11 +86,11 @@ msgstr ""
 msgid "Task"
 msgstr ""
 
-#: templates/djangobmf_task/goal_bmfdetail.html:27
+#: templates/djangobmf_task/goal_bmfdetail.html:23
 msgid "Tasks on hold"
 msgstr ""
 
-#: templates/djangobmf_task/goal_bmfdetail.html:28
+#: templates/djangobmf_task/goal_bmfdetail.html:24
 msgid "Accomplished Tasks"
 msgstr ""
 
