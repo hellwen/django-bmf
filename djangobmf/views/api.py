@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
 from django.template.loader import get_template
 from django.template.loader import select_template
+from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.models import Activity
 from djangobmf.filters import ViewFilterBackend
@@ -165,7 +166,7 @@ class APIIndex(BaseMixin, APIView):
         navigation = [
             {
                 # verbose (req)
-                'name': 'Notifications 1',
+                'name': _('Notifications'),
                 'symbol': "glyphicon glyphicon-comment",
 
                 # fallback, when api is unset or does not return html (req)
@@ -175,54 +176,11 @@ class APIIndex(BaseMixin, APIView):
                 'api': reverse('djangobmf:notification'),
 
                 # check every n seconds for changes (req, when api)
-                'intervall': 10,
+                'intervall': 60,
 
                 # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
                 'active': False,
                 'count': 0,
-                'html': '<h1>TEST</h1>',
-            },
-            {
-                # verbose (req)
-                'name': 'Notifications 2',
-                'symbol': "glyphicon glyphicon-plus",
-
-                # fallback, when api is unset or does not return html (req)
-                'url': reverse('djangobmf:notification'),
-
-                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
-                'active': False,
-                'count': 0,
-                'html': '<h1>TEST</h1>',
-            },
-            {
-                # verbose (req)
-                'name': 'Notifications 3',
-                'symbol': "glyphicon glyphicon-search",
-
-                # fallback, when api is unset or does not return html (req)
-                'url': reverse('djangobmf:notification'),
-
-                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
-                'active': False,
-                'count': 0,
-                'html': '<h1>TEST</h1>',
-            },
-            {
-                # verbose (req)
-                'name': 'Notifications 4',
-                'symbol': "glyphicon glyphicon-heart",
-
-                # API call for updates (opt)
-                'api': reverse('djangobmf:notification'),
-
-                # check every n seconds for changes (req, when api)
-                'intervall': 10,
-
-                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
-                'active': True,
-                'count': 12,
-                'html': '<h1>TEST</h1>',
             },
         ]
 

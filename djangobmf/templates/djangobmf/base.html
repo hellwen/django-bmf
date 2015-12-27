@@ -62,40 +62,9 @@
                                     <a href="{{ n.url }}" ng-class="n.active ? 'active' : ''">
                                         <span class="{{ n.symbol }}"></span>
                                         <span class="nav-text">{{ n.name }}</span>
-                                        <span class="label label-primary">{{ n.count }}</span>
                                     </a>
                                 </li>
                                 {% endverbatim %}
-                                {% block navbar %}
-                                <li data-count="{{ djangobmf.notification_count }}" id="bmf_notification">
-                                    <a href="{% url 'djangobmf:notification' %}">
-                                        <span class="glyphicon glyphicon-comment"></span>
-                                        <span class="nav-text">{% trans "Notifications" %}</span>
-                                    </a>
-                                </li>
-                                {% comment %}
-                                <li data-count="{{ djangobmf.message_count }}" id="bmf_message">
-                                    <a href="{% url 'djangobmf:message' %}">
-                                        <span class="glyphicon glyphicon-envelope"></span>
-                                        <span class="nav-text">{% trans "Messages" %}</span>
-                                    </a>
-                                </li>
-                                {% endcomment %}
-                                {% comment %}
-                                <li class="disabled" id="bmf_calendar">
-                                    <a href="#">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                        <span class="nav-text">{% trans "Calendar" %}</span>
-                                    </a>
-                                </li>
-                                {% endcomment %}
-                                <li class="disabled" id="bmf_timesheet">
-                                    <a href="#">
-                                        <span class="glyphicon glyphicon-time"></span>
-                                        <span class="nav-text">{% trans "Timesheet" %}</span>
-                                    </a>
-                                </li>
-                                {% endblock %}
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                         <span class="glyphicon glyphicon-user"></span>

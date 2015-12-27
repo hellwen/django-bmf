@@ -1177,6 +1177,9 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
     // place to store all dashboards
     $rootScope.bmf_dashboards = undefined;
 
+    // place to store all top navigation
+    $rootScope.bmf_navigation = undefined;
+
     // place to store all sitemaps
     $rootScope.bmf_sidebars = undefined;
 
@@ -1213,6 +1216,7 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
         $rootScope.bmf_dashboards = response.data.dashboards;
         $rootScope.bmf_debug = response.data.debug;
         $rootScope.bmf_templates = response.data.templates;
+        $rootScope.bmf_navigation = response.data.navigation;
 
         if (response.data.debug) {
             console.log("BMF-API", response.data);
@@ -1370,17 +1374,45 @@ app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $inter
         function(newValue) {if (newValue != undefined) init_navigation()}
     );
 
-    var stop;
     $scope.$on('$destroy', function() {
         // Make sure that the interval is destroyed too
-        // $scope.stopFight();
-        if (angular.isDefined(stop)) {
-            $interval.cancel(stop);
-            stop = undefined;
+        $scope.data.forEach(function(nav, i) {
+            if (nav.timer) {
+                $interval.cancel(nav.timer);
+            }
         }
     });
 
     function init_navigation() {
+        if (!$scope.bmf_navigation) return false;
+
+        $scope.data = $scope.bmf_navigation;
+
+        $scope.update = function (i) {
+            nav = $scope.data[i]
+            console.log("TIMER", i, nav)
+        }
+
+        $scope.data.forEach(function(nav, i) {
+            // use the button as a link if url is set
+            if (nav.url == undefined) nav.url = '#';
+
+            // stop an old timer
+            if (nav.timer) {
+                $interval.cancel(nav.timer);
+            }
+            nav.timer = undefined;
+
+            if (nav.api && nav.intervall) {
+                $scope.update(i);
+                nav.timer = $interval(function() {
+                    $scope.update(i)
+                }, nav.intervall * 1000);
+            }
+        });
+
+
+
 //      var response = [];
 //      var key = $scope.bmf_current_dashboard.key;
 //
@@ -1401,7 +1433,6 @@ app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $inter
 //          });
 //      });
 //
-        $scope.data = $scope.bmf_navigation;
-        console.log($scope.bmf_navigation);
+        console.log($scope.data);
     }
 }]);
