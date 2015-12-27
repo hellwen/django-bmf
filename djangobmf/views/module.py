@@ -137,63 +137,63 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
             + ["djangobmf/api/detail-default.html"]
 
 
-class ModuleDetailViewOld(
-        ModuleFilesMixin, ModuleActivityMixin, ModuleViewMixin, DetailView):
-    """
-    show the details of an entry
-    """
-    permission_classes = [ModuleViewPermission]
-    context_object_name = 'object'
-    template_name_suffix = '_bmfdetail'
-    reports = []
+#lass ModuleDetailViewOld(
+#       ModuleFilesMixin, ModuleActivityMixin, ModuleViewMixin, DetailView):
+#   """
+#   show the details of an entry
+#   """
+#   permission_classes = [ModuleViewPermission]
+#   context_object_name = 'object'
+#   template_name_suffix = '_bmfdetail'
+#   reports = []
 
-    def get_related_views(self):
-        # TODO: maybe cache this
-        if hasattr(self, '_related_views'):
-            return self._related_views
-        open = self.request.GET.get("open", None)
-        self._related_views = {}
-        for rel in self.model._meta.get_all_related_objects():
-            # TODO add rel.field.name to reponse
-            template = '%s/%s_bmfrelated_%s.html' % (
-                rel.model._meta.app_label,
-                rel.model._meta.model_name,
-                self.model._meta.model_name,
-            )
-            qs = getattr(self.object, rel.get_accessor_name())
-            qs_mod = getattr(rel.model, 'bmfrelated_%s_queryset' % self.model._meta.model_name, None)
-            try:
-                self._related_views[rel.model._meta.model_name] = {
-                    'name': '%s' % rel.model._meta.verbose_name_plural,
-                    'key': rel.model._meta.model_name,
-                    'active': open == rel.model._meta.model_name,
-                    'objects': qs if not isinstance(qs_mod, types.FunctionType) else qs_mod(qs),
-                    'template': get_template(template),
-                }
-            except TemplateDoesNotExist:
-                continue
-        return self._related_views
+#   def get_related_views(self):
+#       # TODO: maybe cache this
+#       if hasattr(self, '_related_views'):
+#           return self._related_views
+#       open = self.request.GET.get("open", None)
+#       self._related_views = {}
+#       for rel in self.model._meta.get_all_related_objects():
+#           # TODO add rel.field.name to reponse
+#           template = '%s/%s_bmfrelated_%s.html' % (
+#               rel.model._meta.app_label,
+#               rel.model._meta.model_name,
+#               self.model._meta.model_name,
+#           )
+#           qs = getattr(self.object, rel.get_accessor_name())
+#           qs_mod = getattr(rel.model, 'bmfrelated_%s_queryset' % self.model._meta.model_name, None)
+#           try:
+#               self._related_views[rel.model._meta.model_name] = {
+#                   'name': '%s' % rel.model._meta.verbose_name_plural,
+#                   'key': rel.model._meta.model_name,
+#                   'active': open == rel.model._meta.model_name,
+#                   'objects': qs if not isinstance(qs_mod, types.FunctionType) else qs_mod(qs),
+#                   'template': get_template(template),
+#               }
+#           except TemplateDoesNotExist:
+#               continue
+#       return self._related_views
 
-    def get_context_data(self, **kwargs):
-        kwargs.update({
-            'open_view': self.request.GET.get("open", None),
-            'related_views': self.get_related_views(),
-            'parent_template': select_template(self.get_template_names(related=False)),
-            'related_objects': self.get_related_objects(),  # TODO add pagination
-        })
-        return super(ModuleDetailView, self).get_context_data(**kwargs)
+#   def get_context_data(self, **kwargs):
+#       kwargs.update({
+#           'open_view': self.request.GET.get("open", None),
+#           'related_views': self.get_related_views(),
+#           'parent_template': select_template(self.get_template_names(related=False)),
+#           'related_objects': self.get_related_objects(),  # TODO add pagination
+#       })
+#       return super(ModuleDetailView, self).get_context_data(**kwargs)
 
-    def get_related_objects(self):
-        if "open" in self.request.GET.keys() and self.request.GET["open"] in self.get_related_views().keys():
-            return self.get_related_views()[self.request.GET["open"]]["objects"]
+#   def get_related_objects(self):
+#       if "open" in self.request.GET.keys() and self.request.GET["open"] in self.get_related_views().keys():
+#           return self.get_related_views()[self.request.GET["open"]]["objects"]
 
-    def get_template_names(self, related=True):
-        # self.update_notification()
-        if related and "open" in self.request.GET.keys() and \
-                self.request.GET["open"] in self.get_related_views().keys():
-            return self.get_related_views()[self.request.GET["open"]]["template"]
-        return super(ModuleDetailView, self).get_template_names() \
-            + ["djangobmf/module_detail_default.html"]
+#   def get_template_names(self, related=True):
+#       # self.update_notification()
+#       if related and "open" in self.request.GET.keys() and \
+#               self.request.GET["open"] in self.get_related_views().keys():
+#           return self.get_related_views()[self.request.GET["open"]]["template"]
+#       return super(ModuleDetailView, self).get_template_names() \
+#           + ["djangobmf/module_detail_default.html"]
 
 
 class ModuleReportView(ModuleViewMixin, DetailView):
