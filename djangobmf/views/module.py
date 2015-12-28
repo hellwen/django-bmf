@@ -41,7 +41,6 @@ from .mixins import ModuleSearchMixin
 from .mixins import ModuleBaseMixin
 from .mixins import ModuleAjaxMixin
 from .mixins import ModuleViewMixin
-from .mixins import ModuleActivityMixin
 from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin

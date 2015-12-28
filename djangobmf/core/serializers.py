@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 
+from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.models import Activity
@@ -11,6 +12,7 @@ from djangobmf.models.activity import ACTION_UPDATED
 from djangobmf.models.activity import ACTION_CREATED
 from djangobmf.models.activity import ACTION_WORKFLOW
 from djangobmf.models.activity import ACTION_FILE
+from djangobmf.signals import activity_comment
 from djangobmf.templatetags.djangobmf_markup import markdown_filter
 
 from rest_framework.serializers import ValidationError
@@ -42,13 +44,19 @@ class ActivitySerializer(ModelSerializer):
         return data
 
     def create(self, validated_data):
-        return Activity.objects.create(
+        obj = Activity.objects.create(
             user=self.context['request'].user,
             action=ACTION_COMMENT,
             parent_id=self.context['view'].kwargs.get('pk'),
             parent_ct=self.context['view'].get_bmfcontenttype(),
             **validated_data
         )
+        obj.save()
+        obj.parent_object.modified = now()
+        obj.parent_object.modified_by = self.context['request'].user
+        obj.parent_object.save()
+        activity_comment.send(sender=obj.__class__, instance=obj)
+        return obj
 
     def get_user(self, obj):
         if hasattr(obj.user, 'get_full_name'):

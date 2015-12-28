@@ -4,23 +4,6 @@
 from __future__ import unicode_literals
 
 from django import forms
-# from django.utils.translation import ugettext_lazy as _
-
-from djangobmf.models import Activity
-
-
-class HistoryCommentForm(forms.ModelForm):
-    class Meta:
-        model = Activity
-        fields = ['topic', 'text']
-
-    def __init__(self, *args, **kwargs):
-        super(HistoryCommentForm, self).__init__(*args, **kwargs)
-        field = self.fields.get('topic')
-        field.widget = forms.TextInput(attrs={'placeholder': field.label, 'class': 'form-control'})
-
-        field = self.fields.get('text')
-        field.widget = forms.Textarea(attrs={'rows': 8, 'class': 'form-control'})
 
 
 class FollowForm(forms.Form):
