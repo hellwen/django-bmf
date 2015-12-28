@@ -108,6 +108,7 @@ app.filter('django_date', ['$filter', function($filter) {
     }
 }]);
 
+// http://web.archive.org/web/20060617175230/http://blog.natbat.co.uk/archive/2003/Jun/14/time_since
 app.filter('timesince', ['$filter', function($filter) {
     return function(value) {
         var now = new Date();
