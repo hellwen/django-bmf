@@ -303,7 +303,7 @@ class NotificationAPI(BaseMixin, UpdateModelMixin, RetrieveModelMixin, GenericAP
         return obj
 
     def post(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
+        return self.partial_update(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
