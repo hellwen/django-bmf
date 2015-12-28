@@ -693,7 +693,10 @@ app.filter('django_strftime', [function() {
         var date = new Date(value);
 
         var dateformat_F = gettext("January February March April May June July August September October November December").split(" ");
+        var dateformat_E = gettext("January February March April May June July August September October November December").split(" ");
         var dateformat_N = gettext("Jan. Feb. March April May June July August Sept. Oct. Nov. Dec.").split(" ");
+        var dateformat_M = gettext("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec").split(" ");
+        var dateformat_l = gettext('Sunday Monday Tuesday Wednesday Thursday Friday Saturday').split(' ');
 
         var fields = {
             'a': function() {
@@ -707,6 +710,9 @@ app.filter('django_strftime', [function() {
             },
             'd': function() {
                 return (date.getDate() < 10) ? '0' + date.getDate() : date.getDate();
+            },
+            'E': function() {
+                return dateformat_F[date.getMonth()];
             },
             'f': function() {
                 return this.g() + ':' + this.i();
@@ -723,11 +729,17 @@ app.filter('django_strftime', [function() {
                     return hours <= 12 ? hours : (hours - 12);
                 }
             },
+            'G': function() {
+                return date.getHours();
+            },
             'H': function() {
                 return (date.getHours() < 10) ? '0' + date.getHours() : date.getHours();
             },
             'i': function() {
                 return (date.getMinutes() < 10) ? '0' + date.getMinutes() : date.getMinutes();
+            },
+            'l': function() {
+                return dateformat_l[date.getDay()];
             },
             'j': function() {
                 return '' + date.getDate();
