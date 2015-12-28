@@ -94,6 +94,13 @@ urlpatterns = patterns(
         name="api-activity",
     ),
     url(
+        r'^api/notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/$',
+        never_cache(
+            NotificationAPI.as_view()
+        ),
+        name="api-notification",
+    ),
+    url(
         r'^api/notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
         never_cache(
             NotificationAPI.as_view()

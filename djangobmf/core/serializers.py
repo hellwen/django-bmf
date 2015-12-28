@@ -7,6 +7,7 @@ from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.models import Activity
+from djangobmf.models import Notification
 from djangobmf.models.activity import ACTION_COMMENT
 from djangobmf.models.activity import ACTION_UPDATED
 from djangobmf.models.activity import ACTION_CREATED
@@ -83,3 +84,17 @@ class ActivitySerializer(ModelSerializer):
         if obj.action == ACTION_COMMENT:
             return 'comment'
         return None
+
+
+class NotificationSerializer(ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['new_entry', 'comment', 'file', 'changed', 'workflow']
+
+    def create(self, validated_data):
+        return Notification.objects.create(
+            user=self.context['request'].user,
+            watch_id=self.context['view'].kwargs.get('pk'),
+            watch_ct=self.context['view'].get_bmfcontenttype(),
+            **validated_data
+        )

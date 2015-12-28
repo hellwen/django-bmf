@@ -52,4 +52,4 @@ class Notification(models.Model):
         return self.comment or self.file or self.changed or self.workflow
 
     def __str__(self):
-        return '%s %s' % (self.user, self.watch_ct)
+        return '%s %s %s' % (self.user, self.watch_ct, self.watch_id)

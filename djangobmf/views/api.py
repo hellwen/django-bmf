@@ -12,13 +12,16 @@ from django.template.loader import select_template
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.models import Activity
+from djangobmf.models import Notification
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
 from djangobmf.filters import RelatedFilterBackend
-from djangobmf.permissions import ModuleViewPermission
 from djangobmf.permissions import ActivityPermission
+from djangobmf.permissions import ModuleViewPermission
+from djangobmf.permissions import NotificationPermission
 from djangobmf.pagination import ModulePagination
 from djangobmf.core.serializers import ActivitySerializer
+from djangobmf.core.serializers import NotificationSerializer
 from djangobmf.views.mixins import BaseMixin
 
 from rest_framework.generics import GenericAPIView
@@ -256,10 +259,13 @@ class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAP
     serializer_class = ActivitySerializer
 
     def get_queryset(self):
-        model = self.get_bmfmodel()
+        # check if the user has access to the object
         obj = self.get_bmfobject(self.kwargs.get('pk', None))
-        ct = ContentType.objects.get_for_model(model)
-        return Activity.objects.filter(parent_id=self.kwargs.get('pk', None), parent_ct=ct).select_related('user')
+
+        return Activity.objects.filter(
+            parent_id=self.kwargs.get('pk', None),
+            parent_ct=self.get_bmfcontenttype(),
+        ).select_related('user')
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -268,18 +274,36 @@ class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAP
         return self.list(request, *args, **kwargs)
 
 
-class NotificationAPI(BaseMixin, CreateModelMixin, ListModelMixin, GenericAPIView):
-    permission_classes = [ActivityPermission,]
-    serializer_class = ActivitySerializer
+class NotificationAPI(BaseMixin, UpdateModelMixin, RetrieveModelMixin, GenericAPIView):
+    permission_classes = [NotificationPermission,]
+    serializer_class = NotificationSerializer
 
     def get_queryset(self):
-        model = self.get_bmfmodel()
-        obj = self.get_bmfobject(self.kwargs.get('pk', None))
-        ct = ContentType.objects.get_for_model(model)
-        return Activity.objects.filter(parent_id=self.kwargs.get('pk', None), parent_ct=ct).select_related('user')
+        return Notification.objects.all()
+
+    def get_object(self):
+        # check if the user has access to the object
+        if 'pk' in self.kwargs:
+            self.get_bmfobject(self.kwargs.get('pk'))
+
+        queryset = self.filter_queryset(self.get_queryset())
+        lookup = {
+            'user': self.request.user,
+            'watch_id': self.kwargs.get('pk', None),
+            'watch_ct': self.get_bmfcontenttype(),
+        }
+
+        try:
+            obj = queryset.get(**lookup)
+            self.check_object_permissions(self.request, obj)
+        except Notification.DoesNotExist:
+            obj = Notification(**lookup)
+            self.check_permissions(self.request)
+
+        return obj
 
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        return self.update(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+        return self.retrieve(request, *args, **kwargs)
