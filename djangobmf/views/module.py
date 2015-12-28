@@ -98,16 +98,14 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
             if notification.unread:
                 notification.unread = False
                 notification.save()
-            watching = notification.is_active()
+            notification_unread = notification.unread
+            notification_watching = notification.is_active()
         except Notification.DoesNotExist:
             notification = None
-            watching = False
+            notification_unread = None
+            notification_watching = False
 
         context.update({
-            'notifications': {
-                # 'url': notification.get_absolute_url(),
-                'watching': watching,
-            },
             'views': {
                 'update': reverse(
                     'djangobmf:moduleapi_%s_%s:update' % (
@@ -132,6 +130,20 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
                     'enabled': self.object._bmfmeta.has_activity,
                     'url': reverse(
                         'djangobmf:api-activity',
+                        format=None,
+                        request=self.request,
+                        kwargs={
+                            'pk': self.object.pk,
+                            'app': self.object._meta.app_label,
+                            'model': self.object._meta.model_name,
+                        },
+                    ),
+                },
+                'notification': {
+                    'enabled': notification_watching,
+                    'unread': notification_unread,
+                    'url': reverse(
+                        'djangobmf:api-notification',
                         format=None,
                         request=self.request,
                         kwargs={

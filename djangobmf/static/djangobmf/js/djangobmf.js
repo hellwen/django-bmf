@@ -1102,14 +1102,12 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                     scope.ui = {
                         workflow: null,
                         views: null,
-                        notifications: null,
                     };
 
                     var url = view.module.base + view.pk  + '/';
                     $http.get(url).then(function(response) {
                         scope.ui.workflow = response.data.workflow;
                         scope.ui.views = response.data.views;
-                        scope.ui.notifications = response.data.notifications;
                         scope.template_html = response.data.html
 
                         if (response.data.views.activity.enabled) {

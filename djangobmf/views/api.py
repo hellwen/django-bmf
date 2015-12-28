@@ -266,3 +266,20 @@ class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAP
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+
+class NotificationAPI(BaseMixin, CreateModelMixin, ListModelMixin, GenericAPIView):
+    permission_classes = [ActivityPermission,]
+    serializer_class = ActivitySerializer
+
+    def get_queryset(self):
+        model = self.get_bmfmodel()
+        obj = self.get_bmfobject(self.kwargs.get('pk', None))
+        ct = ContentType.objects.get_for_model(model)
+        return Activity.objects.filter(parent_id=self.kwargs.get('pk', None), parent_ct=ct).select_related('user')
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
