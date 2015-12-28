@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 
+from djangobmf.permissions import ModuleViewPermission
 from djangobmf.views.mixins import BaseViewMixin
 
 import re
@@ -51,6 +52,7 @@ class ViewMixin(six.with_metaclass(ViewMixinMetaclass, BaseViewMixin)):
     This class acts a an mixin for the REST-API and the view, which is
     rendering the table.
     """
+    default_permission_classes = [ModuleViewPermission]
     manager = None
     date_resolution = None
     permissions = None
