@@ -791,6 +791,31 @@ app.filter('django_date', ['$filter', function($filter) {
     }
 }]);
 
+app.filter('timesince', ['$filter', function($filter) {
+    return function(value) {
+        var now = new Date();
+        var date = new Date(value);
+        var diff = (now - date) / 1000;
+        if (diff < 60) {
+            return gettext('seconds ago')
+        }
+        diff /= 60;
+        if (diff < 60) {
+            return Math.floor(diff) + ' ' + gettext('minutes ago')
+        }
+        diff /= 60;
+        if (diff < 48) {
+            return Math.floor(diff) + ' ' + gettext('hours ago')
+        }
+        diff /= 24;
+        if (diff < 31) {
+            return Math.floor(diff) + ' ' + gettext('days ago')
+        }
+        var filter_function = $filter('django_date');
+        return filter_function(value);
+    }
+}]);
+
 /*
  * ui-directive
  */
@@ -926,12 +951,10 @@ app.directive('bmfDetail', ["$location", function($location) {
 app.directive('bmfTimeAgo', [function() {
     return {
         restrict: 'A',
-        template: '<span title="{{ time | django_datetime }}">{{ time | django_datetime }}</span>',
+        template: '<span title="{{ time | django_datetime }}">{{ time | timesince }}</span>',
         replace: true,
         link: function(scope, element, attr) {
             scope.time = scope.$eval(attr.bmfTimeAgo);
-            // var d = new Date(scope.$eval(attr.bmfTimeAgo));
-            // scope.timeago = d.strftime(get_format("DATETIME_INPUT_FORMATS")[0]);
         }
     };
 }]);

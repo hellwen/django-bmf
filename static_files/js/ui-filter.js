@@ -107,3 +107,28 @@ app.filter('django_date', ['$filter', function($filter) {
         return filter_function(value, format);
     }
 }]);
+
+app.filter('timesince', ['$filter', function($filter) {
+    return function(value) {
+        var now = new Date();
+        var date = new Date(value);
+        var diff = (now - date) / 1000;
+        if (diff < 60) {
+            return gettext('seconds ago')
+        }
+        diff /= 60;
+        if (diff < 60) {
+            return Math.floor(diff) + ' ' + gettext('minutes ago')
+        }
+        diff /= 60;
+        if (diff < 48) {
+            return Math.floor(diff) + ' ' + gettext('hours ago')
+        }
+        diff /= 24;
+        if (diff < 31) {
+            return Math.floor(diff) + ' ' + gettext('days ago')
+        }
+        var filter_function = $filter('django_date');
+        return filter_function(value);
+    }
+}]);
