@@ -705,6 +705,9 @@ app.filter('django_strftime', [function() {
             'c': function() {
                 return date.toString();
             },
+            'd': function() {
+                return (date.getDate() < 10) ? '0' + date.getDate() : date.getDate();
+            },
             'f': function() {
                 return this.g() + ':' + this.i();
             },
@@ -717,7 +720,7 @@ app.filter('django_strftime', [function() {
                     return '12';
                 }
                 else {
-                    return hours <= 12 ? '' + hours : '' + (hours - 12);
+                    return hours <= 12 ? hours : (hours - 12);
                 }
             },
             'H': function() {
@@ -728,6 +731,9 @@ app.filter('django_strftime', [function() {
             },
             'j': function() {
                 return '' + date.getDate();
+            },
+            'm': function() {
+                return (date.getMonth() < 9) ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
             },
             'N': function() {
                 return dateformat_N[date.getMonth()];
@@ -741,13 +747,13 @@ app.filter('django_strftime', [function() {
                 return this.f() + ' ' + this.a();
             },
             'w': function() {
-                return '' + date.getDay();
+                return date.getDay();
             },
             'y': function() {
                 return ('' + date.getFullYear()).substr(2, 4);
             },
             'Y': function() {
-                return '' + date.getFullYear();
+                return date.getFullYear();
             },
         };
         var regex = new RegExp('[A-Za-z]');
@@ -764,6 +770,22 @@ app.filter('django_strftime', [function() {
             ++i;
         }
         return result;
+    }
+}]);
+
+app.filter('django_short_datetime', ['$filter', function($filter) {
+    var filter_function = $filter('django_strftime');
+    var format = get_format("SHORT_DATETIME_FORMAT");
+    return function(value) {
+        return filter_function(value, format);
+    }
+}]);
+
+app.filter('django_short_date', ['$filter', function($filter) {
+    var filter_function = $filter('django_strftime');
+    var format = get_format("SHORT_DATE_FORMAT");
+    return function(value) {
+        return filter_function(value, format);
     }
 }]);
 
