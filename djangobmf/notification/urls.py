@@ -8,7 +8,6 @@ from django.conf.urls import patterns, url
 from .views import NotificationView
 from .views import NotificationUpdate
 from .views import NotificationCreate
-from .views import ActivityView
 
 
 urlpatterns = patterns(
@@ -27,8 +26,5 @@ urlpatterns = patterns(
     ),
     url(
         r'^update/(?P<pk>[0-9]+)/$', NotificationUpdate.as_view(), name="notification-update",
-    ),
-    url(
-        r'^activity/$', ActivityView.as_view(), name="activity",
     ),
 )

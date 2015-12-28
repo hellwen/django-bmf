@@ -197,18 +197,18 @@ class NotificationUpdate(AjaxMixin, UpdateView):
         return form
 
 
-class ActivityView(ListView):
-    """
-    table view
-    """
-    model = Notification
-    allow_empty = True
-    template_name = "djangobmf/activity_list.html"
+#lass ActivityView(ListView):
+#   """
+#   table view
+#   """
+#   model = Notification
+#   allow_empty = True
+#   template_name = "djangobmf/activity_list.html"
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ActivityView, self).dispatch(*args, **kwargs)
+#   @method_decorator(login_required)
+#   def dispatch(self, *args, **kwargs):
+#       return super(ActivityView, self).dispatch(*args, **kwargs)
 
-    def get_queryset(self, *args, **kwargs):
-        qs = super(ActivityView, self).get_queryset(*args, **kwargs)
-        return qs.filter(user=self.request.user).select_related('history', 'ct')
+#   def get_queryset(self, *args, **kwargs):
+#       qs = super(ActivityView, self).get_queryset(*args, **kwargs)
+#       return qs.filter(user=self.request.user).select_related('history', 'ct')
