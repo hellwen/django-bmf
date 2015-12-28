@@ -46,6 +46,7 @@ from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
 
+from djangobmf.models import Notification
 from djangobmf.models import Report
 from djangobmf.permissions import AjaxPermission
 from djangobmf.permissions import ModuleViewPermission
@@ -86,9 +87,28 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
 
     def get_ajax_context(self, **context):
         # shortcut
+        ct = ContentType.objects.get_for_model(self.object)
         meta = self.object._bmfmeta
 
+        try:
+            notification = Notification.objects.get(
+                user=self.request.user,
+                watch_ct=ct,
+                watch_id=self.object.pk
+            )
+            if notification.unread:
+                notification.unread = False
+                notification.save()
+            watching = notification.is_active()
+        except Notification.DoesNotExist:
+            notification = None
+            watching = False
+
         context.update({
+            'notifications': {
+                # 'url': notification.get_absolute_url(),
+                'watching': watching,
+            },
             'views': {
                 'update': reverse(
                     'djangobmf:moduleapi_%s_%s:update' % (
@@ -128,11 +148,6 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
         return context
 
     def get_template_names(self, related=True):
-#       # self.update_notification()
-#       if related and "open" in self.request.GET.keys() and \
-#               self.request.GET["open"] in self.get_related_views().keys():
-#           return self.get_related_views()[self.request.GET["open"]]["template"]
-
         return super(ModuleDetailView, self).get_template_names() \
             + ["djangobmf/api/detail-default.html"]
 
