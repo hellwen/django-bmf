@@ -133,11 +133,12 @@ app.directive('bmfDetail', ["$location", function($location) {
 app.directive('bmfTimeAgo', [function() {
     return {
         restrict: 'A',
-        template: '<span title="{{ timeago }}">{{ timeago }}</span>',
+        template: '<span title="{{ time | django_datetime }}">{{ time | django_datetime }}</span>',
         replace: true,
         link: function(scope, element, attr) {
-            var d = new Date(scope.$eval(attr.bmfTimeAgo));
-            scope.timeago = d.strftime(get_format("DATETIME_INPUT_FORMATS")[0]);
+            scope.time = scope.$eval(attr.bmfTimeAgo);
+            // var d = new Date(scope.$eval(attr.bmfTimeAgo));
+            // scope.timeago = d.strftime(get_format("DATETIME_INPUT_FORMATS")[0]);
         }
     };
 }]);
