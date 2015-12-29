@@ -87,14 +87,69 @@ class ActivitySerializer(ModelSerializer):
 
 
 class NotificationSerializer(ModelSerializer):
+    has_new_entry = SerializerMethodField()
+    has_comments = SerializerMethodField()
+    has_files = SerializerMethodField()
+    has_detectchanges = SerializerMethodField()
+    has_workflow = SerializerMethodField()
+
     class Meta:
         model = Notification
-        fields = ['new_entry', 'comment', 'file', 'changed', 'workflow']
+        fields = [
+            'new_entry',
+            'comment',
+            'file',
+            'changed',
+            'workflow',
+            'has_new_entry',
+            'has_comments',
+            'has_files',
+            'has_detectchanges',
+            'has_workflow',
+        ]
+
+    def validate(self, data):
+        """
+        Check that the start is before the stop.
+        """
+        model = self.context['view'].get_bmfmodel()
+
+        if "new_entry" in data and self.context['view'].kwargs.get('pk', None):
+            data["new_entry"] = False
+
+        if "comment" in data and not model._bmfmeta.has_comments:
+            data["comment"] = False
+
+        if "file" in data and not model._bmfmeta.has_files:
+            data["file"] = False
+
+        if "changed" in data and not model._bmfmeta.has_detectchanges:
+            data["changed"] = False
+
+        if "workflow" in data and not model._bmfmeta.has_workflow:
+            data["workflow"] = False
+
+        return data
+
+    def get_has_new_entry(self, obj):
+        return not bool(obj.watch_id)
+
+    def get_has_comments(self, obj):
+        return obj.watch_ct.model_class()._bmfmeta.has_comments
+
+    def get_has_files(self, obj):
+        return obj.watch_ct.model_class()._bmfmeta.has_files
+
+    def get_has_detectchanges(self, obj):
+        return obj.watch_ct.model_class()._bmfmeta.has_detectchanges
+
+    def get_has_workflow(self, obj):
+        return obj.watch_ct.model_class()._bmfmeta.has_workflow
 
     def create(self, validated_data):
         return Notification.objects.create(
             user=self.context['request'].user,
-            watch_id=self.context['view'].kwargs.get('pk'),
+            watch_id=self.context['view'].kwargs.get('pk', None),
             watch_ct=self.context['view'].get_bmfcontenttype(),
             **validated_data
         )
