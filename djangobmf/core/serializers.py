@@ -151,5 +151,6 @@ class NotificationSerializer(ModelSerializer):
             user=self.context['request'].user,
             watch_id=self.context['view'].kwargs.get('pk', None),
             watch_ct=self.context['view'].get_bmfcontenttype(),
+            unread=False,
             **validated_data
         )
