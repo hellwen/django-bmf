@@ -133,7 +133,7 @@ app.directive('bmfDetail', ["$location", function($location) {
 app.directive('bmfNotification', ['$http', function($http) {
     return {
         restrict: 'A',
-        template: '<a ng-class="enabled ? \'btn-info\' : \'btn-default\'"><span ng-class="symbol"></span></a>',
+        template: '<a ng-class="enabled ? \'btn-info\' : \'btn-default\'" title="{{ title }}"><span ng-class="symbol"></span></a>',
         replace: true,
         scope: {},
         link: function(scope, element, attr) {
@@ -141,11 +141,27 @@ app.directive('bmfNotification', ['$http', function($http) {
             scope.method = attr.bmfNotification;
             scope.url = attr.href;
             scope.symbol = "glyphicon glyphicon-question-sign";
-            if (scope.method == "new_entry") scope.symbol = "glyphicon glyphicon-file";
-            if (scope.method == "comments") scope.symbol = "glyphicon glyphicon-comment";
-            if (scope.method == "workflow") scope.symbol = "glyphicon glyphicon-random";
-            if (scope.method == "files") scope.symbol = "glyphicon glyphicon-paperclip";
-            if (scope.method == "detectchanges") scope.symbol = "glyphicon glyphicon-pencil";
+            scope.title = "";
+            if (scope.method == "new_entry") {
+                scope.symbol = "glyphicon glyphicon-file";
+                scope.title = gettext("New entries");
+            };
+            if (scope.method == "comments") {
+                scope.symbol = "glyphicon glyphicon-comment";
+                scope.title = gettext("New comments");
+            };
+            if (scope.method == "workflow") {
+                scope.symbol = "glyphicon glyphicon-random";
+                scope.title = gettext("Worflow changes");
+            };
+            if (scope.method == "files") {
+                scope.symbol = "glyphicon glyphicon-paperclip";
+                scope.title = gettext("New files");
+            };
+            if (scope.method == "detectchanges") {
+                scope.symbol = "glyphicon glyphicon-edit";
+                scope.title = gettext("Detected changes");
+            };
 
             element.on('click', function(event) {
                 event.preventDefault();
