@@ -24,7 +24,7 @@ class Notification(models.Model):
     )
 
     watch_ct = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
-    watch_id = models.PositiveIntegerField(null=True)
+    watch_id = models.PositiveIntegerField(null=True, db_index=True)
     watch_object = GenericForeignKey('watch_ct', 'watch_id')
 
     triggered = models.BooleanField(_("Triggered"), default=True, editable=False, db_index=True)
