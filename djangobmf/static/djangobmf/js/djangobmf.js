@@ -983,6 +983,50 @@ app.directive('bmfDetail', ["$location", function($location) {
 
 
 // 
+app.directive('bmfNotification', ['$http', function($http) {
+    return {
+        restrict: 'A',
+        template: '<a ng-class="enabled ? \'btn-info\' : \'btn-default\'"><span ng-class="symbol"></span></a>',
+        replace: true,
+        scope: {},
+        link: function(scope, element, attr) {
+            scope.enabled = scope.$eval(attr.enabled);
+            scope.method = attr.bmfNotification;
+            scope.url = attr.href;
+            scope.symbol = "glyphicon glyphicon-question-sign";
+            if (scope.method == "new_entry") scope.symbol = "glyphicon glyphicon-file";
+            if (scope.method == "comments") scope.symbol = "glyphicon glyphicon-comment";
+            if (scope.method == "workflow") scope.symbol = "glyphicon glyphicon-random";
+            if (scope.method == "files") scope.symbol = "glyphicon glyphicon-paperclip";
+            if (scope.method == "detectchanges") scope.symbol = "glyphicon glyphicon-pencil";
+
+            element.on('click', function(event) {
+                event.preventDefault();
+                var data = {};
+                data[scope.method] = !scope.enabled;
+
+                $http({
+                    method: 'POST',
+                    data: data,
+                    url: scope.url,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(function (response) {
+                    // success callback
+                    // console.log("success", response);
+                    scope.enabled = response.data[scope.method];
+                }, function (response) {
+                    // error callback
+                    console.log("Notification - Error", response);
+                });
+            });
+        },
+    };
+}]);
+
+
+// 
 app.directive('bmfTimeAgo', [function() {
     return {
         restrict: 'A',
@@ -1447,7 +1491,7 @@ app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
             // error callback
             console.log("ActivityForm - Error", response);
             alert(response.data.non_field_errors[0]);
-        })
+        });
     }
 }]);
 

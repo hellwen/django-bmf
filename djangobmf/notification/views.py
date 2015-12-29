@@ -74,6 +74,8 @@ class NotificationView(ViewMixin, ListView):
 
         kwargs.update({
             'navigation': navigation.values(),
+            'model_name': model._meta.model_name,
+            'app_label': model._meta.app_label,
             'unread': total,
             'selected_ct': selected_ct_id,
             'datafilter': self.kwargs.get('filter', None),

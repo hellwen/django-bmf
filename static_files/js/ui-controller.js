@@ -202,7 +202,7 @@ app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
             // error callback
             console.log("ActivityForm - Error", response);
             alert(response.data.non_field_errors[0]);
-        })
+        });
     }
 }]);
 

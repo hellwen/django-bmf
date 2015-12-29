@@ -97,9 +97,9 @@ class NotificationSerializer(ModelSerializer):
         model = Notification
         fields = [
             'new_entry',
-            'comment',
-            'file',
-            'changed',
+            'comments',
+            'files',
+            'detectchanges',
             'workflow',
             'has_new_entry',
             'has_comments',
@@ -117,14 +117,14 @@ class NotificationSerializer(ModelSerializer):
         if "new_entry" in data and self.context['view'].kwargs.get('pk', None):
             data["new_entry"] = False
 
-        if "comment" in data and not model._bmfmeta.has_comments:
-            data["comment"] = False
+        if "comments" in data and not model._bmfmeta.has_comments:
+            data["comments"] = False
 
-        if "file" in data and not model._bmfmeta.has_files:
-            data["file"] = False
+        if "files" in data and not model._bmfmeta.has_files:
+            data["files"] = False
 
-        if "changed" in data and not model._bmfmeta.has_detectchanges:
-            data["changed"] = False
+        if "detectchanges" in data and not model._bmfmeta.has_detectchanges:
+            data["detectchanges"] = False
 
         if "workflow" in data and not model._bmfmeta.has_workflow:
             data["workflow"] = False
