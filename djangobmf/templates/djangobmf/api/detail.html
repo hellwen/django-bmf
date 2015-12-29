@@ -24,17 +24,6 @@
     </div>
     <div class="btn-toolbar pull-right" role="toolbar">
 
-        <div ng-if="!ui.views.notification.enabled" class="btn-group">
-            <a href="{{ ui.views.notification.url }}" class="btn btn-default bmf-edit">
-                <span class="glyphicon glyphicon-star-empty"></span>
-            </a>
-        </div>
-        <div ng-if="ui.views.notification.enabled" class="btn-group">
-            <a href="{{ ui.views.notification.url }}" class="btn bmf-edit" ng-class="ui.view.notification.unread ? 'btn-info' : 'btn-default'">
-                <span class="glyphicon glyphicon-star"></span>
-            </a>
-        </div>
-
         <div ng-if="!ui.workflow || ui.workflow && ui.workflow.update" class="btn-group">
             <a class="btn btn-bmfupdate" bmf-form="update" href="{{ ui.views.update }}"><span class="glyphicon glyphicon-wrench"></span> {% endverbatim %}{% trans "Edit" %}{% verbatim %}</a>
         </div>
@@ -63,13 +52,19 @@
 </ul>
 -->
 <div class="panel panel-default" id="bmf_message_box">
-    <div ng-if="ui.views.comments" class="panel-heading text-right">
-        <button type="button" data-toggle="collapse" data-target="#bmf_message_form" data-parent="#bmf_message_box" class="btn btn-default">
+
+    <div ng-if="ui.notifications.data.enabled" class="panel-heading">
+        <a ng-if="ui.notifications.data.has_comments" href="{{ ui.notifications.url }}" class="btn" bmf-notification="comments" data-enabled="{{ ui.notifications.data.comments }}"></a>
+        <a ng-if="ui.notifications.data.has_workflow" href="{{ ui.notifications.url }}" class="btn" bmf-notification="workflow" data-enabled="{{ ui.notifications.data.workflow }}"></a>
+        <a ng-if="ui.notifications.data.has_detectchanges" href="{{ ui.notifications.url }}" class="btn" bmf-notification="detectchanges" data-enabled="{{ ui.notifications.data.detectchanges }}"></a>
+        <a ng-if="ui.notifications.data.has_files" href="{{ ui.notifications.url }}" class="btn" bmf-notification="files" data-enabled="{{ ui.notifications.data.files }}"></a>
+
+        <button ng-if="ui.notifications.data.has_comments" type="button" data-toggle="collapse" data-target="#bmf_message_form" data-parent="#bmf_message_box" class="btn btn-default pull-right">
             <span class="glyphicon glyphicon-pencil"></span> {% endverbatim %}{% trans "Write message" %}{% verbatim %}
         </button>
     </div>
-    <div class="panel-body">
 
+    <div class="panel-body">
         <div ng-if="ui.views.comments" id="bmf_message_form" class="collapse out">
             <form class="form" role="form" ng-controller="ActivityFormCtrl" ng-submit="processForm()">
                 <div class="form-group">

@@ -291,6 +291,7 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                     scope.module = view.module;
 
                     scope.ui = {
+                        notifications: null,
                         workflow: null,
                         views: null,
                     };
@@ -299,6 +300,7 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                     $http.get(url).then(function(response) {
                         scope.ui.workflow = response.data.workflow;
                         scope.ui.views = response.data.views;
+                        scope.ui.notifications = response.data.notifications;
                         scope.template_html = response.data.html
 
                         if (response.data.views.activity.enabled) {

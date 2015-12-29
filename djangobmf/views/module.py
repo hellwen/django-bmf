@@ -45,6 +45,7 @@ from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
 
+from djangobmf.core.serializers import NotificationSerializer
 from djangobmf.models import Notification
 from djangobmf.models import Report
 from djangobmf.permissions import AjaxPermission
@@ -98,12 +99,13 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
             if notification.unread:
                 notification.unread = False
                 notification.save()
-            notification_unread = notification.unread
-            notification_watching = notification.is_active()
         except Notification.DoesNotExist:
-            notification = None
-            notification_unread = None
-            notification_watching = False
+            notification = Notification(
+                user=self.request.user,
+                watch_ct=ct,
+                watch_id=self.object.pk,
+                unread=False,
+            )
 
         context.update({
             'views': {
@@ -139,22 +141,21 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
                         },
                     ),
                 },
-                'notification': {
-                    'enabled': notification_watching,
-                    'unread': notification_unread,
-                    'url': reverse(
-                        'djangobmf:api-notification',
-                        format=None,
-                        request=self.request,
-                        kwargs={
-                            'pk': self.object.pk,
-                            'app': self.object._meta.app_label,
-                            'model': self.object._meta.model_name,
-                        },
-                    ),
-                },
             },
             'workflow': meta.workflow.serialize(self.request) if meta.workflow else None,
+            'notifications': {
+                'data': NotificationSerializer(notification).data,
+                'url': reverse(
+                    'djangobmf:api-notification',
+                    format=None,
+                    request=self.request,
+                    kwargs={
+                        'pk': self.object.pk,
+                        'app': self.object._meta.app_label,
+                        'model': self.object._meta.model_name,
+                    },
+                ),
+            },
         })
         return context
 

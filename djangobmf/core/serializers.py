@@ -92,6 +92,7 @@ class NotificationSerializer(ModelSerializer):
     has_files = SerializerMethodField()
     has_detectchanges = SerializerMethodField()
     has_workflow = SerializerMethodField()
+    enabled = SerializerMethodField()
 
     class Meta:
         model = Notification
@@ -106,6 +107,7 @@ class NotificationSerializer(ModelSerializer):
             'has_files',
             'has_detectchanges',
             'has_workflow',
+            'enabled',
         ]
 
     def validate(self, data):
@@ -145,6 +147,10 @@ class NotificationSerializer(ModelSerializer):
 
     def get_has_workflow(self, obj):
         return obj.watch_ct.model_class()._bmfmeta.has_workflow
+
+    def get_enabled(self, obj):
+        return self.get_has_workflow(obj) or self.get_has_detectchanges(obj) or \
+            self.get_has_files(obj) or self.get_has_comments(obj)
 
     def create(self, validated_data):
         return Notification.objects.create(
