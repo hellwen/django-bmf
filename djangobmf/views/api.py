@@ -7,6 +7,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
+from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.template.loader import select_template
 from django.utils.translation import ugettext_lazy as _
@@ -68,22 +69,47 @@ class APIIndex(BaseMixin, APIView):
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
-                related = OrderedDict(
-                    [
-                        (
-                            i.name,
-                            ContentType.objects.get_for_model(i.related_model).pk
-                        )
-                        for i in model._meta.get_fields()
-                        if hasattr(i.related_model, '_bmfmeta')
-                        and self.request.user.has_perms([
-                            '%s.view_%s' % (
-                                i.related_model._meta.app_label,
-                                i.related_model._meta.model_name,
-                            )
-                        ])
-                    ]
-                )
+                related = []
+                for name, related_model in [
+                   (
+                       i.name,
+                       i.related_model,
+                   )
+                   for i in model._meta.get_fields()
+                   if hasattr(i.related_model, '_bmfmeta')
+                   and self.request.user.has_perms([
+                       '%s.view_%s' % (
+                           i.related_model._meta.app_label,
+                           i.related_model._meta.model_name,
+                       )
+                   ])
+                ]:
+                    related_ct = ContentType.objects.get_for_model(related_model)
+                    template = '%s/%s_bmfrelated/%s_%s.html' % (
+                        related_model._meta.app_label,
+                        related_model._meta.model_name,
+                        model._meta.model_name,
+                        name,
+                    )
+
+                    try:
+                        get_template(template)
+                        html = "<h1>TODO</h1>"  # TODO
+                    except TemplateDoesNotExist:
+                        html = None
+
+                    related.append((name, OrderedDict([
+                        ('ct', related_ct.pk),
+                        ('template', template),
+                        ('html', html),
+                        ('data',
+                            reverse('djangobmf:api', request=request, format=format, kwargs={
+                                'app': related_model._meta.app_label,
+                                'model': related_model._meta.model_name,
+                            })
+                        ),
+                    ])))
+
                 modules.append(OrderedDict([
                     ('app', model._meta.app_label),
                     ('model', model._meta.model_name),
@@ -98,7 +124,7 @@ class APIIndex(BaseMixin, APIView):
                         'model': model._meta.model_name,
                     })),
                     ('only_related', model._bmfmeta.only_related),
-                    ('related', related),
+                    ('related', OrderedDict(related)),
                     ('creates', [
                         {
                             "name": i[1],
