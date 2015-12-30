@@ -1,6 +1,8 @@
 Version 0.3.0 (currently in development)
 ========================================
 
+* Related data on detail views
+
 Version 0.2.X
 ========================================
 
