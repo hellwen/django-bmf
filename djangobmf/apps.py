@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from django.apps import apps
 from django.apps import AppConfig
 from django.conf import settings
+from django.contrib.admin.sites import AlreadyRegistered
 from django.core.checks import register
 from django.core.checks import Error
 from django.core.exceptions import ImproperlyConfigured
@@ -25,11 +26,24 @@ class BMFConfig(AppConfig):
 
     def __init__(self, *args, **kwargs):
         super(BMFConfig, self).__init__(*args, **kwargs)
+        self.bmf_modules = []
 
     def ready(self):
         from djangobmf.core.site import Site
         self.site = Site(namespace=self.label, app_name=self.label)
-        self.bmf_modules = []
+
+    def bmfregister_module(module):
+        """
+        register a module with the framework
+        """
+        for mod in self.bmf_modules:
+            if mod.model == module.model:
+                raise AlreadyRegistered(
+                    'The module %s is already registered' % module.model.__name__
+                )
+        mod = module()
+        self.bmf_modules.append(mod)
+        return mod
 
 
 class ModuleTemplate(AppConfig):
