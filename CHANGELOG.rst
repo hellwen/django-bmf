@@ -1,12 +1,12 @@
 Version 0.2.6 (currently in development)
 ========================================
 
-(in development)
+* Rebuild Notifications with angularJS
 
 Version 0.2.4 (2015-12-27)
 ========================================
 
-* New UI build on angular JS
+* New UI build on angularJS
 
 Version 0.2.4 (2015-10-15)
 ========================================
