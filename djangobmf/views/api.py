@@ -7,6 +7,8 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
+from django.db.models.fields.related import ManyToOneRel
+from django.db.models.fields.related import ManyToManyField
 from django.http import Http404
 from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
@@ -76,13 +78,14 @@ class APIIndex(BaseMixin, APIView):
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
                 related = []
-                for name, related_model in [
+                for field, related_model in [
                    (
-                       i.name,
+                       i,
                        i.related_model,
                    )
                    for i in model._meta.get_fields()
                    if hasattr(i.related_model, '_bmfmeta')
+                   and isinstance(i, (ManyToOneRel, ManyToManyField))
                    and self.request.user.has_perms([
                        '%s.view_%s' % (
                            i.related_model._meta.app_label,
@@ -95,7 +98,7 @@ class APIIndex(BaseMixin, APIView):
                         related_model._meta.app_label,
                         related_model._meta.model_name,
                         model._meta.model_name,
-                        name,
+                        field.name,
                     )
 
                     try:
@@ -104,16 +107,10 @@ class APIIndex(BaseMixin, APIView):
                     except TemplateDoesNotExist:
                         html = None
 
-                    related.append((name, OrderedDict([
+                    related.append((field.name, OrderedDict([
                         ('ct', related_ct.pk),
                         ('template', template),
                         ('html', html),
-                        ('data',
-                            reverse('djangobmf:api', request=request, format=format, kwargs={
-                                'app': related_model._meta.app_label,
-                                'model': related_model._meta.model_name,
-                            })
-                        ),
                     ])))
 
                 modules.append(OrderedDict([
