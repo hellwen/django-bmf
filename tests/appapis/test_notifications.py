@@ -84,47 +84,47 @@ class NotificationTests(ModuleMixin, TestCase):
         self.prepare_model_tests()
         self.assertEqual(1, 0, "not implemented")
 
-    def test_notification_views_index(self):
-        """
-        """
-        self.client_login("user1")
+#   def test_notification_views_index(self):
+#       """
+#       """
+#       self.client_login("user1")
 
-        r = self.client.get(reverse('djangobmf:notification'))
-        self.assertEqual(r.status_code, 200)
+#       r = self.client.get(reverse('djangobmf:notification'))
+#       self.assertEqual(r.status_code, 200)
 
-        r = self.client.get(reverse('djangobmf:notification', kwargs={"filter": "all"}))
-        self.assertEqual(r.status_code, 200)
+#       r = self.client.get(reverse('djangobmf:notification', kwargs={"filter": "all"}))
+#       self.assertEqual(r.status_code, 200)
 
-        r = self.client.get(reverse('djangobmf:notification', kwargs={"filter": "active"}))
-        self.assertEqual(r.status_code, 200)
+#       r = self.client.get(reverse('djangobmf:notification', kwargs={"filter": "active"}))
+#       self.assertEqual(r.status_code, 200)
 
-        self.assertEqual(Notification.objects.filter(user=self.user1).count(), 0)
+#       self.assertEqual(Notification.objects.filter(user=self.user1).count(), 0)
 
-        r = self.client.get(reverse('djangobmf:notification', kwargs={'ct': self.ct.pk, "filter": "all"}))
-        self.assertEqual(r.status_code, 200)
+#       r = self.client.get(reverse('djangobmf:notification', kwargs={'ct': self.ct.pk, "filter": "all"}))
+#       self.assertEqual(r.status_code, 200)
 
-        # self.assertEqual(Notification.objects.filter(user=self.user1).count(), 1)  # ???
+#       # self.assertEqual(Notification.objects.filter(user=self.user1).count(), 1)  # ???
 
-        r = self.client.get(reverse('djangobmf:notification', kwargs={'ct': self.ct.pk, "filter": "active"}))
-        self.assertEqual(r.status_code, 200)
+#       r = self.client.get(reverse('djangobmf:notification', kwargs={'ct': self.ct.pk, "filter": "active"}))
+#       self.assertEqual(r.status_code, 200)
 
-        r = self.client.get(reverse('djangobmf:notification', kwargs={'ct': self.ct.pk, "filter": "unread"}))
-        self.assertEqual(r.status_code, 200)
+#       r = self.client.get(reverse('djangobmf:notification', kwargs={'ct': self.ct.pk, "filter": "unread"}))
+#       self.assertEqual(r.status_code, 200)
 
-    def test_notification_views_edit_root(self):
-        self.client_login("user1")
-        fields = {
-            'user': self.user1,
-            'watch_ct': self.ct,
-            'watch_id': 0,
-        }
-        notification = Notification.objects.create(**fields)
+#   def test_notification_views_edit_root(self):
+#       self.client_login("user1")
+#       fields = {
+#           'user': self.user1,
+#           'watch_ct': self.ct,
+#           'watch_id': 0,
+#       }
+#       notification = Notification.objects.create(**fields)
 
-        self.assertFalse(notification.new_entry)
-        self.assertFalse(notification.comments)
-        self.assertFalse(notification.files)
-        self.assertFalse(notification.detectchanges)
-        self.assertFalse(notification.workflow)
+#       self.assertFalse(notification.new_entry)
+#       self.assertFalse(notification.comments)
+#       self.assertFalse(notification.files)
+#       self.assertFalse(notification.detectchanges)
+#       self.assertFalse(notification.workflow)
 
 #   def test_notification_views_edit_object(self):
 #       self.client_login("user1")
