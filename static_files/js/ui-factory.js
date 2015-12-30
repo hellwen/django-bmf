@@ -2,7 +2,7 @@
  * ui-factory
  */
 
-app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
+bmfapp.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
     function go(next) {
         $rootScope.bmf_current_view = next;
         if (next && ["list", "detail"].indexOf(next.type) >= 0) {
@@ -73,11 +73,21 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
         if (current) {
             return current;
         }
+        // Notification index
+        if (prefix + url == $rootScope.bmf_ui.notification.url) {
+            return {
+                type: 'notification',
+                module: null,
+            }
+        }
+        if (current) {
+            return current;
+        }
     }
     return {get: get, go: go, update: update}
 }]);
 
-app.factory('PageTitle', function() {
+bmfapp.factory('PageTitle', function() {
     var title = '';
     return {
         get: function() { return title; },

@@ -1,0 +1,26 @@
+{% load i18n %}{% spaceless %}{% verbatim %}
+<div class="row" ng-controller="NotificationCtrl">
+    <div class="col-lg-9 col-sm-8">
+        <ul class="nav nav-tabs">
+        </ul>
+    </div>
+    <div class="col-lg-3 col-sm-4">
+        <ul class="nav nav-pills nav-stacked">
+            <li ng-repeat="n in navigation | orderBy:'name'">
+                <a href="{{ n.notification }}">{{ n.name }}</a>
+            </li>
+            <span ng-if="n.count > 0" class="badge pull-right">{{ n.count }}</span>
+        </ul>
+    </div>
+</div>
+
+<!--
+<h2>Header (todo):</h2>
+<ul>
+    <li>clone-view</li>
+    <li>report-view(s)</li>
+    <li>notifications</li>
+    <li>files (?)</li>
+</ul>
+-->
+{% endverbatim %}{% endspaceless %}

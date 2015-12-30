@@ -12,4 +12,4 @@ var BMFEVENT_MODELDETAIL = "bmf.event.modeldetail";
 var BMFEVENT_MODELLIST = "bmf.event.modellist";
 
 // INIT APP
-var app = angular.module('djangoBMF', []);
+var bmfapp = angular.module('djangoBMF', []);

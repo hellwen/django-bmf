@@ -13,9 +13,7 @@ from django.utils.decorators import method_decorator
 from django.utils.text import force_text
 from django.utils.timezone import now
 from django.views.defaults import permission_denied
-from django.views.generic import CreateView
 from django.views.generic import ListView
-from django.views.generic import UpdateView
 
 from djangobmf.conf import settings
 from djangobmf.models import Activity
@@ -28,7 +26,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class NotificationView(ViewMixin, ListView):
+class NotificationMixin(ViewMixin):
+    model = Notification
+
+
+class NotificationIndex(NotificationMixin, ListView):
+    template_name = "djangobmf/notification/index.html"
+    model = Notification
+
+
+class NotificationView(NotificationMixin, ListView):
     model = Notification
     allow_empty = True
     template_name = "djangobmf/notification/index.html"

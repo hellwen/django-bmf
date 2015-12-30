@@ -18,6 +18,7 @@ from django.views.decorators.http import last_modified
 
 from djangobmf import get_version
 from djangobmf.sites import site
+from djangobmf.views import Index
 from djangobmf.views.api import APIIndex
 from djangobmf.views.api import APIViewDetail
 from djangobmf.views.api import APIModuleListView
@@ -58,11 +59,42 @@ def i18n_javascript(request):
 
 urlpatterns = patterns(
     '',
-    url(
-        r'^$',
-        DashboardIndex.as_view(),
-        name="dashboard"
+    # VIEWS COVERED BY UI
+    url(r'^$',
+        Index.as_view(), name="dashboard"
     ),
+    url(
+        r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/(?P<view>[\w-]+)/$',
+        Index.as_view(),
+        name="dashboard",
+    ),
+    url(
+        r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/(?P<view>[\w-]+)/(?P<pk>[0-9]+)/$',
+        Index.as_view(),
+        name="dashboard",
+    ),
+
+    url(
+        r'^dashboard/(?P<dashboard>[\w-]+)/$',
+        DashboardIndex.as_view(),
+        name="dashboard",
+    ),
+    url(
+        r'^notification/$',
+        Index.as_view(),
+        name="notification",
+    ),
+    url(
+        r'^notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/$',
+        Index.as_view(),
+        name="notification",
+    ),
+    url(
+        r'^notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        Index.as_view(),
+        name="notification",
+    ),
+
     url(r'^accounts/', include('djangobmf.account.urls')),
 
     url(r'^router/', include(site.router.urls, namespace="router")),
@@ -151,21 +183,6 @@ urlpatterns = patterns(
     #   r'^detail/' via sites
 
     # --- Dashboard
-    url(
-        r'^dashboard/(?P<dashboard>[\w-]+)/$',
-        DashboardIndex.as_view(),
-        name="dashboard",
-    ),
-    url(
-        r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/(?P<view>[\w-]+)/$',
-        DashboardIndex.as_view(),
-        name="dashboard",
-    ),
-    url(
-        r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/(?P<view>[\w-]+)/(?P<pk>[0-9]+)/$',
-        DashboardIndex.as_view(),
-        name="dashboard",
-    ),
     #   url(
     #       r'^dashboard/(?P<dashboard>[\w-]+)/(?P<category>[\w-]+)/$',
     #       DashboardCategory.as_view(),
@@ -177,13 +194,13 @@ urlpatterns = patterns(
     url(r'^document/', include('djangobmf.document.urls')),
     url(r'^i18n/', i18n_javascript, name="jsi18n"),
     url(
-        r'^notification/$', NotificationView.as_view(), name="notification", kwargs={'filter': "unread", 'ct': 0},
+        r'^notification/$', NotificationView.as_view(), name="notification-old", kwargs={'filter': "unread", 'ct': 0},
     ),
     url(
-        r'^notification/(?P<filter>all|active)/$', NotificationView.as_view(), name="notification", kwargs={'ct': 0},
+        r'^notification/(?P<filter>all|active)/$', NotificationView.as_view(), name="notification-old", kwargs={'ct': 0},
     ),
     url(
-        r'^notification/(?P<filter>all|active|unread)/(?P<ct>[0-9]+)/$', NotificationView.as_view(), name="notification",
+        r'^notification/(?P<filter>all|active|unread)/(?P<ct>[0-9]+)/$', NotificationView.as_view(), name="notification-old",
     ),
     #  url(r'^messages/', include('djangobmf.message.urls')),
     url(r'^wizard/$', WizardView.as_view(), name="wizard"),

@@ -668,27 +668,27 @@ var BMFEVENT_MODELDETAIL = "bmf.event.modeldetail";
 var BMFEVENT_MODELLIST = "bmf.event.modellist";
 
 // INIT APP
-var app = angular.module('djangoBMF', []);
+var bmfapp = angular.module('djangoBMF', []);
 
 /*
  * ui-config
  */
 
-app.config(['$httpProvider', '$locationProvider', function($httpProvider, $locationProvider) {
+bmfapp.config(['$httpProvider', '$locationProvider', function($httpProvider, $locationProvider) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $locationProvider.html5Mode(true).hashPrefix('!');
 }]);
 
-app.filter('mark_safe', ['$sce', function($sce) {
+bmfapp.filter('mark_safe', ['$sce', function($sce) {
     return function(value) {
         return $sce.trustAsHtml(value);
     }
 }]);
 
 // compare with https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date-and-time-formatting-specifiers
-app.filter('django_strftime', [function() {
+bmfapp.filter('django_strftime', [function() {
     return function(value, format) {
         var date = new Date(value);
 
@@ -785,7 +785,7 @@ app.filter('django_strftime', [function() {
     }
 }]);
 
-app.filter('django_short_datetime', ['$filter', function($filter) {
+bmfapp.filter('django_short_datetime', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("SHORT_DATETIME_FORMAT");
     return function(value) {
@@ -793,7 +793,7 @@ app.filter('django_short_datetime', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_short_date', ['$filter', function($filter) {
+bmfapp.filter('django_short_date', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("SHORT_DATE_FORMAT");
     return function(value) {
@@ -801,7 +801,7 @@ app.filter('django_short_date', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_datetime', ['$filter', function($filter) {
+bmfapp.filter('django_datetime', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("DATETIME_FORMAT");
     return function(value) {
@@ -809,7 +809,7 @@ app.filter('django_datetime', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_time', ['$filter', function($filter) {
+bmfapp.filter('django_time', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("TIME_FORMAT");
     return function(value) {
@@ -817,7 +817,7 @@ app.filter('django_time', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_date', ['$filter', function($filter) {
+bmfapp.filter('django_date', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("DATE_FORMAT");
     return function(value) {
@@ -826,7 +826,7 @@ app.filter('django_date', ['$filter', function($filter) {
 }]);
 
 // http://web.archive.org/web/20060617175230/http://blog.natbat.co.uk/archive/2003/Jun/14/time_since
-app.filter('timesince', ['$filter', function($filter) {
+bmfapp.filter('timesince', ['$filter', function($filter) {
     return function(value) {
         var now = new Date();
         var date = new Date(value);
@@ -856,7 +856,7 @@ app.filter('timesince', ['$filter', function($filter) {
  */
 
 // manages form modal calls
-app.directive('bmfForm', [function() {
+bmfapp.directive('bmfForm', [function() {
     return {
         restrict: 'A',
         link: function(scope, element, attr) {
@@ -968,7 +968,7 @@ app.directive('bmfForm', [function() {
 
 
 // manages links vom list views to detail views
-app.directive('bmfDetail', ["$location", function($location) {
+bmfapp.directive('bmfDetail', ["$location", function($location) {
     return {
         restrict: 'A',
         link: function(scope, element, attr) {
@@ -983,7 +983,7 @@ app.directive('bmfDetail', ["$location", function($location) {
 
 
 // 
-app.directive('bmfNotification', ['$http', function($http) {
+bmfapp.directive('bmfNotification', ['$http', function($http) {
     return {
         restrict: 'A',
         template: '<a ng-class="enabled ? \'btn-info\' : \'btn-default\'" title="{{ title }}"><span ng-class="symbol"></span></a>',
@@ -1043,7 +1043,7 @@ app.directive('bmfNotification', ['$http', function($http) {
 
 
 // 
-app.directive('bmfTimeAgo', [function() {
+bmfapp.directive('bmfTimeAgo', [function() {
     return {
         restrict: 'A',
         template: '<span title="{{ time | django_datetime }}">{{ time | timesince }}</span>',
@@ -1056,7 +1056,7 @@ app.directive('bmfTimeAgo', [function() {
 
 
 // manages the content-area
-app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
+bmfapp.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
     return {
         restrict: 'A',
         priority: -90,
@@ -1110,6 +1110,9 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                 }
                 if (type == "detail") {
                     view_detail()
+                }
+                if (type == "notification") {
+                    view_notification()
                 }
             }
 
@@ -1185,6 +1188,45 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                 update_html("detail");
             }
 
+            function view_notification(type) {
+                scope.content_watcher = scope.$watch(
+                    function(scope) {return scope.bmf_current_view},
+                    function(newValue) {if (newValue != undefined && newValue.type == "notification") upd(newValue)}
+                );
+
+                function upd(view) {
+//                  // update vars
+//                  scope.view_name = view.view.name;
+//                  scope.category_name = view.category.name;
+//                  scope.dashboard_name = view.dashboard.name;
+//                  scope.module = view.module;
+//
+//                  scope.ui = {
+//                      notifications: null,
+//                      workflow: null,
+//                      views: null,
+//                  };
+//
+//                  var url = view.module.base + view.pk  + '/';
+//                  $http.get(url).then(function(response) {
+//                      scope.ui.workflow = response.data.workflow;
+//                      scope.ui.views = response.data.views;
+//                      scope.ui.notifications = response.data.notifications;
+//                      scope.template_html = response.data.html
+//
+//                      if (response.data.views.activity.enabled) {
+//                          var url = response.data.views.activity.url;
+//                          $http.get(url).then(function(response) {
+//                              scope.activities = response.data;
+//                              console.log(response.data);
+//                          });
+//                      }
+//                  });
+                }
+
+                update_html("notification");
+            }
+
             function update_html(type) {
                 $element.html(scope.bmf_templates[type]).show();
                 $compile($element.contents())(scope);
@@ -1195,7 +1237,7 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
 
 
 // compiles the content of a scope variable
-app.directive('bmfTemplate', ['$compile', function($compile) {
+bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
     return {
         restrict: 'E',
         priority: -80,
@@ -1222,7 +1264,7 @@ app.directive('bmfTemplate', ['$compile', function($compile) {
  * ui-factory
  */
 
-app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
+bmfapp.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
     function go(next) {
         $rootScope.bmf_current_view = next;
         if (next && ["list", "detail"].indexOf(next.type) >= 0) {
@@ -1293,11 +1335,21 @@ app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($ro
         if (current) {
             return current;
         }
+        // Notification index
+        if (prefix + url == $rootScope.bmf_ui.notification.url) {
+            return {
+                type: 'notification',
+                module: null,
+            }
+        }
+        if (current) {
+            return current;
+        }
     }
     return {get: get, go: go, update: update}
 }]);
 
-app.factory('PageTitle', function() {
+bmfapp.factory('PageTitle', function() {
     var title = '';
     return {
         get: function() { return title; },
@@ -1311,7 +1363,7 @@ app.factory('PageTitle', function() {
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
 
     // pace to store basic templates
     $rootScope.bmf_templates = {
@@ -1335,14 +1387,14 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
     // place to store all sitemaps
     $rootScope.bmf_modules = undefined;
 
+    // place to store all sitemaps
+    $rootScope.bmf_ui = undefined;
+
     // holds the current dashboard
     $rootScope.bmf_current_dashboard = undefined;
 
     // holds all informations about the current view
     $rootScope.bmf_current_view = undefined
-
-    // data holder
-    $rootScope.bmf_data = undefined;
 
     // Load data from REST API
     var url = angular.element.find('body')[0].dataset.api;
@@ -1362,6 +1414,7 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
         $rootScope.bmf_modules = modules;
         $rootScope.bmf_sidebars = sidebar;
 
+        $rootScope.bmf_ui = response.data.ui;
         $rootScope.bmf_dashboards = response.data.dashboards;
         $rootScope.bmf_debug = response.data.debug;
         $rootScope.bmf_templates = response.data.templates;
@@ -1393,7 +1446,7 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
 }]);
 
 // This controller updates the dashboard dropdown menu
-app.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
 
     $scope.data = [];
     $scope.current_dashboard = null;
@@ -1450,8 +1503,17 @@ app.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootS
 
 }]);
 
+
 // This controller updates the dashboard dropdown menu
-app.controller('SidebarCtrl', ['$scope', function($scope) {
+bmfapp.controller('NotificationCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+    $scope.navigation = [];
+    for (var key in $rootScope.bmf_modules) {
+        $scope.navigation.push($rootScope.bmf_modules[key]);
+    };
+}]);
+
+// This controller updates the dashboard dropdown menu
+bmfapp.controller('SidebarCtrl', ['$scope', function($scope) {
     $scope.data = [];
 
     $scope.$watch(
@@ -1489,7 +1551,7 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
 }]);
 
 // This controller manages the activity form
-app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
+bmfapp.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.data = {};
     console.log($scope);
     $scope.processForm = function() {
@@ -1515,7 +1577,7 @@ app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
 
 
 // This controller updates the dashboards navigation
-app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $interval) {
+bmfapp.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $interval) {
     $scope.data = undefined;
 
     $scope.$watch(

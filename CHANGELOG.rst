@@ -2,6 +2,7 @@ Version 0.2.6 (currently in development)
 ========================================
 
 * Rebuild Notifications with angularJS
+* Removed sekizai dependency
 
 Version 0.2.4 (2015-12-27)
 ========================================

@@ -4,7 +4,7 @@
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
 
     // pace to store basic templates
     $rootScope.bmf_templates = {
@@ -28,14 +28,14 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
     // place to store all sitemaps
     $rootScope.bmf_modules = undefined;
 
+    // place to store all sitemaps
+    $rootScope.bmf_ui = undefined;
+
     // holds the current dashboard
     $rootScope.bmf_current_dashboard = undefined;
 
     // holds all informations about the current view
     $rootScope.bmf_current_view = undefined
-
-    // data holder
-    $rootScope.bmf_data = undefined;
 
     // Load data from REST API
     var url = angular.element.find('body')[0].dataset.api;
@@ -55,6 +55,7 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
         $rootScope.bmf_modules = modules;
         $rootScope.bmf_sidebars = sidebar;
 
+        $rootScope.bmf_ui = response.data.ui;
         $rootScope.bmf_dashboards = response.data.dashboards;
         $rootScope.bmf_debug = response.data.debug;
         $rootScope.bmf_templates = response.data.templates;
@@ -86,7 +87,7 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
 }]);
 
 // This controller updates the dashboard dropdown menu
-app.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
 
     $scope.data = [];
     $scope.current_dashboard = null;
@@ -143,8 +144,17 @@ app.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootS
 
 }]);
 
+
 // This controller updates the dashboard dropdown menu
-app.controller('SidebarCtrl', ['$scope', function($scope) {
+bmfapp.controller('NotificationCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+    $scope.navigation = [];
+    for (var key in $rootScope.bmf_modules) {
+        $scope.navigation.push($rootScope.bmf_modules[key]);
+    };
+}]);
+
+// This controller updates the dashboard dropdown menu
+bmfapp.controller('SidebarCtrl', ['$scope', function($scope) {
     $scope.data = [];
 
     $scope.$watch(
@@ -182,7 +192,7 @@ app.controller('SidebarCtrl', ['$scope', function($scope) {
 }]);
 
 // This controller manages the activity form
-app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
+bmfapp.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.data = {};
     console.log($scope);
     $scope.processForm = function() {
@@ -208,7 +218,7 @@ app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
 
 
 // This controller updates the dashboards navigation
-app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $interval) {
+bmfapp.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $interval) {
     $scope.data = undefined;
 
     $scope.$watch(

@@ -100,6 +100,10 @@ class APIIndex(BaseMixin, APIView):
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
                     })),
+                    ('notification', reverse('djangobmf:notification', request=request, format=format, kwargs={
+                        'app': model._meta.app_label,
+                        'model': model._meta.model_name,
+                    })),
                     ('only_related', model._bmfmeta.only_related),
                     ('related', related),
                     ('creates', [
@@ -162,6 +166,7 @@ class APIIndex(BaseMixin, APIView):
         templates = {
             'list': get_template('djangobmf/api/list.html').render().strip(),
             'detail': get_template('djangobmf/api/detail.html').render().strip(),
+            'notification': get_template('djangobmf/api/notification.html').render().strip(),
         }
 
         # === Navigation ------------------------------------------------------
@@ -194,6 +199,12 @@ class APIIndex(BaseMixin, APIView):
             ('modules', modules),
             ('navigation', navigation),
             ('templates', templates),
+            ('ui', OrderedDict([
+                ('notification', OrderedDict([
+                    ('url', reverse('djangobmf:notification')),
+                    ('data', reverse('djangobmf:notification')),
+                ])), 
+            ])),
             ('debug', settings.DEBUG),
         ]))
 
