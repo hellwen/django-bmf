@@ -5,6 +5,4 @@
 
 * check if you can use the notifications to implement better acls
 
-* move the tests folder into the djangobmf folder
-
 And search our source code for the keywords "TODO" and "FIXME".

@@ -1,7 +1,12 @@
-Version 0.2.5 (currently in development)
+Version 0.2.6 (currently in development)
 ========================================
 
 (in development)
+
+Version 0.2.4 (2015-12-27)
+========================================
+
+* New UI build on angular JS
 
 Version 0.2.4 (2015-10-15)
 ========================================
