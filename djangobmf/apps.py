@@ -25,10 +25,10 @@ class BMFConfig(AppConfig):
 
     def __init__(self, *args, **kwargs):
         super(BMFConfig, self).__init__(*args, **kwargs)
-        from djangobmf.core.site import Site
-        self.site = Site(namespace=self.label, app_name=self.label)
 
     def ready(self):
+        from djangobmf.core.site import Site
+        self.site = Site(namespace=self.label, app_name=self.label)
         self.bmf_modules = []
 
 
