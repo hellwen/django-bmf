@@ -28,6 +28,32 @@ CLASSIFIERS = [
 # Dynamically calculate the version
 version = __import__('djangobmf').get_version()
 
+
+def get_packages(package):
+    """
+    Return root package and all sub-packages.
+    """
+    return [dirpath
+        for dirpath, dirnames, filenames in os.walk(package)
+        if os.path.exists(os.path.join(dirpath, '__init__.py'))]
+
+
+def get_package_data(package):
+    """
+    Return all files under the root package, that are not in a
+    package themselves.
+    """
+    walk = [(dirpath.replace(package + os.sep, '', 1), filenames)
+        for dirpath, dirnames, filenames in os.walk(package)
+        if not os.path.exists(os.path.join(dirpath, '__init__.py'))
+        and dirpath[-11:] != '__pycache__'
+    ]
+    filepaths = []
+    for base, filenames in walk:
+        filepaths.extend([os.path.join(base, filename) for filename in filenames])
+    return {package: filepaths}
+
+
 setup(
     name='django-bmf',
     version=version,
@@ -38,7 +64,8 @@ setup(
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author="Sebastian Braun",
     author_email="sbraun@django-bmf.org",
-    packages=find_packages(exclude=['sandbox', 'tests']),
+    packages=get_packages("djangobmf"),
+    package_data=get_package_data("djangobmf"),
     classifiers=CLASSIFIERS,
     extras_require={
       'celery': ['celery'],

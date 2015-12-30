@@ -30,10 +30,12 @@ from djangobmf.views.dashboard import DashboardIndex
 from djangobmf.views.dashboard import Redirect
 # from djangobmf.views.dashboard import DashboardCategory
 # from djangobmf.views.dashboard import DashboardView
+from djangobmf.views.notification import NotificationView
 from djangobmf.views.wizard import WizardView
 
 
 VERSION = get_version()
+
 
 if settings.DEBUG:
     CACHE_TIME = 1
@@ -101,6 +103,14 @@ urlpatterns = patterns(
         name="api-notification",
     ),
     url(
+        r'^api/notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/list/$',
+        never_cache(
+            NotificationAPI.as_view()
+        ),
+        name="api-notification",
+        kwargs={'all': True},
+    ),
+    url(
         r'^api/notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
         never_cache(
             NotificationAPI.as_view()
@@ -166,7 +176,15 @@ urlpatterns = patterns(
 
     url(r'^document/', include('djangobmf.document.urls')),
     url(r'^i18n/', i18n_javascript, name="jsi18n"),
+    url(
+        r'^notification/$', NotificationView.as_view(), name="notification", kwargs={'filter': "unread", 'ct': 0},
+    ),
+    url(
+        r'^notification/(?P<filter>all|active)/$', NotificationView.as_view(), name="notification", kwargs={'ct': 0},
+    ),
+    url(
+        r'^notification/(?P<filter>all|active|unread)/(?P<ct>[0-9]+)/$', NotificationView.as_view(), name="notification",
+    ),
     #  url(r'^messages/', include('djangobmf.message.urls')),
-    url(r'^notifications/', include('djangobmf.notification.urls')),
     url(r'^wizard/$', WizardView.as_view(), name="wizard"),
 )

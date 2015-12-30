@@ -274,23 +274,23 @@ class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAP
         return self.list(request, *args, **kwargs)
 
 
-class NotificationAPI(BaseMixin, UpdateModelMixin, RetrieveModelMixin, GenericAPIView):
+class NotificationAPI(BaseMixin, UpdateModelMixin, ListModelMixin, RetrieveModelMixin, GenericAPIView):
     permission_classes = [NotificationPermission,]
     serializer_class = NotificationSerializer
 
     def get_queryset(self):
-        return Notification.objects.all()
+        return Notification.objects.filter(
+            user=self.request.user,
+            watch_ct=self.get_bmfcontenttype(),
+        )
 
     def get_object(self):
-        # check if the user has access to the object
         if 'pk' in self.kwargs:
             self.get_bmfobject(self.kwargs.get('pk'))
 
         queryset = self.filter_queryset(self.get_queryset())
         lookup = {
-            'user': self.request.user,
             'watch_id': self.kwargs.get('pk', None),
-            'watch_ct': self.get_bmfcontenttype(),
         }
 
         try:
@@ -306,4 +306,7 @@ class NotificationAPI(BaseMixin, UpdateModelMixin, RetrieveModelMixin, GenericAP
         return self.partial_update(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
+        if self.kwargs.get('all', False):
+            return self.list(request, *args, **kwargs)
+        else:
+            return self.retrieve(request, *args, **kwargs)
