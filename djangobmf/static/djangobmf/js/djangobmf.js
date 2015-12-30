@@ -1251,6 +1251,30 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
 
 
 // compiles the content of a scope variable
+bmfapp.directive('bmfRelatedModules', ['$compile', '$rootScope', function($compile, $rootScope) {
+    return {
+        restrict: 'E',
+        scope: {},
+        link: function(scope) {
+            var modules = [];
+            for (var key in $rootScope.bmf_current_view.module.related) {
+                var related = $rootScope.bmf_current_view.module.related[key];
+                var module = $rootScope.bmf_modules[related.ct];
+                modules.push({
+                    template: related.template,
+                    name: module.name,
+                    data: module.data,
+                    html: related.html,
+                });
+            };
+            scope.related = modules;
+            console.log("RELATED_OBJECTS", scope);
+        },
+    };
+}]);
+
+
+// compiles the content of a scope variable
 bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
     return {
         restrict: 'E',
