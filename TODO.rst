@@ -5,4 +5,6 @@
 
 * check if you can use the notifications to implement better acls
 
+* remove sites in favor of apps.py
+
 And search our source code for the keywords "TODO" and "FIXME".
