@@ -1169,10 +1169,26 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                     // update vars
                     scope.module = view.module;
 
+                    console.log(view.module);
                     scope.ui = {
                         notifications: null,
                         workflow: null,
                         views: null,
+                        related: [],
+                    };
+
+                    // get related objects
+                    for (var key in view.module.related) {
+                        console.log(key);
+                        var related = view.module.related[key];
+                        var module = scope.bmf_modules[related.ct];
+                        scope.ui.related.push({
+                            template: related.template,
+                            active: false,
+                            name: module.name,
+                            data: module.data + '?rel-field=' + related.field + '&rel-pk=' + view.pk,
+                            html: related.html,
+                        });
                     };
 
                     var url = view.module.base + view.kwargs.pk  + '/';
@@ -1252,25 +1268,25 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
 
 // compiles the content of a scope variable
 bmfapp.directive('bmfRelatedModules', ['$compile', '$rootScope', function($compile, $rootScope) {
-    return {
-        restrict: 'E',
-        scope: {},
-        link: function(scope) {
-            var modules = [];
-            for (var key in $rootScope.bmf_current_view.module.related) {
-                var related = $rootScope.bmf_current_view.module.related[key];
-                var module = $rootScope.bmf_modules[related.ct];
-                modules.push({
-                    template: related.template,
-                    name: module.name,
-                    data: module.data,
-                    html: related.html,
-                });
-            };
-            scope.related = modules;
-            console.log("RELATED_OBJECTS", scope);
-        },
-    };
+//  return {
+//      restrict: 'C',
+//      scope: {},
+//      link: function(scope) {
+//          var modules = [];
+//          for (var key in $rootScope.bmf_current_view.module.related) {
+//              var related = $rootScope.bmf_current_view.module.related[key];
+//              var module = $rootScope.bmf_modules[related.ct];
+//              modules.push({
+//                  template: related.template,
+//                  name: module.name,
+//                  data: module.data,
+//                  html: related.html,
+//              });
+//          };
+//          scope.related = modules;
+//          console.log("RELATED_OBJECTS", scope);
+//      },
+//  };
 }]);
 
 

@@ -101,6 +101,14 @@ class APIIndex(BaseMixin, APIView):
                         field.name,
                     )
 
+                    # select the lookup field name of the related model
+                    rel_field = None
+                    if isinstance(field, ManyToOneRel):
+                        rel_field = field.get_accessor_name()
+                    if isinstance(field, ManyToManyField):
+                        rel_field = field.m2m_reverse_name()
+                    if not rel_field: continue
+
                     try:
                         get_template(template)
                         html = "<h1>TODO</h1>"  # TODO
@@ -111,6 +119,7 @@ class APIIndex(BaseMixin, APIView):
                         ('ct', related_ct.pk),
                         ('template', template),
                         ('html', html),
+                        ('field', rel_field),
                     ])))
 
                 modules.append(OrderedDict([
