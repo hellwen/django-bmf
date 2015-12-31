@@ -68,25 +68,3 @@ class RangeFilterBackend(BaseFilterBackend):
             return queryset
 
         return queryset.filter(**{'%s__gte' % fieldname: i, '%s__lt' % fieldname: f})
-
-
-class RelatedFilterBackend(BaseFilterBackend):
-    """
-    select only related objects
-    """
-
-    def filter_queryset(self, request, queryset, view):
-        fieldname = request.GET.get('rel-field', None)
-        pk = request.GET.get('rel-pk', None)
-
-        # variables not set
-        if not fieldname or not pk:
-            return queryset
-
-        try:
-            queryset.model._meta.get_field(fieldname)
-        except FieldDoesNotExist:
-            logger.exception('Fieldname is invalid')
-            return queryset
-
-        return queryset.filter(**{'%s_id' % fieldname: pk})

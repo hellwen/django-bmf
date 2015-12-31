@@ -289,9 +289,17 @@ class APIModuleListView(ModelMixin, BaseMixin, ListModelMixin, CreateModelMixin,
 
 class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
     permission_classes = [ModuleViewPermission,]
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    filter_backends = (ViewFilterBackend, RangeFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
+class APIRelatedView(ModelMixin, BaseMixin, RetrieveModelMixin, GenericAPIView):
+    permission_classes = [ModuleViewPermission,]
+    filter_backends = (ViewFilterBackend, RangeFilterBackend)
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
