@@ -855,6 +855,16 @@ bmfapp.filter('timesince', ['$filter', function($filter) {
  * ui-directive
  */
 
+bmfapp.directive('bmfLink', ['ApiUrlFactory', function(ApiUrlFactory) {
+    return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, element, attr) {
+            console.log(ApiUrlFactory('test'));
+        },
+    }
+}]);
+
 // manages form modal calls
 bmfapp.directive('bmfForm', [function() {
     return {
@@ -971,6 +981,7 @@ bmfapp.directive('bmfForm', [function() {
 bmfapp.directive('bmfDetail', ["$location", function($location) {
     return {
         restrict: 'A',
+        scope: false,
         link: function(scope, element, attr) {
             element.on('click', function(event) {
                 var next = $location.path() + attr.bmfDetail + '/';
@@ -1264,6 +1275,90 @@ bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
  * ui-factory
  */
 
+// This factory uses the rootScope to generate a from a given type (req),
+// action(opt) and primary_key(opt)
+bmfapp.factory('ApiUrlFactory', ['$rootScope', function($rootScope) {
+    return function(type, action, pk) {
+        if (!$rootScope.bmf_api.base) throw "api not loaded";
+        if (!$rootScope.bmf_api.app_label) throw "no app_label defined";
+        if (!$rootScope.bmf_api.model_name) throw "no model_name defined";
+        if (!type) throw "no type defined";
+        var url = $rootScope.bmf_api.base + type + '/' + $rootScope.bmf_api.app_label + '/' + $rootScope.bmf_api.model_name + '/';
+        if (action) url += action + '/';
+        if (pk) url += pk + '/';
+        return url
+    }
+}]);
+
+
+/**
+ * @description
+ *
+ * TODO
+ *
+ */
+bmfapp.factory('ViewUrlconf', ['$rootScope', function($rootScope) {
+    return function(url) {
+        // https://gist.github.com/jlong/2428561
+        var parser = document.createElement('a');
+        parser.href = url;
+
+        var urlconf = undefined
+        $rootScope.bmf_view_urlconf.forEach(function(view, i) {
+            if (view.regex.test(parser.pathname)) urlconf = view;
+        });
+
+        if (!urlconf) return false;
+
+        var exp = urlconf.regex.exec(parser.pathname);
+        var kwargs = {}
+        var kwargs_parent = {}
+        urlconf.args.forEach(function(arg, i) {
+            kwargs[arg] = exp[i+1];
+            if (arg != 'pk') kwargs_parent[arg] = exp[i+1];
+        });
+
+        // TODO add validation ... ?
+
+        // Overwrite the breadcrumbs
+        if (urlconf.parent == null) {
+            $rootScope.bmf_breadcrumbs = [{
+                name: urlconf.name,
+                url: url,
+                path: parser.pathname,
+                kwargs: kwargs,
+            }];
+            return true
+        }
+        // Update the breadcrumbs if they are not defined
+        else if ($rootScope.bmf_breadcrumbs.length == 0) {
+            var regex = new RegExp('^(.*/)[0-9+]/$');
+            $rootScope.bmf_breadcrumbs = [{
+                name: urlconf.parent,
+                url: regex.exec(parser.pathname)[1],
+                path: regex.exec(parser.pathname)[1],
+                kwargs: kwargs_parent,
+            },{
+                name: urlconf.name,
+                url: url,
+                path: parser.pathname,
+                kwargs: kwargs,
+            }];
+            return true
+        }
+        // TODO walk over each breadcrumb until the path is matched
+        // return matched path with updated url or append a new entry
+        $rootScope.bmf_breadcrumbs.push({
+            name: urlconf.name,
+            url: url,
+            path: parser.pathname,
+            kwargs: kwargs,
+        });
+        return true
+    }
+}]);
+
+
 bmfapp.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
     function go(next) {
         $rootScope.bmf_current_view = next;
@@ -1363,13 +1458,102 @@ bmfapp.factory('PageTitle', function() {
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', 'ViewUrlconf', function($http, $rootScope, $scope, $window, CurrentView, PageTitle, ViewUrlconf) {
+
+    /**
+     * @description
+     *
+     * This scope stores the base url to the API (needed for lookups)
+     *
+     */
+    $rootScope.bmf_api_base = angular.element.find('body')[0].dataset.api;
+
+    /**
+     * @description
+     *
+     * Every overlay get appended to this list. we only show one modal
+     * per time and update the content as long as this list is not empty
+     *
+     * data {
+     * }
+     *
+     */
+    $rootScope.bmf_modal = [];
+
+    /**
+     * @description
+     *
+     * The breadcrumbs are filled with data as the user navigates through the
+     * framework. it contains information about the history to provide the
+     * functionality to go back one page. With this we are able to travel
+     * from a module to another without changing the overlaying view.
+     * 
+     * The listing pages overwrite this, while every detail-page appends to
+     * this.
+     *
+     * data is generated via the CurrentView factory
+     * - name: the view callback name
+     * - url: the called url
+     * - kwargs: the views keyword arguments
+     *
+     */
+    $rootScope.bmf_breadcrumbs = [];
+
+    /**
+     * @description
+     *
+     * The urlconf is needed to map an url to a view / controller (?)
+     * TODO: check if if could be loaded via the REST-API
+     *
+     */
+    $rootScope.bmf_view_urlconf = [
+        {
+            name: 'list',
+            parent: null,
+            regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/$'),
+            args: ['dashboard', 'category', 'view'],
+        },
+        {
+            name: 'detail',
+            parent: 'list',
+            regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['dashboard', 'category', 'view', 'pk'],
+        },
+        {
+            name: 'notification',
+            parent: null,
+            regex: new RegExp('notification/$'),
+            args: [],
+        },
+        {
+            name: 'notification',
+            parent: null,
+            regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/$'),
+            args: ['app_label', 'module_name'],
+        },
+        {
+            name: 'detail',
+            parent: 'notification',
+            regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['app_label', 'module_name', 'pk'],
+        },
+    ];
+    $rootScope.bmf_api_urlconf = [
+    ];
 
     // pace to store basic templates
     $rootScope.bmf_templates = {
         // template used to display items from the data api as a list
         'list': '',
         'detail': '',
+    };
+
+
+    $rootScope.bmf_api = {
+        base: angular.element.find('body')[0].dataset.api,
+        app_label: undefined,
+        model_name: undefined,
+        module: undefined,
     };
 
     // place to store all dashboards
@@ -1384,10 +1568,8 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     // place to store all sitemaps
     $rootScope.bmf_sidebars = undefined;
 
-    // place to store all sitemaps
     $rootScope.bmf_modules = undefined;
 
-    // place to store all sitemaps
     $rootScope.bmf_ui = undefined;
 
     // holds the current dashboard
@@ -1428,6 +1610,13 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     });
 
     $scope.$on('$locationChangeStart', function(event, next, current) {
+        if (ViewUrlconf(next)) {
+            console.log($rootScope.bmf_breadcrumbs, next);
+        }
+        else {
+            console.log(event, next, current);
+        }
+
         // only invoke if dashboards are present (and the ui is loaded propperly)
         if ($rootScope.bmf_dashboards) {
             var next_view = CurrentView.get(next, true);

@@ -10,12 +10,81 @@ bmfapp.factory('ApiUrlFactory', ['$rootScope', function($rootScope) {
         if (!$rootScope.bmf_api.app_label) throw "no app_label defined";
         if (!$rootScope.bmf_api.model_name) throw "no model_name defined";
         if (!type) throw "no type defined";
-        var url = $rootScope.bmf_api.base + 'm/' + $rootScope.bmf_api.app_label + '/' + $rootScope.bmf_api.model_name + '/' + type + '/';
+        var url = $rootScope.bmf_api.base + type + '/' + $rootScope.bmf_api.app_label + '/' + $rootScope.bmf_api.model_name + '/';
         if (action) url += action + '/';
         if (pk) url += pk + '/';
         return url
     }
 }]);
+
+
+/**
+ * @description
+ *
+ * TODO
+ *
+ */
+bmfapp.factory('ViewUrlconf', ['$rootScope', function($rootScope) {
+    return function(url) {
+        // https://gist.github.com/jlong/2428561
+        var parser = document.createElement('a');
+        parser.href = url;
+
+        var urlconf = undefined
+        $rootScope.bmf_view_urlconf.forEach(function(view, i) {
+            if (view.regex.test(parser.pathname)) urlconf = view;
+        });
+
+        if (!urlconf) return false;
+
+        var exp = urlconf.regex.exec(parser.pathname);
+        var kwargs = {}
+        var kwargs_parent = {}
+        urlconf.args.forEach(function(arg, i) {
+            kwargs[arg] = exp[i+1];
+            if (arg != 'pk') kwargs_parent[arg] = exp[i+1];
+        });
+
+        // TODO add validation ... ?
+
+        // Overwrite the breadcrumbs
+        if (urlconf.parent == null) {
+            $rootScope.bmf_breadcrumbs = [{
+                name: urlconf.name,
+                url: url,
+                path: parser.pathname,
+                kwargs: kwargs,
+            }];
+            return true
+        }
+        // Update the breadcrumbs if they are not defined
+        else if ($rootScope.bmf_breadcrumbs.length == 0) {
+            var regex = new RegExp('^(.*/)[0-9+]/$');
+            $rootScope.bmf_breadcrumbs = [{
+                name: urlconf.parent,
+                url: regex.exec(parser.pathname)[1],
+                path: regex.exec(parser.pathname)[1],
+                kwargs: kwargs_parent,
+            },{
+                name: urlconf.name,
+                url: url,
+                path: parser.pathname,
+                kwargs: kwargs,
+            }];
+            return true
+        }
+        // TODO walk over each breadcrumb until the path is matched
+        // return matched path with updated url or append a new entry
+        $rootScope.bmf_breadcrumbs.push({
+            name: urlconf.name,
+            url: url,
+            path: parser.pathname,
+            kwargs: kwargs,
+        });
+        return true
+    }
+}]);
+
 
 bmfapp.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
     function go(next) {

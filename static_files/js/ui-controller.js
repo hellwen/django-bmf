@@ -4,7 +4,15 @@
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', 'ViewUrlconf', function($http, $rootScope, $scope, $window, CurrentView, PageTitle, ViewUrlconf) {
+
+    /**
+     * @description
+     *
+     * This scope stores the base url to the API (needed for lookups)
+     *
+     */
+    $rootScope.bmf_api_base = angular.element.find('body')[0].dataset.api;
 
     /**
      * @description
@@ -29,8 +37,10 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
      * The listing pages overwrite this, while every detail-page appends to
      * this.
      *
-     * data {
-     * }
+     * data is generated via the CurrentView factory
+     * - name: the view callback name
+     * - url: the called url
+     * - kwargs: the views keyword arguments
      *
      */
     $rootScope.bmf_breadcrumbs = [];
@@ -38,10 +48,44 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     /**
      * @description
      *
-     * This scope stores the base url to the API (needed for lookups)
+     * The urlconf is needed to map an url to a view / controller (?)
+     * TODO: check if if could be loaded via the REST-API
      *
      */
-    $rootScope.bmf_apibase = angular.element.find('body')[0].dataset.api;
+    $rootScope.bmf_view_urlconf = [
+        {
+            name: 'list',
+            parent: null,
+            regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/$'),
+            args: ['dashboard', 'category', 'view'],
+        },
+        {
+            name: 'detail',
+            parent: 'list',
+            regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['dashboard', 'category', 'view', 'pk'],
+        },
+        {
+            name: 'notification',
+            parent: null,
+            regex: new RegExp('notification/$'),
+            args: [],
+        },
+        {
+            name: 'notification',
+            parent: null,
+            regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/$'),
+            args: ['app_label', 'module_name'],
+        },
+        {
+            name: 'detail',
+            parent: 'notification',
+            regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['app_label', 'module_name', 'pk'],
+        },
+    ];
+    $rootScope.bmf_api_urlconf = [
+    ];
 
     // pace to store basic templates
     $rootScope.bmf_templates = {
@@ -49,6 +93,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         'list': '',
         'detail': '',
     };
+
 
     $rootScope.bmf_api = {
         base: angular.element.find('body')[0].dataset.api,
@@ -111,6 +156,13 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     });
 
     $scope.$on('$locationChangeStart', function(event, next, current) {
+        if (ViewUrlconf(next)) {
+            console.log($rootScope.bmf_breadcrumbs, next);
+        }
+        else {
+            console.log(event, next, current);
+        }
+
         // only invoke if dashboards are present (and the ui is loaded propperly)
         if ($rootScope.bmf_dashboards) {
             var next_view = CurrentView.get(next, true);
