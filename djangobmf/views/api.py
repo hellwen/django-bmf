@@ -327,6 +327,8 @@ class NotificationAPI(BaseMixin, UpdateModelMixin, ListModelMixin, RetrieveModel
 
         queryset = self.filter_queryset(self.get_queryset())
         lookup = {
+            'user': self.request.user,
+            'watch_ct': self.get_bmfcontenttype(),
             'watch_id': self.kwargs.get('pk', None),
         }
 
