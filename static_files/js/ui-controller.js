@@ -6,6 +6,13 @@
 // the data needed to access the bmf's views
 bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
 
+    $rootScope.bmf_api = {
+        base: angular.element.find('body')[0].dataset.api,
+        app_label: undefined,
+        model_name: undefined,
+        module: undefined,
+    };
+
     // pace to store basic templates
     $rootScope.bmf_templates = {
         // template used to display items from the data api as a list
@@ -25,10 +32,8 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     // place to store all sitemaps
     $rootScope.bmf_sidebars = undefined;
 
-    // place to store all sitemaps
     $rootScope.bmf_modules = undefined;
 
-    // place to store all sitemaps
     $rootScope.bmf_ui = undefined;
 
     // holds the current dashboard

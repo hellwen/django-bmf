@@ -2,6 +2,16 @@
  * ui-directive
  */
 
+bmfapp.directive('bmfLink', ['ApiUrlFactory', function(ApiUrlFactory) {
+    return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, element, attr) {
+            console.log(ApiUrlFactory('test'));
+        },
+    }
+}]);
+
 // manages form modal calls
 bmfapp.directive('bmfForm', [function() {
     return {
@@ -118,6 +128,7 @@ bmfapp.directive('bmfForm', [function() {
 bmfapp.directive('bmfDetail', ["$location", function($location) {
     return {
         restrict: 'A',
+        scope: false,
         link: function(scope, element, attr) {
             element.on('click', function(event) {
                 var next = $location.path() + attr.bmfDetail + '/';

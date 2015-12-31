@@ -2,6 +2,21 @@
  * ui-factory
  */
 
+// This factory uses the rootScope to generate a from a given type (req),
+// action(opt) and primary_key(opt)
+bmfapp.factory('ApiUrlFactory', ['$rootScope', function($rootScope) {
+    return function(type, action, pk) {
+        if (!$rootScope.bmf_api.base) throw "api not loaded";
+        if (!$rootScope.bmf_api.app_label) throw "no app_label defined";
+        if (!$rootScope.bmf_api.model_name) throw "no model_name defined";
+        if (!type) throw "no type defined";
+        var url = $rootScope.bmf_api.base + 'm/' + $rootScope.bmf_api.app_label + '/' + $rootScope.bmf_api.model_name + '/' + type + '/';
+        if (action) url += action + '/';
+        if (pk) url += pk + '/';
+        return url
+    }
+}]);
+
 bmfapp.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
     function go(next) {
         $rootScope.bmf_current_view = next;
