@@ -6,18 +6,55 @@
 // the data needed to access the bmf's views
 bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
 
-    $rootScope.bmf_api = {
-        base: angular.element.find('body')[0].dataset.api,
-        app_label: undefined,
-        model_name: undefined,
-        module: undefined,
-    };
+    /**
+     * @description
+     *
+     * Every overlay get appended to this list. we only show one modal
+     * per time and update the content as long as this list is not empty
+     *
+     * data {
+     * }
+     *
+     */
+    $rootScope.bmf_modal = [];
+
+    /**
+     * @description
+     *
+     * The breadcrumbs are filled with data as the user navigates through the
+     * framework. it contains information about the history to provide the
+     * functionality to go back one page. With this we are able to travel
+     * from a module to another without changing the overlaying view.
+     * 
+     * The listing pages overwrite this, while every detail-page appends to
+     * this.
+     *
+     * data {
+     * }
+     *
+     */
+    $rootScope.bmf_breadcrumbs = [];
+
+    /**
+     * @description
+     *
+     * This scope stores the base url to the API (needed for lookups)
+     *
+     */
+    $rootScope.bmf_apibase = angular.element.find('body')[0].dataset.api;
 
     // pace to store basic templates
     $rootScope.bmf_templates = {
         // template used to display items from the data api as a list
         'list': '',
         'detail': '',
+    };
+
+    $rootScope.bmf_api = {
+        base: angular.element.find('body')[0].dataset.api,
+        app_label: undefined,
+        model_name: undefined,
+        module: undefined,
     };
 
     // place to store all dashboards
