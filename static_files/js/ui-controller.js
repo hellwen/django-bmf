@@ -4,7 +4,7 @@
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', 'ViewUrlconf', function($http, $rootScope, $scope, $window, CurrentView, PageTitle, ViewUrlconf) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'PageTitle', 'ViewUrlconf', function($http, $rootScope, $scope, $window, PageTitle, ViewUrlconf) {
 
     /**
      * @description
@@ -13,6 +13,14 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
      *
      */
     $rootScope.bmf_api_base = angular.element.find('body')[0].dataset.api;
+
+    /**
+     * @description
+     *
+     * This scope stores the currently active module
+     *
+     */
+    $rootScope.bmf_module = undefined;
 
     /**
      * @description
@@ -37,7 +45,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
      * The listing pages overwrite this, while every detail-page appends to
      * this.
      *
-     * data is generated via the CurrentView factory
+     * data is generated via the ViewUrlconf factory
      * - name: the view callback name
      * - url: the called url
      * - kwargs: the views keyword arguments
@@ -75,13 +83,13 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
             name: 'notification',
             parent: null,
             regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/$'),
-            args: ['app_label', 'module_name'],
+            args: ['app_label', 'model_name'],
         },
         {
             name: 'detail',
             parent: 'notification',
             regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
-            args: ['app_label', 'module_name', 'pk'],
+            args: ['app_label', 'model_name', 'pk'],
         },
     ];
     $rootScope.bmf_api_urlconf = [
@@ -118,16 +126,12 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
 
     $rootScope.bmf_ui = undefined;
 
-    // holds the current dashboard
-    $rootScope.bmf_current_dashboard = undefined;
-
-    // holds all informations about the current view
-    $rootScope.bmf_current_view = undefined
+    $rootScope.bmf_last_dashboard = undefined;
+    $rootScope.bmf_last_view = undefined
 
     // Load data from REST API
     var url = angular.element.find('body')[0].dataset.api;
     $http.get(url).then(function(response) {
-
         // Update sidebar and Dashboard objects
         var sidebar = {}
         response.data.dashboards.forEach(function(element, index) {
@@ -152,30 +156,19 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
             console.log("BMF-API", response.data);
         }
 
-        CurrentView.update();
+        // load urlconf when all variables are set
+        ViewUrlconf(window.location.href);
     });
 
     $scope.$on('$locationChangeStart', function(event, next, current) {
-        if (ViewUrlconf(next)) {
-            console.log($rootScope.bmf_breadcrumbs, next);
-        }
-        else {
-            console.log(event, next, current);
-        }
-
-        // only invoke if dashboards are present (and the ui is loaded propperly)
-        if ($rootScope.bmf_dashboards) {
-            var next_view = CurrentView.get(next, true);
-            if (next_view) {
-                CurrentView.go(next_view);
-                return true
-            };
-        }
-
-        // Case when the target url is not managed by the ui
-        event.preventDefault(true);
-        if (next != current) {
-            $window.location = next;
+        if (!ViewUrlconf(next)) {
+            // if the url is not managed by the framework, prevent default
+            // action from the angularJS url management and redirect browser to the new url
+            // if the url was changed
+            event.preventDefault(true);
+            if (next != current) {
+                $window.location = next;
+            }
         }
     });
 }]);
