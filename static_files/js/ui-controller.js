@@ -28,8 +28,8 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
      * Every overlay get appended to this list. we only show one modal
      * per time and update the content as long as this list is not empty
      *
-     * data {
-     * }
+     * data
+     * - TODO??
      *
      */
     $rootScope.bmf_modal = [];
@@ -92,15 +92,43 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
             args: ['app_label', 'model_name', 'pk'],
         },
     ];
+    // TODO this is currenty unused
     $rootScope.bmf_api_urlconf = [
+        {
+            type: 'activity',
+            pk: true,
+        },
+        {
+            type: 'notification',
+            action: 'list',
+        },
+        {
+            type: 'notification',
+            action: 'view',
+        },
+        {
+            type: 'notification',
+            action: 'view',
+            pk: true,
+        },
+        {
+            type: 'related',
+            action: '?field',
+            pk: true,
+        },
     ];
 
     // pace to store basic templates
+    /**
+     * @description
+     *
+     * place where all templates are stored
+     *
+     */
     $rootScope.bmf_templates = {
-        // template used to display items from the data api as a list
         'list': '',
         'detail': '',
-        'notification': '<h1>Test</h1>',
+        'notification': '',
     };
 
 

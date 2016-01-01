@@ -151,7 +151,6 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             $rootScope.bmf_breadcrumbs = [{
                 name: urlconf.name,
                 url: url,
-                path: parser.pathname,
                 kwargs: kwargs,
             }];
             return true
@@ -162,12 +161,10 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             $rootScope.bmf_breadcrumbs = [{
                 name: urlconf.parent,
                 url: regex.exec(parser.pathname)[1],
-                path: regex.exec(parser.pathname)[1],
                 kwargs: kwargs_parent,
             },{
                 name: urlconf.name,
                 url: url,
-                path: parser.pathname,
                 kwargs: kwargs,
             }];
             return true
@@ -179,14 +176,13 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
         $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
             if (crumb.url == url) index = i;
         });
-        if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1), i>index, $i--) {
+        if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
             delete $rootScope.bmf_breadcrumbs[i];
         }
 
         $rootScope.bmf_breadcrumbs.push({
             name: urlconf.name,
             url: url,
-            path: parser.pathname,
             kwargs: kwargs,
         });
         return true

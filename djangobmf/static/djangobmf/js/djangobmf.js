@@ -1423,7 +1423,6 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             $rootScope.bmf_breadcrumbs = [{
                 name: urlconf.name,
                 url: url,
-                path: parser.pathname,
                 kwargs: kwargs,
             }];
             return true
@@ -1434,12 +1433,10 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             $rootScope.bmf_breadcrumbs = [{
                 name: urlconf.parent,
                 url: regex.exec(parser.pathname)[1],
-                path: regex.exec(parser.pathname)[1],
                 kwargs: kwargs_parent,
             },{
                 name: urlconf.name,
                 url: url,
-                path: parser.pathname,
                 kwargs: kwargs,
             }];
             return true
@@ -1451,14 +1448,13 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
         $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
             if (crumb.url == url) index = i;
         });
-        if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1), i>index, $i--) {
+        if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
             delete $rootScope.bmf_breadcrumbs[i];
         }
 
         $rootScope.bmf_breadcrumbs.push({
             name: urlconf.name,
             url: url,
-            path: parser.pathname,
             kwargs: kwargs,
         });
         return true
@@ -1504,8 +1500,8 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
      * Every overlay get appended to this list. we only show one modal
      * per time and update the content as long as this list is not empty
      *
-     * data {
-     * }
+     * data
+     * - TODO??
      *
      */
     $rootScope.bmf_modal = [];
@@ -1568,15 +1564,43 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
             args: ['app_label', 'model_name', 'pk'],
         },
     ];
+    // TODO this is currenty unused
     $rootScope.bmf_api_urlconf = [
+        {
+            type: 'activity',
+            pk: true,
+        },
+        {
+            type: 'notification',
+            action: 'list',
+        },
+        {
+            type: 'notification',
+            action: 'view',
+        },
+        {
+            type: 'notification',
+            action: 'view',
+            pk: true,
+        },
+        {
+            type: 'related',
+            action: '?field',
+            pk: true,
+        },
     ];
 
     // pace to store basic templates
+    /**
+     * @description
+     *
+     * place where all templates are stored
+     *
+     */
     $rootScope.bmf_templates = {
-        // template used to display items from the data api as a list
         'list': '',
         'detail': '',
-        'notification': '<h1>Test</h1>',
+        'notification': '',
     };
 
 
