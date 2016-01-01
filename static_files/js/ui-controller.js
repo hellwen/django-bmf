@@ -100,6 +100,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         // template used to display items from the data api as a list
         'list': '',
         'detail': '',
+        'notification': '<h1>Test</h1>',
     };
 
 
@@ -152,7 +153,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         $rootScope.bmf_templates = response.data.templates;
         $rootScope.bmf_navigation = response.data.navigation;
 
-        if (response.data.debug) {
+        if ($rootScope.bmf_debug) {
             console.log("BMF-API", response.data);
         }
 
@@ -177,57 +178,41 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
 bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
 
     $scope.data = [];
-    $scope.current_dashboard = null;
+    $scope.current = undefined;
 
     $scope.$watch(
         function(scope) {return scope.bmf_dashboards},
         function(newValue) {if (newValue != undefined) update_dashboard()}
     );
     $scope.$watch(
-        function(scope) {return scope.bmf_current_dashboard},
+        function(scope) {return scope.bmf_last_dashboard},
         function(newValue) {if (newValue != undefined) update_dashboard()}
     );
 
     function update_dashboard(key) {
         var response = [];
-        var current_dashboard = [];
-        var current = $scope.bmf_current_dashboard;
+        var data = [];
+        var current = undefined;
+        if (!key && $scope.bmf_last_dashboard) key = $scope.bmf_last_dashboard.key;
 
         $scope.bmf_dashboards.forEach(function(d, di) {
             var active = false
-            if (current && current.key == d.key || key && key == d.key) {
-                active = true
+            if (key && key == d.key) {
+                active = true;
+                current = d;
             }
-
-            response.push({
+            data.push({
                 'key': d.key,
                 'name': d.name,
                 'active': active,
             });
         });
 
-        $scope.data = response;
-        $scope.current_dashboard = $scope.bmf_current_dashboard;
+        $scope.data = data;
+        $scope.current = current;
+        $rootScope.bmf_current_dashboard = current;
     }
-
-    $scope.update = function(key) {
-        var name;
-        $scope.bmf_dashboards.forEach(function(d, di) {
-            if (key && key == d.key) {
-                name = d.name;
-            }
-        });
-
-        if (name) {
-            $rootScope.bmf_current_dashboard = {
-                key: key,
-                name: name
-            };
-        }
-        else {
-            $rootScope.bmf_current_dashboard = undefined;
-        }
-    };
+    $scope.update = update_dashboard;
 
 }]);
 
@@ -241,40 +226,59 @@ bmfapp.controller('NotificationCtrl', ['$scope', '$rootScope', function($scope, 
 }]);
 
 // This controller updates the dashboard dropdown menu
-bmfapp.controller('SidebarCtrl', ['$scope', function($scope) {
+bmfapp.controller('SidebarCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
     $scope.data = [];
 
     $scope.$watch(
         function(scope) {return scope.bmf_current_view},
         function(newValue) {if (newValue != undefined && (newValue.type == "list" || newValue.type == "detail")) update_sidebar()}
     );
-    $scope.$watch(
-        function(scope) {return scope.bmf_current_dashboard},
-        function(newValue) {if (newValue != undefined) update_sidebar()}
+    $rootScope.$watch(
+        function(scope) {return $rootScope.bmf_current_dashboard},
+        function(value) {if (value != undefined) dashboard($rootScope.bmf_breadcrumbs[0], value.key, value.name)}
+    );
+    $rootScope.$watch(
+        function(scope) {
+            if ($rootScope.bmf_breadcrumbs.length == 0) return undefined;
+            return $rootScope.bmf_breadcrumbs[0].url;
+        },
+        function(value) {if (value != undefined) update($rootScope.bmf_breadcrumbs[0]);}
     );
 
-    function update_sidebar() {
-        var response = [];
-        var key = $scope.bmf_current_dashboard.key;
+    function update(view) {
+        if ($rootScope.bmf_debug) {
+            console.log("ROOT-VIEW", view);
+        }
+    }
 
-        response.push({
+    function dashboard(root, key, name) {
+        var data = []
+        data.push({
             'class': 'sidebar-board',
-            'name': $scope.bmf_current_dashboard.name
+            'name': name,
         });
 
-        $scope.bmf_sidebars[key].forEach(function(c, ci) {
-            response.push({'name': c.name});
+        $rootScope.bmf_sidebars[key].forEach(function(c, ci) {
+            data.push({'name': c.name});
             c.views.forEach(function(v, vi) {
-                if ($scope.bmf_current_view && ($scope.bmf_current_view.type == "list" || $scope.bmf_current_view.type == "detail") && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
-                    response.push({'name': v.name, 'url': v.url, 'class': 'active'});
+                if ('dashboard' in root.kwargs && 'category' in root.kwargs && 'view' in root.kwargs && root.kwargs.dashboard == key && root.kwargs.category == c.key && root.kwargs.view == v.key) {
+                    data.push({'name': v.name, 'url': v.url, 'class': 'active'});
                 }
                 else {
-                    response.push({'name': v.name, 'url': v.url});
+                    data.push({'name': v.name, 'url': v.url});
                 }
             });
         });
+        $scope.data = data;
+    }
 
-        $scope.data = response;
+    function update_sidebar() {
+        if (!$scope.bmf_current_dashboard) return false;
+        dashboard(
+            $rootScope.bmf_breadcrumbs[0],
+            $scope.bmf_current_dashboard.key,
+            $scope.bmf_current_dashboard.name
+        );
     }
 }]);
 
@@ -349,29 +353,5 @@ bmfapp.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $in
                 }, nav.intervall * 1000);
             }
         });
-
-
-
-//      var response = [];
-//      var key = $scope.bmf_current_dashboard.key;
-//
-//      response.push({
-//          'class': 'sidebar-board',
-//          'name': $scope.bmf_current_dashboard.name
-//      });
-//
-//      $scope.bmf_sidebars[key].forEach(function(c, ci) {
-//          response.push({'name': c.name});
-//          c.views.forEach(function(v, vi) {
-//              if ($scope.bmf_current_view && $scope.bmf_current_view.type == "list" && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
-//                  response.push({'name': v.name, 'url': v.url, 'class': 'active'});
-//              }
-//              else {
-//                  response.push({'name': v.name, 'url': v.url});
-//              }
-//          });
-//      });
-//
-        console.log($scope.data);
     }
 }]);

@@ -214,19 +214,18 @@ bmfapp.directive('bmfTimeAgo', [function() {
 
 
 // manages the content-area
-bmfapp.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
+bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', function($compile, $rootScope, $http) {
     return {
         restrict: 'A',
         priority: -90,
+        // scope: {},
         link: function(scope, $element) {
             scope.$watch(
                 function(scope) {
-                    if (scope.bmf_current_view) {
-                        return scope.bmf_current_view.type
-                    }
-                    return undefined
+                    if ($rootScope.bmf_breadcrumbs.length == 0) return undefined;
+                    return $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1].name;
                 },
-                function(newValue) {if (newValue != undefined) update(newValue)}
+                function(value) {if (value != undefined) update(value);}
             );
 
             // clear all variables not in common use
@@ -386,7 +385,7 @@ bmfapp.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
             }
 
             function update_html(type) {
-                $element.html(scope.bmf_templates[type]).show();
+                $element.html($rootScope.bmf_templates[type]).show();
                 $compile($element.contents())(scope);
             }
         }

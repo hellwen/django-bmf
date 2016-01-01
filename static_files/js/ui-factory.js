@@ -78,7 +78,7 @@ bmfapp.factory('ModuleFromCt', ['$rootScope', function($rootScope) {
 /**
  * @description
  *
- * TODO
+ * Parse the url, validate and update rootScope
  *
  */
 bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'ModuleFromUrl', function($rootScope, ViewFromUrl, ModuleFromCt, ModuleFromUrl) {
@@ -106,8 +106,8 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
         });
 
         // Validation
-        if ('model_name' in kwargs && 'app_label' in kwargs) {
-            var module = ModuleFromUrl(app_label, model_name);
+        if ('app_label' in kwargs && 'model_name' in kwargs) {
+            var module = ModuleFromUrl(kwargs.app_label, kwargs.model_name);
             if (module == undefined) return false;
             $rootScope.bmf_module = module;
         }
@@ -125,11 +125,6 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             if (module == undefined) return false;
             $rootScope.bmf_module = module;
 
-            // TODO REMOVE ME
-            $rootScope.bmf_current_dashboard = {
-                key: view.dashboard.key,
-                name: view.dashboard.name
-            };
             // TODO REMOVE ME
             if ('pk' in kwargs) {
                 $rootScope.bmf_current_view = {
@@ -149,7 +144,6 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
                     dashboard: view.dashboard,
                 };
             }
-
         }
 
         // Overwrite the breadcrumbs
@@ -179,8 +173,16 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             return true
         }
 
-        // TODO walk over each breadcrumb until the path is matched
+        // Walk over each breadcrumb until the path is matched
         // return matched path with updated url or append a new entry
+        var index = undefined;
+        $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
+            if (crumb.url == url) index = i;
+        });
+        if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1), i>index, $i--) {
+            delete $rootScope.bmf_breadcrumbs[i];
+        }
+
         $rootScope.bmf_breadcrumbs.push({
             name: urlconf.name,
             url: url,
