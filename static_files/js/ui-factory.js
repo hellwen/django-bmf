@@ -5,11 +5,11 @@
 // This factory uses the rootScope to generate a from a given type (req),
 // action(opt) and primary_key(opt)
 bmfapp.factory('ApiUrlFactory', ['$rootScope', function($rootScope) {
-    return function(type, action, pk) {
+    return function(module, type, action, pk) {
         if (!$rootScope.bmf_api.base) throw "api not loaded";
         if (!type) throw "no type defined";
         var url = $rootScope.bmf_api.base + type + '/';
-        if ($rootScope.bmf_api.app_label && $rootScope.bmf_api.model_name) url += $rootScope.bmf_api.app_label + '/' + $rootScope.bmf_api.model_name + '/';
+        if (module) url += module.app + '/' + module.model + '/';
         if (action) url += action + '/';
         if (pk) url += pk + '/';
         return url
@@ -105,13 +105,15 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
         });
 
         // Validation
+        var view = undefined;
+        var module = undefined;
         if ('app_label' in kwargs && 'model_name' in kwargs) {
-            var module = ModuleFromUrl(kwargs.app_label, kwargs.model_name);
+            module = ModuleFromUrl(kwargs.app_label, kwargs.model_name);
             if (module == undefined) return false;
             $rootScope.bmf_module = module;
         }
         else if ('dashboard' in kwargs && 'category' in kwargs && 'view' in kwargs) {
-            var view = ViewFromUrl(kwargs.dashboard, kwargs.category, kwargs.view);
+            view = ViewFromUrl(kwargs.dashboard, kwargs.category, kwargs.view);
             if (view == undefined) return false;
 
             $rootScope.bmf_last_dashboard = {
@@ -120,7 +122,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             };
             $rootScope.bmf_last_view = view;
 
-            var module = ModuleFromCt(view.view.ct);
+            module = ModuleFromCt(view.view.ct);
             if (module == undefined) return false;
             $rootScope.bmf_module = module;
 
@@ -145,45 +147,56 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             }
         }
 
+        // Fire event to update content layer
+        // (needs to be fired before breadcrumbs are updated)
+        $rootScope.bmfevent_content(urlconf.name);
+
         // Overwrite the breadcrumbs
         if (urlconf.parent == null) {
             $rootScope.bmf_breadcrumbs = [{
                 name: urlconf.name,
+                module: module || null,
                 url: url,
                 kwargs: kwargs,
             }];
-            return true
         }
         // Update the breadcrumbs if they are not defined
         else if ($rootScope.bmf_breadcrumbs.length == 0) {
             var regex = new RegExp('^(.*/)[0-9+]/$');
             $rootScope.bmf_breadcrumbs = [{
                 name: urlconf.parent,
+                module: module || null,
                 url: regex.exec(parser.pathname)[1],
                 kwargs: kwargs_parent,
             },{
                 name: urlconf.name,
+                module: module || null,
                 url: url,
                 kwargs: kwargs,
             }];
-            return true
+        }
+        else {
+            // Walk over each breadcrumb until the path is matched
+            // return matched path with updated url or append a new entry
+            var index = undefined;
+            $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
+                if (crumb.url == url) index = i;
+            });
+            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
+                delete $rootScope.bmf_breadcrumbs[i];
+            }
+
+            $rootScope.bmf_breadcrumbs.push({
+                name: urlconf.name,
+                module: module || null,
+                url: url,
+                kwargs: kwargs,
+            });
         }
 
-        // Walk over each breadcrumb until the path is matched
-        // return matched path with updated url or append a new entry
-        var index = undefined;
-        $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
-            if (crumb.url == url) index = i;
-        });
-        if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
-            delete $rootScope.bmf_breadcrumbs[i];
-        }
+        // fire events (with updated breadcrumbs)
+        if (view) $rootScope.bmfevent_dashboard(kwargs.dashboard);
 
-        $rootScope.bmf_breadcrumbs.push({
-            name: urlconf.name,
-            url: url,
-            kwargs: kwargs,
-        });
         return true
     }
 }]);

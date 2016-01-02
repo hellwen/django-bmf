@@ -2,14 +2,13 @@
  * django BMF Angular UI
  */
 
-// Event send, when the activity list needs to be reloaded
-var BMFEVENT_ACTIVITY = "bmf.event.activity";
-
-// Event send, when the model details need to be updated
-var BMFEVENT_MODELDETAIL = "bmf.event.modeldetail";
-
-// Event send, when the model details need to be updated
-var BMFEVENT_MODELLIST = "bmf.event.modellist";
+var BMFEVENT_ACTIVITY = "bmf.event.update.activity";
+var BMFEVENT_CONTENT = "bmf.event.update.content";
+var BMFEVENT_DASHBOARD = "bmf.event.update.dashboard";
+var BMFEVENT_DATA = "bmf.event.update.data";
+var BMFEVENT_MODAL = "bmf.event.update.modal";
+var BMFEVENT_NAVIGATION = "bmf.event.update.navigation";
+var BMFEVENT_SIDEBAR = "bmf.event.update.sidebar";
 
 // INIT APP
 var bmfapp = angular.module('djangoBMF', []);

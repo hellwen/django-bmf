@@ -214,19 +214,13 @@ bmfapp.directive('bmfTimeAgo', [function() {
 
 
 // manages the content-area
-bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', function($compile, $rootScope, $http) {
+bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactory', function($compile, $rootScope, $http, ApiUrlFactory) {
     return {
         restrict: 'A',
         priority: -90,
         // scope: {},
         link: function(scope, $element) {
-            scope.$watch(
-                function(scope) {
-                    if ($rootScope.bmf_breadcrumbs.length == 0) return undefined;
-                    return $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1].name;
-                },
-                function(value) {if (value != undefined) update(value);}
-            );
+            scope.$on(BMFEVENT_CONTENT, function(event, name) {update(name)});
 
             // clear all variables not in common use
             // by views
@@ -347,14 +341,17 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', function($com
 
             function view_notification(type) {
                 
-                scope.content_watcher = scope.$watch(
-                    function(scope) {return $rootScope.bmf_module},
-                    function(value) {upd(value)}
-                );
+            //  scope.content_watcher = scope.$watch(
+            //      function(scope) {return $rootScope.bmf_module},
+            //      function(value) {upd(value)}
+            //  );
 
                 function upd(module) {
-                    console.log("NOTI", module, $rootScope.bmf_module)
-//                  // update vars
+                    // update vars
+                    var url = ApiUrlFactory(null, 'notification', 'count');
+                    $http.get(url).then(function(response) {
+                        console.log(response);
+                    });
 //                  scope.view_name = view.view.name;
 //                  scope.category_name = view.category.name;
 //                  scope.dashboard_name = view.dashboard.name;

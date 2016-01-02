@@ -658,14 +658,13 @@ $(document).ready(function() {
  * django BMF Angular UI
  */
 
-// Event send, when the activity list needs to be reloaded
-var BMFEVENT_ACTIVITY = "bmf.event.activity";
-
-// Event send, when the model details need to be updated
-var BMFEVENT_MODELDETAIL = "bmf.event.modeldetail";
-
-// Event send, when the model details need to be updated
-var BMFEVENT_MODELLIST = "bmf.event.modellist";
+var BMFEVENT_ACTIVITY = "bmf.event.update.activity";
+var BMFEVENT_CONTENT = "bmf.event.update.content";
+var BMFEVENT_DASHBOARD = "bmf.event.update.dashboard";
+var BMFEVENT_DATA = "bmf.event.update.data";
+var BMFEVENT_MODAL = "bmf.event.update.modal";
+var BMFEVENT_NAVIGATION = "bmf.event.update.navigation";
+var BMFEVENT_SIDEBAR = "bmf.event.update.sidebar";
 
 // INIT APP
 var bmfapp = angular.module('djangoBMF', []);
@@ -1067,19 +1066,13 @@ bmfapp.directive('bmfTimeAgo', [function() {
 
 
 // manages the content-area
-bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', function($compile, $rootScope, $http) {
+bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactory', function($compile, $rootScope, $http, ApiUrlFactory) {
     return {
         restrict: 'A',
         priority: -90,
         // scope: {},
         link: function(scope, $element) {
-            scope.$watch(
-                function(scope) {
-                    if ($rootScope.bmf_breadcrumbs.length == 0) return undefined;
-                    return $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1].name;
-                },
-                function(value) {if (value != undefined) update(value);}
-            );
+            scope.$on(BMFEVENT_CONTENT, function(event, name) {update(name)});
 
             // clear all variables not in common use
             // by views
@@ -1200,14 +1193,17 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', function($com
 
             function view_notification(type) {
                 
-                scope.content_watcher = scope.$watch(
-                    function(scope) {return $rootScope.bmf_module},
-                    function(value) {upd(value)}
-                );
+            //  scope.content_watcher = scope.$watch(
+            //      function(scope) {return $rootScope.bmf_module},
+            //      function(value) {upd(value)}
+            //  );
 
                 function upd(module) {
-                    console.log("NOTI", module, $rootScope.bmf_module)
-//                  // update vars
+                    // update vars
+                    var url = ApiUrlFactory(null, 'notification', 'count');
+                    $http.get(url).then(function(response) {
+                        console.log(response);
+                    });
 //                  scope.view_name = view.view.name;
 //                  scope.category_name = view.category.name;
 //                  scope.dashboard_name = view.dashboard.name;
@@ -1279,11 +1275,11 @@ bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
 // This factory uses the rootScope to generate a from a given type (req),
 // action(opt) and primary_key(opt)
 bmfapp.factory('ApiUrlFactory', ['$rootScope', function($rootScope) {
-    return function(type, action, pk) {
+    return function(module, type, action, pk) {
         if (!$rootScope.bmf_api.base) throw "api not loaded";
         if (!type) throw "no type defined";
         var url = $rootScope.bmf_api.base + type + '/';
-        if ($rootScope.bmf_api.app_label && $rootScope.bmf_api.model_name) url += $rootScope.bmf_api.app_label + '/' + $rootScope.bmf_api.model_name + '/';
+        if (module) url += module.app + '/' + module.model + '/';
         if (action) url += action + '/';
         if (pk) url += pk + '/';
         return url
@@ -1379,13 +1375,15 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
         });
 
         // Validation
+        var view = undefined;
+        var module = undefined;
         if ('app_label' in kwargs && 'model_name' in kwargs) {
-            var module = ModuleFromUrl(kwargs.app_label, kwargs.model_name);
+            module = ModuleFromUrl(kwargs.app_label, kwargs.model_name);
             if (module == undefined) return false;
             $rootScope.bmf_module = module;
         }
         else if ('dashboard' in kwargs && 'category' in kwargs && 'view' in kwargs) {
-            var view = ViewFromUrl(kwargs.dashboard, kwargs.category, kwargs.view);
+            view = ViewFromUrl(kwargs.dashboard, kwargs.category, kwargs.view);
             if (view == undefined) return false;
 
             $rootScope.bmf_last_dashboard = {
@@ -1394,7 +1392,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             };
             $rootScope.bmf_last_view = view;
 
-            var module = ModuleFromCt(view.view.ct);
+            module = ModuleFromCt(view.view.ct);
             if (module == undefined) return false;
             $rootScope.bmf_module = module;
 
@@ -1419,45 +1417,56 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             }
         }
 
+        // Fire event to update content layer
+        // (needs to be fired before breadcrumbs are updated)
+        $rootScope.bmfevent_content(urlconf.name);
+
         // Overwrite the breadcrumbs
         if (urlconf.parent == null) {
             $rootScope.bmf_breadcrumbs = [{
                 name: urlconf.name,
+                module: module || null,
                 url: url,
                 kwargs: kwargs,
             }];
-            return true
         }
         // Update the breadcrumbs if they are not defined
         else if ($rootScope.bmf_breadcrumbs.length == 0) {
             var regex = new RegExp('^(.*/)[0-9+]/$');
             $rootScope.bmf_breadcrumbs = [{
                 name: urlconf.parent,
+                module: module || null,
                 url: regex.exec(parser.pathname)[1],
                 kwargs: kwargs_parent,
             },{
                 name: urlconf.name,
+                module: module || null,
                 url: url,
                 kwargs: kwargs,
             }];
-            return true
+        }
+        else {
+            // Walk over each breadcrumb until the path is matched
+            // return matched path with updated url or append a new entry
+            var index = undefined;
+            $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
+                if (crumb.url == url) index = i;
+            });
+            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
+                delete $rootScope.bmf_breadcrumbs[i];
+            }
+
+            $rootScope.bmf_breadcrumbs.push({
+                name: urlconf.name,
+                module: module || null,
+                url: url,
+                kwargs: kwargs,
+            });
         }
 
-        // Walk over each breadcrumb until the path is matched
-        // return matched path with updated url or append a new entry
-        var index = undefined;
-        $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
-            if (crumb.url == url) index = i;
-        });
-        if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
-            delete $rootScope.bmf_breadcrumbs[i];
-        }
+        // fire events (with updated breadcrumbs)
+        if (view) $rootScope.bmfevent_dashboard(kwargs.dashboard);
 
-        $rootScope.bmf_breadcrumbs.push({
-            name: urlconf.name,
-            url: url,
-            kwargs: kwargs,
-        });
         return true
     }
 }]);
@@ -1560,6 +1569,45 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     $rootScope.bmf_api_urlconf = [
     ];
 
+    /**
+     * @description
+     *
+     * Event broadcaster
+     *
+     */
+    $rootScope.bmfevent_activity = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_ACTIVITY);
+    }
+    $rootScope.bmfevent_content = function(name) {
+        var crumbs = $rootScope.bmf_breadcrumbs;
+        if (!crumbs || crumbs.length == 0 || crumbs[crumbs.length - 1].name != name) {
+            $rootScope.$broadcast(BMFEVENT_CONTENT, name)
+        }
+    }
+    $rootScope.bmfevent_dashboard = function(key) {
+        $rootScope.$broadcast(BMFEVENT_DASHBOARD, key);
+    }
+    $rootScope.bmfevent_data = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_DATA);
+    }
+    $rootScope.bmfevent_modal = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_MODAL);
+    }
+    $rootScope.bmfevent_navigation = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_NAVIGATION);
+    }
+    $rootScope.bmfevent_sidebar = function(dashboard_key) {
+        $rootScope.bmf_dashboards.forEach(function(d, i) {
+            if (d.key == dashboard_key) {
+                $rootScope.$broadcast(BMFEVENT_SIDEBAR, d.key, d.name);
+            }
+        });
+    }
+
     // pace to store basic templates
     /**
      * @description
@@ -1595,7 +1643,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     $rootScope.bmf_ui = undefined;
 
     $rootScope.bmf_last_dashboard = undefined;
-    $rootScope.bmf_last_view = undefined
+    $rootScope.bmf_last_view = undefined;
 
     // Load data from REST API
     var url = angular.element.find('body')[0].dataset.api;
@@ -1623,48 +1671,30 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         if ($rootScope.bmf_debug) {
             console.log("BMF-API", response.data);
         }
+        $rootScope.bmfevent_dashboard();
 
         // load urlconf when all variables are set
         ViewUrlconf(window.location.href);
     });
 
-    $scope.$on('$locationChangeStart', function(event, next, current) {
-        if (!ViewUrlconf(next)) {
-            // if the url is not managed by the framework, prevent default
-            // action from the angularJS url management and redirect browser to the new url
-            // if the url was changed
-            event.preventDefault(true);
-            if (next != current) {
-                $window.location = next;
-            }
-        }
-    });
 }]);
 
 // This controller updates the dashboard dropdown menu
 bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
 
+    $scope.$on(BMFEVENT_DASHBOARD, function(event, key) {update(key)});
+
     $scope.data = [];
     $scope.current = undefined;
 
-    $scope.$watch(
-        function(scope) {return scope.bmf_dashboards},
-        function(newValue) {if (newValue != undefined) update_dashboard()}
-    );
-    $scope.$watch(
-        function(scope) {return scope.bmf_last_dashboard},
-        function(newValue) {if (newValue != undefined) update_dashboard()}
-    );
-
-    function update_dashboard(key) {
+    function update(key) {
         var response = [];
         var data = [];
         var current = undefined;
-        if (!key && $scope.bmf_last_dashboard) key = $scope.bmf_last_dashboard.key;
 
-        $scope.bmf_dashboards.forEach(function(d, di) {
+        $rootScope.bmf_dashboards.forEach(function(d, di) {
             var active = false
-            if (key && key == d.key) {
+            if (key == d.key) {
                 active = true;
                 current = d;
             }
@@ -1675,12 +1705,15 @@ bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $ro
             });
         });
 
+        // fire event
+        if (current) {
+            $rootScope.bmfevent_sidebar(key);
+        }
+
         $scope.data = data;
         $scope.current = current;
-        $rootScope.bmf_current_dashboard = current;
     }
-    $scope.update = update_dashboard;
-
+    $scope.update = update;
 }]);
 
 
@@ -1694,28 +1727,13 @@ bmfapp.controller('NotificationCtrl', ['$scope', '$rootScope', function($scope, 
 
 // This controller updates the dashboard dropdown menu
 bmfapp.controller('SidebarCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+    $scope.$on(BMFEVENT_SIDEBAR, function(event, key, name) {update(key, name)});
+
     $scope.data = [];
 
-    $rootScope.$watch(
-        function(scope) {return $rootScope.bmf_current_dashboard},
-        function(value) {if (value != undefined) dashboard($rootScope.bmf_breadcrumbs[0], value.key, value.name)}
-    );
-    $rootScope.$watch(
-        function(scope) {
-            if ($rootScope.bmf_breadcrumbs.length == 0) return undefined;
-            return $rootScope.bmf_breadcrumbs[0].url;
-        },
-        function(value) {if (value != undefined) update($rootScope.bmf_breadcrumbs[0]);}
-    );
-
-    function update(root) {
-        if ('dashboard' in root.kwargs && 'category' in root.kwargs && 'view' in root.kwargs) {
-            $rootScope.bmf_dashboards.forEach(function(d, i) {
-                if (d.key == root.kwargs.dashboard) {
-                    dashboard(root, d.key, d.name);
-                }
-            });
-        }
+    function update(key, name) {
+        var root = $rootScope.bmf_breadcrumbs[0];
+        dashboard(root, key, name);
     }
 
     function dashboard(root, key, name) {
@@ -1737,15 +1755,6 @@ bmfapp.controller('SidebarCtrl', ['$scope', '$rootScope', function($scope, $root
             });
         });
         $scope.data = data;
-    }
-
-    function update_sidebar() {
-        if (!$scope.bmf_current_dashboard) return false;
-        dashboard(
-            $rootScope.bmf_breadcrumbs[0],
-            $scope.bmf_current_dashboard.key,
-            $scope.bmf_current_dashboard.name
-        );
     }
 }]);
 
@@ -1838,4 +1847,23 @@ bmfapp.controller('NavigationCtrl', ['$scope', '$interval', '$http', function($s
             }
         });
     }
+}]);
+
+/*
+ * ui-run
+ */
+
+
+bmfapp.run(['$rootScope', '$location', 'ViewUrlconf', function($rootScope, $location, ViewUrlconf) {
+    $rootScope.$on('$locationChangeStart', function(event, next, current) {
+        if (next != current && !ViewUrlconf(next)) {
+            // if the url is not managed by the framework, prevent default
+            // action from the angularJS url management and redirect browser to the new url
+            // if the url was changed
+            event.preventDefault(true);
+            if (next != current) {
+                $window.location = next;
+            }
+        }
+    });
 }]);
