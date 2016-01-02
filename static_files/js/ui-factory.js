@@ -187,12 +187,3 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
         return true
     }
 }]);
-
-
-bmfapp.factory('PageTitle', function() {
-    var title = '';
-    return {
-        get: function() { return title; },
-        set: function(newTitle) { title = newTitle }
-    };
-});

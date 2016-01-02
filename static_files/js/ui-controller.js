@@ -4,7 +4,7 @@
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'PageTitle', 'ViewUrlconf', function($http, $rootScope, $scope, $window, PageTitle, ViewUrlconf) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'ViewUrlconf', function($http, $rootScope, $scope, $window, ViewUrlconf) {
 
     /**
      * @description
@@ -94,28 +94,6 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     ];
     // TODO this is currenty unused
     $rootScope.bmf_api_urlconf = [
-        {
-            type: 'activity',
-            pk: true,
-        },
-        {
-            type: 'notification',
-            action: 'list',
-        },
-        {
-            type: 'notification',
-            action: 'view',
-        },
-        {
-            type: 'notification',
-            action: 'view',
-            pk: true,
-        },
-        {
-            type: 'related',
-            action: '?field',
-            pk: true,
-        },
     ];
 
     // pace to store basic templates
@@ -138,9 +116,6 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         model_name: undefined,
         module: undefined,
     };
-
-    // place to store all dashboards
-    $rootScope.PageTitle = PageTitle;
 
     // place to store all dashboards
     $rootScope.bmf_dashboards = undefined;
@@ -257,10 +232,6 @@ bmfapp.controller('NotificationCtrl', ['$scope', '$rootScope', function($scope, 
 bmfapp.controller('SidebarCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
     $scope.data = [];
 
-    $scope.$watch(
-        function(scope) {return scope.bmf_current_view},
-        function(newValue) {if (newValue != undefined && (newValue.type == "list" || newValue.type == "detail")) update_sidebar()}
-    );
     $rootScope.$watch(
         function(scope) {return $rootScope.bmf_current_dashboard},
         function(value) {if (value != undefined) dashboard($rootScope.bmf_breadcrumbs[0], value.key, value.name)}
@@ -273,9 +244,13 @@ bmfapp.controller('SidebarCtrl', ['$scope', '$rootScope', function($scope, $root
         function(value) {if (value != undefined) update($rootScope.bmf_breadcrumbs[0]);}
     );
 
-    function update(view) {
-        if ($rootScope.bmf_debug) {
-            console.log("ROOT-VIEW", view);
+    function update(root) {
+        if ('dashboard' in root.kwargs && 'category' in root.kwargs && 'view' in root.kwargs) {
+            $rootScope.bmf_dashboards.forEach(function(d, i) {
+                if (d.key == root.kwargs.dashboard) {
+                    dashboard(root, d.key, d.name);
+                }
+            });
         }
     }
 
@@ -337,7 +312,7 @@ bmfapp.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http
 
 
 // This controller updates the dashboards navigation
-bmfapp.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $interval) {
+bmfapp.controller('NavigationCtrl', ['$scope', '$interval', '$http', function($scope, $interval, $http) {
     $scope.data = undefined;
 
     $scope.$watch(
@@ -360,8 +335,23 @@ bmfapp.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $in
         $scope.data = $scope.bmf_navigation;
 
         $scope.update = function (i) {
-            nav = $scope.data[i]
-            console.log("TIMER", i, nav)
+            nav = $scope.data[i];
+            // console.log("TIMER", i, nav)
+            $http({
+                method: 'GET',
+                url: nav.api,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }).then(function (response) {
+                // success callback
+                // console.log("success", this, response);
+                $scope.data[i].active = response.data.active;
+                $scope.data[i].count = response.data.count;
+            }, function (response) {
+                // error callback
+                console.log("Navigation Timer Error", response);
+            });
         }
 
         $scope.data.forEach(function(nav, i) {
@@ -373,6 +363,8 @@ bmfapp.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $in
                 $interval.cancel(nav.timer);
             }
             nav.timer = undefined;
+            nav.active = false;
+            nav.count = 0;
 
             if (nav.api && nav.intervall) {
                 $scope.update(i);

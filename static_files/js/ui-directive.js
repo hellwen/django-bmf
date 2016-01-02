@@ -346,12 +346,14 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', function($com
             }
 
             function view_notification(type) {
+                
                 scope.content_watcher = scope.$watch(
-                    function(scope) {return scope.bmf_current_view},
-                    function(newValue) {if (newValue != undefined && newValue.type == "notification") upd(newValue)}
+                    function(scope) {return $rootScope.bmf_module},
+                    function(value) {upd(value)}
                 );
 
-                function upd(view) {
+                function upd(module) {
+                    console.log("NOTI", module, $rootScope.bmf_module)
 //                  // update vars
 //                  scope.view_name = view.view.name;
 //                  scope.category_name = view.category.name;
@@ -380,7 +382,7 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', function($com
 //                      }
 //                  });
                 }
-
+                upd($rootScope.bmf_module);
                 update_html("notification");
             }
 

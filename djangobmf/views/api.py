@@ -213,11 +213,7 @@ class APIIndex(BaseMixin, APIView):
                 'api': reverse('djangobmf:api-notification', kwargs={'action': 'count'}),
 
                 # check every n seconds for changes (req, when api)
-                'intervall': 60,
-
-                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
-                'active': False,
-                'count': 0,
+                'intervall': 180,
             },
         ]
 
