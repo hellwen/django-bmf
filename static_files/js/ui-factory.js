@@ -7,10 +7,9 @@
 bmfapp.factory('ApiUrlFactory', ['$rootScope', function($rootScope) {
     return function(type, action, pk) {
         if (!$rootScope.bmf_api.base) throw "api not loaded";
-        if (!$rootScope.bmf_api.app_label) throw "no app_label defined";
-        if (!$rootScope.bmf_api.model_name) throw "no model_name defined";
         if (!type) throw "no type defined";
-        var url = $rootScope.bmf_api.base + type + '/' + $rootScope.bmf_api.app_label + '/' + $rootScope.bmf_api.model_name + '/';
+        var url = $rootScope.bmf_api.base + type + '/';
+        if ($rootScope.bmf_api.app_label && $rootScope.bmf_api.model_name) url += $rootScope.bmf_api.app_label + '/' + $rootScope.bmf_api.model_name + '/';
         if (action) url += action + '/';
         if (pk) url += pk + '/';
         return url

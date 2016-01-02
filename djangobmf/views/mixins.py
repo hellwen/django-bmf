@@ -95,7 +95,10 @@ class BaseMixin(object):
         if getattr(self, 'model', None):
             return self.model
 
-        # Raises a LookupError, when it does not find a model
+        if 'app' not in self.kwargs or 'model' not in self.kwargs:
+            raise LookupError()
+
+        # Raises also a LookupError, when it does not find a model
         self.model = apps.get_model(self.kwargs.get('app'), self.kwargs.get('model'))
         return self.model
 

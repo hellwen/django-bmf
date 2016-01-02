@@ -6,7 +6,7 @@
     </div>
     <div class="col-lg-3 col-sm-4">
         <ul class="nav nav-pills nav-stacked">
-            <li ng-repeat="n in navigation | orderBy:'name'">
+            <li ng-repeat="n in navigation | filter:{watch_function:true} | orderBy:'name'" ng-class="n.ct==bmf_module.ct ? 'active' : ''">
                 <a href="{{ n.notification }}">{{ n.name }}</a>
             </li>
             <span ng-if="n.count > 0" class="badge pull-right">{{ n.count }}</span>

@@ -86,7 +86,7 @@ class ActivitySerializer(ModelSerializer):
         return None
 
 
-class NotificationSerializer(ModelSerializer):
+class NotificationViewSerializer(ModelSerializer):
     has_new_entry = SerializerMethodField()
     has_comments = SerializerMethodField()
     has_files = SerializerMethodField()
@@ -160,3 +160,7 @@ class NotificationSerializer(ModelSerializer):
             unread=False,
             **validated_data
         )
+
+
+class NotificationListSerializer(NotificationViewSerializer):
+    pass

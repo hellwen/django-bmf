@@ -45,7 +45,7 @@ from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
 
-from djangobmf.core.serializers import NotificationSerializer
+from djangobmf.core.serializers import NotificationViewSerializer
 from djangobmf.models import Notification
 from djangobmf.models import Report
 from djangobmf.permissions import AjaxPermission
@@ -144,7 +144,7 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
             },
             'workflow': meta.workflow.serialize(self.request) if meta.workflow else None,
             'notifications': {
-                'data': NotificationSerializer(notification).data,
+                'data': NotificationViewSerializer(notification).data,
                 'url': reverse(
                     'djangobmf:api-notification',
                     format=None,

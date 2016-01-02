@@ -1279,10 +1279,9 @@ bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
 bmfapp.factory('ApiUrlFactory', ['$rootScope', function($rootScope) {
     return function(type, action, pk) {
         if (!$rootScope.bmf_api.base) throw "api not loaded";
-        if (!$rootScope.bmf_api.app_label) throw "no app_label defined";
-        if (!$rootScope.bmf_api.model_name) throw "no model_name defined";
         if (!type) throw "no type defined";
-        var url = $rootScope.bmf_api.base + type + '/' + $rootScope.bmf_api.app_label + '/' + $rootScope.bmf_api.model_name + '/';
+        var url = $rootScope.bmf_api.base + type + '/';
+        if ($rootScope.bmf_api.app_label && $rootScope.bmf_api.model_name) url += $rootScope.bmf_api.app_label + '/' + $rootScope.bmf_api.model_name + '/';
         if (action) url += action + '/';
         if (pk) url += pk + '/';
         return url
@@ -1761,7 +1760,7 @@ bmfapp.controller('SidebarCtrl', ['$scope', '$rootScope', function($scope, $root
         $rootScope.bmf_sidebars[key].forEach(function(c, ci) {
             data.push({'name': c.name});
             c.views.forEach(function(v, vi) {
-                if ('dashboard' in root.kwargs && 'category' in root.kwargs && 'view' in root.kwargs && root.kwargs.dashboard == key && root.kwargs.category == c.key && root.kwargs.view == v.key) {
+                if (root && 'dashboard' in root.kwargs && 'category' in root.kwargs && 'view' in root.kwargs && root.kwargs.dashboard == key && root.kwargs.category == c.key && root.kwargs.view == v.key) {
                     data.push({'name': v.name, 'url': v.url, 'class': 'active'});
                 }
                 else {

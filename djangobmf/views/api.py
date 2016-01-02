@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Count
 from django.http import Http404
 from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
@@ -22,7 +23,8 @@ from djangobmf.permissions import ModuleViewPermission
 from djangobmf.permissions import NotificationPermission
 from djangobmf.pagination import ModulePagination
 from djangobmf.core.serializers import ActivitySerializer
-from djangobmf.core.serializers import NotificationSerializer
+from djangobmf.core.serializers import NotificationViewSerializer
+from djangobmf.core.serializers import NotificationListSerializer
 from djangobmf.views.mixins import BaseMixin
 
 from rest_framework.generics import GenericAPIView
@@ -122,6 +124,7 @@ class APIIndex(BaseMixin, APIView):
                         model._meta.app_label,
                         model._meta.model_name,
                     ))),
+                    ('watch_function', model._bmfmeta.has_watchfunction),
                     ('data', reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
@@ -207,7 +210,7 @@ class APIIndex(BaseMixin, APIView):
                 'url': reverse('djangobmf:notification'),
 
                 # API call for updates (opt)
-                'api': reverse('djangobmf:notification'),
+                'api': reverse('djangobmf:api-notification', kwargs={'action': 'count'}),
 
                 # check every n seconds for changes (req, when api)
                 'intervall': 60,
@@ -311,15 +314,17 @@ class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAP
         return self.list(request, *args, **kwargs)
 
 
-class NotificationAPI(BaseMixin, UpdateModelMixin, ListModelMixin, RetrieveModelMixin, GenericAPIView):
+class NotificationMixin(BaseMixin):
     permission_classes = [NotificationPermission,]
-    serializer_class = NotificationSerializer
 
     def get_queryset(self):
         return Notification.objects.filter(
             user=self.request.user,
             watch_ct=self.get_bmfcontenttype(),
         )
+
+class NotificationViewAPI(NotificationMixin, UpdateModelMixin, RetrieveModelMixin, GenericAPIView):
+    serializer_class = NotificationViewSerializer
 
     def get_object(self):
         if 'pk' in self.kwargs:
@@ -345,7 +350,31 @@ class NotificationAPI(BaseMixin, UpdateModelMixin, ListModelMixin, RetrieveModel
         return self.partial_update(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        if self.kwargs.get('all', False):
+        return self.retrieve(request, *args, **kwargs)
+
+
+class NotificationListAPI(NotificationMixin, ListModelMixin, GenericAPIView):
+    serializer_class = NotificationListSerializer
+
+    def get(self, request, *args, **kwargs):
             return self.list(request, *args, **kwargs)
-        else:
-            return self.retrieve(request, *args, **kwargs)
+
+
+class NotificationCountAPI(BaseMixin, GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        data = Notification.objects.filter(
+            unread=True,
+            user=request.user,
+        ).values_list(
+            'watch_ct_id',
+        ).annotate(
+            count=Count('*'),
+        ).order_by(
+            'watch_ct_id',
+        )
+        count = sum([n for ct, n in data])
+        return Response(OrderedDict([
+            ('active', bool(count)),
+            ('count', count),
+            ('data', OrderedDict(data)),
+        ]))
