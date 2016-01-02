@@ -219,8 +219,10 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
         restrict: 'A',
         priority: -90,
         // scope: {},
-        link: function(scope, $element) {
-            scope.$on(BMFEVENT_CONTENT, function(event, name) {update(name)});
+        link: function(scope, $element, attr, ctrl) {
+            scope.$on(BMFEVENT_CONTENT, function(event, name) {
+                update(name);
+            });
 
             // clear all variables not in common use
             // by views
@@ -341,17 +343,33 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
 
             function view_notification(type) {
                 
-            //  scope.content_watcher = scope.$watch(
-            //      function(scope) {return $rootScope.bmf_module},
-            //      function(value) {upd(value)}
-            //  );
+                scope.content_watcher = scope.$watch(
+                    function(scope) {return $rootScope.bmf_breadcrumbs[0].module},
+                    function(value) {upd(value)}
+                );
+
+                scope.module = undefined;
 
                 function upd(module) {
                     // update vars
+                    scope.module = module
+
+                    scope.navigation = [];
+                    for (var key in $rootScope.bmf_modules) {
+                        var data = $rootScope.bmf_modules[key];
+                        data.count = 0;
+                        scope.navigation.push(data);
+                    };
+
                     var url = ApiUrlFactory(null, 'notification', 'count');
                     $http.get(url).then(function(response) {
-                        console.log(response);
+                        for (var i in scope.navigation) {
+                            if (scope.navigation[i].ct in response.data.data) {
+                                scope.navigation[i].count = response.data.data[scope.navigation[i].ct];
+                            }
+                        };
                     });
+
 //                  scope.view_name = view.view.name;
 //                  scope.category_name = view.category.name;
 //                  scope.dashboard_name = view.dashboard.name;
@@ -379,7 +397,6 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
 //                      }
 //                  });
                 }
-                upd($rootScope.bmf_module);
                 update_html("notification");
             }
 

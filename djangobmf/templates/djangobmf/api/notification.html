@@ -1,15 +1,14 @@
 {% load i18n %}{% spaceless %}{% verbatim %}
-<div class="row" ng-controller="NotificationCtrl">
+<div class="row">
     <div class="col-lg-9 col-sm-8">
         <ul class="nav nav-tabs">
         </ul>
     </div>
     <div class="col-lg-3 col-sm-4">
         <ul class="nav nav-pills nav-stacked">
-            <li ng-repeat="n in navigation | filter:{watch_function:true} | orderBy:'name'" ng-class="n.ct==bmf_module.ct ? 'active' : ''">
-                <a href="{{ n.notification }}">{{ n.name }}</a>
+            <li ng-repeat="n in navigation | filter:{watch_function:true} | orderBy:'name'" ng-class="n.ct==module.ct ? 'active' : ''">
+                <a href="{{ n.notification }}">{{ n.name }}<span ng-if="n.count>0" class="badge pull-right">{{ n.count }}</span></a>
             </li>
-            <span ng-if="n.count > 0" class="badge pull-right">{{ n.count }}</span>
         </ul>
     </div>
 </div>

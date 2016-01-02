@@ -66,7 +66,7 @@
 
     <div class="panel-body">
         <div ng-if="ui.views.comments" id="bmf_message_form" class="collapse out">
-            <form class="form" role="form" ng-controller="ActivityFormCtrl" ng-submit="processForm()">
+            <form class="form" role="form" ng-controller="ActivityCtrl" ng-submit="processForm()">
                 <div class="form-group">
                     <input type="text" name="topic" class="form-control" placeholder="{% endverbatim %}{% trans "Topic" %}{% verbatim %}" ng-model="data.topic">
                 </div>

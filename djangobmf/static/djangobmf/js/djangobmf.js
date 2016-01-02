@@ -1071,8 +1071,10 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
         restrict: 'A',
         priority: -90,
         // scope: {},
-        link: function(scope, $element) {
-            scope.$on(BMFEVENT_CONTENT, function(event, name) {update(name)});
+        link: function(scope, $element, attr, ctrl) {
+            scope.$on(BMFEVENT_CONTENT, function(event, name) {
+                update(name);
+            });
 
             // clear all variables not in common use
             // by views
@@ -1193,17 +1195,33 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
 
             function view_notification(type) {
                 
-            //  scope.content_watcher = scope.$watch(
-            //      function(scope) {return $rootScope.bmf_module},
-            //      function(value) {upd(value)}
-            //  );
+                scope.content_watcher = scope.$watch(
+                    function(scope) {return $rootScope.bmf_breadcrumbs[0].module},
+                    function(value) {upd(value)}
+                );
+
+                scope.module = undefined;
 
                 function upd(module) {
                     // update vars
+                    scope.module = module
+
+                    scope.navigation = [];
+                    for (var key in $rootScope.bmf_modules) {
+                        var data = $rootScope.bmf_modules[key];
+                        data.count = 0;
+                        scope.navigation.push(data);
+                    };
+
                     var url = ApiUrlFactory(null, 'notification', 'count');
                     $http.get(url).then(function(response) {
-                        console.log(response);
+                        for (var i in scope.navigation) {
+                            if (scope.navigation[i].ct in response.data.data) {
+                                scope.navigation[i].count = response.data.data[scope.navigation[i].ct];
+                            }
+                        };
                     });
+
 //                  scope.view_name = view.view.name;
 //                  scope.category_name = view.category.name;
 //                  scope.dashboard_name = view.dashboard.name;
@@ -1231,7 +1249,6 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
 //                      }
 //                  });
                 }
-                upd($rootScope.bmf_module);
                 update_html("notification");
             }
 
@@ -1679,6 +1696,45 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
 
 }]);
 
+
+// bmfapp.controller('ModalCtrl', [function() {
+// }]);
+
+
+// This controller updates the dashboard dropdown menu
+bmfapp.controller('SidebarCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+    $scope.$on(BMFEVENT_SIDEBAR, function(event, key, name) {update(key, name)});
+
+    $scope.data = [];
+
+    function update(key, name) {
+        var root = $rootScope.bmf_breadcrumbs[0];
+        dashboard(root, key, name);
+    }
+
+    function dashboard(root, key, name) {
+        var data = []
+        data.push({
+            'class': 'sidebar-board',
+            'name': name,
+        });
+
+        $rootScope.bmf_sidebars[key].forEach(function(c, ci) {
+            data.push({'name': c.name});
+            c.views.forEach(function(v, vi) {
+                if (root && 'dashboard' in root.kwargs && 'category' in root.kwargs && 'view' in root.kwargs && root.kwargs.dashboard == key && root.kwargs.category == c.key && root.kwargs.view == v.key) {
+                    data.push({'name': v.name, 'url': v.url, 'class': 'active'});
+                }
+                else {
+                    data.push({'name': v.name, 'url': v.url});
+                }
+            });
+        });
+        $scope.data = data;
+    }
+}]);
+
+
 // This controller updates the dashboard dropdown menu
 bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
 
@@ -1714,73 +1770,6 @@ bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $ro
         $scope.current = current;
     }
     $scope.update = update;
-}]);
-
-
-// This controller updates the dashboard dropdown menu
-bmfapp.controller('NotificationCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
-    $scope.navigation = [];
-    for (var key in $rootScope.bmf_modules) {
-        $scope.navigation.push($rootScope.bmf_modules[key]);
-    };
-}]);
-
-// This controller updates the dashboard dropdown menu
-bmfapp.controller('SidebarCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
-    $scope.$on(BMFEVENT_SIDEBAR, function(event, key, name) {update(key, name)});
-
-    $scope.data = [];
-
-    function update(key, name) {
-        var root = $rootScope.bmf_breadcrumbs[0];
-        dashboard(root, key, name);
-    }
-
-    function dashboard(root, key, name) {
-        var data = []
-        data.push({
-            'class': 'sidebar-board',
-            'name': name,
-        });
-
-        $rootScope.bmf_sidebars[key].forEach(function(c, ci) {
-            data.push({'name': c.name});
-            c.views.forEach(function(v, vi) {
-                if (root && 'dashboard' in root.kwargs && 'category' in root.kwargs && 'view' in root.kwargs && root.kwargs.dashboard == key && root.kwargs.category == c.key && root.kwargs.view == v.key) {
-                    data.push({'name': v.name, 'url': v.url, 'class': 'active'});
-                }
-                else {
-                    data.push({'name': v.name, 'url': v.url});
-                }
-            });
-        });
-        $scope.data = data;
-    }
-}]);
-
-// This controller manages the activity form
-bmfapp.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.data = {};
-    console.log($scope);
-    $scope.processForm = function() {
-        var url = $scope.$parent.$parent.ui.views.activity.url;
-        $http({
-            method: 'POST',
-            data: $scope.data,
-            url: url,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }).then(function (response) {
-            // success callback
-            // console.log("success", this, response);
-            window.location.reload(); 
-        }, function (response) {
-            // error callback
-            console.log("ActivityForm - Error", response);
-            alert(response.data.non_field_errors[0]);
-        });
-    }
 }]);
 
 
@@ -1848,6 +1837,59 @@ bmfapp.controller('NavigationCtrl', ['$scope', '$interval', '$http', function($s
         });
     }
 }]);
+
+
+// bmfapp.controller('ContentCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('DataCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('PaginationCtrl', [function() {
+// }]);
+
+
+bmfapp.controller('ActivityCtrl', [function() {
+    $scope.data = {};
+    $scope.processForm = function() {
+        var url = $scope.$parent.$parent.ui.views.activity.url;
+        $http({
+            method: 'POST',
+            data: $scope.data,
+            url: url,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function (response) {
+            // success callback
+            // console.log("success", this, response);
+            window.location.reload(); 
+        }, function (response) {
+            // error callback
+            console.log("ActivityForm - Error", response);
+            alert(response.data.non_field_errors[0]);
+        });
+    }
+}]);
+
+
+/*
+ * View specific controller
+ */
+
+
+// bmfapp.controller('ListViewCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('DetailViewCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('NotificationViewCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+// }]);
 
 /*
  * ui-run
