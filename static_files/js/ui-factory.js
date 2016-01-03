@@ -127,7 +127,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             $rootScope.bmf_module = module;
 
             // TODO REMOVE ME
-            if (!'pk' in kwargs) {
+            if ('pk' in kwargs == false) {
                 $rootScope.bmf_current_view = {
                     type: urlconf.name,
                     view: view.view,
