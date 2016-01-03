@@ -58,16 +58,16 @@ def djangobmf_user_watch(pk):
         qs = Notification.objects.filter(watch_ct=object.parent_ct, watch_id=object.parent_id)
         if object.action == ACTION_COMMENT:
             logger.debug("Notifications for comment: %s (pk: %s)" % (object.parent_ct, object.parent_id))
-            qs = qs.filter(comment=True)
+            qs = qs.filter(comments=True)
         if object.action == ACTION_UPDATED:
             logger.debug("Notifications for updated data: %s (pk: %s)" % (object.parent_ct, object.parent_id))
-            qs = qs.filter(changed=True)
+            qs = qs.filter(detectchanges=True)
         if object.action == ACTION_WORKFLOW:
             logger.debug("Notifications for changed workflow: %s (pk: %s)" % (object.parent_ct, object.parent_id))
             qs = qs.filter(workflow=True)
         if object.action == ACTION_FILE:
             logger.debug("Notifications for appended file: %s (pk: %s)" % (object.parent_ct, object.parent_id))
-            qs = qs.filter(file=True)
+            qs = qs.filter(files=True)
 
         # ACL
         for notification in qs.select_related('user'):

@@ -97,7 +97,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.core.context_processors.debug',
     'django.contrib.messages.context_processors.messages',
-    'sekizai.context_processors.sekizai',
 )
 
 SECRET_KEY = 'djangobmf-secret-key'
@@ -144,7 +143,6 @@ INSTALLED_APPS = (
     'django.contrib.sitemaps',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'sekizai',
     'rest_framework',
     # 'haystack',
 )

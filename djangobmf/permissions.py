@@ -80,6 +80,15 @@ class BaseModulePermission(BasePermission):
         return qs
 
 
+class NotificationPermission(BaseModulePermission):
+    _methods_map = {
+        'GET': ['%(app)s.view_%(model)s'],
+        'OPTIONS': ['%(app)s.view_%(model)s'],
+        'HEAD': ['%(app)s.view_%(model)s'],
+        'POST': ['%(app)s.view_%(model)s'],
+    }
+
+
 class ActivityPermission(BaseModulePermission):
     _methods_map = {
         'GET': ['%(app)s.view_%(model)s'],

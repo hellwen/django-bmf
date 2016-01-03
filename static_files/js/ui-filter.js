@@ -1,11 +1,11 @@
-app.filter('mark_safe', ['$sce', function($sce) {
+bmfapp.filter('mark_safe', ['$sce', function($sce) {
     return function(value) {
         return $sce.trustAsHtml(value);
     }
 }]);
 
 // compare with https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date-and-time-formatting-specifiers
-app.filter('django_strftime', [function() {
+bmfapp.filter('django_strftime', [function() {
     return function(value, format) {
         var date = new Date(value);
 
@@ -102,7 +102,7 @@ app.filter('django_strftime', [function() {
     }
 }]);
 
-app.filter('django_short_datetime', ['$filter', function($filter) {
+bmfapp.filter('django_short_datetime', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("SHORT_DATETIME_FORMAT");
     return function(value) {
@@ -110,7 +110,7 @@ app.filter('django_short_datetime', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_short_date', ['$filter', function($filter) {
+bmfapp.filter('django_short_date', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("SHORT_DATE_FORMAT");
     return function(value) {
@@ -118,7 +118,7 @@ app.filter('django_short_date', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_datetime', ['$filter', function($filter) {
+bmfapp.filter('django_datetime', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("DATETIME_FORMAT");
     return function(value) {
@@ -126,7 +126,7 @@ app.filter('django_datetime', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_time', ['$filter', function($filter) {
+bmfapp.filter('django_time', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("TIME_FORMAT");
     return function(value) {
@@ -134,7 +134,7 @@ app.filter('django_time', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_date', ['$filter', function($filter) {
+bmfapp.filter('django_date', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("DATE_FORMAT");
     return function(value) {
@@ -143,7 +143,7 @@ app.filter('django_date', ['$filter', function($filter) {
 }]);
 
 // http://web.archive.org/web/20060617175230/http://blog.natbat.co.uk/archive/2003/Jun/14/time_since
-app.filter('timesince', ['$filter', function($filter) {
+bmfapp.filter('timesince', ['$filter', function($filter) {
     return function(value) {
         var now = new Date();
         var date = new Date(value);

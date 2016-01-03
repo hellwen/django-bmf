@@ -1,16 +1,16 @@
-{% load sekizai_tags i18n staticfiles %}<!DOCTYPE html>
+{% load i18n staticfiles %}<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" ng-app="djangoBMF" ng-controller="FrameworkCtrl">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <title>django BMF - {% block title %}{% verbatim %}{{ PageTitle.get() }}{% endverbatim %}{% endblock %}</title>
+        <title>django BMF{% block title %}{% endblock %}</title>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <meta name="author" content="Django BMF" />
         <meta name="Content-Language" content="{{ LANGUAGE_CODE }}" />
         <meta name="language" content="{{ LANGUAGE_CODE }}" />
         <base href="/">{# make the html5 url rewriting work #}
         <link rel="shortcut icon" type="image/x-icon" href="{% static "djangobmf/favicon.ico" %}">
-        <link href="{% static "djangobmf/css/djangobmf.min.css" %}?v={{ djangobmf.version }}" rel="stylesheet">{% render_block "css" %}
+        <link href="{% static "djangobmf/css/djangobmf.min.css" %}?v={{ djangobmf.version }}" rel="stylesheet">
     </head>
     <body data-api="{% url 'djangobmf:api' %}">
         {% block full_body %}
@@ -51,8 +51,8 @@
                                     {% endverbatim %}
                                 </li>
                                 {% verbatim %}
-                                <li ng-if="current_dashboard" ng-cloak class="hidden-xs">
-                                    <p class="navbar-text">{{ current_dashboard.name }}</p>
+                                <li ng-if="current" ng-cloak class="hidden-xs">
+                                    <p class="navbar-text">{{ current.name }}</p>
                                 </li>
                                 {% endverbatim %}
                             </ul>
@@ -132,6 +132,6 @@
         <script src="{% static "djangobmf/js/djangobmf.js" %}?v={{ djangobmf.version }}"></script>
         {% else %}
         <script src="{% static "djangobmf/js/djangobmf.min.js" %}?v={{ djangobmf.version }}"></script>
-        {% endif %}{% render_block "js" %}
+        {% endif %}
     </body>
 </html>

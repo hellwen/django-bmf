@@ -4,17 +4,157 @@
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'ViewUrlconf', function($http, $rootScope, $scope, $window, ViewUrlconf) {
+
+    /**
+     * @description
+     *
+     * This scope stores the base url to the API (needed for lookups)
+     *
+     */
+    $rootScope.bmf_api_base = angular.element.find('body')[0].dataset.api;
+
+    /**
+     * @description
+     *
+     * This scope stores the currently active module
+     *
+     */
+    $rootScope.bmf_module = undefined;
+
+    /**
+     * @description
+     *
+     * Every overlay get appended to this list. we only show one modal
+     * per time and update the content as long as this list is not empty
+     *
+     * data
+     * - TODO??
+     *
+     */
+    $rootScope.bmf_modal = [];
+
+    /**
+     * @description
+     *
+     * The breadcrumbs are filled with data as the user navigates through the
+     * framework. it contains information about the history to provide the
+     * functionality to go back one page. With this we are able to travel
+     * from a module to another without changing the overlaying view.
+     * 
+     * The listing pages overwrite this, while every detail-page appends to
+     * this.
+     *
+     * data is generated via the ViewUrlconf factory
+     * - name: the view callback name
+     * - url: the called url
+     * - kwargs: the views keyword arguments
+     *
+     */
+    $rootScope.bmf_breadcrumbs = [];
+
+    /**
+     * @description
+     *
+     * The urlconf is needed to map an url to a view / controller (?)
+     * TODO: check if if could be loaded via the REST-API
+     *
+     */
+    $rootScope.bmf_view_urlconf = [
+        {
+            name: 'list',
+            parent: null,
+            regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/$'),
+            args: ['dashboard', 'category', 'view'],
+        },
+        {
+            name: 'detail',
+            parent: 'list',
+            regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['dashboard', 'category', 'view', 'pk'],
+        },
+        {
+            name: 'notification',
+            parent: null,
+            regex: new RegExp('notification/$'),
+            args: [],
+        },
+        {
+            name: 'notification',
+            parent: null,
+            regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/$'),
+            args: ['app_label', 'model_name'],
+        },
+        {
+            name: 'detail',
+            parent: 'notification',
+            regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['app_label', 'model_name', 'pk'],
+        },
+    ];
+    // TODO this is currenty unused
+    $rootScope.bmf_api_urlconf = [
+    ];
+
+    /**
+     * @description
+     *
+     * Event broadcaster
+     *
+     */
+    $rootScope.bmfevent_activity = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_ACTIVITY);
+    }
+    $rootScope.bmfevent_content = function(name) {
+        var crumbs = $rootScope.bmf_breadcrumbs;
+        if (!crumbs || crumbs.length == 0 || crumbs[crumbs.length - 1].name != name) {
+            $rootScope.$broadcast(BMFEVENT_CONTENT, name)
+        }
+    }
+    $rootScope.bmfevent_dashboard = function(key) {
+        $rootScope.$broadcast(BMFEVENT_DASHBOARD, key);
+    }
+    $rootScope.bmfevent_data = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_DATA);
+    }
+    $rootScope.bmfevent_modal = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_MODAL);
+    }
+    $rootScope.bmfevent_navigation = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_NAVIGATION);
+    }
+    $rootScope.bmfevent_sidebar = function(dashboard_key) {
+        $rootScope.bmf_dashboards.forEach(function(d, i) {
+            if (d.key == dashboard_key) {
+                $rootScope.$broadcast(BMFEVENT_SIDEBAR, d.key, d.name);
+            }
+        });
+    }
 
     // pace to store basic templates
+    /**
+     * @description
+     *
+     * place where all templates are stored
+     *
+     */
     $rootScope.bmf_templates = {
-        // template used to display items from the data api as a list
         'list': '',
         'detail': '',
+        'notification': '',
     };
 
-    // place to store all dashboards
-    $rootScope.PageTitle = PageTitle;
+
+    $rootScope.bmf_api = {
+        base: angular.element.find('body')[0].dataset.api,
+        app_label: undefined,
+        model_name: undefined,
+        module: undefined,
+    };
 
     // place to store all dashboards
     $rootScope.bmf_dashboards = undefined;
@@ -25,22 +165,16 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
     // place to store all sitemaps
     $rootScope.bmf_sidebars = undefined;
 
-    // place to store all sitemaps
     $rootScope.bmf_modules = undefined;
 
-    // holds the current dashboard
-    $rootScope.bmf_current_dashboard = undefined;
+    $rootScope.bmf_ui = undefined;
 
-    // holds all informations about the current view
-    $rootScope.bmf_current_view = undefined
-
-    // data holder
-    $rootScope.bmf_data = undefined;
+    $rootScope.bmf_last_dashboard = undefined;
+    $rootScope.bmf_last_view = undefined;
 
     // Load data from REST API
     var url = angular.element.find('body')[0].dataset.api;
     $http.get(url).then(function(response) {
-
         // Update sidebar and Dashboard objects
         var sidebar = {}
         response.data.dashboards.forEach(function(element, index) {
@@ -55,160 +189,102 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
         $rootScope.bmf_modules = modules;
         $rootScope.bmf_sidebars = sidebar;
 
+        $rootScope.bmf_ui = response.data.ui;
         $rootScope.bmf_dashboards = response.data.dashboards;
         $rootScope.bmf_debug = response.data.debug;
         $rootScope.bmf_templates = response.data.templates;
         $rootScope.bmf_navigation = response.data.navigation;
 
-        if (response.data.debug) {
+        if ($rootScope.bmf_debug) {
             console.log("BMF-API", response.data);
         }
+        $rootScope.bmfevent_dashboard();
 
-        CurrentView.update();
+        // load urlconf when all variables are set
+        ViewUrlconf(window.location.href);
     });
 
-    $scope.$on('$locationChangeStart', function(event, next, current) {
-        // only invoke if dashboards are present (and the ui is loaded propperly)
-        if ($rootScope.bmf_dashboards) {
-            var next_view = CurrentView.get(next, true);
-            if (next_view) {
-                CurrentView.go(next_view);
-                return true
-            };
-        }
-
-        // Case when the target url is not managed by the ui
-        event.preventDefault(true);
-        if (next != current) {
-            $window.location = next;
-        }
-    });
 }]);
 
+
+// bmfapp.controller('ModalCtrl', [function() {
+// }]);
+
+
 // This controller updates the dashboard dropdown menu
-app.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+bmfapp.controller('SidebarCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+    $scope.$on(BMFEVENT_SIDEBAR, function(event, key, name) {update(key, name)});
 
     $scope.data = [];
-    $scope.current_dashboard = null;
 
-    $scope.$watch(
-        function(scope) {return scope.bmf_dashboards},
-        function(newValue) {if (newValue != undefined) update_dashboard()}
-    );
-    $scope.$watch(
-        function(scope) {return scope.bmf_current_dashboard},
-        function(newValue) {if (newValue != undefined) update_dashboard()}
-    );
+    function update(key, name) {
+        var root = $rootScope.bmf_breadcrumbs[0];
+        dashboard(root, key, name);
+    }
 
-    function update_dashboard(key) {
+    function dashboard(root, key, name) {
+        var data = []
+        data.push({
+            'class': 'sidebar-board',
+            'name': name,
+        });
+
+        $rootScope.bmf_sidebars[key].forEach(function(c, ci) {
+            data.push({'name': c.name});
+            c.views.forEach(function(v, vi) {
+                if (root && 'dashboard' in root.kwargs && 'category' in root.kwargs && 'view' in root.kwargs && root.kwargs.dashboard == key && root.kwargs.category == c.key && root.kwargs.view == v.key) {
+                    data.push({'name': v.name, 'url': v.url, 'class': 'active'});
+                }
+                else {
+                    data.push({'name': v.name, 'url': v.url});
+                }
+            });
+        });
+        $scope.data = data;
+    }
+}]);
+
+
+// This controller updates the dashboard dropdown menu
+bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+
+    $scope.$on(BMFEVENT_DASHBOARD, function(event, key) {update(key)});
+
+    $scope.data = [];
+    $scope.current = undefined;
+
+    function update(key) {
         var response = [];
-        var current_dashboard = [];
-        var current = $scope.bmf_current_dashboard;
+        var data = [];
+        var current = undefined;
 
-        $scope.bmf_dashboards.forEach(function(d, di) {
+        $rootScope.bmf_dashboards.forEach(function(d, di) {
             var active = false
-            if (current && current.key == d.key || key && key == d.key) {
-                active = true
+            if (key == d.key) {
+                active = true;
+                current = d;
             }
-
-            response.push({
+            data.push({
                 'key': d.key,
                 'name': d.name,
                 'active': active,
             });
         });
 
-        $scope.data = response;
-        $scope.current_dashboard = $scope.bmf_current_dashboard;
-    }
-
-    $scope.update = function(key) {
-        var name;
-        $scope.bmf_dashboards.forEach(function(d, di) {
-            if (key && key == d.key) {
-                name = d.name;
-            }
-        });
-
-        if (name) {
-            $rootScope.bmf_current_dashboard = {
-                key: key,
-                name: name
-            };
+        // fire event
+        if (current) {
+            $rootScope.bmfevent_sidebar(key);
         }
-        else {
-            $rootScope.bmf_current_dashboard = undefined;
-        }
-    };
 
-}]);
-
-// This controller updates the dashboard dropdown menu
-app.controller('SidebarCtrl', ['$scope', function($scope) {
-    $scope.data = [];
-
-    $scope.$watch(
-        function(scope) {return scope.bmf_current_view},
-        function(newValue) {if (newValue != undefined && (newValue.type == "list" || newValue.type == "detail")) update_sidebar()}
-    );
-    $scope.$watch(
-        function(scope) {return scope.bmf_current_dashboard},
-        function(newValue) {if (newValue != undefined) update_sidebar()}
-    );
-
-    function update_sidebar() {
-        var response = [];
-        var key = $scope.bmf_current_dashboard.key;
-
-        response.push({
-            'class': 'sidebar-board',
-            'name': $scope.bmf_current_dashboard.name
-        });
-
-        $scope.bmf_sidebars[key].forEach(function(c, ci) {
-            response.push({'name': c.name});
-            c.views.forEach(function(v, vi) {
-                if ($scope.bmf_current_view && ($scope.bmf_current_view.type == "list" || $scope.bmf_current_view.type == "detail") && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
-                    response.push({'name': v.name, 'url': v.url, 'class': 'active'});
-                }
-                else {
-                    response.push({'name': v.name, 'url': v.url});
-                }
-            });
-        });
-
-        $scope.data = response;
+        $scope.data = data;
+        $scope.current = current;
     }
-}]);
-
-// This controller manages the activity form
-app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.data = {};
-    console.log($scope);
-    $scope.processForm = function() {
-        var url = $scope.$parent.$parent.ui.views.activity.url;
-        $http({
-            method: 'POST',
-            data: $scope.data,
-            url: url,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }).then(function (response) {
-            // success callback
-            // console.log("success", this, response);
-            window.location.reload(); 
-        }, function (response) {
-            // error callback
-            console.log("ActivityForm - Error", response);
-            alert(response.data.non_field_errors[0]);
-        })
-    }
+    $scope.update = update;
 }]);
 
 
 // This controller updates the dashboards navigation
-app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $interval) {
+bmfapp.controller('NavigationCtrl', ['$scope', '$interval', '$http', function($scope, $interval, $http) {
     $scope.data = undefined;
 
     $scope.$watch(
@@ -231,8 +307,23 @@ app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $inter
         $scope.data = $scope.bmf_navigation;
 
         $scope.update = function (i) {
-            nav = $scope.data[i]
-            console.log("TIMER", i, nav)
+            nav = $scope.data[i];
+            // console.log("TIMER", i, nav)
+            $http({
+                method: 'GET',
+                url: nav.api,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }).then(function (response) {
+                // success callback
+                // console.log("success", this, response);
+                $scope.data[i].active = response.data.active;
+                $scope.data[i].count = response.data.count;
+            }, function (response) {
+                // error callback
+                console.log("Navigation Timer Error", response);
+            });
         }
 
         $scope.data.forEach(function(nav, i) {
@@ -244,6 +335,8 @@ app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $inter
                 $interval.cancel(nav.timer);
             }
             nav.timer = undefined;
+            nav.active = false;
+            nav.count = 0;
 
             if (nav.api && nav.intervall) {
                 $scope.update(i);
@@ -252,29 +345,58 @@ app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $inter
                 }, nav.intervall * 1000);
             }
         });
-
-
-
-//      var response = [];
-//      var key = $scope.bmf_current_dashboard.key;
-//
-//      response.push({
-//          'class': 'sidebar-board',
-//          'name': $scope.bmf_current_dashboard.name
-//      });
-//
-//      $scope.bmf_sidebars[key].forEach(function(c, ci) {
-//          response.push({'name': c.name});
-//          c.views.forEach(function(v, vi) {
-//              if ($scope.bmf_current_view && $scope.bmf_current_view.type == "list" && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
-//                  response.push({'name': v.name, 'url': v.url, 'class': 'active'});
-//              }
-//              else {
-//                  response.push({'name': v.name, 'url': v.url});
-//              }
-//          });
-//      });
-//
-        console.log($scope.data);
     }
 }]);
+
+
+// bmfapp.controller('ContentCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('DataCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('PaginationCtrl', [function() {
+// }]);
+
+
+bmfapp.controller('ActivityCtrl', ['$scope', '$http', function($scope, $http) {
+    $scope.data = {};
+    $scope.processForm = function() {
+        var url = $scope.$parent.$parent.ui.views.activity.url;
+        $http({
+            method: 'POST',
+            data: $scope.data,
+            url: url,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function (response) {
+            // success callback
+            // console.log("success", this, response);
+            window.location.reload(); 
+        }, function (response) {
+            // error callback
+            console.log("ActivityForm - Error", response);
+            alert(response.data.non_field_errors[0]);
+        });
+    }
+}]);
+
+
+/*
+ * View specific controller
+ */
+
+
+// bmfapp.controller('ListViewCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('DetailViewCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('NotificationViewCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+// }]);

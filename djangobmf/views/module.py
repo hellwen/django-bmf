@@ -41,11 +41,12 @@ from .mixins import ModuleSearchMixin
 from .mixins import ModuleBaseMixin
 from .mixins import ModuleAjaxMixin
 from .mixins import ModuleViewMixin
-from .mixins import ModuleActivityMixin
 from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
 
+from djangobmf.core.serializers import NotificationViewSerializer
+from djangobmf.models import Notification
 from djangobmf.models import Report
 from djangobmf.permissions import AjaxPermission
 from djangobmf.permissions import ModuleViewPermission
@@ -86,7 +87,25 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
 
     def get_ajax_context(self, **context):
         # shortcut
+        ct = ContentType.objects.get_for_model(self.object)
         meta = self.object._bmfmeta
+
+        try:
+            notification = Notification.objects.get(
+                user=self.request.user,
+                watch_ct=ct,
+                watch_id=self.object.pk
+            )
+            if notification.unread:
+                notification.unread = False
+                notification.save()
+        except Notification.DoesNotExist:
+            notification = Notification(
+                user=self.request.user,
+                watch_ct=ct,
+                watch_id=self.object.pk,
+                unread=False,
+            )
 
         context.update({
             'views': {
@@ -124,15 +143,23 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
                 },
             },
             'workflow': meta.workflow.serialize(self.request) if meta.workflow else None,
+            'notifications': {
+                'data': NotificationViewSerializer(notification).data,
+                'url': reverse(
+                    'djangobmf:api-notification',
+                    format=None,
+                    request=self.request,
+                    kwargs={
+                        'pk': self.object.pk,
+                        'app': self.object._meta.app_label,
+                        'model': self.object._meta.model_name,
+                    },
+                ),
+            },
         })
         return context
 
     def get_template_names(self, related=True):
-#       # self.update_notification()
-#       if related and "open" in self.request.GET.keys() and \
-#               self.request.GET["open"] in self.get_related_views().keys():
-#           return self.get_related_views()[self.request.GET["open"]]["template"]
-
         return super(ModuleDetailView, self).get_template_names() \
             + ["djangobmf/api/detail-default.html"]
 

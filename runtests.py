@@ -81,11 +81,10 @@ def main(modules, verbosity=2, failfast=False, contrib=None, nocontrib=False):
 
     # find tests in tests-directory
     if len(modules) == 0:
-        path = "tests"
+
+        path = os.path.join(os.path.dirname(__file__), "tests")
         for module in os.listdir(path):
-            if os.path.isdir(os.path.join(path, module)):
-                if module[0] == '_':
-                    continue
+            if os.path.isdir(os.path.join(path, module)) and module[0] != '_':
                 modules.append('tests.%s' % module)
 
         # find tests in contrib modules

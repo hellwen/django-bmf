@@ -658,37 +658,36 @@ $(document).ready(function() {
  * django BMF Angular UI
  */
 
-// Event send, when the activity list needs to be reloaded
-var BMFEVENT_ACTIVITY = "bmf.event.activity";
-
-// Event send, when the model details need to be updated
-var BMFEVENT_MODELDETAIL = "bmf.event.modeldetail";
-
-// Event send, when the model details need to be updated
-var BMFEVENT_MODELLIST = "bmf.event.modellist";
+var BMFEVENT_ACTIVITY = "bmf.event.update.activity";
+var BMFEVENT_CONTENT = "bmf.event.update.content";
+var BMFEVENT_DASHBOARD = "bmf.event.update.dashboard";
+var BMFEVENT_DATA = "bmf.event.update.data";
+var BMFEVENT_MODAL = "bmf.event.update.modal";
+var BMFEVENT_NAVIGATION = "bmf.event.update.navigation";
+var BMFEVENT_SIDEBAR = "bmf.event.update.sidebar";
 
 // INIT APP
-var app = angular.module('djangoBMF', []);
+var bmfapp = angular.module('djangoBMF', []);
 
 /*
  * ui-config
  */
 
-app.config(['$httpProvider', '$locationProvider', function($httpProvider, $locationProvider) {
+bmfapp.config(['$httpProvider', '$locationProvider', function($httpProvider, $locationProvider) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $locationProvider.html5Mode(true).hashPrefix('!');
 }]);
 
-app.filter('mark_safe', ['$sce', function($sce) {
+bmfapp.filter('mark_safe', ['$sce', function($sce) {
     return function(value) {
         return $sce.trustAsHtml(value);
     }
 }]);
 
 // compare with https://docs.djangoproject.com/en/dev/ref/templates/builtins/#date-and-time-formatting-specifiers
-app.filter('django_strftime', [function() {
+bmfapp.filter('django_strftime', [function() {
     return function(value, format) {
         var date = new Date(value);
 
@@ -785,7 +784,7 @@ app.filter('django_strftime', [function() {
     }
 }]);
 
-app.filter('django_short_datetime', ['$filter', function($filter) {
+bmfapp.filter('django_short_datetime', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("SHORT_DATETIME_FORMAT");
     return function(value) {
@@ -793,7 +792,7 @@ app.filter('django_short_datetime', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_short_date', ['$filter', function($filter) {
+bmfapp.filter('django_short_date', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("SHORT_DATE_FORMAT");
     return function(value) {
@@ -801,7 +800,7 @@ app.filter('django_short_date', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_datetime', ['$filter', function($filter) {
+bmfapp.filter('django_datetime', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("DATETIME_FORMAT");
     return function(value) {
@@ -809,7 +808,7 @@ app.filter('django_datetime', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_time', ['$filter', function($filter) {
+bmfapp.filter('django_time', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("TIME_FORMAT");
     return function(value) {
@@ -817,7 +816,7 @@ app.filter('django_time', ['$filter', function($filter) {
     }
 }]);
 
-app.filter('django_date', ['$filter', function($filter) {
+bmfapp.filter('django_date', ['$filter', function($filter) {
     var filter_function = $filter('django_strftime');
     var format = get_format("DATE_FORMAT");
     return function(value) {
@@ -826,7 +825,7 @@ app.filter('django_date', ['$filter', function($filter) {
 }]);
 
 // http://web.archive.org/web/20060617175230/http://blog.natbat.co.uk/archive/2003/Jun/14/time_since
-app.filter('timesince', ['$filter', function($filter) {
+bmfapp.filter('timesince', ['$filter', function($filter) {
     return function(value) {
         var now = new Date();
         var date = new Date(value);
@@ -855,8 +854,18 @@ app.filter('timesince', ['$filter', function($filter) {
  * ui-directive
  */
 
+bmfapp.directive('bmfLink', ['ApiUrlFactory', function(ApiUrlFactory) {
+    return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, element, attr) {
+            console.log(ApiUrlFactory('test'));
+        },
+    }
+}]);
+
 // manages form modal calls
-app.directive('bmfForm', [function() {
+bmfapp.directive('bmfForm', [function() {
     return {
         restrict: 'A',
         link: function(scope, element, attr) {
@@ -968,9 +977,10 @@ app.directive('bmfForm', [function() {
 
 
 // manages links vom list views to detail views
-app.directive('bmfDetail', ["$location", function($location) {
+bmfapp.directive('bmfDetail', ["$location", function($location) {
     return {
         restrict: 'A',
+        scope: false,
         link: function(scope, element, attr) {
             element.on('click', function(event) {
                 var next = $location.path() + attr.bmfDetail + '/';
@@ -983,7 +993,67 @@ app.directive('bmfDetail', ["$location", function($location) {
 
 
 // 
-app.directive('bmfTimeAgo', [function() {
+bmfapp.directive('bmfNotification', ['$http', function($http) {
+    return {
+        restrict: 'A',
+        template: '<a ng-class="enabled ? \'btn-info\' : \'btn-default\'" title="{{ title }}"><span ng-class="symbol"></span></a>',
+        replace: true,
+        scope: {},
+        link: function(scope, element, attr) {
+            scope.enabled = scope.$eval(attr.enabled);
+            scope.method = attr.bmfNotification;
+            scope.url = attr.href;
+            scope.symbol = "glyphicon glyphicon-question-sign";
+            scope.title = "";
+            if (scope.method == "new_entry") {
+                scope.symbol = "glyphicon glyphicon-file";
+                scope.title = gettext("New entries");
+            };
+            if (scope.method == "comments") {
+                scope.symbol = "glyphicon glyphicon-comment";
+                scope.title = gettext("New comments");
+            };
+            if (scope.method == "workflow") {
+                scope.symbol = "glyphicon glyphicon-random";
+                scope.title = gettext("Worflow changes");
+            };
+            if (scope.method == "files") {
+                scope.symbol = "glyphicon glyphicon-paperclip";
+                scope.title = gettext("New files");
+            };
+            if (scope.method == "detectchanges") {
+                scope.symbol = "glyphicon glyphicon-edit";
+                scope.title = gettext("Detected changes");
+            };
+
+            element.on('click', function(event) {
+                event.preventDefault();
+                var data = {};
+                data[scope.method] = !scope.enabled;
+
+                $http({
+                    method: 'POST',
+                    data: data,
+                    url: scope.url,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(function (response) {
+                    // success callback
+                    // console.log("success", response);
+                    scope.enabled = response.data[scope.method];
+                }, function (response) {
+                    // error callback
+                    console.log("Notification - Error", response);
+                });
+            });
+        },
+    };
+}]);
+
+
+// 
+bmfapp.directive('bmfTimeAgo', [function() {
     return {
         restrict: 'A',
         template: '<span title="{{ time | django_datetime }}">{{ time | timesince }}</span>',
@@ -996,20 +1066,15 @@ app.directive('bmfTimeAgo', [function() {
 
 
 // manages the content-area
-app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
+bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactory', function($compile, $rootScope, $http, ApiUrlFactory) {
     return {
         restrict: 'A',
         priority: -90,
-        link: function(scope, $element) {
-            scope.$watch(
-                function(scope) {
-                    if (scope.bmf_current_view) {
-                        return scope.bmf_current_view.type
-                    }
-                    return undefined
-                },
-                function(newValue) {if (newValue != undefined) update(newValue)}
-            );
+        // scope: {},
+        link: function(scope, $element, attr, ctrl) {
+            scope.$on(BMFEVENT_CONTENT, function(event, name) {
+                update(name);
+            });
 
             // clear all variables not in common use
             // by views
@@ -1051,6 +1116,9 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                 if (type == "detail") {
                     view_detail()
                 }
+                if (type == "notification") {
+                    view_notification()
+                }
             }
 
             function view_list(type) {
@@ -1088,33 +1156,36 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
 
             function view_detail(type) {
                 scope.content_watcher = scope.$watch(
-                    function(scope) {return scope.bmf_current_view},
-                    function(newValue) {if (newValue != undefined && newValue.type == "detail") upd(newValue)}
+                    function(scope) {
+                        if (!$rootScope.bmf_breadcrumbs || $rootScope.bmf_breadcrumbs.length == 0) {
+                            return undefined
+                        }
+                        return $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length -1];
+                    },
+                    function(value) {if (value != undefined) upd(value)}
                 );
 
                 function upd(view) {
                     // update vars
-                    scope.view_name = view.view.name;
-                    scope.category_name = view.category.name;
-                    scope.dashboard_name = view.dashboard.name;
                     scope.module = view.module;
 
                     scope.ui = {
+                        notifications: null,
                         workflow: null,
                         views: null,
                     };
 
-                    var url = view.module.base + view.pk  + '/';
+                    var url = view.module.base + view.kwargs.pk  + '/';
                     $http.get(url).then(function(response) {
                         scope.ui.workflow = response.data.workflow;
                         scope.ui.views = response.data.views;
+                        scope.ui.notifications = response.data.notifications;
                         scope.template_html = response.data.html
 
                         if (response.data.views.activity.enabled) {
                             var url = response.data.views.activity.url;
                             $http.get(url).then(function(response) {
                                 scope.activities = response.data;
-                                console.log(response.data);
                             });
                         }
                     });
@@ -1123,8 +1194,55 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                 update_html("detail");
             }
 
+            function view_notification(type) {
+                
+                scope.content_watcher = scope.$watch(
+                    function(scope) {return $rootScope.bmf_breadcrumbs[0].module},
+                    function(value) {upd(value)}
+                );
+
+                scope.module = undefined;
+                scope.settings = undefined;
+
+                function upd(module) {
+                    // update vars
+                    scope.module = module
+                    scope.settings = undefined;
+
+                    scope.navigation = [];
+                    for (var key in $rootScope.bmf_modules) {
+                        var data = $rootScope.bmf_modules[key];
+                        data.count = 0;
+                        scope.navigation.push(data);
+                    };
+
+                    var url = ApiUrlFactory(null, 'notification', 'count');
+                    $http.get(url).then(function(response) {
+                        for (var i in scope.navigation) {
+                            if (scope.navigation[i].ct in response.data.data) {
+                                scope.navigation[i].count = response.data.data[scope.navigation[i].ct];
+                            }
+                        };
+                    });
+
+                    if (module) {
+                        var url = ApiUrlFactory(module, 'notification', 'list');
+                        $http.get(url).then(function(response) {
+                            scope.data = response.data.items;
+                        });
+
+                        var url = ApiUrlFactory(module, 'notification', 'view');
+                        $http.get(url).then(function(response) {
+                            scope.settings = response.data;
+                            scope.settings.api = url;
+                        });
+                    }
+                }
+                update_html("notification");
+            }
+
             function update_html(type) {
-                $element.html(scope.bmf_templates[type]).show();
+                $element.html($rootScope.bmf_templates[type]).show();
                 $compile($element.contents())(scope);
             }
         }
@@ -1133,7 +1251,7 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
 
 
 // compiles the content of a scope variable
-app.directive('bmfTemplate', ['$compile', function($compile) {
+bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
     return {
         restrict: 'E',
         priority: -80,
@@ -1160,88 +1278,204 @@ app.directive('bmfTemplate', ['$compile', function($compile) {
  * ui-factory
  */
 
-app.factory('CurrentView', ['$rootScope', '$location', 'PageTitle', function($rootScope, $location, PageTitle) {
-    function go(next) {
-        $rootScope.bmf_current_view = next;
-        if (next && ["list", "detail"].indexOf(next.type) >= 0) {
-            PageTitle.set(next.dashboard.name + ' - ' + next.category.name + ' - ' + next.view.name);
-            $rootScope.bmf_current_dashboard = {
-                key: next.dashboard.key,
-                name: next.dashboard.name
-            };
-        }
+// This factory uses the rootScope to generate a from a given type (req),
+// action(opt) and primary_key(opt)
+bmfapp.factory('ApiUrlFactory', ['$rootScope', function($rootScope) {
+    return function(module, type, action, pk) {
+        if (!$rootScope.bmf_api.base) throw "api not loaded";
+        if (!type) throw "no type defined";
+        var url = $rootScope.bmf_api.base + type + '/';
+        if (module) url += module.app + '/' + module.model + '/';
+        if (action) url += action + '/';
+        if (pk) url += pk + '/';
+        return url
     }
+}]);
 
-    function update(url, prefix) {
-        var current = get(url, prefix);
-        go(current);
-        return current
-    }
 
-    function get(url, prefix) {
-        if (url == undefined) {
-            url = $location.path();
-        }
-        if (prefix) {
-            if ($location.protocol() == 'http' && $location.port() == 80) {
-                prefix = 'http://'+ $location.host();
-            }
-            else if ($location.protocol() == 'https' && $location.port() == 443) {
-                prefix = 'https://'+ $location.host();
-            }
-            else {
-                prefix = $location.protocol() + '://' + $location.host() + ':' + $location.port()
-            }
-        }
-        else {
-            prefix = ''
-        }
-        var current = undefined;
-
-        // LIST AND DETAIL
+/**
+ * @description
+ *
+ * Get the dashboard from url parameters
+ *
+ */
+bmfapp.factory('ViewFromUrl', ['$rootScope', function($rootScope) {
+    return function(dashboard, category, view) {
+        var data = undefined
         $rootScope.bmf_dashboards.forEach(function(d, di) {
-            d.categories.forEach(function(c, ci) {
-                c.views.forEach(function(v, vi) {
-                    var regex = new RegExp('^' + prefix + v.url + '([0-9]+)/$');
-
-                    // check if the view relates to a list view
-                    if (prefix + v.url == url) {
-                        current = {
-                            type: 'list',
+            if (d.key == dashboard) d.categories.forEach(function(c, ci) {
+                if (c.key == category) c.views.forEach(function(v, vi) {
+                    if (v.key == view) {
+                        data = {
                             view: v,
                             category: c,
                             dashboard: d,
-                        };
-                    }
-
-                    // check if the view relates to a detail view
-                    if (regex.test(url)) {
-                        current = {
-                            type: 'detail',
-                            module: $rootScope.bmf_modules[v.ct],
-                            pk: regex.exec(url)[1],
-                            view: v,
-                            category: c,
-                            dashboard: d,
-                        };
+                        }
                     }
                 });
             });
         });
-        if (current) {
-            return current;
-        }
+        return data
     }
-    return {get: get, go: go, update: update}
 }]);
 
-app.factory('PageTitle', function() {
-    var title = '';
-    return {
-        get: function() { return title; },
-        set: function(newTitle) { title = newTitle }
-    };
-});
+
+/**
+ * @description
+ *
+ * Get the module from url parameters
+ *
+ */
+bmfapp.factory('ModuleFromUrl', ['$rootScope', function($rootScope) {
+    return function(app_label, model_name) {
+        var data = undefined
+        for (var key in $rootScope.bmf_modules) {
+            if ($rootScope.bmf_modules[key].app == app_label && $rootScope.bmf_modules[key].model == model_name ) return data = $rootScope.bmf_modules[key];
+        };
+        return data
+    }
+}]);
+
+
+/**
+ * @description
+ *
+ * Get the module from a content-type
+ *
+ */
+bmfapp.factory('ModuleFromCt', ['$rootScope', function($rootScope) {
+    return function(ct) {
+        return $rootScope.bmf_modules[ct];
+    }
+}]);
+
+
+/**
+ * @description
+ *
+ * Parse the url, validate and update rootScope
+ *
+ */
+bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'ModuleFromUrl', function($rootScope, ViewFromUrl, ModuleFromCt, ModuleFromUrl) {
+    return function(url) {
+        // break if api is not loaded
+        if (!$rootScope.bmf_dashboards || !$rootScope.bmf_modules) return false;
+
+        // https://gist.github.com/jlong/2428561
+        var parser = document.createElement('a');
+        parser.href = url;
+
+        var urlconf = undefined
+        $rootScope.bmf_view_urlconf.forEach(function(view, i) {
+            if (view.regex.test(parser.pathname)) urlconf = view;
+        });
+
+        if (!urlconf) return false;
+
+        var exp = urlconf.regex.exec(parser.pathname);
+        var kwargs = {};
+        var kwargs_parent = {};
+        urlconf.args.forEach(function(arg, i) {
+            kwargs[arg] = exp[i+1];
+            if (arg != 'pk') kwargs_parent[arg] = exp[i+1];
+        });
+
+        // Validation
+        var view = undefined;
+        var module = undefined;
+        if ('app_label' in kwargs && 'model_name' in kwargs) {
+            module = ModuleFromUrl(kwargs.app_label, kwargs.model_name);
+            if (module == undefined) return false;
+            $rootScope.bmf_module = module;
+        }
+        else if ('dashboard' in kwargs && 'category' in kwargs && 'view' in kwargs) {
+            view = ViewFromUrl(kwargs.dashboard, kwargs.category, kwargs.view);
+            if (view == undefined) return false;
+
+            $rootScope.bmf_last_dashboard = {
+                key: view.dashboard.key,
+                name: view.dashboard.name
+            };
+            $rootScope.bmf_last_view = view;
+
+            module = ModuleFromCt(view.view.ct);
+            if (module == undefined) return false;
+            $rootScope.bmf_module = module;
+
+            // TODO REMOVE ME
+            if ('pk' in kwargs) {
+                $rootScope.bmf_current_view = {
+                    type: urlconf.name,
+                    module: module,
+                    pk: kwargs.pk,
+                    view: view.view,
+                    category: view.category,
+                    dashboard: view.dashboard,
+                };
+            }
+            else {
+                $rootScope.bmf_current_view = {
+                    type: urlconf.name,
+                    view: view.view,
+                    category: view.category,
+                    dashboard: view.dashboard,
+                };
+            }
+        }
+
+        // Fire event to update content layer
+        // (needs to be fired before breadcrumbs are updated)
+        $rootScope.bmfevent_content(urlconf.name);
+
+        // Overwrite the breadcrumbs
+        if (urlconf.parent == null) {
+            $rootScope.bmf_breadcrumbs = [{
+                name: urlconf.name,
+                module: module || null,
+                url: url,
+                kwargs: kwargs,
+            }];
+        }
+        // Update the breadcrumbs if they are not defined
+        else if ($rootScope.bmf_breadcrumbs.length == 0) {
+            var regex = new RegExp('^(.*/)[0-9+]/$');
+            $rootScope.bmf_breadcrumbs = [{
+                name: urlconf.parent,
+                module: module || null,
+                url: regex.exec(parser.pathname)[1],
+                kwargs: kwargs_parent,
+            },{
+                name: urlconf.name,
+                module: module || null,
+                url: url,
+                kwargs: kwargs,
+            }];
+        }
+        else {
+            // Walk over each breadcrumb until the path is matched
+            // return matched path with updated url or append a new entry
+            var index = undefined;
+            $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
+                if (crumb.url == url) index = i;
+            });
+            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
+                delete $rootScope.bmf_breadcrumbs[i];
+            }
+
+            $rootScope.bmf_breadcrumbs.push({
+                name: urlconf.name,
+                module: module || null,
+                url: url,
+                kwargs: kwargs,
+            });
+        }
+
+        // fire events (with updated breadcrumbs)
+        if (view) $rootScope.bmfevent_dashboard(kwargs.dashboard);
+
+        return true
+    }
+}]);
 
 /*
  * ui-controller
@@ -1249,17 +1483,157 @@ app.factory('PageTitle', function() {
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'CurrentView', 'PageTitle', function($http, $rootScope, $scope, $window, CurrentView, PageTitle) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'ViewUrlconf', function($http, $rootScope, $scope, $window, ViewUrlconf) {
+
+    /**
+     * @description
+     *
+     * This scope stores the base url to the API (needed for lookups)
+     *
+     */
+    $rootScope.bmf_api_base = angular.element.find('body')[0].dataset.api;
+
+    /**
+     * @description
+     *
+     * This scope stores the currently active module
+     *
+     */
+    $rootScope.bmf_module = undefined;
+
+    /**
+     * @description
+     *
+     * Every overlay get appended to this list. we only show one modal
+     * per time and update the content as long as this list is not empty
+     *
+     * data
+     * - TODO??
+     *
+     */
+    $rootScope.bmf_modal = [];
+
+    /**
+     * @description
+     *
+     * The breadcrumbs are filled with data as the user navigates through the
+     * framework. it contains information about the history to provide the
+     * functionality to go back one page. With this we are able to travel
+     * from a module to another without changing the overlaying view.
+     * 
+     * The listing pages overwrite this, while every detail-page appends to
+     * this.
+     *
+     * data is generated via the ViewUrlconf factory
+     * - name: the view callback name
+     * - url: the called url
+     * - kwargs: the views keyword arguments
+     *
+     */
+    $rootScope.bmf_breadcrumbs = [];
+
+    /**
+     * @description
+     *
+     * The urlconf is needed to map an url to a view / controller (?)
+     * TODO: check if if could be loaded via the REST-API
+     *
+     */
+    $rootScope.bmf_view_urlconf = [
+        {
+            name: 'list',
+            parent: null,
+            regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/$'),
+            args: ['dashboard', 'category', 'view'],
+        },
+        {
+            name: 'detail',
+            parent: 'list',
+            regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['dashboard', 'category', 'view', 'pk'],
+        },
+        {
+            name: 'notification',
+            parent: null,
+            regex: new RegExp('notification/$'),
+            args: [],
+        },
+        {
+            name: 'notification',
+            parent: null,
+            regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/$'),
+            args: ['app_label', 'model_name'],
+        },
+        {
+            name: 'detail',
+            parent: 'notification',
+            regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['app_label', 'model_name', 'pk'],
+        },
+    ];
+    // TODO this is currenty unused
+    $rootScope.bmf_api_urlconf = [
+    ];
+
+    /**
+     * @description
+     *
+     * Event broadcaster
+     *
+     */
+    $rootScope.bmfevent_activity = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_ACTIVITY);
+    }
+    $rootScope.bmfevent_content = function(name) {
+        var crumbs = $rootScope.bmf_breadcrumbs;
+        if (!crumbs || crumbs.length == 0 || crumbs[crumbs.length - 1].name != name) {
+            $rootScope.$broadcast(BMFEVENT_CONTENT, name)
+        }
+    }
+    $rootScope.bmfevent_dashboard = function(key) {
+        $rootScope.$broadcast(BMFEVENT_DASHBOARD, key);
+    }
+    $rootScope.bmfevent_data = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_DATA);
+    }
+    $rootScope.bmfevent_modal = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_MODAL);
+    }
+    $rootScope.bmfevent_navigation = function() {
+        // TODO
+        $rootScope.$broadcast(BMFEVENT_NAVIGATION);
+    }
+    $rootScope.bmfevent_sidebar = function(dashboard_key) {
+        $rootScope.bmf_dashboards.forEach(function(d, i) {
+            if (d.key == dashboard_key) {
+                $rootScope.$broadcast(BMFEVENT_SIDEBAR, d.key, d.name);
+            }
+        });
+    }
 
     // pace to store basic templates
+    /**
+     * @description
+     *
+     * place where all templates are stored
+     *
+     */
     $rootScope.bmf_templates = {
-        // template used to display items from the data api as a list
         'list': '',
         'detail': '',
+        'notification': '',
     };
 
-    // place to store all dashboards
-    $rootScope.PageTitle = PageTitle;
+
+    $rootScope.bmf_api = {
+        base: angular.element.find('body')[0].dataset.api,
+        app_label: undefined,
+        model_name: undefined,
+        module: undefined,
+    };
 
     // place to store all dashboards
     $rootScope.bmf_dashboards = undefined;
@@ -1270,22 +1644,16 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
     // place to store all sitemaps
     $rootScope.bmf_sidebars = undefined;
 
-    // place to store all sitemaps
     $rootScope.bmf_modules = undefined;
 
-    // holds the current dashboard
-    $rootScope.bmf_current_dashboard = undefined;
+    $rootScope.bmf_ui = undefined;
 
-    // holds all informations about the current view
-    $rootScope.bmf_current_view = undefined
-
-    // data holder
-    $rootScope.bmf_data = undefined;
+    $rootScope.bmf_last_dashboard = undefined;
+    $rootScope.bmf_last_view = undefined;
 
     // Load data from REST API
     var url = angular.element.find('body')[0].dataset.api;
     $http.get(url).then(function(response) {
-
         // Update sidebar and Dashboard objects
         var sidebar = {}
         response.data.dashboards.forEach(function(element, index) {
@@ -1300,160 +1668,102 @@ app.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'Cu
         $rootScope.bmf_modules = modules;
         $rootScope.bmf_sidebars = sidebar;
 
+        $rootScope.bmf_ui = response.data.ui;
         $rootScope.bmf_dashboards = response.data.dashboards;
         $rootScope.bmf_debug = response.data.debug;
         $rootScope.bmf_templates = response.data.templates;
         $rootScope.bmf_navigation = response.data.navigation;
 
-        if (response.data.debug) {
+        if ($rootScope.bmf_debug) {
             console.log("BMF-API", response.data);
         }
+        $rootScope.bmfevent_dashboard();
 
-        CurrentView.update();
+        // load urlconf when all variables are set
+        ViewUrlconf(window.location.href);
     });
 
-    $scope.$on('$locationChangeStart', function(event, next, current) {
-        // only invoke if dashboards are present (and the ui is loaded propperly)
-        if ($rootScope.bmf_dashboards) {
-            var next_view = CurrentView.get(next, true);
-            if (next_view) {
-                CurrentView.go(next_view);
-                return true
-            };
-        }
-
-        // Case when the target url is not managed by the ui
-        event.preventDefault(true);
-        if (next != current) {
-            $window.location = next;
-        }
-    });
 }]);
 
+
+// bmfapp.controller('ModalCtrl', [function() {
+// }]);
+
+
 // This controller updates the dashboard dropdown menu
-app.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+bmfapp.controller('SidebarCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+    $scope.$on(BMFEVENT_SIDEBAR, function(event, key, name) {update(key, name)});
 
     $scope.data = [];
-    $scope.current_dashboard = null;
 
-    $scope.$watch(
-        function(scope) {return scope.bmf_dashboards},
-        function(newValue) {if (newValue != undefined) update_dashboard()}
-    );
-    $scope.$watch(
-        function(scope) {return scope.bmf_current_dashboard},
-        function(newValue) {if (newValue != undefined) update_dashboard()}
-    );
+    function update(key, name) {
+        var root = $rootScope.bmf_breadcrumbs[0];
+        dashboard(root, key, name);
+    }
 
-    function update_dashboard(key) {
+    function dashboard(root, key, name) {
+        var data = []
+        data.push({
+            'class': 'sidebar-board',
+            'name': name,
+        });
+
+        $rootScope.bmf_sidebars[key].forEach(function(c, ci) {
+            data.push({'name': c.name});
+            c.views.forEach(function(v, vi) {
+                if (root && 'dashboard' in root.kwargs && 'category' in root.kwargs && 'view' in root.kwargs && root.kwargs.dashboard == key && root.kwargs.category == c.key && root.kwargs.view == v.key) {
+                    data.push({'name': v.name, 'url': v.url, 'class': 'active'});
+                }
+                else {
+                    data.push({'name': v.name, 'url': v.url});
+                }
+            });
+        });
+        $scope.data = data;
+    }
+}]);
+
+
+// This controller updates the dashboard dropdown menu
+bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+
+    $scope.$on(BMFEVENT_DASHBOARD, function(event, key) {update(key)});
+
+    $scope.data = [];
+    $scope.current = undefined;
+
+    function update(key) {
         var response = [];
-        var current_dashboard = [];
-        var current = $scope.bmf_current_dashboard;
+        var data = [];
+        var current = undefined;
 
-        $scope.bmf_dashboards.forEach(function(d, di) {
+        $rootScope.bmf_dashboards.forEach(function(d, di) {
             var active = false
-            if (current && current.key == d.key || key && key == d.key) {
-                active = true
+            if (key == d.key) {
+                active = true;
+                current = d;
             }
-
-            response.push({
+            data.push({
                 'key': d.key,
                 'name': d.name,
                 'active': active,
             });
         });
 
-        $scope.data = response;
-        $scope.current_dashboard = $scope.bmf_current_dashboard;
-    }
-
-    $scope.update = function(key) {
-        var name;
-        $scope.bmf_dashboards.forEach(function(d, di) {
-            if (key && key == d.key) {
-                name = d.name;
-            }
-        });
-
-        if (name) {
-            $rootScope.bmf_current_dashboard = {
-                key: key,
-                name: name
-            };
+        // fire event
+        if (current) {
+            $rootScope.bmfevent_sidebar(key);
         }
-        else {
-            $rootScope.bmf_current_dashboard = undefined;
-        }
-    };
 
-}]);
-
-// This controller updates the dashboard dropdown menu
-app.controller('SidebarCtrl', ['$scope', function($scope) {
-    $scope.data = [];
-
-    $scope.$watch(
-        function(scope) {return scope.bmf_current_view},
-        function(newValue) {if (newValue != undefined && (newValue.type == "list" || newValue.type == "detail")) update_sidebar()}
-    );
-    $scope.$watch(
-        function(scope) {return scope.bmf_current_dashboard},
-        function(newValue) {if (newValue != undefined) update_sidebar()}
-    );
-
-    function update_sidebar() {
-        var response = [];
-        var key = $scope.bmf_current_dashboard.key;
-
-        response.push({
-            'class': 'sidebar-board',
-            'name': $scope.bmf_current_dashboard.name
-        });
-
-        $scope.bmf_sidebars[key].forEach(function(c, ci) {
-            response.push({'name': c.name});
-            c.views.forEach(function(v, vi) {
-                if ($scope.bmf_current_view && ($scope.bmf_current_view.type == "list" || $scope.bmf_current_view.type == "detail") && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
-                    response.push({'name': v.name, 'url': v.url, 'class': 'active'});
-                }
-                else {
-                    response.push({'name': v.name, 'url': v.url});
-                }
-            });
-        });
-
-        $scope.data = response;
+        $scope.data = data;
+        $scope.current = current;
     }
-}]);
-
-// This controller manages the activity form
-app.controller('ActivityFormCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.data = {};
-    console.log($scope);
-    $scope.processForm = function() {
-        var url = $scope.$parent.$parent.ui.views.activity.url;
-        $http({
-            method: 'POST',
-            data: $scope.data,
-            url: url,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }).then(function (response) {
-            // success callback
-            // console.log("success", this, response);
-            window.location.reload(); 
-        }, function (response) {
-            // error callback
-            console.log("ActivityForm - Error", response);
-            alert(response.data.non_field_errors[0]);
-        })
-    }
+    $scope.update = update;
 }]);
 
 
 // This controller updates the dashboards navigation
-app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $interval) {
+bmfapp.controller('NavigationCtrl', ['$scope', '$interval', '$http', function($scope, $interval, $http) {
     $scope.data = undefined;
 
     $scope.$watch(
@@ -1476,8 +1786,23 @@ app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $inter
         $scope.data = $scope.bmf_navigation;
 
         $scope.update = function (i) {
-            nav = $scope.data[i]
-            console.log("TIMER", i, nav)
+            nav = $scope.data[i];
+            // console.log("TIMER", i, nav)
+            $http({
+                method: 'GET',
+                url: nav.api,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }).then(function (response) {
+                // success callback
+                // console.log("success", this, response);
+                $scope.data[i].active = response.data.active;
+                $scope.data[i].count = response.data.count;
+            }, function (response) {
+                // error callback
+                console.log("Navigation Timer Error", response);
+            });
         }
 
         $scope.data.forEach(function(nav, i) {
@@ -1489,6 +1814,8 @@ app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $inter
                 $interval.cancel(nav.timer);
             }
             nav.timer = undefined;
+            nav.active = false;
+            nav.count = 0;
 
             if (nav.api && nav.intervall) {
                 $scope.update(i);
@@ -1497,29 +1824,77 @@ app.controller('NavigationCtrl', ['$scope', '$interval', function($scope, $inter
                 }, nav.intervall * 1000);
             }
         });
-
-
-
-//      var response = [];
-//      var key = $scope.bmf_current_dashboard.key;
-//
-//      response.push({
-//          'class': 'sidebar-board',
-//          'name': $scope.bmf_current_dashboard.name
-//      });
-//
-//      $scope.bmf_sidebars[key].forEach(function(c, ci) {
-//          response.push({'name': c.name});
-//          c.views.forEach(function(v, vi) {
-//              if ($scope.bmf_current_view && $scope.bmf_current_view.type == "list" && c.key == $scope.bmf_current_view.category.key && v.key == $scope.bmf_current_view.view.key) {
-//                  response.push({'name': v.name, 'url': v.url, 'class': 'active'});
-//              }
-//              else {
-//                  response.push({'name': v.name, 'url': v.url});
-//              }
-//          });
-//      });
-//
-        console.log($scope.data);
     }
+}]);
+
+
+// bmfapp.controller('ContentCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('DataCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('PaginationCtrl', [function() {
+// }]);
+
+
+bmfapp.controller('ActivityCtrl', ['$scope', '$http', function($scope, $http) {
+    $scope.data = {};
+    $scope.processForm = function() {
+        var url = $scope.$parent.$parent.ui.views.activity.url;
+        $http({
+            method: 'POST',
+            data: $scope.data,
+            url: url,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(function (response) {
+            // success callback
+            // console.log("success", this, response);
+            window.location.reload(); 
+        }, function (response) {
+            // error callback
+            console.log("ActivityForm - Error", response);
+            alert(response.data.non_field_errors[0]);
+        });
+    }
+}]);
+
+
+/*
+ * View specific controller
+ */
+
+
+// bmfapp.controller('ListViewCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('DetailViewCtrl', [function() {
+// }]);
+
+
+// bmfapp.controller('NotificationViewCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+// }]);
+
+/*
+ * ui-run
+ */
+
+
+bmfapp.run(['$rootScope', '$location', 'ViewUrlconf', function($rootScope, $location, ViewUrlconf) {
+    $rootScope.$on('$locationChangeStart', function(event, next, current) {
+        if (next != current && !ViewUrlconf(next)) {
+            // if the url is not managed by the framework, prevent default
+            // action from the angularJS url management and redirect browser to the new url
+            // if the url was changed
+            event.preventDefault(true);
+            if (next != current) {
+                $window.location = next;
+            }
+        }
+    });
 }]);

@@ -5,8 +5,6 @@
 
 * check if you can use the notifications to implement better acls
 
-* move the tests folder into the djangobmf folder
-
 * remove sites in favor of apps.py
 
 And search our source code for the keywords "TODO" and "FIXME".
