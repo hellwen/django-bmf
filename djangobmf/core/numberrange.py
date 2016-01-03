@@ -12,7 +12,7 @@ from django.utils.timezone import get_default_timezone
 from django.utils.timezone import is_aware
 from django.utils.timezone import localtime
 
-from djangobmf.models import NumberRange
+from djangobmf.models import NumberRange as NumberRangeModel
 
 import re
 import datetime
@@ -60,14 +60,14 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
 
         if self.type == self._TYPE_COUNTER:
             date = None
-            number = get_object(ct)
+            number = self.get_object(ct)
             counter = obj.pk
         else:
             date = self.from_time(getattr(obj, time_field))
-            number = get_object(ct, date)
+            number = self.get_object(ct, date)
 
             counter = obj._base_manager.filter(**{
-                '%s__gte' % field_name: number.period_start,
+                '%s__gte' % time_field: number.period_start,
                 'pk__lt': obj.pk,
             }).count() + number.counter
 
@@ -79,7 +79,7 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
         ct = ContentType.objects.get_for_model(obj)
         date = self.from_time(getattr(obj, time_field))
 
-        number = get_object(ct, date)
+        number = self.get_object(ct, date)
         number.counter += 1
         number.save()
 
@@ -90,7 +90,9 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
         else:
             start, final = self.get_period(date)
 
-        obj, created = NumberRange.objects.get_or_create(ct=ct, period_start=None, period_end=None)
+        obj, created = NumberRangeModel.objects.get_or_create(
+            ct=ct, period_start=start, period_final=final,
+        )
         return obj
 
     @classmethod
