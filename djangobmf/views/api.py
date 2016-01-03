@@ -339,6 +339,7 @@ class NotificationViewAPI(NotificationMixin, UpdateModelMixin, RetrieveModelMixi
             self.check_object_permissions(self.request, obj)
         except Notification.DoesNotExist:
             obj = Notification(**lookup)
+            obj.unread = False
             self.check_permissions(self.request)
 
         return obj
@@ -367,6 +368,7 @@ class NotificationCountAPI(BaseMixin, GenericAPIView):
         data = Notification.objects.filter(
             unread=True,
             user=request.user,
+            watch_id__isnull=False,
         ).values_list(
             'watch_ct_id',
         ).annotate(
