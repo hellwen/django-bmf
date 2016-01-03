@@ -1,7 +1,5 @@
 include README.rst
-include AUTHORS
-include INSTALL
 include LICENSE
-include MANIFEST.in
-recursive-include djangobmf *
+recursive-include djangobmf/ *
 recursive-exclude * *.py[co]
+recursive-exclude * __pycache__

@@ -22,7 +22,6 @@ from djangobmf.conf import settings as bmfsettings
 from djangobmf.core.employee import Employee
 from djangobmf.decorators import login_required
 from djangobmf.document.forms import UploadDocument
-from djangobmf.notification.forms import HistoryCommentForm
 from djangobmf.models import Activity
 from djangobmf.models import Document
 from djangobmf.models import Notification
@@ -96,7 +95,10 @@ class BaseMixin(object):
         if getattr(self, 'model', None):
             return self.model
 
-        # Raises a LookupError, when it does not find a model
+        if 'app' not in self.kwargs or 'model' not in self.kwargs:
+            raise LookupError()
+
+        # Raises also a LookupError, when it does not find a model
         self.model = apps.get_model(self.kwargs.get('app'), self.kwargs.get('model'))
         return self.model
 
@@ -487,54 +489,6 @@ class ModuleSearchMixin(object):
             return "%s__search" % field_name[1:]
         else:
             return "%s__icontains" % field_name
-
-
-class ModuleActivityMixin(object):
-    """
-    Parse history to view (as a context variable)
-    """
-
-    def get_context_data(self, **kwargs):
-        ct = ContentType.objects.get_for_model(self.object)
-
-        try:
-            watch = Notification.objects.get(
-                user=self.request.user,
-                watch_ct=ct,
-                watch_id=self.object.pk
-            )
-            if watch.unread:
-                watch.unread = False
-                watch.save()
-            notification = watch
-            watching = watch.is_active()
-        except Notification.DoesNotExist:
-            notification = None
-            watching = False
-
-        kwargs.update({
-            'bmfactivity': {
-                'qs': Activity.objects.filter(parent_ct=ct, parent_id=self.object.pk),
-                'enabled': (self.model._bmfmeta.has_comments),
-#               'enabled': (self.model._bmfmeta.has_comments or self.model._bmfmeta.has_history),
-                'comments': self.model._bmfmeta.has_comments,
-#               'log': self.model._bmfmeta.has_history,
-                'pk': self.object.pk,
-                'ct': ct.pk,
-                'notification': notification,
-                'watch': watching,
-                'log_data': None,
-                'comment_form': None,
-                'object_ct': ct,
-                'object_pk': self.object.pk,
-            },
-        })
-        if self.model._bmfmeta.has_history:
-            kwargs['bmfactivity']['log_data'] = Activity.objects.select_related('user') \
-                .filter(parent_ct=ct, parent_id=self.object.pk)
-        if self.model._bmfmeta.has_comments:
-            kwargs['bmfactivity']['comment_form'] = HistoryCommentForm()
-        return super(ModuleActivityMixin, self).get_context_data(**kwargs)
 
 
 class ModuleFilesMixin(object):

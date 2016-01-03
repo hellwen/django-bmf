@@ -75,9 +75,9 @@ class NotificationTests(ModuleMixin, TestCase):
             'watch_ct': self.ct,
             'watch_id': 0,
             'new_entry': True,
-            'comment': True,
-            'file': True,
-            'changed': True,
+            'comments': True,
+            'files': True,
+            'detectchanges': True,
             'workflow': True,
         }
         Notification.objects.create(user=self.user1, **fields)

@@ -6,19 +6,26 @@ from __future__ import unicode_literals
 from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Count
 from django.http import Http404
+from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.template.loader import select_template
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.models import Activity
+from djangobmf.models import Notification
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
 from djangobmf.filters import RelatedFilterBackend
-from djangobmf.permissions import ModuleViewPermission
 from djangobmf.permissions import ActivityPermission
+from djangobmf.permissions import ModuleViewPermission
+from djangobmf.permissions import NotificationPermission
 from djangobmf.pagination import ModulePagination
 from djangobmf.core.serializers import ActivitySerializer
+from djangobmf.core.serializers import NotificationViewSerializer
+from djangobmf.core.serializers import NotificationListSerializer
+from djangobmf.core.pagination import NotificationPagination
 from djangobmf.views.mixins import BaseMixin
 
 from rest_framework.generics import GenericAPIView
@@ -68,22 +75,47 @@ class APIIndex(BaseMixin, APIView):
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
-                related = OrderedDict(
-                    [
-                        (
-                            i.name,
-                            ContentType.objects.get_for_model(i.related_model).pk
-                        )
-                        for i in model._meta.get_fields()
-                        if hasattr(i.related_model, '_bmfmeta')
-                        and self.request.user.has_perms([
-                            '%s.view_%s' % (
-                                i.related_model._meta.app_label,
-                                i.related_model._meta.model_name,
-                            )
-                        ])
-                    ]
-                )
+                related = []
+                for name, related_model in [
+                   (
+                       i.name,
+                       i.related_model,
+                   )
+                   for i in model._meta.get_fields()
+                   if hasattr(i.related_model, '_bmfmeta')
+                   and self.request.user.has_perms([
+                       '%s.view_%s' % (
+                           i.related_model._meta.app_label,
+                           i.related_model._meta.model_name,
+                       )
+                   ])
+                ]:
+                    related_ct = ContentType.objects.get_for_model(related_model)
+                    template = '%s/%s_bmfrelated/%s_%s.html' % (
+                        related_model._meta.app_label,
+                        related_model._meta.model_name,
+                        model._meta.model_name,
+                        name,
+                    )
+
+                    try:
+                        get_template(template)
+                        html = "<h1>TODO</h1>"  # TODO
+                    except TemplateDoesNotExist:
+                        html = None
+
+                    related.append((name, OrderedDict([
+                        ('ct', related_ct.pk),
+                        ('template', template),
+                        ('html', html),
+                        ('data',
+                            reverse('djangobmf:api', request=request, format=format, kwargs={
+                                'app': related_model._meta.app_label,
+                                'model': related_model._meta.model_name,
+                            })
+                        ),
+                    ])))
+
                 modules.append(OrderedDict([
                     ('app', model._meta.app_label),
                     ('model', model._meta.model_name),
@@ -93,12 +125,17 @@ class APIIndex(BaseMixin, APIView):
                         model._meta.app_label,
                         model._meta.model_name,
                     ))),
+                    ('watch_function', model._bmfmeta.has_watchfunction),
                     ('data', reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,
                         'model': model._meta.model_name,
                     })),
+                    ('notification', reverse('djangobmf:notification', request=request, format=format, kwargs={
+                        'app': model._meta.app_label,
+                        'model': model._meta.model_name,
+                    })),
                     ('only_related', model._bmfmeta.only_related),
-                    ('related', related),
+                    ('related', OrderedDict(related)),
                     ('creates', [
                         {
                             "name": i[1],
@@ -159,6 +196,7 @@ class APIIndex(BaseMixin, APIView):
         templates = {
             'list': get_template('djangobmf/api/list.html').render().strip(),
             'detail': get_template('djangobmf/api/detail.html').render().strip(),
+            'notification': get_template('djangobmf/api/notification.html').render().strip(),
         }
 
         # === Navigation ------------------------------------------------------
@@ -173,14 +211,10 @@ class APIIndex(BaseMixin, APIView):
                 'url': reverse('djangobmf:notification'),
 
                 # API call for updates (opt)
-                'api': reverse('djangobmf:notification'),
+                'api': reverse('djangobmf:api-notification', kwargs={'action': 'count'}),
 
                 # check every n seconds for changes (req, when api)
-                'intervall': 60,
-
-                # TODO: REMOVE AND LOAD THOSE ATTRIBUTES VIA API
-                'active': False,
-                'count': 0,
+                'intervall': 180,
             },
         ]
 
@@ -191,6 +225,12 @@ class APIIndex(BaseMixin, APIView):
             ('modules', modules),
             ('navigation', navigation),
             ('templates', templates),
+            ('ui', OrderedDict([
+                ('notification', OrderedDict([
+                    ('url', reverse('djangobmf:notification')),
+                    ('data', reverse('djangobmf:notification')),
+                ])), 
+            ])),
             ('debug', settings.DEBUG),
         ]))
 
@@ -256,13 +296,87 @@ class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAP
     serializer_class = ActivitySerializer
 
     def get_queryset(self):
-        model = self.get_bmfmodel()
+        # check if the user has access to the object
         obj = self.get_bmfobject(self.kwargs.get('pk', None))
-        ct = ContentType.objects.get_for_model(model)
-        return Activity.objects.filter(parent_id=self.kwargs.get('pk', None), parent_ct=ct).select_related('user')
+
+        return Activity.objects.filter(
+            parent_id=self.kwargs.get('pk', None),
+            parent_ct=self.get_bmfcontenttype(),
+        ).select_related('user')
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+
+class NotificationMixin(BaseMixin):
+    permission_classes = [NotificationPermission,]
+
+    def get_queryset(self):
+        return Notification.objects.filter(
+            user=self.request.user,
+            watch_ct=self.get_bmfcontenttype(),
+        )
+
+class NotificationViewAPI(NotificationMixin, UpdateModelMixin, RetrieveModelMixin, GenericAPIView):
+    serializer_class = NotificationViewSerializer
+
+    def get_object(self):
+        if 'pk' in self.kwargs:
+            self.get_bmfobject(self.kwargs.get('pk'))
+
+        queryset = self.filter_queryset(self.get_queryset())
+        lookup = {
+            'user': self.request.user,
+            'watch_ct': self.get_bmfcontenttype(),
+            'watch_id': self.kwargs.get('pk', None),
+        }
+
+        try:
+            obj = queryset.get(**lookup)
+            self.check_object_permissions(self.request, obj)
+        except Notification.DoesNotExist:
+            obj = Notification(**lookup)
+            self.check_permissions(self.request)
+
+        return obj
+
+    def post(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
+class NotificationListAPI(NotificationMixin, ListModelMixin, GenericAPIView):
+    serializer_class = NotificationListSerializer
+    pagination_class = ModulePagination
+
+    def get_queryset(self):
+        queryset = super(NotificationListAPI, self).get_queryset()
+        return queryset.prefetch_related('watch_object').exclude(watch_id__isnull=True)
+
+    def get(self, request, *args, **kwargs):
+            return self.list(request, *args, **kwargs)
+
+
+class NotificationCountAPI(BaseMixin, GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        data = Notification.objects.filter(
+            unread=True,
+            user=request.user,
+        ).values_list(
+            'watch_ct_id',
+        ).annotate(
+            count=Count('*'),
+        ).order_by(
+            'watch_ct_id',
+        )
+        count = sum([n for ct, n in data])
+        return Response(OrderedDict([
+            ('active', bool(count)),
+            ('count', count),
+            ('data', OrderedDict(data)),
+        ]))

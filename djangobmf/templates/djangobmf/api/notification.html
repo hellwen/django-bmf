@@ -1,0 +1,47 @@
+{% load i18n djangobmf_angularjs %}{% spaceless %}
+<div class="row">
+    <div class="col-lg-9 col-sm-8">
+        <!--ul class="nav nav-tabs">
+        </ul-->
+        <div class="text-right" ng-if="settings">
+            <span>{% trans "Global settings" %}: </span>
+            <a ng-if="settings.has_new_entry" href="{% ng "settings.api" %}" class="btn" bmf-notification="new_entry" data-enabled="{% ng "settings.new_entry" %}"></a>
+            <a ng-if="settings.has_comments" href="{% ng "settings.api" %}" class="btn" bmf-notification="comments" data-enabled="{% ng "settings.comments" %}"></a>
+            <a ng-if="settings.has_workflow" href="{% ng "settings.api" %}" class="btn" bmf-notification="workflow" data-enabled="{% ng "settings.workflow" %}"></a>
+            <a ng-if="settings.has_detectchanges" href="{% ng "settings.api" %}" class="btn" bmf-notification="detectchanges" data-enabled="{% ng "settings.detectchanges" %}"></a>
+            <a ng-if="settings.has_files" href="{% ng "settings.api" %}" class="btn" bmf-notification="files" data-enabled="{% ng "settings.files" %}"></a>
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>{% trans "Notifications" %}</th>
+                    <th style="width: 150px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="d in data">
+                    <td>
+                        <a bmf-detail="{% ng "d.watch_id" %}" href="#">{% ng "d.name" %}</a>&nbsp;
+                        <span ng-if="d.unread" class="label label-primary">{% trans "new" %}</span>
+                        <br>
+                        <small><span bmf-time-ago="d.modified"></span></small>
+                    </td>
+                    <td class="text-right">
+                        <a ng-if="d.has_comments" href="{% ng "d.api" %}" class="btn btn-sm" bmf-notification="comments" data-enabled="{% ng "d.comments" %}"></a>
+                        <a ng-if="d.has_workflow" href="{% ng "d.api" %}" class="btn btn-sm" bmf-notification="workflow" data-enabled="{% ng "d.workflow" %}"></a>
+                        <a ng-if="d.has_detectchanges" href="{% ng "d.api" %}" class="btn btn-sm" bmf-notification="detectchanges" data-enabled="{% ng "d.detectchanges" %}"></a>
+                        <a ng-if="d.has_files" href="{% ng "d.api" %}" class="btn btn-sm" bmf-notification="files" data-enabled="{% ng "d.files" %}"></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-lg-3 col-sm-4">
+        <ul class="nav nav-pills nav-stacked">
+            <li ng-repeat="n in navigation | filter:{watch_function:true} | orderBy:'name'" ng-class="n.ct==module.ct ? 'active' : ''">
+                <a href="{% ng "n.notification" %}">{% ng "n.name" %}<span ng-if="n.count>0" class="badge pull-right">{% ng "n.count" %}</span></a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endspaceless %}

@@ -2,8 +2,18 @@
  * ui-directive
  */
 
+bmfapp.directive('bmfLink', ['ApiUrlFactory', function(ApiUrlFactory) {
+    return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, element, attr) {
+            console.log(ApiUrlFactory('test'));
+        },
+    }
+}]);
+
 // manages form modal calls
-app.directive('bmfForm', [function() {
+bmfapp.directive('bmfForm', [function() {
     return {
         restrict: 'A',
         link: function(scope, element, attr) {
@@ -115,9 +125,10 @@ app.directive('bmfForm', [function() {
 
 
 // manages links vom list views to detail views
-app.directive('bmfDetail', ["$location", function($location) {
+bmfapp.directive('bmfDetail', ["$location", function($location) {
     return {
         restrict: 'A',
+        scope: false,
         link: function(scope, element, attr) {
             element.on('click', function(event) {
                 var next = $location.path() + attr.bmfDetail + '/';
@@ -130,34 +141,88 @@ app.directive('bmfDetail', ["$location", function($location) {
 
 
 // 
-app.directive('bmfTimeAgo', [function() {
+bmfapp.directive('bmfNotification', ['$http', function($http) {
     return {
         restrict: 'A',
-        template: '<span title="{{ timeago }}">{{ timeago }}</span>',
+        template: '<a ng-class="enabled ? \'btn-info\' : \'btn-default\'" title="{{ title }}"><span ng-class="symbol"></span></a>',
+        replace: true,
+        scope: {},
+        link: function(scope, element, attr) {
+            scope.enabled = scope.$eval(attr.enabled);
+            scope.method = attr.bmfNotification;
+            scope.url = attr.href;
+            scope.symbol = "glyphicon glyphicon-question-sign";
+            scope.title = "";
+            if (scope.method == "new_entry") {
+                scope.symbol = "glyphicon glyphicon-file";
+                scope.title = gettext("New entries");
+            };
+            if (scope.method == "comments") {
+                scope.symbol = "glyphicon glyphicon-comment";
+                scope.title = gettext("New comments");
+            };
+            if (scope.method == "workflow") {
+                scope.symbol = "glyphicon glyphicon-random";
+                scope.title = gettext("Worflow changes");
+            };
+            if (scope.method == "files") {
+                scope.symbol = "glyphicon glyphicon-paperclip";
+                scope.title = gettext("New files");
+            };
+            if (scope.method == "detectchanges") {
+                scope.symbol = "glyphicon glyphicon-edit";
+                scope.title = gettext("Detected changes");
+            };
+
+            element.on('click', function(event) {
+                event.preventDefault();
+                var data = {};
+                data[scope.method] = !scope.enabled;
+
+                $http({
+                    method: 'POST',
+                    data: data,
+                    url: scope.url,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(function (response) {
+                    // success callback
+                    // console.log("success", response);
+                    scope.enabled = response.data[scope.method];
+                }, function (response) {
+                    // error callback
+                    console.log("Notification - Error", response);
+                });
+            });
+        },
+    };
+}]);
+
+
+// 
+bmfapp.directive('bmfTimeAgo', [function() {
+    return {
+        restrict: 'A',
+        template: '<span title="{{ time | django_datetime }}">{{ time | timesince }}</span>',
         replace: true,
         link: function(scope, element, attr) {
-            var d = new Date(scope.$eval(attr.bmfTimeAgo));
-            scope.timeago = d.strftime(get_format("DATETIME_INPUT_FORMATS")[0]);
+            scope.time = scope.$eval(attr.bmfTimeAgo);
         }
     };
 }]);
 
 
 // manages the content-area
-app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
+bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactory', function($compile, $rootScope, $http, ApiUrlFactory) {
     return {
         restrict: 'A',
         priority: -90,
-        link: function(scope, $element) {
-            scope.$watch(
-                function(scope) {
-                    if (scope.bmf_current_view) {
-                        return scope.bmf_current_view.type
-                    }
-                    return undefined
-                },
-                function(newValue) {if (newValue != undefined) update(newValue)}
-            );
+        // scope: {},
+        link: function(scope, $element, attr, ctrl) {
+            scope.$on(BMFEVENT_CONTENT, function(event, name) {
+                update(name);
+            });
 
             // clear all variables not in common use
             // by views
@@ -199,6 +264,9 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                 if (type == "detail") {
                     view_detail()
                 }
+                if (type == "notification") {
+                    view_notification()
+                }
             }
 
             function view_list(type) {
@@ -236,33 +304,36 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
 
             function view_detail(type) {
                 scope.content_watcher = scope.$watch(
-                    function(scope) {return scope.bmf_current_view},
-                    function(newValue) {if (newValue != undefined && newValue.type == "detail") upd(newValue)}
+                    function(scope) {
+                        if (!$rootScope.bmf_breadcrumbs || $rootScope.bmf_breadcrumbs.length == 0) {
+                            return undefined
+                        }
+                        return $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length -1];
+                    },
+                    function(value) {if (value != undefined) upd(value)}
                 );
 
                 function upd(view) {
                     // update vars
-                    scope.view_name = view.view.name;
-                    scope.category_name = view.category.name;
-                    scope.dashboard_name = view.dashboard.name;
                     scope.module = view.module;
 
                     scope.ui = {
+                        notifications: null,
                         workflow: null,
                         views: null,
                     };
 
-                    var url = view.module.base + view.pk  + '/';
+                    var url = view.module.base + view.kwargs.pk  + '/';
                     $http.get(url).then(function(response) {
                         scope.ui.workflow = response.data.workflow;
                         scope.ui.views = response.data.views;
+                        scope.ui.notifications = response.data.notifications;
                         scope.template_html = response.data.html
 
                         if (response.data.views.activity.enabled) {
                             var url = response.data.views.activity.url;
                             $http.get(url).then(function(response) {
                                 scope.activities = response.data;
-                                console.log(response.data);
                             });
                         }
                     });
@@ -271,8 +342,55 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
                 update_html("detail");
             }
 
+            function view_notification(type) {
+                
+                scope.content_watcher = scope.$watch(
+                    function(scope) {return $rootScope.bmf_breadcrumbs[0].module},
+                    function(value) {upd(value)}
+                );
+
+                scope.module = undefined;
+                scope.settings = undefined;
+
+                function upd(module) {
+                    // update vars
+                    scope.module = module
+                    scope.settings = undefined;
+
+                    scope.navigation = [];
+                    for (var key in $rootScope.bmf_modules) {
+                        var data = $rootScope.bmf_modules[key];
+                        data.count = 0;
+                        scope.navigation.push(data);
+                    };
+
+                    var url = ApiUrlFactory(null, 'notification', 'count');
+                    $http.get(url).then(function(response) {
+                        for (var i in scope.navigation) {
+                            if (scope.navigation[i].ct in response.data.data) {
+                                scope.navigation[i].count = response.data.data[scope.navigation[i].ct];
+                            }
+                        };
+                    });
+
+                    if (module) {
+                        var url = ApiUrlFactory(module, 'notification', 'list');
+                        $http.get(url).then(function(response) {
+                            scope.data = response.data.items;
+                        });
+
+                        var url = ApiUrlFactory(module, 'notification', 'view');
+                        $http.get(url).then(function(response) {
+                            scope.settings = response.data;
+                            scope.settings.api = url;
+                        });
+                    }
+                }
+                update_html("notification");
+            }
+
             function update_html(type) {
-                $element.html(scope.bmf_templates[type]).show();
+                $element.html($rootScope.bmf_templates[type]).show();
                 $compile($element.contents())(scope);
             }
         }
@@ -281,7 +399,7 @@ app.directive('bmfContent', ['$compile', '$http', function($compile, $http) {
 
 
 // compiles the content of a scope variable
-app.directive('bmfTemplate', ['$compile', function($compile) {
+bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
     return {
         restrict: 'E',
         priority: -80,

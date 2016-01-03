@@ -50,25 +50,28 @@ class ModulePagination(BasePagination):
         self.request = request
         return list(self.page)
 
-    def get_paginated_response(self, data):
+    def get_paginated_response_data(self, data):
         if self.page:
-            return Response({
+            return {
                 'paginator': {
                     'current': self.page.number,
                     'count': self.count,
                     'pages': self.page.paginator.num_pages,
                 },
                 'items': data,
-            })
+            }
         else:
-            return Response({
+            return {
                 'paginator': {
                     'current': 1,
                     'count': self.count,
                     'pages': 1,
                 },
                 'items': data,
-            })
+            }
+
+    def get_paginated_response(self, data):
+        return Response(self.get_paginated_response_data(data))
 
     def get_next_link(self):
         if not self.page or not self.page.has_next():
