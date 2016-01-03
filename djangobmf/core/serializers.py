@@ -19,6 +19,7 @@ from djangobmf.templatetags.djangobmf_markup import markdown_filter
 from rest_framework.serializers import ValidationError
 from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import SerializerMethodField
+from rest_framework.reverse import reverse
 
 import json
 
@@ -50,6 +51,7 @@ class ActivitySerializer(ModelSerializer):
             action=ACTION_COMMENT,
             parent_id=self.context['view'].kwargs.get('pk'),
             parent_ct=self.context['view'].get_bmfcontenttype(),
+            unread=False,
             **validated_data
         )
         obj.save()
@@ -163,4 +165,36 @@ class NotificationViewSerializer(ModelSerializer):
 
 
 class NotificationListSerializer(NotificationViewSerializer):
-    pass
+    api = SerializerMethodField()
+    name = SerializerMethodField()
+
+    class Meta:
+        model = Notification
+        fields = [
+            'name',
+            'modified',
+            'watch_id',
+            'unread',
+            'api',
+            'new_entry',
+            'comments',
+            'files',
+            'detectchanges',
+            'workflow',
+            'has_new_entry',
+            'has_comments',
+            'has_files',
+            'has_detectchanges',
+            'has_workflow',
+            'enabled',
+        ]
+
+    def get_name(self, obj):
+        return '%s' % obj.watch_object
+
+    def get_api(self, obj):
+        return reverse('djangobmf:api-notification', kwargs={
+            'app': obj.watch_object._meta.app_label,
+            'model': obj.watch_object._meta.model_name,
+            'pk': obj.watch_id,
+        })

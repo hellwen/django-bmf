@@ -349,10 +349,12 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                 );
 
                 scope.module = undefined;
+                scope.settings = undefined;
 
                 function upd(module) {
                     // update vars
                     scope.module = module
+                    scope.settings = undefined;
 
                     scope.navigation = [];
                     for (var key in $rootScope.bmf_modules) {
@@ -370,32 +372,18 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                         };
                     });
 
-//                  scope.view_name = view.view.name;
-//                  scope.category_name = view.category.name;
-//                  scope.dashboard_name = view.dashboard.name;
-//                  scope.module = view.module;
-//
-//                  scope.ui = {
-//                      notifications: null,
-//                      workflow: null,
-//                      views: null,
-//                  };
-//
-//                  var url = view.module.base + view.pk  + '/';
-//                  $http.get(url).then(function(response) {
-//                      scope.ui.workflow = response.data.workflow;
-//                      scope.ui.views = response.data.views;
-//                      scope.ui.notifications = response.data.notifications;
-//                      scope.template_html = response.data.html
-//
-//                      if (response.data.views.activity.enabled) {
-//                          var url = response.data.views.activity.url;
-//                          $http.get(url).then(function(response) {
-//                              scope.activities = response.data;
-//                              console.log(response.data);
-//                          });
-//                      }
-//                  });
+                    if (module) {
+                        var url = ApiUrlFactory(module, 'notification', 'list');
+                        $http.get(url).then(function(response) {
+                            scope.data = response.data.items;
+                        });
+
+                        var url = ApiUrlFactory(module, 'notification', 'view');
+                        $http.get(url).then(function(response) {
+                            scope.settings = response.data;
+                            scope.settings.api = url;
+                        });
+                    }
                 }
                 update_html("notification");
             }

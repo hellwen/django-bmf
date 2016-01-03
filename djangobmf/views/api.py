@@ -25,6 +25,7 @@ from djangobmf.pagination import ModulePagination
 from djangobmf.core.serializers import ActivitySerializer
 from djangobmf.core.serializers import NotificationViewSerializer
 from djangobmf.core.serializers import NotificationListSerializer
+from djangobmf.core.pagination import NotificationPagination
 from djangobmf.views.mixins import BaseMixin
 
 from rest_framework.generics import GenericAPIView
@@ -351,6 +352,11 @@ class NotificationViewAPI(NotificationMixin, UpdateModelMixin, RetrieveModelMixi
 
 class NotificationListAPI(NotificationMixin, ListModelMixin, GenericAPIView):
     serializer_class = NotificationListSerializer
+    pagination_class = ModulePagination
+
+    def get_queryset(self):
+        queryset = super(NotificationListAPI, self).get_queryset()
+        return queryset.prefetch_related('watch_object').exclude(watch_id__isnull=True)
 
     def get(self, request, *args, **kwargs):
             return self.list(request, *args, **kwargs)
