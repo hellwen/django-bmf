@@ -79,7 +79,6 @@ class BMFOptions(object):
         self.clean = False
         self.observed_fields = []
         self.search_fields = []
-        self.number_cycle = None
 
         # add an workflow object to the class
 
@@ -174,7 +173,6 @@ class BMFOptions(object):
                 'has_comments',
                 'has_files',
                 'search_fields',
-                'number_cycle',
                 'clean',
                 'can_clone',
             ]:

@@ -71,9 +71,9 @@ class ModuleTemplate(AppConfig):
             # load instructions of bmf_module.py
             import_module('%s.%s' % (self.name, "bmf_module"))
 
-            # see if model needs a number_cycle
-            for model in [m for m in self.models.values() if hasattr(m, '_bmfmeta') and m._bmfmeta.number_cycle]:
-                self.bmf_config.site.register_numbercycle(model)
+        #   # see if model needs a number_cycle
+        #   for model in [m for m in self.models.values() if hasattr(m, '_bmfmeta') and m._bmfmeta.number_cycle]:
+        #       self.bmf_config.site.register_numbercycle(model)
 
         logger.debug('App "%s" (%s) is ready' % (
             self.verbose_name,

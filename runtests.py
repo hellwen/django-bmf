@@ -112,7 +112,12 @@ def main(modules, verbosity=2, failfast=False, contrib=None, nocontrib=False):
             if verbosity >= 2:
                 print("Importing application %s" % module)
             settings.INSTALLED_APPS += (module, )
+
     apps.set_installed_apps(settings.INSTALLED_APPS)
+
+    # Load default settings from bmf framework
+    from djangobmf.conf import settings as bmfsettings
+    bmfsettings.patch()
 
     failures = djangobmf_tests(verbosity, False, failfast, modules)
 

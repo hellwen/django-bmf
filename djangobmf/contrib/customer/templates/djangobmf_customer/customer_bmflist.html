@@ -9,7 +9,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="obj in data" ng-class="obj.is_active' ? '' : 'text-muted'">
+        <tr ng-repeat="obj in data" ng-class="obj.is_active ? '' : 'text-muted'">
             <td>
                 <a bmf-detail="{% ng "obj.pk" %}" href="#">
                     <span ng-if="obj.is_company == true" class="glyphicon glyphicon-home"></span>

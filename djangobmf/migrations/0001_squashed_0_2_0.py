@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import django.db.models.deletion
-import djangobmf.numbering.validators
 import djangobmf.utils.generate_filename
 from django.conf import settings
 import django.utils.timezone
@@ -72,7 +71,7 @@ class Migration(migrations.Migration):
             name='NumberCycle',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
-                ('name_template', models.CharField(validators=[djangobmf.numbering.validators.template_name_validator], max_length=64, verbose_name='Template', null=True)),
+                ('name_template', models.CharField(validators=[], max_length=64, verbose_name='Template', null=True)),
                 ('counter_start', models.PositiveIntegerField(null=True, default=1)),
                 ('current_period', models.DateField(null=True, default=django.utils.timezone.now)),
                 ('ct', models.OneToOneField(related_name='bmf_numbercycle', null=True, to='contenttypes.ContentType', editable=False)),

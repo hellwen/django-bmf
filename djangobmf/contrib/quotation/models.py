@@ -9,7 +9,6 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from djangobmf.conf import settings
 from djangobmf.models import BMFModel
-from djangobmf.numbering.utils import numbercycle_get_name, numbercycle_delete_object
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
 
@@ -18,6 +17,7 @@ from decimal import Decimal
 
 from .serializers import QuotationSerializer
 from .workflows import QuotationWorkflow
+from .utils import number_range
 
 
 @python_2_unicode_compatible
@@ -91,7 +91,6 @@ class AbstractQuotation(BMFModel):
         has_comments = True
         clean = True
         serializer = QuotationSerializer
-        number_cycle = "Q{year}/{month}-{counter:04d}"
         workflow = QuotationWorkflow
 
     def __init__(self, *args, **kwargs):
@@ -141,12 +140,12 @@ class AbstractQuotation(BMFModel):
     @staticmethod
     def post_save(sender, instance, created, raw, *args, **kwargs):
         if not instance.quotation_number:
-            name = numbercycle_get_name(instance)
+            name = number_range.name(instance)
             instance._meta.model.objects.filter(pk=instance.pk).update(quotation_number=name)
 
     @staticmethod
     def post_delete(sender, instance, *args, **kwargs):
-        numbercycle_delete_object(instance)
+        number_range.delete(instance)
 
     def get_products(self):
         if not hasattr(self, '_cache_products'):

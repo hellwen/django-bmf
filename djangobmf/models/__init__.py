@@ -31,7 +31,7 @@ from .configuration import Configuration as AbstractConfiguration
 from .dashboard import Dashboard as AbstractDashboard
 from .document import Document as AbstractDocument
 from .notification import Notification as AbstractNotification
-from .numbering import NumberCycle as AbstractNumberCycle
+from .numberrange import NumberRange as AbstractNumberRange
 from .renderer import Renderer as AbstractRenderer
 from .report import Report as AbstractReport
 
@@ -85,8 +85,8 @@ class Notification(AbstractNotification):
         app_label = settings.APP_LABEL
 
 
-class NumberCycle(AbstractNumberCycle):
-    class Meta(AbstractNumberCycle.Meta):
+class NumberRange(AbstractNumberRange):
+    class Meta(AbstractNumberRange.Meta):
         abstract = False
         app_label = settings.APP_LABEL
 

@@ -6,7 +6,6 @@ import djangobmf.utils.generate_filename
 import django.db.models.deletion
 import django.utils.timezone
 from django.conf import settings
-import djangobmf.numbering.validators
 import djangobmf.document.storage
 
 
@@ -72,7 +71,7 @@ class Migration(migrations.Migration):
             name='NumberCycle',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name_template', models.CharField(max_length=64, null=True, verbose_name='Template', validators=[djangobmf.numbering.validators.template_name_validator])),
+                ('name_template', models.CharField(max_length=64, null=True, verbose_name='Template', validators=[])),
                 ('counter_start', models.PositiveIntegerField(default=1, null=True)),
                 ('current_period', models.DateField(default=django.utils.timezone.now, null=True)),
                 ('ct', models.OneToOneField(related_name='bmf_numbercycle', null=True, editable=False, to='contenttypes.ContentType')),

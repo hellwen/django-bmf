@@ -9,7 +9,6 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from djangobmf.conf import settings
 from djangobmf.models import BMFModel
-from djangobmf.numbering.utils import numbercycle_get_name, numbercycle_delete_object
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
 from djangobmf.fields.models import FileField
@@ -19,6 +18,7 @@ from decimal import Decimal
 
 from .serializers import InvoiceSerializer
 from .workflows import InvoiceWorkflow
+from .utils import number_range
 
 
 @python_2_unicode_compatible
@@ -51,15 +51,19 @@ class BaseInvoice(BMFModel):
         swappable = "BMF_CONTRIB_INVOICE"
 
     class BMFMeta:
-        number_cycle = "INV{year}/{month}-{counter:04d}"
         workflow = InvoiceWorkflow
         serializer = InvoiceSerializer
 
     @staticmethod
     def post_save(sender, instance, created, raw, *args, **kwargs):
         if not instance.invoice_number:
-            name = numbercycle_get_name(instance)
+            name = number_range.name(instance)
             instance._meta.model.objects.filter(pk=instance.pk).update(invoice_number=name)
+
+    @staticmethod
+    def post_delete(sender, instance, *args, **kwargs):
+        number_range.delete(instance)
+
 
     def __str__(self):
         return '%s' % self.invoice_number
@@ -111,10 +115,6 @@ class AbstractInvoice(BaseInvoice):
         if self.project:
             return qs.filter(pk=self.project.customer_id)
         return qs
-
-    @staticmethod
-    def post_delete(sender, instance, *args, **kwargs):
-        numbercycle_delete_object(instance)
 
     def get_products(self):
         if not hasattr(self, '_cache_products'):

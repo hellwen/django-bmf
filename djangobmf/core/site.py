@@ -14,7 +14,6 @@ from django.core.exceptions import ImproperlyConfigured
 
 from djangobmf.core.module import Module
 from djangobmf.models import Configuration
-from djangobmf.models import NumberCycle
 from djangobmf.models import Report
 
 from rest_framework.routers import DefaultRouter
@@ -43,9 +42,6 @@ class Site(object):
 
         # all currencies should be stored here
         self.currencies = {}
-
-        # all numbercycles are here
-        self.numbercycles = []
 
         # all dashboards are stored here
         self.dashboards = []
@@ -82,16 +78,6 @@ class Site(object):
                 )
                 if created:
                     logger.debug('Reportobject for report %s created' % report.key)
-
-        # ~~~~ numbercycles ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        for model in self.numbercycles:
-            ct = ContentType.objects.get_for_model(model)
-            count = NumberCycle.objects.filter(ct=ct).count()
-            if not count:  # pragma: no branch
-                obj = NumberCycle(ct=ct, name_template=model._bmfmeta.number_cycle)
-                obj.save()
-                logger.debug('Numbercycle for model %s created' % model.__class__.__name__)
 
         # ~~~~ settings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -175,11 +161,6 @@ class Site(object):
     def get_setting_field(self, app_label, setting_name):
         name = '.'.join([app_label, setting_name])
         return self.settings[name]
-
-    # --- number cycle --------------------------------------------------------
-
-    def register_numbercycle(self, model):
-        self.numbercycles.append(model)
 
     # --- dashboards ----------------------------------------------------------
 

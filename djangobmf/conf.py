@@ -140,5 +140,30 @@ class Settings(object):
     def DEFAULT_CURRENCY(self):  # noqa
         return getattr(djsettings, 'BMF_DEFAULT_CURRENCY', 'EUR')
 
+    def patch(self):
+        """
+        This function is used to update django.conf.settings in the testrunner.
+        It updates django's settings with the default values from the bmf
+        """
+        for setting in [
+            'CONTRIB_ACCOUNT',
+            'CONTRIB_ADDRESS',
+            'CONTRIB_CUSTOMER',
+            'CONTRIB_EMPLOYEE',
+            'CONTRIB_GOAL',
+            'CONTRIB_INVOICE',
+            'CONTRIB_TAX',
+            'CONTRIB_TASK',
+            'CONTRIB_TEAM',
+            'CONTRIB_POSITION',
+            'CONTRIB_PRODUCT',
+            'CONTRIB_PROJECT',
+            'CONTRIB_QUOTATION',
+            'CONTRIB_TIMESHEET',
+            'CONTRIB_TRANSACTION',
+            'CONTRIB_TRANSACTIONITEM',
+        ]:
+            getattr(self, setting)
+
 
 settings = Settings()
