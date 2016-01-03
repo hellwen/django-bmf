@@ -1,0 +1,30 @@
+{% load i18n djangobmf_angularjs %}{% spaceless %}
+<table class="table table-striped table-condensed table-hover">
+    <thead>
+        <tr>
+            <th width="60%">{% trans "Address" %}</th>
+            <th width="30%">{% trans "Customer" %}</th>
+            <th width="5%">{% trans "Billing" %}</th>
+            <th width="5%">{% trans "Shipping" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="obj in data" ng-class="obj.is_active' ? '' : 'text-muted'">
+            <td>
+                <a bmf-detail="{% ng "obj.pk" %}" href="#">
+                    <span> {% ng "obj.name" %}</span>
+                </a>
+            </td>
+            <td>{% ng "obj.customer_name" %}</td>
+            <td ng-class="obj.default_billing ? '' : 'text-muted'" class="text-center">
+                <span ng-if="obj.is_billing == true" class="glyphicon glyphicon-ok"></span>
+                <span ng-if="obj.is_billing == false" class="glyphicon glyphicon-remove"></span>
+            </td>
+            <td ng-class="obj.default_shipping ? '' : 'text-muted'" class="text-center">
+                <span ng-if="obj.is_shipping == true" class="glyphicon glyphicon-ok"></span>
+                <span ng-if="obj.is_shipping == false" class="glyphicon glyphicon-remove"></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endspaceless %}

@@ -74,9 +74,15 @@ class AbstractAddress(BaseAddress):
         )
 
     def __str__(self):
+        name = self.name
         if self.name2:
-            return self.name + ", " + self.name2
-        return self.name
+            name += ", " + self.name2
+        return '%s, %s, %s (%s)' % (
+            name,
+            self.street,
+            self.city,
+            self.country,
+        )
 
 
 class Address(AbstractAddress):

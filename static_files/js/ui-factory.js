@@ -127,17 +127,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             $rootScope.bmf_module = module;
 
             // TODO REMOVE ME
-            if ('pk' in kwargs) {
-                $rootScope.bmf_current_view = {
-                    type: urlconf.name,
-                    module: module,
-                    pk: kwargs.pk,
-                    view: view.view,
-                    category: view.category,
-                    dashboard: view.dashboard,
-                };
-            }
-            else {
+            if (!'pk' in kwargs) {
                 $rootScope.bmf_current_view = {
                     type: urlconf.name,
                     view: view.view,
@@ -162,7 +152,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
         }
         // Update the breadcrumbs if they are not defined
         else if ($rootScope.bmf_breadcrumbs.length == 0) {
-            var regex = new RegExp('^(.*/)[0-9+]/$');
+            var regex = new RegExp('^(.*/)[0-9]+/$');
             $rootScope.bmf_breadcrumbs = [{
                 name: urlconf.parent,
                 module: module || null,

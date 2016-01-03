@@ -51,7 +51,6 @@ class ActivitySerializer(ModelSerializer):
             action=ACTION_COMMENT,
             parent_id=self.context['view'].kwargs.get('pk'),
             parent_ct=self.context['view'].get_bmfcontenttype(),
-            unread=False,
             **validated_data
         )
         obj.save()

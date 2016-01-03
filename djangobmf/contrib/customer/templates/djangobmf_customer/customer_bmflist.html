@@ -1,0 +1,39 @@
+{% load i18n djangobmf_angularjs %}{% spaceless %}
+<table class="table table-striped table-condensed table-hover">
+    <thead>
+        <tr>
+            <th width="60%">{% trans "Name" %}</th>
+            <th width="30%">{% trans "User" %}</th>
+            <th width="5%">{% trans "Customer" %}</th>
+            <th width="5%">{% trans "Supplier" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="obj in data" ng-class="obj.is_active' ? '' : 'text-muted'">
+            <td>
+                <a bmf-detail="{% ng "obj.pk" %}" href="#">
+                    <span ng-if="obj.is_company == true" class="glyphicon glyphicon-home"></span>
+                    <span ng-if="obj.is_company == false" class="glyphicon glyphicon-user"></span>
+                    <span ng-if="obj.number"> {% ng "obj.number" %}:</span>
+                    <span> {% ng "obj.name" %}</span>
+                </a>
+                <span ng-if="obj.employee_at" class="text-muted"><br>
+                    <small>{% ng "obj.employee" %} <a bmf-detail="{% ng "obj.employee_at" %}" href="#">
+                        <span class="glyphicon glyphicon-home"></span>
+                    </small>
+                </span>
+            </td>
+            <td ng-if="obj.username">{% ng "obj.username" %}</td>
+            <td ng-if="obj.username == null"><i>{% trans "None" %}</i></td>
+            <td class="text-center">
+                <span ng-if="obj.is_customer == true" class="glyphicon glyphicon-ok"></span>
+                <span ng-if="obj.is_customer == false" class="glyphicon glyphicon-remove"></span>
+            </td>
+            <td class="text-center">
+                <span ng-if="obj.is_supplier == true" class="glyphicon glyphicon-ok"></span>
+                <span ng-if="obj.is_supplier == false" class="glyphicon glyphicon-remove"></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endspaceless %}
