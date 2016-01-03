@@ -361,7 +361,7 @@ bmfapp.controller('NavigationCtrl', ['$scope', '$interval', '$http', function($s
 // }]);
 
 
-bmfapp.controller('ActivityCtrl', [function() {
+bmfapp.controller('ActivityCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.data = {};
     $scope.processForm = function() {
         var url = $scope.$parent.$parent.ui.views.activity.url;

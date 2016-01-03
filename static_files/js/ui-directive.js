@@ -304,15 +304,17 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
 
             function view_detail(type) {
                 scope.content_watcher = scope.$watch(
-                    function(scope) {return scope.bmf_current_view},
-                    function(newValue) {if (newValue != undefined && newValue.type == "detail") upd(newValue)}
+                    function(scope) {
+                        if (!$rootScope.bmf_breadcrumbs || $rootScope.bmf_breadcrumbs.length == 0) {
+                            return undefined
+                        }
+                        return $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length -1];
+                    },
+                    function(value) {if (value != undefined) upd(value)}
                 );
 
                 function upd(view) {
                     // update vars
-                    scope.view_name = view.view.name;
-                    scope.category_name = view.category.name;
-                    scope.dashboard_name = view.dashboard.name;
                     scope.module = view.module;
 
                     scope.ui = {
@@ -321,7 +323,7 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                         views: null,
                     };
 
-                    var url = view.module.base + view.pk  + '/';
+                    var url = view.module.base + view.kwargs.pk  + '/';
                     $http.get(url).then(function(response) {
                         scope.ui.workflow = response.data.workflow;
                         scope.ui.views = response.data.views;
@@ -332,7 +334,6 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                             var url = response.data.views.activity.url;
                             $http.get(url).then(function(response) {
                                 scope.activities = response.data;
-                                console.log(response.data);
                             });
                         }
                     });
