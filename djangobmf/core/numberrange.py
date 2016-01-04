@@ -167,38 +167,3 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
         if as_range:
             return start, end
         return start
-
-
-#   def __init__(self, site):
-#       self.data = OrderedDict()
-#       self.site = site
-#       self.modules = []
-#       self.reports = []
-
-#   def __bool__(self):
-#       return bool(self.data)
-
-#   def __nonzero__(self):
-#       return self.__bool__()
-
-#   def __len__(self):
-#       return len(self.data)
-
-#   def __eq__(self, other):
-#       if isinstance(other, Dashboard):
-#           return self.key == other.key
-#       else:
-#           return False
-
-#   def __iter__(self):
-#       return self.data.values().__iter__()
-
-#   def __getitem__(self, key):
-#       return self.data[key]
-
-#   def __contains__(self, item):
-#       if isinstance(item, Category):
-#           key = item.key
-#       else:
-#           key = item
-#       return key in self.data
