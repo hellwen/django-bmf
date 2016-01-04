@@ -28,7 +28,7 @@ from .activity import ACTION_FILE
 
 from .activity import Activity as AbstractActivity
 from .configuration import Configuration as AbstractConfiguration
-from .dashboard import Dashboard as AbstractDashboard
+# from .dashboard import Dashboard as AbstractDashboard
 from .document import Document as AbstractDocument
 from .notification import Notification as AbstractNotification
 from .numberrange import NumberRange as AbstractNumberRange
@@ -45,7 +45,7 @@ __all__ = (
     'ACTION_WORKFLOW',
     'ACTION_FILE',
     'Activity',
-    'Dashboard',
+    # 'Dashboard',
     'Document',
     'Configuration',
     'Notification',
@@ -67,10 +67,10 @@ class Configuration(AbstractConfiguration):
         app_label = settings.APP_LABEL
 
 
-class Dashboard(AbstractDashboard):
-    class Meta(AbstractDashboard.Meta):
-        abstract = False
-        app_label = settings.APP_LABEL
+# class Dashboard(AbstractDashboard):
+#   class Meta(AbstractDashboard.Meta):
+#       abstract = False
+#       app_label = settings.APP_LABEL
 
 
 class Document(AbstractDocument):
