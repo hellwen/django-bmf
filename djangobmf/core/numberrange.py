@@ -54,6 +54,7 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
     _TYPE_COUNTER = 'c'
 
     settings = None
+    lookup = {}
 
     def name(self, obj, time_field="created"):
         ct = ContentType.objects.get_for_model(obj)
@@ -61,21 +62,25 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
         if self.type == self._TYPE_COUNTER:
             date = None
             number = self.get_object(ct)
-            counter = obj.pk
+            if lookup:
+                counter = obj._base_manager.filter(**lookup).count() + number.counter
+            else:
+                counter = obj.pk
         else:
             date = self.from_time(getattr(obj, time_field))
             number = self.get_object(ct, date)
 
-            counter = obj._base_manager.filter(**{
+            lookup = self.lookup
+            lookup.update({
                 '%s__gte' % time_field: number.period_start,
                 'pk__lt': obj.pk,
-            }).count() + number.counter
+            })
+
+            counter = obj._base_manager.filter(**lookup).count() + number.counter
 
         return self.generate_name(date, counter)
 
     def delete(self, obj):
-        if self.type == self._TYPE_COUNTER:
-            return None
         ct = ContentType.objects.get_for_model(obj)
         date = self.from_time(getattr(obj, time_field))
 

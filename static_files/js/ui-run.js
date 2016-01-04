@@ -3,7 +3,7 @@
  */
 
 
-bmfapp.run(['$rootScope', '$location', 'ViewUrlconf', function($rootScope, $location, ViewUrlconf) {
+bmfapp.run(['$rootScope', '$location', '$window', 'ViewUrlconf', function($rootScope, $location, $window, ViewUrlconf) {
     $rootScope.$on('$locationChangeStart', function(event, next, current) {
         if (next != current && !ViewUrlconf(next)) {
             // if the url is not managed by the framework, prevent default
