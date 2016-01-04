@@ -33,7 +33,7 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
-from rest_framework.mixins import DestroyModelMixin
+# from rest_framework.mixins import DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
@@ -77,19 +77,19 @@ class APIIndex(BaseMixin, APIView):
             if self.request.user.has_perms([perm]):  # pragma: no branch
                 related = []
                 for name, related_model in [
-                       (
-                           i.name,
-                           i.related_model,
-                       )
-                       for i in model._meta.get_fields()
-                       if hasattr(i.related_model, '_bmfmeta')
-                       and self.request.user.has_perms([
-                           '%s.view_%s' % (
-                               i.related_model._meta.app_label,
-                               i.related_model._meta.model_name,
-                           )
-                       ])
-                    ]:
+                        (
+                            i.name,
+                            i.related_model,
+                        )
+                        for i in model._meta.get_fields()
+                        if hasattr(i.related_model, '_bmfmeta')
+                        and self.request.user.has_perms([
+                            '%s.view_%s' % (
+                                i.related_model._meta.app_label,
+                                i.related_model._meta.model_name,
+                            )
+                        ])
+                ]:
                     related_ct = ContentType.objects.get_for_model(related_model)
                     template = '%s/%s_bmfrelated/%s_%s.html' % (
                         related_model._meta.app_label,
@@ -108,12 +108,15 @@ class APIIndex(BaseMixin, APIView):
                         ('ct', related_ct.pk),
                         ('template', template),
                         ('html', html),
-                        ('data',
-                            reverse('djangobmf:api', request=request, format=format, kwargs={
+                        ('data', reverse(
+                            'djangobmf:api',
+                            request=request,
+                            format=format,
+                            kwargs={
                                 'app': related_model._meta.app_label,
                                 'model': related_model._meta.model_name,
-                            })
-                        ),
+                            }
+                        )),
                     ])))
 
                 modules.append(OrderedDict([
@@ -229,7 +232,7 @@ class APIIndex(BaseMixin, APIView):
                 ('notification', OrderedDict([
                     ('url', reverse('djangobmf:notification')),
                     ('data', reverse('djangobmf:notification')),
-                ])), 
+                ])),
             ])),
             ('debug', settings.DEBUG),
         ]))
@@ -265,14 +268,18 @@ class APIViewDetail(BaseMixin, APIView):
 
 
 class ViewSet(ModelMixin, BaseMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    permission_classes = [ModuleViewPermission,]
+    permission_classes = [
+        ModuleViewPermission,
+    ]
     filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
 
 
 class APIModuleListView(ModelMixin, BaseMixin, ListModelMixin, CreateModelMixin, GenericAPIView):
-    permission_classes = [ModuleViewPermission,]
+    permission_classes = [
+        ModuleViewPermission,
+    ]
     filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
@@ -281,8 +288,10 @@ class APIModuleListView(ModelMixin, BaseMixin, ListModelMixin, CreateModelMixin,
         return self.list(request, *args, **kwargs)
 
 
-class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
-    permission_classes = [ModuleViewPermission,]
+class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, GenericAPIView):
+    permission_classes = [
+        ModuleViewPermission,
+    ]
     filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
@@ -292,12 +301,14 @@ class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, UpdateModel
 
 
 class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAPIView):
-    permission_classes = [ActivityPermission,]
+    permission_classes = [
+        ActivityPermission,
+    ]
     serializer_class = ActivitySerializer
 
     def get_queryset(self):
         # check if the user has access to the object
-        obj = self.get_bmfobject(self.kwargs.get('pk', None))
+        self.get_bmfobject(self.kwargs.get('pk', None))
 
         return Activity.objects.filter(
             parent_id=self.kwargs.get('pk', None),
@@ -312,13 +323,16 @@ class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAP
 
 
 class NotificationMixin(BaseMixin):
-    permission_classes = [NotificationPermission,]
+    permission_classes = [
+        NotificationPermission,
+    ]
 
     def get_queryset(self):
         return Notification.objects.filter(
             user=self.request.user,
             watch_ct=self.get_bmfcontenttype(),
         )
+
 
 class NotificationViewAPI(NotificationMixin, UpdateModelMixin, RetrieveModelMixin, GenericAPIView):
     serializer_class = NotificationViewSerializer
