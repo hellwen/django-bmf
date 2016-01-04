@@ -7,9 +7,9 @@ from djangobmf import fields
 
 from rest_framework.fields import CharField
 from rest_framework.fields import DecimalField
-from rest_framework.reverse import reverse
+# from rest_framework.reverse import reverse
 from rest_framework.serializers import ModelSerializer
-from rest_framework.serializers import SerializerMethodField
+# from rest_framework.serializers import SerializerMethodField
 
 
 class ModuleSerializer(ModelSerializer):
@@ -20,6 +20,7 @@ class ModuleSerializer(ModelSerializer):
         if 'pk' not in names:
             names = ('pk',) + tuple(names)
         return names
+
 
 class MoneyField(DecimalField):
     def to_representation(self, value):

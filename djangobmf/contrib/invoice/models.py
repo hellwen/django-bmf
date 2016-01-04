@@ -64,7 +64,6 @@ class BaseInvoice(BMFModel):
     def post_delete(sender, instance, *args, **kwargs):
         number_range.delete(instance)
 
-
     def __str__(self):
         return '%s' % self.invoice_number
 

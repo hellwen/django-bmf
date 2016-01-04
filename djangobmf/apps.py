@@ -32,7 +32,7 @@ class BMFConfig(AppConfig):
         from djangobmf.core.site import Site
         self.site = Site(namespace=self.label, app_name=self.label)
 
-    def bmfregister_module(module):
+    def bmfregister_module(self, module):
         """
         register a module with the framework
         """

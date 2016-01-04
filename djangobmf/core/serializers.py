@@ -12,7 +12,7 @@ from djangobmf.models.activity import ACTION_COMMENT
 from djangobmf.models.activity import ACTION_UPDATED
 from djangobmf.models.activity import ACTION_CREATED
 from djangobmf.models.activity import ACTION_WORKFLOW
-from djangobmf.models.activity import ACTION_FILE
+# from djangobmf.models.activity import ACTION_FILE
 from djangobmf.signals import activity_comment
 from djangobmf.templatetags.djangobmf_markup import markdown_filter
 
@@ -22,6 +22,7 @@ from rest_framework.serializers import SerializerMethodField
 from rest_framework.reverse import reverse
 
 import json
+
 
 class ActivitySerializer(ModelSerializer):
     user = SerializerMethodField()

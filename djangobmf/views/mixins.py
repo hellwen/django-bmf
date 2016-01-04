@@ -22,9 +22,9 @@ from djangobmf.conf import settings as bmfsettings
 from djangobmf.core.employee import Employee
 from djangobmf.decorators import login_required
 from djangobmf.document.forms import UploadDocument
-from djangobmf.models import Activity
+# from djangobmf.models import Activity
 from djangobmf.models import Document
-from djangobmf.models import Notification
+# from djangobmf.models import Notification
 from djangobmf.permissions import AjaxPermission
 from djangobmf.utils.serializers import DjangoBMFEncoder
 from djangobmf.views.defaults import bad_request
@@ -445,10 +445,10 @@ class ModuleAjaxMixin(ModuleBaseMixin, AjaxMixin):
         return ctx
 
     def render_valid_form(self, context):
-    #   if 'redirect' not in context and not self.model._bmfmeta.only_related:
-    #       context.update({
-    #           'redirect': self.get_success_url(),
-    #       })
+        #   if 'redirect' not in context and not self.model._bmfmeta.only_related:
+        #       context.update({
+        #           'redirect': self.get_success_url(),
+        #       })
         return super(ModuleAjaxMixin, self).render_valid_form(context)
 
 

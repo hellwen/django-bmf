@@ -62,7 +62,8 @@ def i18n_javascript(request):
 urlpatterns = patterns(
     '',
     # VIEWS COVERED BY UI
-    url(r'^$',
+    url(
+        r'^$',
         Index.as_view(), name="dashboard"
     ),
     url(
