@@ -14,7 +14,6 @@ from djangobmf.permissions import ModulePermission
 from djangobmf.views import ModuleDetailView
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
-from djangobmf.views import ModuleDetailView
 from djangobmf.views import ModuleFormAPI
 # from djangobmf.views import ModuleReportView
 from djangobmf.views import ModuleUpdateView
@@ -144,7 +143,7 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
             # TODO: Replace me with dummy view
             url(
                 r'^$',
-                self.detail.as_view(  
+                self.detail.as_view(
                     module=self,
                     model=self.model
                 ),

@@ -62,8 +62,8 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
         if self.type == self._TYPE_COUNTER:
             date = None
             number = self.get_object(ct)
-            if lookup:
-                counter = obj._base_manager.filter(**lookup).count() + number.counter
+            if self.lookup:
+                counter = obj._base_manager.filter(**self.lookup).count() + number.counter
             else:
                 counter = obj.pk
         else:
@@ -80,7 +80,7 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
 
         return self.generate_name(date, counter)
 
-    def delete(self, obj):
+    def delete(self, obj, time_field="created"):
         ct = ContentType.objects.get_for_model(obj)
         date = self.from_time(getattr(obj, time_field))
 
@@ -101,10 +101,10 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
         return obj
 
     @classmethod
-    def validate_template(self):
-        y = re.findall(self._MATCH_YEAR, self._template)
-        m = re.findall(self._MATCH_MONTH, self._template)
-        c = re.findall(self._MATCH_COUNTER, self._template)
+    def validate_template(cls):
+        y = re.findall(cls._MATCH_YEAR, cls._template)
+        m = re.findall(cls._MATCH_MONTH, cls._template)
+        c = re.findall(cls._MATCH_COUNTER, cls._template)
 
         if len(y) > 1:
             raise ValidationError('{year} can only be used once')
@@ -118,18 +118,18 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
             raise ValidationError('{counter:0Nd} must be used once')
 
         try:
-            self._template.format(year=1999, month=11, counter=1)
+            cls._template.format(year=1999, month=11, counter=1)
         except KeyError:
             raise ValidationError('The string has the wrong format')
 
     @classmethod
-    def get_type(self):
-        if (re.search(self._MATCH_MONTH, self._template)):
-            self.type = self._TYPE_RANGE_MONTH
-        elif (re.search(self._MATCH_YEAR, self._template)):
-            self.type = self._TYPE_RANGE_YEAR
+    def get_type(cls):
+        if (re.search(cls._MATCH_MONTH, cls._template)):
+            cls.type = cls._TYPE_RANGE_MONTH
+        elif (re.search(cls._MATCH_YEAR, cls._template)):
+            cls.type = cls._TYPE_RANGE_YEAR
         else:
-            self.type = self._TYPE_COUNTER
+            cls.type = cls._TYPE_COUNTER
 
     def from_time(self, time):
         if is_aware(time):

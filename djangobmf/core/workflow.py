@@ -333,11 +333,11 @@ class WorkflowContainer(object):
                 [
                     OrderedDict((
                         ('name', force_text(s.name)),
-                        ('url',
-                            reverse('djangobmf:moduleapi_%s_%s:workflow' % (
+                        ('url', reverse(
+                            'djangobmf:moduleapi_%s_%s:workflow' % (
                                 self.django_object._meta.app_label,
                                 self.django_object._meta.model_name,
-                            ), 
+                            ),
                             format=None,
                             request=request,
                             kwargs={'pk': self.django_object.pk, 'transition': k},

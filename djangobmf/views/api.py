@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 
-from django.apps import apps
+# from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
@@ -25,7 +25,7 @@ from djangobmf.pagination import ModulePagination
 from djangobmf.core.serializers import ActivitySerializer
 from djangobmf.core.serializers import NotificationViewSerializer
 from djangobmf.core.serializers import NotificationListSerializer
-from djangobmf.core.pagination import NotificationPagination
+# from djangobmf.core.pagination import NotificationPagination
 from djangobmf.views.mixins import BaseMixin
 
 from rest_framework.generics import GenericAPIView
@@ -77,19 +77,19 @@ class APIIndex(BaseMixin, APIView):
             if self.request.user.has_perms([perm]):  # pragma: no branch
                 related = []
                 for name, related_model in [
-                   (
-                       i.name,
-                       i.related_model,
-                   )
-                   for i in model._meta.get_fields()
-                   if hasattr(i.related_model, '_bmfmeta')
-                   and self.request.user.has_perms([
-                       '%s.view_%s' % (
-                           i.related_model._meta.app_label,
-                           i.related_model._meta.model_name,
+                       (
+                           i.name,
+                           i.related_model,
                        )
-                   ])
-                ]:
+                       for i in model._meta.get_fields()
+                       if hasattr(i.related_model, '_bmfmeta')
+                       and self.request.user.has_perms([
+                           '%s.view_%s' % (
+                               i.related_model._meta.app_label,
+                               i.related_model._meta.model_name,
+                           )
+                       ])
+                    ]:
                     related_ct = ContentType.objects.get_for_model(related_model)
                     template = '%s/%s_bmfrelated/%s_%s.html' % (
                         related_model._meta.app_label,

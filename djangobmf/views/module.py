@@ -26,9 +26,9 @@ from django.views.generic import DetailView
 from django.views.generic import UpdateView
 from django.views.generic.edit import BaseFormView
 from django.views.generic.detail import SingleObjectMixin
-from django.template.loader import get_template
-from django.template.loader import select_template
-from django.template import TemplateDoesNotExist
+# from django.template.loader import get_template
+# from django.template.loader import select_template
+# from django.template import TemplateDoesNotExist
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 # from django.utils.timezone import make_aware
@@ -41,7 +41,7 @@ from .mixins import ModuleSearchMixin
 from .mixins import ModuleBaseMixin
 from .mixins import ModuleAjaxMixin
 from .mixins import ModuleViewMixin
-from .mixins import ModuleFilesMixin
+# from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
 
@@ -64,7 +64,7 @@ import copy
 # import datetime
 import logging
 import operator
-import types
+# import types
 # import warnings
 
 from functools import reduce
@@ -113,7 +113,7 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
                     'djangobmf:moduleapi_%s_%s:update' % (
                         self.object._meta.app_label,
                         self.object._meta.model_name,
-                    ), 
+                    ),
                     format=None,
                     request=self.request,
                     kwargs={'pk': self.object.pk},
@@ -122,7 +122,7 @@ class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
                     'djangobmf:moduleapi_%s_%s:delete' % (
                         self.object._meta.app_label,
                         self.object._meta.model_name,
-                    ), 
+                    ),
                     format=None,
                     request=self.request,
                     kwargs={'pk': self.object.pk},
@@ -229,7 +229,7 @@ class ModuleCloneView(ModuleFormMixin, ModuleAjaxMixin, UpdateView):
         activity_create.send(sender=self.object.__class__, instance=self.object)
         return self.render_valid_form({
             'object_pk': self.object.pk,
-        #   'redirect': self.object.bmfmodule_detail(),
+            # 'redirect': self.object.bmfmodule_detail(),
             'message': True,
             'reload': True,
         })
@@ -265,7 +265,7 @@ class ModuleUpdateView(ModuleFormMixin, ModuleAjaxMixin, ReadOnlyMixin, UpdateVi
         else:
             return self.render_valid_form({
                 'object_pk': self.object.pk,
-            #   'redirect': self.object.bmfmodule_detail(),
+                # 'redirect': self.object.bmfmodule_detail(),
                 'message': True,
                 'reload': True,
             })
@@ -341,14 +341,14 @@ class ModuleDeleteView(ModuleAjaxMixin, DeleteView):
 
         def format_protected_callback(obj):
 
-        #   if obj.__class__ in self.request.djangobmf_site.modules and not obj._bmfmeta.only_related:
-        #       return format_html(
-        #           '{0}: <a href="{1}">{2}</a>',
-        #           obj._meta.verbose_name,
-        #           obj.bmfmodule_detail(),
-        #           obj
-        #       )
-        #   else:
+            #   if obj.__class__ in self.request.djangobmf_site.modules and not obj._bmfmeta.only_related:
+            #       return format_html(
+            #           '{0}: <a href="{1}">{2}</a>',
+            #           obj._meta.verbose_name,
+            #           obj.bmfmodule_detail(),
+            #           obj
+            #       )
+            #   else:
             return format_html(
                 '{0}: {1}',
                 obj._meta.verbose_name,
