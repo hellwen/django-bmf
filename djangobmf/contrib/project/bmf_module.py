@@ -16,7 +16,7 @@ from .permissions import ProjectPermission
 from .views import ProjectUpdateView
 
 
-@register(dashboard=ProjectManagement)
+@register
 class ProjectModule(Module):
     model = Project
     default = True

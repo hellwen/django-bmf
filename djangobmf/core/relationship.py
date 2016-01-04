@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
+from django.db.models import Model
 from django.utils import six
 from django.utils.timezone import get_default_timezone
 from django.utils.timezone import is_aware
@@ -37,20 +38,15 @@ class RelationshipMetaclass(type):
         if not getattr(new_cls, 'model', None):
             raise ImproperlyConfigured('No model attribute defined in %s.' % new_cls)
 
-        if isinstance(Model, new_cls.model):
+        if isinstance(new_cls.model, Model):
             new_cls._model = new_cls.model
-        elif new_cls.setting:
+        elif hasattr(new_cls, 'settings'):
             new_cls._model = apps.get_model(getattr(settings, new_cls.settings, new_cls.model))
         else:
             new_cls._model = apps.get_model(new_cls.model)
 
         if not getattr(new_cls, 'field', None):
             raise ImproperlyConfigured('No field attribute defined in %s.' % new_cls)
-
-        if not hasattr(new_cls._model, new_cls.field):
-            raise ImproperlyConfigured(
-                'The %s field is not defined on model %s.' % (new_cls.field, new_cls._model.__class__)
-            )
 
         if not getattr(new_cls, 'template', None):
             raise ImproperlyConfigured('No template attribute defined in %s.' % new_cls)

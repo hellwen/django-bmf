@@ -17,7 +17,7 @@ from .views import TeamCreateView
 from .views import TeamUpdateView
 
 
-@register(dashboard=HumanResources)
+@register
 class TeamModule(Module):
     model = Team
     default = True
@@ -25,7 +25,7 @@ class TeamModule(Module):
     update = TeamUpdateView
 
 
-@register(dashboard=HumanResources)
+@register
 class TeamMemberModule(Module):
     model = TeamMember
     default = True

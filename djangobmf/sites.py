@@ -7,6 +7,7 @@ from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 
 from djangobmf.conf import settings
+from djangobmf.core import Relationship
 from djangobmf.core.category import Category
 from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
@@ -71,14 +72,21 @@ if apps.apps_ready:  # pragma: no branch
                 category.add_view(cls)
                 logger.debug('Registered View "%s" to %s', cls.__name__, category.__class__.__name__)
 
-            elif issubclass(cls, Module):
-                if "dashboard" not in self.kwargs:
+            elif issubclass(cls, Relationship):
+                if "module" not in self.kwargs:
                     raise ImproperlyConfigured(
-                        'You need to define a dashbord, when registering the module %s',
-                        cls,
+                        'You need to define a module when registering the view %s',
+                        cls.__name__,
                     )
-                dashboard = self.register_dashboard(self.kwargs["dashboard"])
-                dashboard.add_module(cls)
+                # dashboard.add_module(cls)
+
+            elif issubclass(cls, Module):
+                if "dashboard" in self.kwargs:
+                    logger.warning(
+                        "You don't need to define a dashboard, when registering your modules (%s)",
+                        cls.__name__
+                    )
+                site.modules[cls.model] = cls()
 
             elif issubclass(cls, Report):
                 if "dashboard" not in self.kwargs:

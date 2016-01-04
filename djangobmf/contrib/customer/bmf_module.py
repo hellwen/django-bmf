@@ -17,7 +17,7 @@ from .views import CompanyCreateView
 from .views import UpdateView
 
 
-@register(dashboard=Sales)
+@register
 class CustomerModule(Module):
     model = Customer
     default = True

@@ -18,7 +18,7 @@ from .views import PositionCreateView
 from .views import PositionAPI
 
 
-@register(dashboard=Sales)
+@register
 class PositionModule(Module):
     model = Position
     default = True

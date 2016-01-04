@@ -14,7 +14,7 @@ from .categories import TaxCategory
 from .models import Tax
 
 
-@register(dashboard=Accounting)
+@register
 class TaxModule(Module):
     model = Tax
     default = True

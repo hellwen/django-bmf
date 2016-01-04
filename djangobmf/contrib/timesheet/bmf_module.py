@@ -17,7 +17,7 @@ from .views import CreateView
 from .views import UpdateView
 
 
-@register(dashboard=TimeAndAttendance)
+@register
 class TimesheetModule(Module):
     model = Timesheet
     default = True

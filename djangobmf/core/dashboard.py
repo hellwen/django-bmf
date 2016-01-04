@@ -135,16 +135,16 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
     def get_module(self, model):
         return self.site.modules[model]
 
-    def add_module(self, module):
-        """
-        Adds a module to the dashboard
-        """
-        if module.model in self.site.modules:
-            raise AlreadyRegistered('The module %s is already registered' % module.model.__name__)
+#   def add_module(self, module):
+#       """
+#       Adds a module to the dashboard
+#       """
+#       if module.model in self.site.modules:
+#           raise AlreadyRegistered('The module %s is already registered' % module.model.__name__)
 
-        self.site.modules[module.model] = module()
-        logger.debug('Registered Module "%s"', module.__name__)
-        return self.site.modules[module.model]
+#       self.site.modules[module.model] = module()
+#       logger.debug('Registered Module "%s"', module.__name__)
+#       return self.site.modules[module.model]
 
     def add_category(self, category):
         """

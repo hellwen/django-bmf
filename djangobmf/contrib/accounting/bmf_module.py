@@ -24,13 +24,13 @@ from .views import TransactionCreateView
 from .views import TransactionUpdateView
 
 
-@register(dashboard=Accounting)
+@register
 class AccountModule(Module):
     model = Account
     default = True
 
 
-@register(dashboard=Accounting)
+@register
 class TransactionModule(Module):
     model = Transaction
     default = True
@@ -38,7 +38,7 @@ class TransactionModule(Module):
     update = TransactionUpdateView
 
 
-@register(dashboard=Accounting)
+@register
 class TransactionItemModule(Module):
     model = TransactionItem
     default = True

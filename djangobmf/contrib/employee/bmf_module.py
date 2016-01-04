@@ -15,7 +15,7 @@ from .models import Employee
 from .views import EmployeeCreateView
 
 
-@register(dashboard=HumanResources)
+@register
 class EmployeeModule(Module):
     model = Employee
     default = True

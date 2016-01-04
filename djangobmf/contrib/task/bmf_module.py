@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
+from djangobmf.core import Relationship
 from djangobmf.dashboards import ProjectManagement
 from djangobmf.sites import Module
 from djangobmf.sites import ViewMixin
@@ -20,18 +21,27 @@ from .views import GoalCloneView
 from .views import GoalDetailView
 
 
-@register(dashboard=ProjectManagement)
+@register
 class TaskModule(Module):
     model = Task
     default = True
 
 
-@register(dashboard=ProjectManagement)
+@register
 class GoalModule(Module):
     model = Goal
     default = True
     clone = GoalCloneView
     detail = GoalDetailView
+
+
+@register(module=TaskModule)
+class ProjectTaskRelationship(Relationship):
+    name = "task"
+    model = "djangobmf_project.Project"
+    settings = "BMF_CONTRIB_PROJECT"
+    field = "project"
+    template = "djangobmf_task/relationship/project_task.html"
 
 
 @register(category=GoalCategory)

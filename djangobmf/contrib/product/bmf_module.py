@@ -21,7 +21,7 @@ from .views import ProductDetailView
 from .views import ProductUpdateView
 
 
-@register(dashboard=Sales)
+@register
 class ProductModule(Module):
     model = Product
     default = True
@@ -30,7 +30,7 @@ class ProductModule(Module):
     update = ProductUpdateView
 
 
-@register(dashboard=Sales)
+@register
 class ProductTaxModule(Module):
     model = ProductTax
     default = True

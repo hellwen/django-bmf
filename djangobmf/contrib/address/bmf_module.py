@@ -14,7 +14,7 @@ from .categories import AddressCategory
 from .models import Address
 
 
-@register(dashboard=Sales)
+@register
 class AddressModule(Module):
     model = Address
     default = True
