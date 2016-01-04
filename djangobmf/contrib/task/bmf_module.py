@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.core import Relationship
-from djangobmf.dashboards import ProjectManagement
 from djangobmf.sites import Module
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register

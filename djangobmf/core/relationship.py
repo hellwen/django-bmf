@@ -7,15 +7,15 @@ from django.apps import apps
 from django.conf import settings
 # from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
-from django.core.exceptions import ValidationError
+# from django.core.exceptions import ValidationError
 from django.db.models import Model
 from django.utils import six
-from django.utils.timezone import get_default_timezone
-from django.utils.timezone import is_aware
-from django.utils.timezone import localtime
+# from django.utils.timezone import get_default_timezone
+# from django.utils.timezone import is_aware
+# from django.utils.timezone import localtime
 
-import re
-import datetime
+# import re
+# import datetime
 
 import logging
 logger = logging.getLogger(__name__)

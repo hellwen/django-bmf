@@ -7,10 +7,10 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
-from django.db.models.fields.related import ManyToOneRel
-from django.db.models.fields.related import ManyToManyField
+# from django.db.models.fields.related import ManyToOneRel
+# from django.db.models.fields.related import ManyToManyField
 from django.http import Http404
-from django.template import TemplateDoesNotExist
+# from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.template.loader import select_template
 from django.utils.translation import ugettext_lazy as _
@@ -77,56 +77,56 @@ class APIIndex(BaseMixin, APIView):
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
                 related = []
-                for name, related_model in [
-                        (
-                            i.name,
-                            i.related_model,
-                        )
-                        for i in model._meta.get_fields()
-                        if hasattr(i.related_model, '_bmfmeta')
-                        and self.request.user.has_perms([
-                            '%s.view_%s' % (
-                                i.related_model._meta.app_label,
-                                i.related_model._meta.model_name,
-                            )
-                        ])
-                ]:
-                    related_ct = ContentType.objects.get_for_model(related_model)
-                    template = '%s/%s_bmfrelated/%s_%s.html' % (
-                        related_model._meta.app_label,
-                        related_model._meta.model_name,
-                        model._meta.model_name,
-                        field.name,
-                    )
+                # for field, related_model in [
+                #         (
+                #             i,
+                #             i.related_model,
+                #         )
+                #         for i in model._meta.get_fields()
+                #         if hasattr(i.related_model, '_bmfmeta')
+                #         and self.request.user.has_perms([
+                #             '%s.view_%s' % (
+                #                 i.related_model._meta.app_label,
+                #                 i.related_model._meta.model_name,
+                #             )
+                #         ])
+                # ]:
+                #     related_ct = ContentType.objects.get_for_model(related_model)
+                #     template = '%s/%s_bmfrelated/%s_%s.html' % (
+                #         related_model._meta.app_label,
+                #         related_model._meta.model_name,
+                #         model._meta.model_name,
+                #         field.name,
+                #     )
 
-                    # select the lookup field name of the related model
-                    rel_field = None
-                    if isinstance(field, ManyToOneRel):
-                        rel_field = field.get_accessor_name()
-                    if isinstance(field, ManyToManyField):
-                        rel_field = field.m2m_reverse_name()
-                    if not rel_field: continue
+                #     # select the lookup field name of the related model
+                #     rel_field = None
+                #     if isinstance(field, ManyToOneRel):
+                #         rel_field = field.get_accessor_name()
+                #     if isinstance(field, ManyToManyField):
+                #         rel_field = field.m2m_reverse_name()
+                #     if not rel_field: continue
 
-                    try:
-                        get_template(template)
-                        html = "<h1>TODO</h1>"  # TODO
-                    except TemplateDoesNotExist:
-                        html = None
+                #     try:
+                #         get_template(template)
+                #         html = "<h1>TODO</h1>"  # TODO
+                #     except TemplateDoesNotExist:
+                #         html = None
 
-                    related.append((field.name, OrderedDict([
-                        ('ct', related_ct.pk),
-                        ('template', template),
-                        ('html', html),
-                        ('data', reverse(
-                            'djangobmf:api',
-                            request=request,
-                            format=format,
-                            kwargs={
-                                'app': related_model._meta.app_label,
-                                'model': related_model._meta.model_name,
-                            }
-                        )),
-                    ])))
+                #     related.append((field.name, OrderedDict([
+                #         ('ct', related_ct.pk),
+                #         ('template', template),
+                #         ('html', html),
+                #         ('data', reverse(
+                #             'djangobmf:api',
+                #             request=request,
+                #             format=format,
+                #             kwargs={
+                #                 'app': related_model._meta.app_label,
+                #                 'model': related_model._meta.model_name,
+                #             }
+                #         )),
+                #     ])))
 
                 modules.append(OrderedDict([
                     ('app', model._meta.app_label),
@@ -280,7 +280,7 @@ class ViewSet(ModelMixin, BaseMixin, ListModelMixin, RetrieveModelMixin, Generic
     permission_classes = [
         ModuleViewPermission,
     ]
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    filter_backends = (ViewFilterBackend, RangeFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
 
@@ -289,7 +289,7 @@ class APIModuleListView(ModelMixin, BaseMixin, ListModelMixin, CreateModelMixin,
     permission_classes = [
         ModuleViewPermission,
     ]
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    filter_backends = (ViewFilterBackend, RangeFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
 
@@ -301,7 +301,7 @@ class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, GenericAPIV
     permission_classes = [
         ModuleViewPermission,
     ]
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    filter_backends = (ViewFilterBackend, RangeFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
 

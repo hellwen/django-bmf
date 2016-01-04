@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Model
+# from django.db.models import Model
 
 from djangobmf.conf import settings
 from djangobmf.core import Relationship

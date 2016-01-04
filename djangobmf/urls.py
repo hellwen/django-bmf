@@ -23,7 +23,7 @@ from djangobmf.views.api import APIIndex
 from djangobmf.views.api import APIViewDetail
 from djangobmf.views.api import APIRelatedView
 from djangobmf.views.api import APIModuleListView
-from djangobmf.views.api import APIModuleDetailView
+# from djangobmf.views.api import APIModuleDetailView
 from djangobmf.views.api import APIActivityListView
 from djangobmf.views.api import NotificationCountAPI
 from djangobmf.views.api import NotificationListAPI
