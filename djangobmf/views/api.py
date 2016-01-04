@@ -19,7 +19,6 @@ from djangobmf.models import Activity
 from djangobmf.models import Notification
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
-from djangobmf.filters import RelatedFilterBackend
 from djangobmf.permissions import ActivityPermission
 from djangobmf.permissions import ModuleViewPermission
 from djangobmf.permissions import NotificationPermission
@@ -272,14 +271,14 @@ class APIViewDetail(BaseMixin, APIView):
 
 class ViewSet(ModelMixin, BaseMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
     permission_classes = [ModuleViewPermission,]
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    filter_backends = (ViewFilterBackend, RangeFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
 
 
 class APIModuleListView(ModelMixin, BaseMixin, ListModelMixin, CreateModelMixin, GenericAPIView):
     permission_classes = [ModuleViewPermission,]
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    filter_backends = (ViewFilterBackend, RangeFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
 
