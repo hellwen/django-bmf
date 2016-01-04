@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models import Model
 
 from djangobmf.conf import settings
 from djangobmf.core import Relationship
@@ -73,19 +74,15 @@ if apps.apps_ready:  # pragma: no branch
                 logger.debug('Registered View "%s" to %s', cls.__name__, category.__class__.__name__)
 
             elif issubclass(cls, Relationship):
-                if "module" not in self.kwargs:
+                if "model" not in self.kwargs:
                     raise ImproperlyConfigured(
                         'You need to define a module when registering the view %s',
                         cls.__name__,
                     )
+                logger.debug('RELATIONSHIP %s', cls)
                 # dashboard.add_module(cls)
 
             elif issubclass(cls, Module):
-                if "dashboard" in self.kwargs:
-                    logger.warning(
-                        "You don't need to define a dashboard, when registering your modules (%s)",
-                        cls.__name__
-                    )
                 site.modules[cls.model] = cls()
 
             elif issubclass(cls, Report):

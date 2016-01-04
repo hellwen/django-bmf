@@ -35,7 +35,7 @@ class GoalModule(Module):
     detail = GoalDetailView
 
 
-@register(module=TaskModule)
+@register(model=Task)
 class ProjectTaskRelationship(Relationship):
     name = "task"
     model = "djangobmf_project.Project"
