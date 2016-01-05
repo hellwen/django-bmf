@@ -5,17 +5,11 @@ from __future__ import unicode_literals
 
 from django.apps import apps
 from django.conf import settings
-# from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
-# from django.core.exceptions import ValidationError
 from django.db.models import Model
 from django.utils import six
-# from django.utils.timezone import get_default_timezone
-# from django.utils.timezone import is_aware
-# from django.utils.timezone import localtime
 
-# import re
-# import datetime
+import re
 
 import logging
 logger = logging.getLogger(__name__)
@@ -45,24 +39,51 @@ class RelationshipMetaclass(type):
         else:
             new_cls._model = apps.get_model(new_cls.model)
 
-        if not getattr(new_cls, 'field', None):
-            raise ImproperlyConfigured('No field attribute defined in %s.' % new_cls)
+        if not getattr(new_cls, 'name', None):
+            raise ImproperlyConfigured('No name attribute defined in %s.' % new_cls)
+
+        if not getattr(new_cls, 'slug', None):
+            raise ImproperlyConfigured('No slug attribute defined in %s.' % new_cls)
 
         if not getattr(new_cls, 'template', None):
             raise ImproperlyConfigured('No template attribute defined in %s.' % new_cls)
 
-#       if not getattr(new_cls, 'name', None):
-#           raise ImproperlyConfigured('No name attribute defined in %s.' % new_cls)
-
-#       new_cls._model = new_cls.settings and getattr(settings, new_cls.settings, None) or new_cls.template
-#       new_cls.validate_template()
-#       new_cls.get_type()
+        if not re.match('^[\w-]+$', new_cls.slug):
+            raise ImproperlyConfigured('The slug attribute defined in %s contains invalid chars.' % new_cls)
 
         return new_cls
 
 
 class Relationship(six.with_metaclass(RelationshipMetaclass, object)):
+    _related_model = None
     settings = None
+    field = None
+
+    def __eq__(self, other):
+        if isinstance(other, Relationship):
+            return self._model == other.__model \
+                and self._related_model == other.related_model \
+                and self.slug == other.slug
+        else:
+            return False
+
+    def get_queryset(self, obj):
+        """
+        This function resolves the field value to the the queryset provided by
+        the django relationship or needs to be overwritten
+        """
+        if not self.field:
+            raise NotImplemented(
+                'You need to define a get_queryset method '
+                'or set a field attribute in %s' % self.__class__.__name__
+            )
+
+        raise NotImplemented(
+            'NOT IMPLEMENTED YET'
+        )
+
+    def filter_queryset(self, queryset):
+        return queryset.all()
 
 #   pass
 #   _MATCH_YEAR = r'{year}'

@@ -172,7 +172,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
                 if (crumb.url == url) index = i;
             });
-            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
+            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; i--) {
                 delete $rootScope.bmf_breadcrumbs[i];
             }
 
@@ -186,6 +186,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
 
         // fire events (with updated breadcrumbs)
         if (view) $rootScope.bmfevent_dashboard(kwargs.dashboard);
+        $rootScope.bmfevent_object(module || null, kwargs.pk || null);
 
         return true
     }

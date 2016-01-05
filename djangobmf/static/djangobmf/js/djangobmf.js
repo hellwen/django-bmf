@@ -664,6 +664,7 @@ var BMFEVENT_DASHBOARD = "bmf.event.update.dashboard";
 var BMFEVENT_DATA = "bmf.event.update.data";
 var BMFEVENT_MODAL = "bmf.event.update.modal";
 var BMFEVENT_NAVIGATION = "bmf.event.update.navigation";
+var BMFEVENT_OBJECT = "bmf.event.update.object";
 var BMFEVENT_SIDEBAR = "bmf.event.update.sidebar";
 
 // INIT APP
@@ -1169,26 +1170,12 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                     // update vars
                     scope.module = view.module;
 
-                    console.log(view.module);
+                    // console.log(view.module);
                     scope.ui = {
                         notifications: null,
                         workflow: null,
                         views: null,
                         related: [],
-                    };
-
-                    // get related objects
-                    for (var key in view.module.related) {
-                        console.log(key);
-                        var related = view.module.related[key];
-                        var module = scope.bmf_modules[related.ct];
-                        scope.ui.related.push({
-                            template: related.template,
-                            active: false,
-                            name: module.name,
-                            data: module.data + '?rel-field=' + related.field + '&rel-pk=' + view.pk,
-                            html: related.html,
-                        });
                     };
 
                     var url = view.module.base + view.kwargs.pk  + '/';
@@ -1267,30 +1254,6 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
 
 
 // compiles the content of a scope variable
-bmfapp.directive('bmfRelatedModules', ['$compile', '$rootScope', function($compile, $rootScope) {
-//  return {
-//      restrict: 'C',
-//      scope: {},
-//      link: function(scope) {
-//          var modules = [];
-//          for (var key in $rootScope.bmf_current_view.module.related) {
-//              var related = $rootScope.bmf_current_view.module.related[key];
-//              var module = $rootScope.bmf_modules[related.ct];
-//              modules.push({
-//                  template: related.template,
-//                  name: module.name,
-//                  data: module.data,
-//                  html: related.html,
-//              });
-//          };
-//          scope.related = modules;
-//          console.log("RELATED_OBJECTS", scope);
-//      },
-//  };
-}]);
-
-
-// compiles the content of a scope variable
 bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
     return {
         restrict: 'E',
@@ -1311,6 +1274,128 @@ bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
                 }
             );
         }
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteRelated', [function() {
+    return {
+        restrict: 'C',
+        scope: {},
+        template: function(tElement, tAttrs) {
+            return tElement.html();
+        },
+        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', function($scope, $location, $http, ApiUrlFactory) {
+
+            $scope.visible = false;
+            $scope.module = null;
+            $scope.pk = null;
+
+            $scope.urlparam = undefined;
+            $scope.paginator = undefined;
+
+            function clear_data() {
+                $scope.data = [];
+                $scope.errors = [];
+            }
+            clear_data();
+
+            function update() {
+                var search = $location.search();
+                $scope.urlparam = search.open;
+
+                if ($scope.urlparam) {
+                    $scope.dataurl = ApiUrlFactory(
+                        $scope.module,
+                        'related',
+                        $scope.urlparam,
+                        $scope.pk
+                    ) + '?page=' + (search.rpage || 1);
+                }
+            }
+
+            function get_data(url) {
+                console.log("GET NEW DATA FROM", url);
+            }
+
+            $scope.$watch(
+                function(scope) {return scope.dataurl},
+                function(value) {
+                    clear_data();
+                    if (value) get_data(value);
+                }
+            );
+
+            $scope.open = function(slug) {
+                if (slug == $scope.urlparam) {
+                    $scope.urlparam = undefined;
+                }
+                else {
+                    $scope.urlparam = slug;
+                }
+                // changing the location will result in firing the event
+                // which reloads the data
+                $location.search('open', $scope.urlparam);
+            }
+
+            $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+                if (module && pk) {
+                    $scope.visible = true;
+                    $scope.module = module;
+                    $scope.pk = pk;
+                    update();
+                }
+                else $scope.visible = false;
+            });
+        }],
+        link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {return scope.visible},
+                function(value) {
+                    if (value) {
+                        $element.show()
+                    }
+                    else {
+                        $element.hide()
+                    }
+                }
+            );
+
+        },
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteActivity', ['$compile', function($compile) {
+    return {
+        restrict: 'C',
+        scope: {},
+        template: function(tElement, tAttrs) {
+            return tElement.html();
+        },
+        controller: ['$scope', '$element', function($scope, $element) {
+            $scope.clear = function() {
+                $scope.visible = false;
+                $scope.module = null;
+                $scope.pk = null;
+                $scope.data = [];
+            }
+            $scope.clear();
+
+            $scope.get = function() {
+            }
+            $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+                if (module && pk) {
+                    $scope.visible = true;
+                    $scope.module = module;
+                    $scope.pk = pk;
+                    $scope.get();
+                }
+                else $scope.clear();
+            });
+        }],
+        // link: function(scope, $element) {
+        // },
     };
 }]);
 
@@ -1488,7 +1573,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
                 if (crumb.url == url) index = i;
             });
-            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
+            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; i--) {
                 delete $rootScope.bmf_breadcrumbs[i];
             }
 
@@ -1502,6 +1587,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
 
         // fire events (with updated breadcrumbs)
         if (view) $rootScope.bmfevent_dashboard(kwargs.dashboard);
+        $rootScope.bmfevent_object(module || null, kwargs.pk || null);
 
         return true
     }
@@ -1636,6 +1722,10 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         // TODO
         $rootScope.$broadcast(BMFEVENT_NAVIGATION);
     }
+    $rootScope.bmfevent_object = function(module, pk) {
+        $rootScope.$broadcast(BMFEVENT_OBJECT, module, pk);
+    }
+
     $rootScope.bmfevent_sidebar = function(dashboard_key) {
         $rootScope.bmf_dashboards.forEach(function(d, i) {
             if (d.key == dashboard_key) {
@@ -1864,6 +1954,31 @@ bmfapp.controller('NavigationCtrl', ['$scope', '$interval', '$http', function($s
 
 // bmfapp.controller('DataCtrl', [function() {
 // }]);
+
+
+bmfapp.controller('BmfActivityCtrl', ['$scope', function($scope) {
+    function clear() {
+        $scope.data = [];
+        $scope.visible = false;
+        $scope.module = null;
+        $scope.pk = null;
+    }
+    clear();
+
+    $scope.get = function() {
+        $scope.data = [];
+    }
+
+    $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+        if (module && pk) {
+            $scope.visible = true;
+            $scope.module = module;
+            $scope.pk = pk;
+            $scope.get();
+        }
+        else clear();
+    });
+}]);
 
 
 // bmfapp.controller('PaginationCtrl', [function() {

@@ -154,7 +154,8 @@ class BaseMixin(object):
         """
 
         # add the site object to every request
-        setattr(self.request, 'djangobmf_site', apps.get_app_config(bmfsettings.APP_LABEL).site)
+        setattr(self.request, 'djangobmf_appconfig', apps.get_app_config(bmfsettings.APP_LABEL))
+        setattr(self.request, 'djangobmf_site', self.request.djangobmf_appconfig.site)
 
         # add the authenticated user and employee to the request (as a lazy queryset)
         self.request.user.djangobmf = Employee(self.request.user)

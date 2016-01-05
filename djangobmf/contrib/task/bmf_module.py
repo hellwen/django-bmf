@@ -36,10 +36,11 @@ class GoalModule(Module):
 
 @register(model=Task)
 class ProjectTaskRelationship(Relationship):
-    name = "task"
+    name = _("Tasks")
+    slug = "task"
+    field = "project"
     model = "djangobmf_project.Project"
     settings = "BMF_CONTRIB_PROJECT"
-    field = "project"
     template = "djangobmf_task/relationship/project_task.html"
 
 

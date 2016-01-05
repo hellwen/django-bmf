@@ -44,14 +44,6 @@
 
 <bmf-template></bmf-template>
 
-<ul ng-if="ui.related.length > 0" class="nav nav-pills">
-   <li ng-repeat="mod in ui.related" ng-class="mod.active ? 'active' : ''">
-       <a ng-class="active ? 'active' : ''" href="{{ mod.data }}">{{ mod.name }}</a>
-   </li>
-</ul>
-
-<bmf-related-modules></bmf-related-modules>
-
 <!--
 <h2>Footer: (todo)</h2>
 <ul>

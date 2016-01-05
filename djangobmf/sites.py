@@ -35,6 +35,7 @@ __all__ = [
 # queries). Importing this to early leads to an exception
 # which is a feature and not a bug.
 if apps.apps_ready:  # pragma: no branch
+    bmfappconfig = apps.get_app_config(settings.APP_LABEL)
     site = apps.get_app_config(settings.APP_LABEL).site
 
     class register(object):  # noqa
@@ -79,11 +80,11 @@ if apps.apps_ready:  # pragma: no branch
                         'You need to define a module when registering the view %s',
                         cls.__name__,
                     )
-                logger.debug('RELATIONSHIP %s', cls)
-                # dashboard.add_module(cls)
+                bmfappconfig.bmfregister_relationship(cls, self.kwargs["model"])
 
             elif issubclass(cls, Module):
-                site.modules[cls.model] = cls()
+                instance = bmfappconfig.bmfregister_module(cls)
+                site.modules[cls.model] = instance
 
             elif issubclass(cls, Report):
                 if "dashboard" not in self.kwargs:

@@ -67,38 +67,50 @@ class APIIndex(BaseMixin, APIView):
         """
         """
         site = request.djangobmf_site
+        appconfig = request.djangobmf_appconfig
+
+        # === Relationships ---------------------------------------------------
+        relations = {}
+        for relation in appconfig.bmf_relations:
+
+            # check permissions
+            perm = '%s.view_%s'
+
+            info = relation._model._meta.app_label, relation._model._meta.model_name
+            if not self.request.user.has_perms([perm % info]):
+                continue
+
+            info = relation._related_model._meta.app_label, relation._related_model._meta.model_name
+            if not self.request.user.has_perms([perm]):
+                continue
+
+            ct_target = ContentType.objects.get_for_model(relation._model).pk
+
+            data = OrderedDict([
+                ('app_label', relation._related_model._meta.app_label),
+                ('model_name', relation._related_model._meta.model_name),
+                ('name', relation.name),
+                ('slug', relation.slug),
+                ('template', relation.template),
+            ])
+
+            if ct_target in relations.keys():
+                relations[ct_target].append(data)
+            else:
+                relations[ct_target] = [data]
 
         # === Modules ---------------------------------------------------------
 
         modules = []
-        for ct, model in site.models.items():
+        # for ct, model in site.models.items():
+        for module in appconfig.bmf_modules:
+            model = module.model
+            ct = ContentType.objects.get_for_model(model).pk
 
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
-                related = []
-                # for field, related_model in [
-                #         (
-                #             i,
-                #             i.related_model,
-                #         )
-                #         for i in model._meta.get_fields()
-                #         if hasattr(i.related_model, '_bmfmeta')
-                #         and self.request.user.has_perms([
-                #             '%s.view_%s' % (
-                #                 i.related_model._meta.app_label,
-                #                 i.related_model._meta.model_name,
-                #             )
-                #         ])
-                # ]:
-                #     related_ct = ContentType.objects.get_for_model(related_model)
-                #     template = '%s/%s_bmfrelated/%s_%s.html' % (
-                #         related_model._meta.app_label,
-                #         related_model._meta.model_name,
-                #         model._meta.model_name,
-                #         field.name,
-                #     )
-
+                #     for i in model._meta.get_fields()
                 #     # select the lookup field name of the related model
                 #     rel_field = None
                 #     if isinstance(field, ManyToOneRel):
@@ -106,27 +118,11 @@ class APIIndex(BaseMixin, APIView):
                 #     if isinstance(field, ManyToManyField):
                 #         rel_field = field.m2m_reverse_name()
                 #     if not rel_field: continue
-
                 #     try:
                 #         get_template(template)
                 #         html = "<h1>TODO</h1>"  # TODO
                 #     except TemplateDoesNotExist:
                 #         html = None
-
-                #     related.append((field.name, OrderedDict([
-                #         ('ct', related_ct.pk),
-                #         ('template', template),
-                #         ('html', html),
-                #         ('data', reverse(
-                #             'djangobmf:api',
-                #             request=request,
-                #             format=format,
-                #             kwargs={
-                #                 'app': related_model._meta.app_label,
-                #                 'model': related_model._meta.model_name,
-                #             }
-                #         )),
-                #     ])))
 
                 modules.append(OrderedDict([
                     ('app', model._meta.app_label),
@@ -147,7 +143,7 @@ class APIIndex(BaseMixin, APIView):
                         'model': model._meta.model_name,
                     })),
                     ('only_related', model._bmfmeta.only_related),
-                    ('related', OrderedDict(related)),
+                    ('relations', relations.get(ct, [])),
                     ('creates', [
                         {
                             "name": i[1],

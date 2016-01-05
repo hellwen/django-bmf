@@ -127,6 +127,10 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         // TODO
         $rootScope.$broadcast(BMFEVENT_NAVIGATION);
     }
+    $rootScope.bmfevent_object = function(module, pk) {
+        $rootScope.$broadcast(BMFEVENT_OBJECT, module, pk);
+    }
+
     $rootScope.bmfevent_sidebar = function(dashboard_key) {
         $rootScope.bmf_dashboards.forEach(function(d, i) {
             if (d.key == dashboard_key) {
@@ -355,6 +359,31 @@ bmfapp.controller('NavigationCtrl', ['$scope', '$interval', '$http', function($s
 
 // bmfapp.controller('DataCtrl', [function() {
 // }]);
+
+
+bmfapp.controller('BmfActivityCtrl', ['$scope', function($scope) {
+    function clear() {
+        $scope.data = [];
+        $scope.visible = false;
+        $scope.module = null;
+        $scope.pk = null;
+    }
+    clear();
+
+    $scope.get = function() {
+        $scope.data = [];
+    }
+
+    $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+        if (module && pk) {
+            $scope.visible = true;
+            $scope.module = module;
+            $scope.pk = pk;
+            $scope.get();
+        }
+        else clear();
+    });
+}]);
 
 
 // bmfapp.controller('PaginationCtrl', [function() {

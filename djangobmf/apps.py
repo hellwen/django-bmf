@@ -27,6 +27,7 @@ class BMFConfig(AppConfig):
     def __init__(self, *args, **kwargs):
         super(BMFConfig, self).__init__(*args, **kwargs)
         self.bmf_modules = []
+        self.bmf_relations = []
 
     def ready(self):
         from djangobmf.core.site import Site
@@ -44,6 +45,16 @@ class BMFConfig(AppConfig):
         mod = module()
         self.bmf_modules.append(mod)
         return mod
+
+    def bmfregister_relationship(self, relationship, model):
+        r = relationship()
+        r._related_model = model
+        for obj in self.bmf_relations:
+            if obj == r:
+                raise AlreadyRegistered(
+                    'Can not register the relationship %s' % relationship.__name__
+                )
+        self.bmf_relations.append(r)
 
 
 class ModuleTemplate(AppConfig):

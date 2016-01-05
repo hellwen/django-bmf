@@ -1,4 +1,4 @@
-{% load i18n staticfiles %}<!DOCTYPE html>
+{% load i18n staticfiles djangobmf_angularjs %}<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" ng-app="djangoBMF" ng-controller="FrameworkCtrl">
     <head>
         <meta charset="utf-8">
@@ -17,14 +17,12 @@
         <div id="wrap">
             <div id="sidebar">
                 <p class="switch"><a href="#"><img src="{% static "djangobmf/logo.png" %}"></a></p>
-                {% verbatim %}
                 <ul class="sidebar-nav" ng-controller="SidebarCtrl">
                     <li ng-cloak ng-repeat="d in data" ng-class="d.class ? d.class : ''">
-                        <a ng-if="d.url != undefined" href="{{ d.url }}">{{ d.name }}</a>
-                        <p ng-if="d.url == undefined">{{ d.name }}</p>
+                        <a ng-if="d.url != undefined" href="{% ng "d.url" %}">{% ng "d.name" %}</a>
+                        <p ng-if="d.url == undefined">{% ng "d.name" %}</p>
                     </li>
                 </ul>
-                {% endverbatim %}
             </div>
             <div class="page-container">
                 <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
@@ -42,29 +40,23 @@
                             <ul class="nav navbar-nav dashboards" ng-controller="DashboardCtrl">
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-dashboard"></span> {% trans "Dashboards" %} <b class="caret"></b></a>
-                                    {% verbatim %}
                                     <ul class="dropdown-menu" ng-cloak>
                                         <li ng-repeat="d in data | orderBy:'name'" ng-class="d.active ? 'active' : ''">
-                                            <a ng-click="update(d.key)" href>{{ d.name }}</a>
+                                            <a ng-click="update(d.key)" href>{% ng "d.name" %}</a>
                                         </li>
                                     </ul>
-                                    {% endverbatim %}
                                 </li>
-                                {% verbatim %}
                                 <li ng-if="current" ng-cloak class="hidden-xs">
-                                    <p class="navbar-text">{{ current.name }}</p>
+                                    <p class="navbar-text">{% ng "current.name" %}</p>
                                 </li>
-                                {% endverbatim %}
                             </ul>
                             <ul ng-controller="NavigationCtrl" class="nav navbar-nav navbar-right">
-                                {% verbatim %}
                                 <li ng-repeat="n in data" class="bmf-navigation">
-                                    <a href="{{ n.url }}" ng-class="n.active ? 'active' : ''">
-                                        <span class="{{ n.symbol }}"></span>
-                                        <span class="nav-text">{{ n.name }}</span>
+                                    <a href="{% ng "n.url" %}" ng-class="n.active ? 'active' : ''">
+                                        <span class="{% ng "n.symbol" %}"></span>
+                                        <span class="nav-text">{% ng "n.name" %}</span>
                                     </a>
                                 </li>
-                                {% endverbatim %}
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                         <span class="glyphicon glyphicon-user"></span>
@@ -110,8 +102,11 @@
                             {% endfor %}
                         </div>
                     </div>{% endif %}
-                    <div bmf-content ng-cloak{% block content_container %}{% endblock %}>{% block full_content %}{% endblock %}</div>
+                    <div ng-cloak bmf-content {% block content_container %}{% endblock %}>{% block full_content %}{% endblock %}</div>
                 </div> <!-- /container -->
+                <div class="container bmf-site-content"></div>
+                <div class="container bmf-site-related">{% include "djangobmf/site-related.html" %}</div>
+                <div ng-controller="BmfActivityCtrl" ng-cloak class="container">{% include "djangobmf/site-activity.html" %}</div>
             </div> <!-- /page-container -->
         </div>
         <footer>
