@@ -51,7 +51,7 @@
         <td class="text-right">{% if obj.credit %}{{ obj.amount }}{% endif %}</td>
         {% if obj.draft %}
         <td class="text-right">
-            <a class="btn btn-xs bmfedit btn-bmfupdate" href="{% get_bmf_url obj "update" %}">
+            <a class="btn btn-xs bmfedit btn-bmfupdate" href="{# get_bmf_url obj "update" #}">
             <span class="glyphicon glyphicon-wrench"></span>
           </a>
         </td>
