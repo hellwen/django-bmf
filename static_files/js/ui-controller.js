@@ -361,31 +361,6 @@ bmfapp.controller('NavigationCtrl', ['$scope', '$interval', '$http', function($s
 // }]);
 
 
-bmfapp.controller('BmfActivityCtrl', ['$scope', function($scope) {
-    function clear() {
-        $scope.data = [];
-        $scope.visible = false;
-        $scope.module = null;
-        $scope.pk = null;
-    }
-    clear();
-
-    $scope.get = function() {
-        $scope.data = [];
-    }
-
-    $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
-        if (module && pk) {
-            $scope.visible = true;
-            $scope.module = module;
-            $scope.pk = pk;
-            $scope.get();
-        }
-        else clear();
-    });
-}]);
-
-
 // bmfapp.controller('PaginationCtrl', [function() {
 // }]);
 
@@ -394,6 +369,7 @@ bmfapp.controller('ActivityCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.data = {};
     $scope.processForm = function() {
         var url = $scope.$parent.$parent.ui.views.activity.url;
+
         $http({
             method: 'POST',
             data: $scope.data,

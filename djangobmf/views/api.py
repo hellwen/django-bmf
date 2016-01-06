@@ -26,6 +26,7 @@ from djangobmf.pagination import ModulePagination
 from djangobmf.core.serializers import ActivitySerializer
 from djangobmf.core.serializers import NotificationViewSerializer
 from djangobmf.core.serializers import NotificationListSerializer
+from djangobmf.core.pagination.activity import ActivityPagination
 # from djangobmf.core.pagination import NotificationPagination
 from djangobmf.views.mixins import BaseMixin
 
@@ -320,6 +321,7 @@ class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAP
         ActivityPermission,
     ]
     serializer_class = ActivitySerializer
+    pagination_class = ActivityPagination
 
     def get_queryset(self):
         # check if the user has access to the object
@@ -334,6 +336,10 @@ class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAP
         return self.create(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        # we need to add some data to the request, because the paginator
+        # will need the informations to fetch the users notifications
+        request.bmf_ct = self.get_bmfcontenttype()
+        request.bmf_pk = self.kwargs.get('pk', None)
         return self.list(request, *args, **kwargs)
 
 

@@ -1186,10 +1186,11 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                         scope.template_html = response.data.html
 
                         if (response.data.views.activity.enabled) {
-                            var url = response.data.views.activity.url;
-                            $http.get(url).then(function(response) {
-                                scope.activities = response.data;
-                            });
+                        //  var url = response.data.views.activity.url;
+                        //  console.log("OLDURL", url)
+                        //  $http.get(url).then(function(response) {
+                        //      scope.activities = response.data;
+                        //  });
                         }
                     });
                 }
@@ -1349,14 +1350,15 @@ bmfapp.directive('bmfSiteRelated', [function() {
             });
         }],
         link: function(scope, $element) {
+            $element.hide();
             scope.$watch(
                 function(scope) {return scope.visible},
                 function(value) {
                     if (value) {
-                        $element.show()
+                        $element.show();
                     }
                     else {
-                        $element.hide()
+                        $element.hide();
                     }
                 }
             );
@@ -1366,36 +1368,109 @@ bmfapp.directive('bmfSiteRelated', [function() {
 }]);
 
 
-bmfapp.directive('bmfSiteActivity', ['$compile', function($compile) {
+bmfapp.directive('bmfSiteActivity', [function() {
     return {
         restrict: 'C',
         scope: {},
         template: function(tElement, tAttrs) {
             return tElement.html();
         },
-        controller: ['$scope', '$element', function($scope, $element) {
-            $scope.clear = function() {
-                $scope.visible = false;
-                $scope.module = null;
-                $scope.pk = null;
-                $scope.data = [];
-            }
-            $scope.clear();
+        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', function($scope, $location, $http, ApiUrlFactory) {
 
-            $scope.get = function() {
+            // TODO event to update activity
+            // TODO add timer fire update event every two minutes
+
+            $scope.visible = false;
+            $scope.module = null;
+            $scope.pk = null;
+
+            function clear_data() {
+                $scope.formdata = {};
+                $scope.data = [];
+                $scope.errors = [];
+                $scope.notification = undefined;
+                $scope.paginator = undefined;
             }
+            clear_data();
+
+            function set_dataurl() {
+                var search = $location.search();
+                $scope.notifyurl = ApiUrlFactory(
+                    $scope.module,
+                    'notification',
+                    'view',
+                    $scope.pk
+                );
+                $scope.dataurl = ApiUrlFactory(
+                    $scope.module,
+                    'activity',
+                    undefined,
+                    $scope.pk
+                ) + '?page=' + (search.apage || 1);
+            }
+            $scope.$watch(function(scope) {return scope.dataurl}, get_data);
+  
+            function get_data(url) {
+                clear_data();
+                if (!url) return false;
+                $http.get(url).then(function(response) {
+                    $scope.data = response.data.items;
+                    $scope.notification = response.data.notification;
+                    $scope.paginator = response.data.paginator;
+                });
+            }
+
+            $scope.processForm = function() {
+                var url = ApiUrlFactory(
+                    $scope.module,
+                    'activity',
+                    undefined,
+                    $scope.pk
+                );
+
+                $http({
+                    method: 'POST',
+                    data: $scope.formdata,
+                    url: url,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(function (response) {
+                    // success callback
+                    // console.log("success", this, response);
+                    get_data($scope.dataurl);
+                }, function (response) {
+                    // error callback
+                    console.log("ActivityForm - Error", response);
+                    alert(response.data.non_field_errors[0]);
+                });
+            }
+
             $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
                 if (module && pk) {
                     $scope.visible = true;
                     $scope.module = module;
                     $scope.pk = pk;
-                    $scope.get();
+                    set_dataurl();
                 }
-                else $scope.clear();
+                else $scope.visible = false;
             });
         }],
-        // link: function(scope, $element) {
-        // },
+        link: function(scope, $element) {
+            $element.hide();
+            scope.$watch(
+                function(scope) {return scope.visible},
+                function(value) {
+                    if (value) {
+                        $element.show();
+                    }
+                    else {
+                        $element.hide();
+                    }
+                }
+            );
+
+        },
     };
 }]);
 
@@ -1956,31 +2031,6 @@ bmfapp.controller('NavigationCtrl', ['$scope', '$interval', '$http', function($s
 // }]);
 
 
-bmfapp.controller('BmfActivityCtrl', ['$scope', function($scope) {
-    function clear() {
-        $scope.data = [];
-        $scope.visible = false;
-        $scope.module = null;
-        $scope.pk = null;
-    }
-    clear();
-
-    $scope.get = function() {
-        $scope.data = [];
-    }
-
-    $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
-        if (module && pk) {
-            $scope.visible = true;
-            $scope.module = module;
-            $scope.pk = pk;
-            $scope.get();
-        }
-        else clear();
-    });
-}]);
-
-
 // bmfapp.controller('PaginationCtrl', [function() {
 // }]);
 
@@ -1989,6 +2039,7 @@ bmfapp.controller('ActivityCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.data = {};
     $scope.processForm = function() {
         var url = $scope.$parent.$parent.ui.views.activity.url;
+
         $http({
             method: 'POST',
             data: $scope.data,
