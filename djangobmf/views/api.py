@@ -107,19 +107,6 @@ class APIIndex(BaseMixin, APIView):
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
-                #     for i in model._meta.get_fields()
-                #     # select the lookup field name of the related model
-                #     rel_field = None
-                #     if isinstance(field, ManyToOneRel):
-                #         rel_field = field.get_accessor_name()
-                #     if isinstance(field, ManyToManyField):
-                #         rel_field = field.m2m_reverse_name()
-                #     if not rel_field: continue
-                #     try:
-                #         get_template(template)
-                #         html = "<h1>TODO</h1>"  # TODO
-                #     except TemplateDoesNotExist:
-                #         html = None
 
                 modules.append(OrderedDict([
                     ('app', model._meta.app_label),
@@ -299,20 +286,6 @@ class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, GenericAPIV
     paginate_by = 100
 
     def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-
-class APIRelatedView(ModelMixin, BaseMixin, RetrieveModelMixin, GenericAPIView):
-    permission_classes = [
-        ModuleViewPermission,
-    ]
-    filter_backends = (ViewFilterBackend, RangeFilterBackend)
-
-    def get(self, request, *args, **kwargs):
-        data = self.retrieve(request, *args, **kwargs)
-        print(dir(data))
-        data.data['LALA'] = 234
-        return data
         return self.retrieve(request, *args, **kwargs)
 
 

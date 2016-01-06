@@ -469,6 +469,7 @@ bmfapp.directive('bmfSiteRelated', [function() {
                 if (!url) return false;
                 $http.get(url).then(function(response) {
                     $scope.data = response.data.items;
+                    $scope.template_html = response.data.html;
                     $scope.paginator = response.data.paginator;
                 });
             }
@@ -617,5 +618,22 @@ bmfapp.directive('bmfSiteActivity', [function() {
             );
 
         },
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteTemplate', ['$compile', function($compile) {
+    return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {return scope.template_html},
+                function(value) {
+                    $element.html(value || '').show();
+                    $compile($element.contents())(scope);
+                }
+            );
+        }
     };
 }]);

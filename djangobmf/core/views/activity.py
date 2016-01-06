@@ -53,8 +53,8 @@ class View(BaseMixin, CreateModelMixin, ListModelMixin, GenericAPIView):
         except Notification.DoesNotExist:
             notification = Notification(
                 user=self.request.user,
-                watch_ct=self.ct,
-                watch_id=self.pk,
+                watch_ct=ct,
+                watch_id=pk,
             )
 
         response.data['notification'] = NotificationViewSerializer(notification).data

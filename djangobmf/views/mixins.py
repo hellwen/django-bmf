@@ -196,30 +196,6 @@ class BaseMixin(object):
 
         return response
 
-#   # TODO check this function, maybe we can move it to a separate class
-#   def update_notification(self, count=None):
-#       """
-#       This function is used by django BMF to update the notifications
-#       used in the BMF-Framework
-#       """
-#       logger.debug("Updating notifications for %s" % self.request.user)
-
-#       # get all session data
-#       session_data = self._read_session_data()
-
-#       # manipulate session
-#       session_data["notification_last_update"] = datetime.datetime.utcnow().isoformat()
-#       if count is None:
-#           session_data["notification_count"] = Notification.objects.filter(
-#               unread=True,
-#               user=self.request.user,
-#           ).count()
-#       else:
-#           session_data["notification_count"] = count
-
-#       # update session
-#       self._write_session_data(session_data)
-
 
 class BaseAPIMixin(BaseMixin):
     """

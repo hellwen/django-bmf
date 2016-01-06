@@ -36,12 +36,29 @@ class GoalModule(Module):
 
 @register(model=Task)
 class ProjectTaskRelationship(Relationship):
-    name = _("Tasks")
+    name = _("Open Tasks")
     slug = "task"
-    field = "project"
+    field = "task_set"
     model = "djangobmf_project.Project"
     settings = "BMF_CONTRIB_PROJECT"
-    template = "djangobmf_task/relationship/project_task.html"
+
+
+@register(model=Goal)
+class ProjectGoalRelationship(Relationship):
+    name = _("Active Goals")
+    slug = "goal"
+    field = "goal_set"
+    model = "djangobmf_project.Project"
+    settings = "BMF_CONTRIB_PROJECT"
+
+
+@register(model=Task)
+class GoalTasksRelationship(Relationship):
+    name = _("Tasks")
+    slug = "task"
+    field = "task_set"
+    model = "djangobmf_task.Goal"
+    settings = "BMF_CONTRIB_GOAL"
 
 
 @register(category=GoalCategory)
