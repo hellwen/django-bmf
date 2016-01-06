@@ -56,7 +56,7 @@ def main(modules, verbosity=2, failfast=False, contrib=None, nocontrib=False):
     report = styleguide.check_files()
 
     if report.total_errors > 0:
-        print('Static code analysis failed with %s errors' % report.total_errors)
+        print('Static code analysis failed with %s error(s)' % report.total_errors)
         sys.exit(True)
 
     # apply test settings

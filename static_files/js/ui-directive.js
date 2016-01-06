@@ -448,7 +448,7 @@ bmfapp.directive('bmfSiteRelated', [function() {
             }
             clear_data();
 
-            function update() {
+            function set_dataurl() {
                 var search = $location.search();
                 $scope.urlparam = search.open;
 
@@ -462,17 +462,17 @@ bmfapp.directive('bmfSiteRelated', [function() {
                 }
             }
 
-            function get_data(url) {
-                console.log("GET NEW DATA FROM", url);
-            }
+            $scope.$watch(function(scope) {return scope.dataurl}, get_data);
 
-            $scope.$watch(
-                function(scope) {return scope.dataurl},
-                function(value) {
-                    clear_data();
-                    if (value) get_data(value);
-                }
-            );
+            function get_data(url) {
+                clear_data();
+                if (!url) return false;
+                $http.get(url).then(function(response) {
+                    $scope.data = response.data.items;
+                    $scope.template_html = response.data.html;
+                    $scope.paginator = response.data.paginator;
+                });
+            }
 
             $scope.open = function(slug) {
                 if (slug == $scope.urlparam) {
@@ -491,7 +491,7 @@ bmfapp.directive('bmfSiteRelated', [function() {
                     $scope.visible = true;
                     $scope.module = module;
                     $scope.pk = pk;
-                    update();
+                    set_dataurl();
                 }
                 else $scope.visible = false;
             });
@@ -618,5 +618,22 @@ bmfapp.directive('bmfSiteActivity', [function() {
             );
 
         },
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteTemplate', ['$compile', function($compile) {
+    return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {return scope.template_html},
+                function(value) {
+                    $element.html(value || '').show();
+                    $compile($element.contents())(scope);
+                }
+            );
+        }
     };
 }]);

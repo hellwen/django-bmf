@@ -5,7 +5,5 @@
             <a ng-click="open(d.slug)" href="#">{% ng "d.name" %}</a>
         </li>
     </ul>
-    <div ng-if="urlparam">
-        <p>{% ng "data" %}</p>
-    </div>
+    <div bmf-site-template ng-if="urlparam"></div>
 </div>{% endspaceless %}
