@@ -49,5 +49,5 @@ class View(BaseMixin, ListModelMixin, GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         response = self.list(request, *args, **kwargs)
-        response.data['html'] =  self.relation.get_html()
+        response.data['html'] = self.relation.get_html()
         return response
