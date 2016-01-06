@@ -22,7 +22,6 @@ class View(BaseMixin, ListModelMixin, GenericAPIView):
         if hasattr(self.relation, 'serializer'):
             return getattr(self.relation, 'serializer')
         if hasattr(self.relation._model, '_bmfmeta'):
-            print(self.relation._related_model._bmfmeta.serializer_class)
             return self.relation._related_model._bmfmeta.serializer_class
         raise NotImplementedError(
             'You need to use a model managed by djangobmf or '
@@ -42,7 +41,11 @@ class View(BaseMixin, ListModelMixin, GenericAPIView):
             raise NotFound(_("The object's relation can not be found"))
 
     def get_queryset(self):
-        return self.relation.filter_queryset(self.relation.get_queryset(self.object))
+        return self.relation.filter_queryset(
+            self.request,
+            self.relation.get_queryset(self.object),
+            self
+        )
 
     def get(self, request, *args, **kwargs):
         response = self.list(request, *args, **kwargs)

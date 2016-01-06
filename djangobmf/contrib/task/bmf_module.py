@@ -42,6 +42,11 @@ class ProjectTaskRelationship(Relationship):
     model = "djangobmf_project.Project"
     settings = "BMF_CONTRIB_PROJECT"
 
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
+            completed=False,
+        )
+
 
 @register(model=Goal)
 class ProjectGoalRelationship(Relationship):

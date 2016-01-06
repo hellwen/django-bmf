@@ -91,5 +91,5 @@ class Relationship(six.with_metaclass(RelationshipMetaclass, object)):
             )
         return getattr(obj, self.field)
 
-    def filter_queryset(self, queryset):
+    def filter_queryset(self, request, queryset, view):
         return queryset.all()
