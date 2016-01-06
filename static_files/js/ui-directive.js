@@ -630,8 +630,10 @@ bmfapp.directive('bmfSiteTemplate', ['$compile', function($compile) {
             scope.$watch(
                 function(scope) {return scope.template_html},
                 function(value) {
-                    $element.html(value || '').show();
+                    $element.hide()
+                    $element.html(value || '');
                     $compile($element.contents())(scope);
+                    $element.show();
                 }
             );
         }
