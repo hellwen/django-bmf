@@ -17,6 +17,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import last_modified
 
 from djangobmf import get_version
+from djangobmf.core.views.activity import View as APIActivityListView
 from djangobmf.sites import site
 from djangobmf.views import Index
 from djangobmf.views.api import APIIndex
@@ -24,7 +25,6 @@ from djangobmf.views.api import APIViewDetail
 from djangobmf.views.api import APIRelatedView
 from djangobmf.views.api import APIModuleListView
 # from djangobmf.views.api import APIModuleDetailView
-from djangobmf.views.api import APIActivityListView
 from djangobmf.views.api import NotificationCountAPI
 from djangobmf.views.api import NotificationListAPI
 from djangobmf.views.api import NotificationViewAPI

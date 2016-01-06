@@ -15,18 +15,14 @@ from django.template.loader import get_template
 from django.template.loader import select_template
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.models import Activity
 from djangobmf.models import Notification
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
-from djangobmf.permissions import ActivityPermission
 from djangobmf.permissions import ModuleViewPermission
 from djangobmf.permissions import NotificationPermission
 from djangobmf.pagination import ModulePagination
-from djangobmf.core.serializers import ActivitySerializer
 from djangobmf.core.serializers import NotificationViewSerializer
 from djangobmf.core.serializers import NotificationListSerializer
-from djangobmf.core.pagination.activity import ActivityPagination
 # from djangobmf.core.pagination import NotificationPagination
 from djangobmf.views.mixins import BaseMixin
 
@@ -313,34 +309,11 @@ class APIRelatedView(ModelMixin, BaseMixin, RetrieveModelMixin, GenericAPIView):
     filter_backends = (ViewFilterBackend, RangeFilterBackend)
 
     def get(self, request, *args, **kwargs):
+        data = self.retrieve(request, *args, **kwargs)
+        print(dir(data))
+        data.data['LALA'] = 234
+        return data
         return self.retrieve(request, *args, **kwargs)
-
-
-class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAPIView):
-    permission_classes = [
-        ActivityPermission,
-    ]
-    serializer_class = ActivitySerializer
-    pagination_class = ActivityPagination
-
-    def get_queryset(self):
-        # check if the user has access to the object
-        self.get_bmfobject(self.kwargs.get('pk', None))
-
-        return Activity.objects.filter(
-            parent_id=self.kwargs.get('pk', None),
-            parent_ct=self.get_bmfcontenttype(),
-        ).select_related('user')
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        # we need to add some data to the request, because the paginator
-        # will need the informations to fetch the users notifications
-        request.bmf_ct = self.get_bmfcontenttype()
-        request.bmf_pk = self.kwargs.get('pk', None)
-        return self.list(request, *args, **kwargs)
 
 
 class NotificationMixin(BaseMixin):
