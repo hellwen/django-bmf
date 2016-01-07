@@ -125,14 +125,26 @@ bmfapp.directive('bmfForm', [function() {
 
 
 // manages links vom list views to detail views
-bmfapp.directive('bmfDetail', ["$location", function($location) {
+bmfapp.directive('bmfDetail', ["$location", "$rootScope", function($location, $rootScope) {
     return {
         restrict: 'A',
         scope: false,
         link: function(scope, element, attr) {
             element.on('click', function(event) {
-                var next = $location.path() + attr.bmfDetail + '/';
-                $location.path(next);
+                var view = $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1];
+
+                var next;
+                if (view.name == "detail-base" && scope.module) {
+                    next = $rootScope.bmf_app_base + 'detail/' + scope.module.app + '/' + scope.module.model + '/' + attr.bmfDetail + '/';
+                }
+                else if (view.name == "detail" && scope.module) {
+                    next = $rootScope.bmf_app_base + 'detail/' + scope.module.app + '/' + scope.module.model + '/' + attr.bmfDetail + '/';
+                }
+                else {
+                    next = $location.path() + attr.bmfDetail + '/';
+                }
+                console.log(scope.module);
+                $location.url(next);
                 window.scrollTo(0,0);
             });
         }
@@ -261,7 +273,7 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                 if (type == "list") {
                     view_list()
                 }
-                if (type == "detail") {
+                if (type == "detail" || type == "detail-base") {
                     view_detail()
                 }
                 if (type == "notification") {
@@ -433,9 +445,10 @@ bmfapp.directive('bmfSiteRelated', [function() {
         template: function(tElement, tAttrs) {
             return tElement.html();
         },
-        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', function($scope, $location, $http, ApiUrlFactory) {
+        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', 'ModuleFromUrl', function($scope, $location, $http, ApiUrlFactory, ModuleFromUrl) {
 
             $scope.visible = false;
+            $scope.parent_module = null;
             $scope.module = null;
             $scope.pk = null;
 
@@ -454,7 +467,7 @@ bmfapp.directive('bmfSiteRelated', [function() {
 
                 if ($scope.urlparam) {
                     $scope.dataurl = ApiUrlFactory(
-                        $scope.module,
+                        $scope.parent_module,
                         'related',
                         $scope.urlparam,
                         $scope.pk
@@ -468,6 +481,7 @@ bmfapp.directive('bmfSiteRelated', [function() {
                 clear_data();
                 if (!url) return false;
                 $http.get(url).then(function(response) {
+                    $scope.module = ModuleFromUrl(response.data.model.app_label, response.data.model.model_name);
                     $scope.data = response.data.items;
                     $scope.template_html = response.data.html;
                     $scope.paginator = response.data.paginator;
@@ -489,7 +503,8 @@ bmfapp.directive('bmfSiteRelated', [function() {
             $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
                 if (module && pk) {
                     $scope.visible = true;
-                    $scope.module = module;
+                    $scope.parent_module = module;
+                    // $scope.module = module;
                     $scope.pk = pk;
                     set_dataurl();
                 }

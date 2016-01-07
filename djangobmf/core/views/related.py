@@ -50,4 +50,8 @@ class View(BaseMixin, ListModelMixin, GenericAPIView):
     def get(self, request, *args, **kwargs):
         response = self.list(request, *args, **kwargs)
         response.data['html'] = self.relation.get_html()
+        response.data['model'] = {
+            'app_label': self.relation._related_model._meta.app_label,
+            'model_name': self.relation._related_model._meta.model_name,
+        }
         return response

@@ -97,6 +97,10 @@ urlpatterns = patterns(
         Index.as_view(),
         name="notification",
     ),
+    url(
+        r'^detail/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        Index.as_view(),
+    ),
 
     url(r'^accounts/', include('djangobmf.account.urls')),
 

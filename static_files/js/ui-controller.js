@@ -17,6 +17,14 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     /**
      * @description
      *
+     * This scope stores the base url to the APP (needed for lookups)
+     *
+     */
+    $rootScope.bmf_app_base = angular.element.find('body')[0].dataset.app;
+
+    /**
+     * @description
+     *
      * This scope stores the currently active module
      *
      */
@@ -68,7 +76,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
             args: ['dashboard', 'category', 'view'],
         },
         {
-            name: 'detail',
+            name: 'detail-base',
             parent: 'list',
             regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
             args: ['dashboard', 'category', 'view', 'pk'],
@@ -86,9 +94,15 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
             args: ['app_label', 'model_name'],
         },
         {
-            name: 'detail',
+            name: 'detail-base',
             parent: 'notification',
             regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['app_label', 'model_name', 'pk'],
+        },
+        {
+            name: 'detail',
+            parent: undefined,
+            regex: new RegExp('detail/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
             args: ['app_label', 'model_name', 'pk'],
         },
     ];

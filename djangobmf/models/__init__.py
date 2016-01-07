@@ -28,7 +28,6 @@ from .activity import ACTION_FILE
 
 from .activity import Activity as AbstractActivity
 from .configuration import Configuration as AbstractConfiguration
-# from .dashboard import Dashboard as AbstractDashboard
 from .document import Document as AbstractDocument
 from .notification import Notification as AbstractNotification
 from .numberrange import NumberRange as AbstractNumberRange
@@ -45,7 +44,6 @@ __all__ = (
     'ACTION_WORKFLOW',
     'ACTION_FILE',
     'Activity',
-    # 'Dashboard',
     'Document',
     'Configuration',
     'Notification',
