@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-27 18:41+0100\n"
+"POT-Creation-Date: 2016-01-08 10:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,8 +37,35 @@ msgstr ""
 msgid "New Password confirmation"
 msgstr ""
 
-#: core/serializers.py:41
+#: core/currency.py:51
+#, python-format
+msgctxt "currency formatting"
+msgid "%(val)s %(sym)s"
+msgstr ""
+
+#: core/serializers/__init__.py:46
 msgid "You need to define a topic or a text"
+msgstr ""
+
+#: core/views/mixins.py:56
+msgid "You have no permission to access the object"
+msgstr ""
+
+#: core/views/mixins.py:57
+msgid "The object can not be found"
+msgstr ""
+
+#: core/views/related.py:41
+msgid "The object's relation can not be found"
+msgstr ""
+
+#: core/workflow.py:230
+#, python-format
+msgid "The state %s is not valid"
+msgstr ""
+
+#: core/workflow.py:238 core/workflow.py:365
+msgid "This transition is not valid"
 msgstr ""
 
 #: currency/EUR/bmf_module.py:14
@@ -55,12 +82,6 @@ msgstr ""
 
 #: currency/USD/bmf_module.py:15
 msgid "Dollar"
-msgstr ""
-
-#: currency/__init__.py:51
-#, python-format
-msgctxt "currency formatting"
-msgid "%(val)s %(sym)s"
 msgstr ""
 
 #: dashboards.py:27
@@ -116,7 +137,7 @@ msgstr ""
 msgid "Comment"
 msgstr ""
 
-#: models/activity.py:26 models/base.py:288 models/document.py:44
+#: models/activity.py:26 models/base.py:286 models/document.py:44
 msgid "Created"
 msgstr ""
 
@@ -132,36 +153,36 @@ msgstr ""
 msgid "File"
 msgstr ""
 
-#: models/activity.py:60 templates/djangobmf/api/detail.html:65
+#: models/activity.py:56 templates/djangobmf/site-activity.html:25
 msgid "Topic"
 msgstr ""
 
-#: models/activity.py:61 templates/djangobmf/api/detail.html:68
+#: models/activity.py:57 templates/djangobmf/site-activity.html:28
 msgid "Text"
 msgstr ""
 
-#: models/activity.py:63
+#: models/activity.py:59
 msgid "Action"
 msgstr ""
 
-#: models/activity.py:70 models/numbering.py:41
+#: models/activity.py:66
 msgid "Template"
 msgstr ""
 
-#: models/activity.py:77 models/base.py:275 models/document.py:43
+#: models/activity.py:73 models/base.py:273 models/document.py:43
 #: models/notification.py:40 models/renderer.py:68 models/report.py:41
 msgid "Modified"
 msgstr ""
 
-#: models/activity.py:83 models/activity.py:84
+#: models/activity.py:79 models/activity.py:80
 msgid "Activity"
 msgstr ""
 
-#: models/base.py:302
+#: models/base.py:300
 msgid "Modified by"
 msgstr ""
 
-#: models/base.py:314
+#: models/base.py:312
 msgid "Created by"
 msgstr ""
 
@@ -182,7 +203,7 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: models/configuration.py:81 templates/djangobmf/base.html:77
+#: models/configuration.py:81 templates/djangobmf/base.html:69
 #: templates/djangobmf/configuration/edit.html:5
 #: templates/djangobmf/configuration/index.html:5
 #: templates/djangobmf/configuration/index.html:9
@@ -301,8 +322,8 @@ msgstr ""
 msgid "Key"
 msgstr ""
 
-#: models/report.py:44 templates/djangobmf/module_detail.html:33
-#: templates/djangobmf/module_detail.html:45
+#: models/report.py:44 templates/djangobmf/module_detail.html:32
+#: templates/djangobmf/module_detail.html:44
 msgid "Report"
 msgstr ""
 
@@ -310,7 +331,7 @@ msgstr ""
 msgid "Reports"
 msgstr ""
 
-#: pagination.py:23
+#: pagination.py:22
 #, python-brace-format
 msgid "Invalid page \"{page_number}\": {message}."
 msgstr ""
@@ -334,7 +355,7 @@ msgstr ""
 #: templates/djangobmf/account/logout.html:5
 #: templates/djangobmf/account/modal_logout.html:6
 #: templates/djangobmf/account/modal_logout.html:11
-#: templates/djangobmf/base.html:88
+#: templates/djangobmf/base.html:80
 msgid "Logout"
 msgstr ""
 
@@ -347,9 +368,9 @@ msgid "Are you sure you want to log out?"
 msgstr ""
 
 #: templates/djangobmf/account/modal_logout.html:10
-#: templates/djangobmf/module_clone.html:9
-#: templates/djangobmf/module_create.html:9
-#: templates/djangobmf/module_update.html:9
+#: templates/djangobmf/module_clone.html:8
+#: templates/djangobmf/module_create.html:8
+#: templates/djangobmf/module_update.html:8
 msgid "Cancel"
 msgstr ""
 
@@ -372,7 +393,7 @@ msgid "before"
 msgstr ""
 
 #: templates/djangobmf/activities/updated.html:4
-#: templates/djangobmf/api/detail.html:79
+#: templates/djangobmf/site-activity.html:38
 msgid "Item changed"
 msgstr ""
 
@@ -381,7 +402,7 @@ msgid "The following attributes were changed"
 msgstr ""
 
 #: templates/djangobmf/activities/workflow.html:4
-#: templates/djangobmf/api/detail.html:80
+#: templates/djangobmf/site-activity.html:39
 msgid "State"
 msgstr ""
 
@@ -395,48 +416,53 @@ msgstr ""
 
 #: templates/djangobmf/api/detail.html:28
 #: templates/djangobmf/api/detail.html:31
-#: templates/djangobmf/dashboard/update.html:8
-#: templates/djangobmf/notification/index.html:42
 msgid "Edit"
 msgstr ""
 
-#: templates/djangobmf/api/detail.html:57
-#: templates/djangobmf/api/detail.html:71
-#: templates/djangobmf/module_base.html:28
-#: templates/djangobmf/module_base.html:52
-msgid "Write message"
-msgstr ""
-
-#: templates/djangobmf/api/detail.html:78
-msgid "Item created"
-msgstr ""
-
 #: templates/djangobmf/api/list.html:4 templates/djangobmf/api/list.html:8
-#: templates/djangobmf/dashboard/update.html:13
-#: templates/djangobmf/module_generic.html:29
-#: templates/djangobmf/module_generic.html:39
 msgid "Add"
 msgstr ""
 
-#: templates/djangobmf/base.html:34
+#: templates/djangobmf/api/list_template_not_found.html:2
+msgid "Template not found"
+msgstr ""
+
+#: templates/djangobmf/api/list_template_not_found.html:3
+msgid "Please create"
+msgstr ""
+
+#: templates/djangobmf/api/notification.html:7
+msgid "Global settings"
+msgstr ""
+
+#: templates/djangobmf/api/notification.html:17
+#: templates/djangobmf/notification/index.html:5
+#: templates/djangobmf/notification/index.html:49 views/api.py:199
+msgid "Notifications"
+msgstr ""
+
+#: templates/djangobmf/api/notification.html:25
+msgid "new"
+msgstr ""
+
+#: templates/djangobmf/base.html:32
 msgid "Toogle navigation"
 msgstr ""
 
-#: templates/djangobmf/base.html:44
+#: templates/djangobmf/base.html:42
 #: templates/djangobmf/dashboard/sitebar.html:3
-#: templates/djangobmf/dashboard/update.html:12
 msgid "Dashboards"
 msgstr ""
 
-#: templates/djangobmf/base.html:71
+#: templates/djangobmf/base.html:63
 msgid "Settings"
 msgstr ""
 
-#: templates/djangobmf/base.html:80
+#: templates/djangobmf/base.html:72
 msgid "Administration"
 msgstr ""
 
-#: templates/djangobmf/base.html:85
+#: templates/djangobmf/base.html:77
 msgid "Change Password"
 msgstr ""
 
@@ -477,39 +503,26 @@ msgstr ""
 msgid "Module overview"
 msgstr ""
 
-#: templates/djangobmf/dashboard/update.html:69
-msgid "Update dashboard"
-msgstr ""
-
 #: templates/djangobmf/message/index.html:5
 msgid "Messages"
 msgstr ""
 
-#: templates/djangobmf/module_base.html:24
-#: templates/djangobmf/module_base.html:67
-msgid "Append file"
-msgstr ""
-
-#: templates/djangobmf/module_base.html:76
-msgid "Load more items"
-msgstr ""
-
-#: templates/djangobmf/module_clone.html:6
+#: templates/djangobmf/module_clone.html:5
 #, python-format
 msgid "Copy %(object)s"
 msgstr ""
 
-#: templates/djangobmf/module_clone.html:10
-#: templates/djangobmf/module_update.html:10
+#: templates/djangobmf/module_clone.html:9
+#: templates/djangobmf/module_update.html:9
 msgid "Save Changes"
 msgstr ""
 
-#: templates/djangobmf/module_create.html:6
+#: templates/djangobmf/module_create.html:5
 #, python-format
 msgid "Create %(object)s"
 msgstr ""
 
-#: templates/djangobmf/module_create.html:10
+#: templates/djangobmf/module_create.html:9
 msgid "Create object"
 msgstr ""
 
@@ -539,23 +552,13 @@ msgstr ""
 msgid "Delete Object"
 msgstr ""
 
-#: templates/djangobmf/module_detail.html:11
+#: templates/djangobmf/module_detail.html:10
 msgid "Files"
 msgstr ""
 
 #: templates/djangobmf/module_detail_default.html:6
 #, python-format
 msgid "No default template found for the detail view of \"%(obj)s\"."
-msgstr ""
-
-#: templates/djangobmf/module_generic.html:59
-#: templates/djangobmf/notification/index.html:99
-msgid "Previous"
-msgstr ""
-
-#: templates/djangobmf/module_generic.html:71
-#: templates/djangobmf/notification/index.html:102
-msgid "Next"
 msgstr ""
 
 #: templates/djangobmf/module_report.html:6
@@ -566,7 +569,7 @@ msgstr ""
 msgid "You must configure this report in the admin interface"
 msgstr ""
 
-#: templates/djangobmf/module_update.html:6
+#: templates/djangobmf/module_update.html:5
 #, python-format
 msgid "Change %(object)s"
 msgstr ""
@@ -590,14 +593,9 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-#: templates/djangobmf/notification/index.html:5
-#: templates/djangobmf/notification/index.html:51 views/api.py:169
-msgid "Notifications"
-msgstr ""
-
 #: templates/djangobmf/notification/index.html:14
 #: templates/djangobmf/notification/index.html:18
-#: templates/djangobmf/notification/index.html:113
+#: templates/djangobmf/notification/index.html:109
 msgid "All"
 msgstr ""
 
@@ -605,12 +603,20 @@ msgstr ""
 msgid "Default settings"
 msgstr ""
 
-#: templates/djangobmf/notification/index.html:45
+#: templates/djangobmf/notification/index.html:43
 msgid "Select a category to edit the default settings"
 msgstr ""
 
-#: templates/djangobmf/notification/index.html:91
+#: templates/djangobmf/notification/index.html:87
 msgid "You dont have notifications"
+msgstr ""
+
+#: templates/djangobmf/notification/index.html:95
+msgid "Previous"
+msgstr ""
+
+#: templates/djangobmf/notification/index.html:98
+msgid "Next"
 msgstr ""
 
 #: templates/djangobmf/report_html_base.html:110
@@ -634,6 +640,15 @@ msgstr ""
 msgid "Page %(current)s of %(all)s"
 msgstr ""
 
+#: templates/djangobmf/site-activity.html:18
+#: templates/djangobmf/site-activity.html:31
+msgid "Write message"
+msgstr ""
+
+#: templates/djangobmf/site-activity.html:37
+msgid "Item created"
+msgstr ""
+
 #: templates/djangobmf/wizard/index.html:5
 #: templates/djangobmf/wizard/index.html:9
 msgid "Wizard"
@@ -643,29 +658,20 @@ msgstr ""
 msgid "empty"
 msgstr ""
 
-#: views/module.py:410 views/module.py:416
+#: views/module.py:378 views/module.py:384
 msgid "Object deleted"
 msgstr ""
 
-#: views/module.py:431
+#: views/module.py:399
 #, python-format
 msgid "Cannot delete %(name)s"
 msgstr ""
 
-#: views/module.py:435
+#: views/module.py:403
 msgid "Are you sure?"
 msgstr ""
 
-#: views/module.py:506
+#: views/module.py:474
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
-msgstr ""
-
-#: workflow.py:230
-#, python-format
-msgid "The state %s is not valid"
-msgstr ""
-
-#: workflow.py:238 workflow.py:365
-msgid "This transition is not valid"
 msgstr ""

@@ -2,6 +2,8 @@
  * django BMF Angular UI
  */
 
+(function() {
+
 var BMFEVENT_ACTIVITY = "bmf.event.update.activity";
 var BMFEVENT_CONTENT = "bmf.event.update.content";
 var BMFEVENT_DASHBOARD = "bmf.event.update.dashboard";

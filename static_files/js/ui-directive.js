@@ -2,15 +2,59 @@
  * ui-directive
  */
 
-bmfapp.directive('bmfLink', ['ApiUrlFactory', function(ApiUrlFactory) {
+bmfapp.directive('bmfLink', ['$location', '$rootScope', '$log', function($location, $rootScope, $log) {
+    return {
+        template: '<a ng-href="{{ href }}" ng-transclude></a>',
+        restrict: 'E',
+        priority: -10,
+        scope: {
+            ct: '@ct',
+            pk: '@pk',
+            type: '@type',
+            action: '@action',
+            search: '@href',
+            module: '=module',
+            scopename: '=scopename',
+        },
+        replace: true,
+        transclude: true,
+        link: function(scope, element, attr) {
+            scope.href = "asdasd" + scope.ct + scope.search;
+         //  console.log("BMF-LINK");
+         //  console.log(scope);
+         //  console.log(element);
+         //  console.log(attr);
+        },
+    }
+}]);
+
+// manages links vom list views to detail views
+bmfapp.directive('bmfDetail', ["$location", "$rootScope", function($location, $rootScope) {
     return {
         restrict: 'A',
         scope: false,
         link: function(scope, element, attr) {
-            console.log(ApiUrlFactory('test'));
-        },
-    }
+            element.on('click', function(event) {
+                var view = $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1];
+
+                var next;
+                if (view.name == "detail-base" && scope.module) {
+                    next = $rootScope.bmf_app_base + 'detail/' + scope.module.app + '/' + scope.module.model + '/' + attr.bmfDetail + '/';
+                }
+                else if (view.name == "detail" && scope.module) {
+                    next = $rootScope.bmf_app_base + 'detail/' + scope.module.app + '/' + scope.module.model + '/' + attr.bmfDetail + '/';
+                }
+                else {
+                    next = $location.path() + attr.bmfDetail + '/';
+                }
+                $location.url(next);
+                window.scrollTo(0,0);
+            });
+        }
+    };
 }]);
+
+
 
 // manages form modal calls
 bmfapp.directive('bmfForm', [function() {
@@ -119,34 +163,6 @@ bmfapp.directive('bmfForm', [function() {
                     });
                 });
             }
-        }
-    };
-}]);
-
-
-// manages links vom list views to detail views
-bmfapp.directive('bmfDetail', ["$location", "$rootScope", function($location, $rootScope) {
-    return {
-        restrict: 'A',
-        scope: false,
-        link: function(scope, element, attr) {
-            element.on('click', function(event) {
-                var view = $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1];
-
-                var next;
-                if (view.name == "detail-base" && scope.module) {
-                    next = $rootScope.bmf_app_base + 'detail/' + scope.module.app + '/' + scope.module.model + '/' + attr.bmfDetail + '/';
-                }
-                else if (view.name == "detail" && scope.module) {
-                    next = $rootScope.bmf_app_base + 'detail/' + scope.module.app + '/' + scope.module.model + '/' + attr.bmfDetail + '/';
-                }
-                else {
-                    next = $location.path() + attr.bmfDetail + '/';
-                }
-                console.log(scope.module);
-                $location.url(next);
-                window.scrollTo(0,0);
-            });
         }
     };
 }]);
@@ -447,6 +463,8 @@ bmfapp.directive('bmfSiteRelated', [function() {
         },
         controller: ['$scope', '$location', '$http', 'ApiUrlFactory', 'ModuleFromUrl', function($scope, $location, $http, ApiUrlFactory, ModuleFromUrl) {
 
+            $scope.scopename = "related";
+
             $scope.visible = false;
             $scope.parent_module = null;
             $scope.module = null;
@@ -538,6 +556,8 @@ bmfapp.directive('bmfSiteActivity', [function() {
             return tElement.html();
         },
         controller: ['$scope', '$location', '$http', 'ApiUrlFactory', function($scope, $location, $http, ApiUrlFactory) {
+
+            $scope.scopename = "activity";
 
             // TODO event to update activity
             // TODO add timer fire update event every two minutes
@@ -652,5 +672,99 @@ bmfapp.directive('bmfSiteTemplate', ['$compile', function($compile) {
                 }
             );
         }
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteContent', [function() {
+    return {
+        restrict: 'C',
+        scope: {},
+        template: function(tElement, tAttrs) {
+            return tElement.html();
+        },
+        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', 'ModuleFromUrl', function($scope, $location, $http, ApiUrlFactory, ModuleFromUrl) {
+
+            $scope.scopename = "content";
+
+        //  $scope.visible = false;
+        //  $scope.parent_module = null;
+        //  $scope.module = null;
+        //  $scope.pk = null;
+
+        //  $scope.urlparam = undefined;
+        //  $scope.paginator = undefined;
+
+        //  function clear_data() {
+        //      $scope.data = [];
+        //      $scope.errors = [];
+        //  }
+        //  clear_data();
+
+        //  function set_dataurl() {
+        //      var search = $location.search();
+        //      $scope.urlparam = search.open;
+
+        //      if ($scope.urlparam) {
+        //          $scope.dataurl = ApiUrlFactory(
+        //              $scope.parent_module,
+        //              'related',
+        //              $scope.urlparam,
+        //              $scope.pk
+        //          ) + '?page=' + (search.rpage || 1);
+        //      }
+        //  }
+
+        //  $scope.$watch(function(scope) {return scope.dataurl}, get_data);
+
+        //  function get_data(url) {
+        //      clear_data();
+        //      if (!url) return false;
+        //      $http.get(url).then(function(response) {
+        //          $scope.module = ModuleFromUrl(response.data.model.app_label, response.data.model.model_name);
+        //          $scope.data = response.data.items;
+        //          $scope.template_html = response.data.html;
+        //          $scope.paginator = response.data.paginator;
+        //      });
+        //  }
+
+        //  $scope.open = function(slug) {
+        //      if (slug == $scope.urlparam) {
+        //          $scope.urlparam = undefined;
+        //      }
+        //      else {
+        //          $scope.urlparam = slug;
+        //      }
+        //      // changing the location will result in firing the event
+        //      // which reloads the data
+        //      $location.search('open', $scope.urlparam);
+        //  }
+
+        //  $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+        //      if (module && pk) {
+        //          $scope.visible = true;
+        //          $scope.parent_module = module;
+        //          // $scope.module = module;
+        //          $scope.pk = pk;
+        //          set_dataurl();
+        //      }
+        //      else $scope.visible = false;
+        //  });
+        }],
+        link: function(scope, $element) {
+            $element.hide();
+            scope.$watch(
+                function(scope) {return scope.visible},
+                function(value) {
+                    if (value) {
+                        $element.show();
+                    }
+                    else {
+                        $element.hide();
+                    }
+                }
+            );
+
+        },
     };
 }]);

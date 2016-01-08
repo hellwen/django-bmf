@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-02 19:42+0100\n"
+"POT-Creation-Date: 2016-01-08 10:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:26
+#: bmf_module.py:25
 msgid "All Addresses"
 msgstr ""
 
 #: categories.py:13 models.py:29
+#: templates/djangobmf_address/address_bmflist.html:5
 msgid "Address"
 msgstr ""
 
@@ -83,4 +84,16 @@ msgid ""
 "%(name)s %(name2)s\n"
 "%(street)s\n"
 "%(city)s, %(state)s, %(zip)s, %(country)s"
+msgstr ""
+
+#: templates/djangobmf_address/address_bmflist.html:6
+msgid "Customer"
+msgstr ""
+
+#: templates/djangobmf_address/address_bmflist.html:7
+msgid "Billing"
+msgstr ""
+
+#: templates/djangobmf_address/address_bmflist.html:8
+msgid "Shipping"
 msgstr ""
