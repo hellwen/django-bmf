@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-08 10:28+0100\n"
-"PO-Revision-Date: 2016-01-08 12:34+0000\n"
+"PO-Revision-Date: 2016-01-08 12:37+0000\n"
 "Last-Translator: Wojtek Hulak <wojtek.hulak@gmail.com>\n"
 "Language-Team: Polish (Poland) (http://www.transifex.com/django-bmf/django-bmf/language/pl_PL/)\n"
 "MIME-Version: 1.0\n"
@@ -66,12 +66,12 @@ msgstr "Niedziela Poniedziałek Wtorek Środa Czwartek Piątek Sobota"
 #: static/djangobmf/js/djangobmf.js:697
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "Jan. Feb. March April May June July August Sept. Oct. Nov. Dec."
-msgstr ""
+msgstr "Sty. Lut. Mar. Kwi. Maj. Cze. Lip. Sie. Wrz. Paź. Lis. Gru."
 
 #: static/djangobmf/js/djangobmf.js:698
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec"
-msgstr ""
+msgstr "Sty Lut Mar Kwi Maj Cze Lip Sie Wrz Paź Lis Gru"
 
 #: static/djangobmf/js/djangobmf.js:703
 #: static/djangobmf/js/djangobmf.min.js:20
@@ -146,4 +146,4 @@ msgstr "Nowe pliki"
 #: static/djangobmf/js/djangobmf.js:1039
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "Detected changes"
-msgstr ""
+msgstr "Wykryto zmiany"

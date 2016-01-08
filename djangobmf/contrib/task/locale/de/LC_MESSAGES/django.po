@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Sebastian Braun <sebastian@elmnt.de>, 2014
+# Sebastian Braun <sebastian@elmnt.de>, 2014,2016
 msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-08 10:28+0100\n"
-"PO-Revision-Date: 2016-01-08 09:35+0000\n"
+"PO-Revision-Date: 2016-01-08 13:32+0000\n"
 "Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
 "Language-Team: German (http://www.transifex.com/django-bmf/django-bmf/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -20,11 +20,11 @@ msgstr ""
 
 #: bmf_module.py:39
 msgid "Open Tasks"
-msgstr ""
+msgstr "Offene Aufgaben"
 
 #: bmf_module.py:53
 msgid "Active Goals"
-msgstr ""
+msgstr "Aktive Ziele"
 
 #: bmf_module.py:67 categories.py:19 models.py:176
 msgid "Tasks"
@@ -32,11 +32,11 @@ msgstr "Aufgaben"
 
 #: bmf_module.py:78
 msgid "My goals"
-msgstr ""
+msgstr "Meine Ziele"
 
 #: bmf_module.py:91
 msgid "Active goals"
-msgstr ""
+msgstr "Aktive Ziele"
 
 #: bmf_module.py:103 bmf_module.py:162
 msgid "Archive"
@@ -44,7 +44,7 @@ msgstr "Archiv"
 
 #: bmf_module.py:110
 msgid "My tasks"
-msgstr ""
+msgstr "Meine Aufgaben"
 
 #: bmf_module.py:123
 msgid "Todolist"
@@ -52,7 +52,7 @@ msgstr "Zu erledigende Aufgaben"
 
 #: bmf_module.py:137
 msgid "Availalbe tasks"
-msgstr ""
+msgstr "Verfügbare Aufgaben"
 
 #: bmf_module.py:150 templates/djangobmf_task/goal_bmfdetail.html:21
 msgid "Open tasks"
@@ -112,7 +112,7 @@ msgstr "abgeschlossen"
 
 #: templates/djangobmf_task/task_bmflist.html:5
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: templates/djangobmf_task/task_bmflist.html:6
 #: templates/djangobmf_task/task_inctable.html:6
@@ -159,7 +159,7 @@ msgstr "Schließe das Ziel ab"
 
 #: workflows.py:28
 msgid "Cancel this Goal"
-msgstr ""
+msgstr "Breche das Ziel ab"
 
 #: workflows.py:29
 msgid "Reopen this Goal"
@@ -167,7 +167,7 @@ msgstr "Öffne das Ziel"
 
 #: workflows.py:33 workflows.py:41
 msgid "You can not complete a goal which has open tasks"
-msgstr ""
+msgstr "Sie können kein Ziel abschließen, dass offene Aufgaben hat"
 
 #: workflows.py:63
 msgid "New"
@@ -199,7 +199,7 @@ msgstr "Arbeite an dieser Aufgabe"
 
 #: workflows.py:80
 msgid "Mark as todo"
-msgstr ""
+msgstr "Als \"zu erledigen\" markieren"
 
 #: workflows.py:85
 msgid "Set this task on hold"
@@ -207,7 +207,7 @@ msgstr "Setze diese Aufgabe in die Wateschlange"
 
 #: workflows.py:90
 msgid "Stop working on this task"
-msgstr "Halte die Arbeite an dieser Aufgabe an"
+msgstr "Halte die Arbeit an dieser Aufgabe an"
 
 #: workflows.py:95
 msgid "Finish this task"
@@ -215,7 +215,7 @@ msgstr "Schließe diese Aufgabe ab"
 
 #: workflows.py:101
 msgid "Set to review"
-msgstr ""
+msgstr "Zur Prüfung geben"
 
 #: workflows.py:106 workflows.py:111
 msgid "Reopen this task"

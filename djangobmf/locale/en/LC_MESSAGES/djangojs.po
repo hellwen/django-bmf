@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-08 13:31+0100\n"
+"POT-Creation-Date: 2016-01-08 14:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,32 +122,32 @@ msgstr ""
 msgid "days ago"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:1047
+#: static/djangobmf/js/djangobmf.js:1034
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "New entries"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:1051
+#: static/djangobmf/js/djangobmf.js:1038
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "New comments"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:1055
+#: static/djangobmf/js/djangobmf.js:1042
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "Worflow changes"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:1059
+#: static/djangobmf/js/djangobmf.js:1046
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "New files"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:1063
+#: static/djangobmf/js/djangobmf.js:1050
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "Detected changes"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:2274
+#: static/djangobmf/js/djangobmf.js:2285
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid ""
 "Error!\n"
