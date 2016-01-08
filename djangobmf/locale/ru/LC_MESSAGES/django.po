@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-15 17:17+0200\n"
-"PO-Revision-Date: 2015-12-02 18:27+0000\n"
-"Last-Translator: Artem Litvinov <tema.litvinov@gmail.com>\n"
+"POT-Creation-Date: 2016-01-08 10:28+0100\n"
+"PO-Revision-Date: 2016-01-08 09:34+0000\n"
+"Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
 "Language-Team: Russian (http://www.transifex.com/django-bmf/django-bmf/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -38,6 +38,37 @@ msgstr "Новый пароль"
 msgid "New Password confirmation"
 msgstr "Подтверждение нового пароля"
 
+#: core/currency.py:51
+#, python-format
+msgctxt "currency formatting"
+msgid "%(val)s %(sym)s"
+msgstr ""
+
+#: core/serializers/__init__.py:46
+msgid "You need to define a topic or a text"
+msgstr ""
+
+#: core/views/mixins.py:56
+msgid "You have no permission to access the object"
+msgstr ""
+
+#: core/views/mixins.py:57
+msgid "The object can not be found"
+msgstr ""
+
+#: core/views/related.py:41
+msgid "The object's relation can not be found"
+msgstr ""
+
+#: core/workflow.py:230
+#, python-format
+msgid "The state %s is not valid"
+msgstr ""
+
+#: core/workflow.py:238 core/workflow.py:365
+msgid "This transition is not valid"
+msgstr "Этот переход неверный"
+
 #: currency/EUR/bmf_module.py:14
 msgid "€"
 msgstr "€"
@@ -53,12 +84,6 @@ msgstr "$"
 #: currency/USD/bmf_module.py:15
 msgid "Dollar"
 msgstr "Доллар"
-
-#: currency/__init__.py:51
-#, python-format
-msgctxt "currency formatting"
-msgid "%(val)s %(sym)s"
-msgstr ""
 
 #: dashboards.py:27
 msgid "Accounting"
@@ -100,10 +125,6 @@ msgstr ""
 msgid "Money Field"
 msgstr ""
 
-#: fields/configobj.py:18
-msgid "Config Field"
-msgstr "Поле конфигурации"
-
 #: fields/workflow.py:19
 msgid "Workflow Field"
 msgstr "Поле рабочего процесса"
@@ -117,7 +138,7 @@ msgstr ""
 msgid "Comment"
 msgstr "Комментарий"
 
-#: models/activity.py:26 models/base.py:290 models/document.py:44
+#: models/activity.py:26 models/base.py:286 models/document.py:44
 msgid "Created"
 msgstr "Создан"
 
@@ -133,36 +154,36 @@ msgstr "Рабочий процесс"
 msgid "File"
 msgstr "Файл"
 
-#: models/activity.py:60
+#: models/activity.py:56 templates/djangobmf/site-activity.html:25
 msgid "Topic"
 msgstr "Тема"
 
-#: models/activity.py:61
+#: models/activity.py:57 templates/djangobmf/site-activity.html:28
 msgid "Text"
 msgstr "Текст"
 
-#: models/activity.py:63
+#: models/activity.py:59
 msgid "Action"
 msgstr "Действие"
 
-#: models/activity.py:70 models/numbering.py:41
+#: models/activity.py:66
 msgid "Template"
 msgstr "Шаблон"
 
-#: models/activity.py:77 models/base.py:277 models/document.py:43
+#: models/activity.py:73 models/base.py:273 models/document.py:43
 #: models/notification.py:40 models/renderer.py:68 models/report.py:41
 msgid "Modified"
 msgstr "Изменен"
 
-#: models/activity.py:83 models/activity.py:84
+#: models/activity.py:79 models/activity.py:80
 msgid "Activity"
 msgstr "Активность"
 
-#: models/base.py:304
+#: models/base.py:300
 msgid "Modified by"
 msgstr "Изменен"
 
-#: models/base.py:316
+#: models/base.py:312
 msgid "Created by"
 msgstr "Создан"
 
@@ -183,7 +204,7 @@ msgstr "Значение"
 msgid "Active"
 msgstr "Активно"
 
-#: models/configuration.py:81 templates/djangobmf/base.html:116
+#: models/configuration.py:81 templates/djangobmf/base.html:69
 #: templates/djangobmf/configuration/edit.html:5
 #: templates/djangobmf/configuration/index.html:5
 #: templates/djangobmf/configuration/index.html:9
@@ -302,14 +323,19 @@ msgstr ""
 msgid "Key"
 msgstr ""
 
-#: models/report.py:44 templates/djangobmf/module_detail.html:56
-#: templates/djangobmf/module_detail.html:68
+#: models/report.py:44 templates/djangobmf/module_detail.html:32
+#: templates/djangobmf/module_detail.html:44
 msgid "Report"
 msgstr "Отчет"
 
 #: models/report.py:45
 msgid "Reports"
 msgstr "Отчеты"
+
+#: pagination.py:22
+#, python-brace-format
+msgid "Invalid page \"{page_number}\": {message}."
+msgstr ""
 
 #: templates/djangobmf/account/change_password.html:5
 #: templates/djangobmf/account/change_password.html:11
@@ -330,7 +356,7 @@ msgstr "Пожалуйста, войдите"
 #: templates/djangobmf/account/logout.html:5
 #: templates/djangobmf/account/modal_logout.html:6
 #: templates/djangobmf/account/modal_logout.html:11
-#: templates/djangobmf/base.html:127
+#: templates/djangobmf/base.html:80
 msgid "Logout"
 msgstr "Выйти"
 
@@ -343,17 +369,16 @@ msgid "Are you sure you want to log out?"
 msgstr "Вы уверены, что хотите выйти?"
 
 #: templates/djangobmf/account/modal_logout.html:10
-#: templates/djangobmf/module_clone.html:9
-#: templates/djangobmf/module_create.html:9
-#: templates/djangobmf/module_update.html:9
+#: templates/djangobmf/module_clone.html:8
+#: templates/djangobmf/module_create.html:8
+#: templates/djangobmf/module_update.html:8
 msgid "Cancel"
 msgstr "Отмена"
 
-#: templates/djangobmf/activities/created.html:4
-msgid "Item created"
-msgstr ""
+#: templates/djangobmf/activities/file.html:4
+msgid "Append"
+msgstr "Добавить"
 
-#: templates/djangobmf/activities/created.html:6
 #: templates/djangobmf/activities/file.html:6
 #: templates/djangobmf/activities/message.html:9
 #: templates/djangobmf/activities/updated.html:7
@@ -361,7 +386,6 @@ msgstr ""
 msgid "Unknown"
 msgstr "Неизвестный"
 
-#: templates/djangobmf/activities/created.html:6
 #: templates/djangobmf/activities/file.html:6
 #: templates/djangobmf/activities/message.html:9
 #: templates/djangobmf/activities/updated.html:7
@@ -369,11 +393,8 @@ msgstr "Неизвестный"
 msgid "before"
 msgstr "до"
 
-#: templates/djangobmf/activities/file.html:4
-msgid "Append"
-msgstr "Добавить"
-
 #: templates/djangobmf/activities/updated.html:4
+#: templates/djangobmf/site-activity.html:38
 msgid "Item changed"
 msgstr ""
 
@@ -382,46 +403,67 @@ msgid "The following attributes were changed"
 msgstr "Следующие атрибуты были изменены"
 
 #: templates/djangobmf/activities/workflow.html:4
+#: templates/djangobmf/site-activity.html:39
 msgid "State"
 msgstr "Статус"
 
-#: templates/djangobmf/base.html:36 templates/djangobmf/base.html.py:61
-#: templates/djangobmf/dashboard/detail.html:4
-#: templates/djangobmf/dashboard/detail.html:12
-#: templates/djangobmf/dashboard/sitebar.html:3
-#: templates/djangobmf/dashboard/update.html:12
-msgid "Dashboards"
-msgstr "Панели управления"
-
-#: templates/djangobmf/base.html:51
-msgid "Toogle navigation"
+#: templates/djangobmf/api/detail-default.html:3
+msgid "Caution"
 msgstr ""
 
-#: templates/djangobmf/base.html:76
+#: templates/djangobmf/api/detail-default.html:3
+msgid "The template to render a page for this object is missing"
+msgstr ""
+
+#: templates/djangobmf/api/detail.html:28
+#: templates/djangobmf/api/detail.html:31
+msgid "Edit"
+msgstr "Редактировать"
+
+#: templates/djangobmf/api/list.html:4 templates/djangobmf/api/list.html:8
+msgid "Add"
+msgstr "Добавить"
+
+#: templates/djangobmf/api/list_template_not_found.html:2
+msgid "Template not found"
+msgstr ""
+
+#: templates/djangobmf/api/list_template_not_found.html:3
+msgid "Please create"
+msgstr ""
+
+#: templates/djangobmf/api/notification.html:7
+msgid "Global settings"
+msgstr ""
+
+#: templates/djangobmf/api/notification.html:17
 #: templates/djangobmf/notification/index.html:5
-#: templates/djangobmf/notification/index.html:51
+#: templates/djangobmf/notification/index.html:49 views/api.py:199
 msgid "Notifications"
 msgstr "Оповещения"
 
-#: templates/djangobmf/base.html:100
-msgid "Timesheet"
+#: templates/djangobmf/api/notification.html:25
+msgid "new"
 msgstr ""
 
-#: templates/djangobmf/base.html:107
+#: templates/djangobmf/base.html:32
+msgid "Toogle navigation"
+msgstr ""
+
+#: templates/djangobmf/base.html:42
+#: templates/djangobmf/dashboard/sitebar.html:3
+msgid "Dashboards"
+msgstr "Панели управления"
+
+#: templates/djangobmf/base.html:63
 msgid "Settings"
 msgstr "Настройки"
 
-#: templates/djangobmf/base.html:112
-#: templates/djangobmf/dashboard/sitebar.html:18
-#: templates/djangobmf/modules.html:4 templates/djangobmf/modules.html.py:9
-msgid "Module overview"
-msgstr "Обзор модулей"
-
-#: templates/djangobmf/base.html:119
+#: templates/djangobmf/base.html:72
 msgid "Administration"
 msgstr ""
 
-#: templates/djangobmf/base.html:124
+#: templates/djangobmf/base.html:77
 msgid "Change Password"
 msgstr "Сменить пароль"
 
@@ -454,65 +496,34 @@ msgstr "Создать панель"
 msgid "Delete dashboard"
 msgstr "Удалить панель"
 
-#: templates/djangobmf/dashboard/detail.html:4
-msgid "Dashboard"
-msgstr "Панель управления"
-
 #: templates/djangobmf/dashboard/sitebar.html:12
 msgid "Click on \"add\" to create a new dashboard"
 msgstr "Нажмите \"Добавить\" чтобы создать панель"
 
-#: templates/djangobmf/dashboard/update.html:8
-#: templates/djangobmf/module_detail.html:77
-#: templates/djangobmf/module_detail.html:83
-#: templates/djangobmf/notification/index.html:42
-msgid "Edit"
-msgstr "Редактировать"
-
-#: templates/djangobmf/dashboard/update.html:13
-#: templates/djangobmf/module_generic.html:42
-#: templates/djangobmf/module_generic.html:52
-msgid "Add"
-msgstr "Добавить"
-
-#: templates/djangobmf/dashboard/update.html:69
-msgid "Update dashboard"
-msgstr "Обновить панель управления"
+#: templates/djangobmf/dashboard/sitebar.html:18
+msgid "Module overview"
+msgstr "Обзор модулей"
 
 #: templates/djangobmf/message/index.html:5
 msgid "Messages"
 msgstr "Сообщения"
 
-#: templates/djangobmf/module_base.html:24
-#: templates/djangobmf/module_base.html:67
-msgid "Append file"
-msgstr "Добавить файл"
-
-#: templates/djangobmf/module_base.html:28
-#: templates/djangobmf/module_base.html:52
-msgid "Write message"
-msgstr "Написать сообщение"
-
-#: templates/djangobmf/module_base.html:76
-msgid "Load more items"
-msgstr ""
-
-#: templates/djangobmf/module_clone.html:6
+#: templates/djangobmf/module_clone.html:5
 #, python-format
 msgid "Copy %(object)s"
 msgstr ""
 
-#: templates/djangobmf/module_clone.html:10
-#: templates/djangobmf/module_update.html:10
+#: templates/djangobmf/module_clone.html:9
+#: templates/djangobmf/module_update.html:9
 msgid "Save Changes"
 msgstr "Сохранить изменения"
 
-#: templates/djangobmf/module_create.html:6
+#: templates/djangobmf/module_create.html:5
 #, python-format
 msgid "Create %(object)s"
 msgstr ""
 
-#: templates/djangobmf/module_create.html:10
+#: templates/djangobmf/module_create.html:9
 msgid "Create object"
 msgstr "Создать объект"
 
@@ -542,7 +553,7 @@ msgstr ""
 msgid "Delete Object"
 msgstr "Удалить объект"
 
-#: templates/djangobmf/module_detail.html:11
+#: templates/djangobmf/module_detail.html:10
 msgid "Files"
 msgstr "Файлы"
 
@@ -550,16 +561,6 @@ msgstr "Файлы"
 #, python-format
 msgid "No default template found for the detail view of \"%(obj)s\"."
 msgstr ""
-
-#: templates/djangobmf/module_generic.html:72
-#: templates/djangobmf/notification/index.html:99
-msgid "Previous"
-msgstr "Назад"
-
-#: templates/djangobmf/module_generic.html:84
-#: templates/djangobmf/notification/index.html:102
-msgid "Next"
-msgstr "Вперед"
 
 #: templates/djangobmf/module_report.html:6
 msgid "Report not found"
@@ -569,7 +570,7 @@ msgstr "Отчет не найден"
 msgid "You must configure this report in the admin interface"
 msgstr "Вы должны настроить отчет в интерфейсе администратора"
 
-#: templates/djangobmf/module_update.html:6
+#: templates/djangobmf/module_update.html:5
 #, python-format
 msgid "Change %(object)s"
 msgstr ""
@@ -583,10 +584,6 @@ msgid ""
 "This object is not valid. You need to edit it in order to change it's state."
 msgstr ""
 
-#: templates/djangobmf/modules.html:15
-msgid "You don't have access to any modules"
-msgstr "У вас нет доступа к модулям"
-
 #: templates/djangobmf/notification/create.html:5
 #: templates/djangobmf/notification/update.html:5
 msgid "Update Notification"
@@ -599,7 +596,7 @@ msgstr "Сохранить изменения"
 
 #: templates/djangobmf/notification/index.html:14
 #: templates/djangobmf/notification/index.html:18
-#: templates/djangobmf/notification/index.html:113
+#: templates/djangobmf/notification/index.html:109
 msgid "All"
 msgstr "Все"
 
@@ -607,13 +604,21 @@ msgstr "Все"
 msgid "Default settings"
 msgstr "Настройки по умолчанию"
 
-#: templates/djangobmf/notification/index.html:45
+#: templates/djangobmf/notification/index.html:43
 msgid "Select a category to edit the default settings"
 msgstr "Выберите категорию, чтобы изменить настройки"
 
-#: templates/djangobmf/notification/index.html:91
+#: templates/djangobmf/notification/index.html:87
 msgid "You dont have notifications"
 msgstr "У нас нет оповещений"
+
+#: templates/djangobmf/notification/index.html:95
+msgid "Previous"
+msgstr "Назад"
+
+#: templates/djangobmf/notification/index.html:98
+msgid "Next"
+msgstr "Вперед"
 
 #: templates/djangobmf/report_html_base.html:110
 msgid "Email"
@@ -636,6 +641,15 @@ msgstr "Вы можете добавить дополнительный конт
 msgid "Page %(current)s of %(all)s"
 msgstr "Страница %(current)s из %(all)s"
 
+#: templates/djangobmf/site-activity.html:18
+#: templates/djangobmf/site-activity.html:31
+msgid "Write message"
+msgstr "Написать сообщение"
+
+#: templates/djangobmf/site-activity.html:37
+msgid "Item created"
+msgstr ""
+
 #: templates/djangobmf/wizard/index.html:5
 #: templates/djangobmf/wizard/index.html:9
 msgid "Wizard"
@@ -645,29 +659,20 @@ msgstr "Помощник"
 msgid "empty"
 msgstr "пустой"
 
-#: views/module.py:567 views/module.py:573
+#: views/module.py:378 views/module.py:384
 msgid "Object deleted"
 msgstr "Объект удален"
 
-#: views/module.py:588
+#: views/module.py:399
 #, python-format
 msgid "Cannot delete %(name)s"
 msgstr "Невозможно удалить %(name)s"
 
-#: views/module.py:592
+#: views/module.py:403
 msgid "Are you sure?"
 msgstr "Вы уверены?"
 
-#: views/module.py:663
+#: views/module.py:474
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
 msgstr ""
-
-#: workflow.py:228
-#, python-format
-msgid "The state %s is not valid"
-msgstr ""
-
-#: workflow.py:236 workflow.py:336
-msgid "This transition is not valid"
-msgstr "Этот переход неверный"

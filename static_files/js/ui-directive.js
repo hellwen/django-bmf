@@ -2,58 +2,50 @@
  * ui-directive
  */
 
-bmfapp.directive('bmfLink', ['$location', '$rootScope', '$log', function($location, $rootScope, $log) {
+bmfapp.directive('bmfLink', ['$location', '$rootScope', 'apiurl', 'appurl', 'LinkFactory', 'ModuleFromCt', function($location, $rootScope, apiurl, appurl, LinkFactory, ModuleFromCt) {
     return {
-        template: '<a ng-href="{{ href }}" ng-transclude></a>',
+        template: '<a ng-transclude></a>',
         restrict: 'E',
-        priority: -10,
-        scope: {
-            ct: '@ct',
-            pk: '@pk',
-            type: '@type',
-            action: '@action',
-            search: '@href',
-            module: '=module',
-            scopename: '=scopename',
-        },
+        priority: 10,
+        scope: false,
         replace: true,
         transclude: true,
         link: function(scope, element, attr) {
-            scope.href = "asdasd" + scope.ct + scope.search;
-         //  console.log("BMF-LINK");
-         //  console.log(scope);
-         //  console.log(element);
-         //  console.log(attr);
+            var view = $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1];
+
+            var module;
+            if (attr.ct) module = ModuleFromCt(attr.ct) 
+            else if (scope.module) module = scope.module
+            else if (view.module) module = view.module
+
+            var pk;
+            if (attr.pk) pk = attr.pk
+            else if (view.kwargs.pk) pk = view.kwargs.pk
+
+            var href = LinkFactory(attr.type, module, pk, attr.action);
+
+            if (href) element.attr('href', href);
         },
     }
 }]);
 
 // manages links vom list views to detail views
-bmfapp.directive('bmfDetail', ["$location", "$rootScope", function($location, $rootScope) {
+bmfapp.directive('bmfDetail', ['LinkFactory', function(LinkFactory) {
     return {
         restrict: 'A',
         scope: false,
         link: function(scope, element, attr) {
-            element.on('click', function(event) {
-                var view = $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1];
+            element.attr(
+                'href',
+                LinkFactory("detail", scope.module, attr.bmfDetail, undefined)
+            );
 
-                var next;
-                if (view.name == "detail-base" && scope.module) {
-                    next = $rootScope.bmf_app_base + 'detail/' + scope.module.app + '/' + scope.module.model + '/' + attr.bmfDetail + '/';
-                }
-                else if (view.name == "detail" && scope.module) {
-                    next = $rootScope.bmf_app_base + 'detail/' + scope.module.app + '/' + scope.module.model + '/' + attr.bmfDetail + '/';
-                }
-                else {
-                    next = $location.path() + attr.bmfDetail + '/';
-                }
-                $location.url(next);
+            element.on('click', function(event) {
                 window.scrollTo(0,0);
             });
         }
     };
 }]);
-
 
 
 // manages form modal calls
@@ -530,7 +522,6 @@ bmfapp.directive('bmfSiteRelated', [function() {
             });
         }],
         link: function(scope, $element) {
-            $element.hide();
             scope.$watch(
                 function(scope) {return scope.visible},
                 function(value) {
@@ -639,7 +630,6 @@ bmfapp.directive('bmfSiteActivity', [function() {
             });
         }],
         link: function(scope, $element) {
-            $element.hide();
             scope.$watch(
                 function(scope) {return scope.visible},
                 function(value) {
@@ -686,8 +676,8 @@ bmfapp.directive('bmfSiteContent', [function() {
         controller: ['$scope', '$location', '$http', 'ApiUrlFactory', 'ModuleFromUrl', function($scope, $location, $http, ApiUrlFactory, ModuleFromUrl) {
 
             $scope.scopename = "content";
+            $scope.visible = false;
 
-        //  $scope.visible = false;
         //  $scope.parent_module = null;
         //  $scope.module = null;
         //  $scope.pk = null;
@@ -752,19 +742,17 @@ bmfapp.directive('bmfSiteContent', [function() {
         //  });
         }],
         link: function(scope, $element) {
-            $element.hide();
-            scope.$watch(
-                function(scope) {return scope.visible},
-                function(value) {
-                    if (value) {
-                        $element.show();
-                    }
-                    else {
-                        $element.hide();
-                    }
-                }
-            );
-
+          //scope.$watch(
+          //    function(scope) {return scope.visible},
+          //    function(value) {
+          //        if (value) {
+          //            $element.show();
+          //        }
+          //        else {
+          //            $element.hide();
+          //        }
+          //    }
+          //);
         },
     };
 }]);

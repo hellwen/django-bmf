@@ -1,0 +1,225 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: django-bmf\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-01-08 10:28+0100\n"
+"PO-Revision-Date: 2016-01-08 10:59+0000\n"
+"Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
+"Language-Team: Polish (Poland) (http://www.transifex.com/django-bmf/django-bmf/language/pl_PL/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: bmf_module.py:39
+msgid "Open Tasks"
+msgstr ""
+
+#: bmf_module.py:53
+msgid "Active Goals"
+msgstr ""
+
+#: bmf_module.py:67 categories.py:19 models.py:176
+msgid "Tasks"
+msgstr ""
+
+#: bmf_module.py:78
+msgid "My goals"
+msgstr ""
+
+#: bmf_module.py:91
+msgid "Active goals"
+msgstr ""
+
+#: bmf_module.py:103 bmf_module.py:162
+msgid "Archive"
+msgstr ""
+
+#: bmf_module.py:110
+msgid "My tasks"
+msgstr ""
+
+#: bmf_module.py:123
+msgid "Todolist"
+msgstr ""
+
+#: bmf_module.py:137
+msgid "Availalbe tasks"
+msgstr ""
+
+#: bmf_module.py:150 templates/djangobmf_task/goal_bmfdetail.html:21
+msgid "Open tasks"
+msgstr ""
+
+#: categories.py:13 models.py:60
+msgid "Goals"
+msgstr ""
+
+#: forms.py:17
+msgid "Copy the Tasks"
+msgstr ""
+
+#: forms.py:18
+msgid "When copying unset the task's employee"
+msgstr ""
+
+#: models.py:35 models.py:153
+msgid "Title"
+msgstr ""
+
+#: models.py:36 models.py:154
+msgid "Description"
+msgstr ""
+
+#: models.py:54 models.py:170 workflows.py:23
+msgid "Completed"
+msgstr ""
+
+#: models.py:59
+msgid "Goal"
+msgstr ""
+
+#: models.py:155
+msgid "Due date"
+msgstr ""
+
+#: models.py:175
+msgid "Task"
+msgstr ""
+
+#: templates/djangobmf_task/goal_bmflist.html:5
+msgid "Summary"
+msgstr ""
+
+#: templates/djangobmf_task/goal_bmflist.html:6
+msgid "Referee"
+msgstr ""
+
+#: templates/djangobmf_task/goal_bmflist.html:7
+msgid "Current State"
+msgstr ""
+
+#: templates/djangobmf_task/goal_bmflist.html:26
+msgid "completed"
+msgstr ""
+
+#: templates/djangobmf_task/task_bmflist.html:5
+msgid "Name"
+msgstr "Nazwa"
+
+#: templates/djangobmf_task/task_bmflist.html:6
+#: templates/djangobmf_task/task_inctable.html:6
+msgid "Employee"
+msgstr ""
+
+#: templates/djangobmf_task/task_bmflist.html:7
+#: templates/djangobmf_task/task_inctable.html:7
+msgid "State"
+msgstr "Stan"
+
+#: templates/djangobmf_task/task_bmflist.html:44
+#: templates/djangobmf_task/task_inctable.html:45
+msgid "None"
+msgstr ""
+
+#: templates/djangobmf_task/task_inctable.html:35
+msgid "review"
+msgstr ""
+
+#: templates/djangobmf_task/task_inctable.html:36
+msgid "started"
+msgstr ""
+
+#: templates/djangobmf_task/task_inctable.html:37
+msgid "hold"
+msgstr ""
+
+#: templates/djangobmf_task/task_inctable.html:38
+msgid "todo"
+msgstr ""
+
+#: workflows.py:22 workflows.py:64
+msgid "Open"
+msgstr ""
+
+#: workflows.py:24 workflows.py:70
+msgid "Cancelled"
+msgstr ""
+
+#: workflows.py:27
+msgid "Complete this Goal"
+msgstr ""
+
+#: workflows.py:28
+msgid "Cancel this Goal"
+msgstr ""
+
+#: workflows.py:29
+msgid "Reopen this Goal"
+msgstr ""
+
+#: workflows.py:33 workflows.py:41
+msgid "You can not complete a goal which has open tasks"
+msgstr ""
+
+#: workflows.py:63
+msgid "New"
+msgstr ""
+
+#: workflows.py:65
+msgid "Hold"
+msgstr ""
+
+#: workflows.py:66
+msgid "Todo"
+msgstr ""
+
+#: workflows.py:67
+msgid "Started"
+msgstr ""
+
+#: workflows.py:68
+msgid "Review"
+msgstr ""
+
+#: workflows.py:69
+msgid "Finished"
+msgstr ""
+
+#: workflows.py:74
+msgid "Work on this task"
+msgstr ""
+
+#: workflows.py:80
+msgid "Mark as todo"
+msgstr ""
+
+#: workflows.py:85
+msgid "Set this task on hold"
+msgstr ""
+
+#: workflows.py:90
+msgid "Stop working on this task"
+msgstr ""
+
+#: workflows.py:95
+msgid "Finish this task"
+msgstr ""
+
+#: workflows.py:101
+msgid "Set to review"
+msgstr ""
+
+#: workflows.py:106 workflows.py:111
+msgid "Reopen this task"
+msgstr ""
+
+#: workflows.py:116
+msgid "Cancel this task"
+msgstr ""

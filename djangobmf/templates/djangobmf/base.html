@@ -104,13 +104,7 @@
                     </div>{% endif %}
                     <div ng-cloak bmf-content {% block content_container %}{% endblock %}>{% block full_content %}{% endblock %}</div>
                 </div> <!-- /container -->
-                <div class="container bmf-site-content">
-                    <bmf-link type="create" action="default" pk="23" ct="12" href="#?234=123">Text</bmf-link>
-                    <bmf-link type="create" action="default" pk="23" ct="13" href="#?234=123">Text</bmf-link>
-                    <bmf-link type="create" action="default" pk="23" ct="14" href="#?234=123">Text</bmf-link>
-                    <bmf-link type="create" action="default" pk="23" ct="15" href="#?234=123">Text</bmf-link>
-                    <bmf-link type="create" action="default" pk="23" ct="16" href="#?234=123">Text</bmf-link>
-                </div>
+                <div class="container bmf-site-content"></div>
                 <div class="container bmf-site-related">{% include "djangobmf/site-related.html" %}</div>
                 <div class="container bmf-site-activity">{% include "djangobmf/site-activity.html" %}</div>
             </div> <!-- /page-container -->
