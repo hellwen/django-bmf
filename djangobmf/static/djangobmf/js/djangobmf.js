@@ -1838,7 +1838,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'config', function($http, $rootScope, $scope, $window, config) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', '$log', 'config', function($http, $rootScope, $scope, $window, $log, config) {
 
     /**
      * @description
@@ -1961,6 +1961,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         }
     }
     $rootScope.bmfevent_dashboard = function(key) {
+        $log.debug(BMFEVENT_DASHBOARD, key)
         $rootScope.$broadcast(BMFEVENT_DASHBOARD, key);
     }
     $rootScope.bmfevent_data = function() {
@@ -2088,9 +2089,6 @@ bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $ro
 
     $scope.$on(BMFEVENT_DASHBOARD, function(event, key) {update(key)});
 
-    $scope.data = [];
-    $scope.current = undefined;
-
     function update(key) {
         var response = [];
         var data = [];
@@ -2117,6 +2115,8 @@ bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $ro
         $scope.data = data;
         $scope.current = current;
     }
+    update();
+
     $scope.update = update;
 }]);
 
