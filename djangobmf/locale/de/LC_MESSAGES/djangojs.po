@@ -4,13 +4,13 @@
 # 
 # Translators:
 # Dirk <Dirk_Matthes@gmx.net>, 2014
-# Sebastian Braun <sebastian@elmnt.de>, 2014-2015
+# Sebastian Braun <sebastian@elmnt.de>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-08 04:15+0100\n"
-"PO-Revision-Date: 2015-12-02 18:48+0000\n"
+"POT-Creation-Date: 2016-01-08 10:28+0100\n"
+"PO-Revision-Date: 2016-01-08 13:28+0000\n"
 "Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
 "Language-Team: German (http://www.transifex.com/django-bmf/django-bmf/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -19,43 +19,132 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: static/djangobmf/js/djangobmf.js:28 static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:30 static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 403\n"
 " You don't have permission to view this page"
 msgstr "Fehler 403\n Sie haben keine Rechte diese Seite zu betrachten"
 
-#: static/djangobmf/js/djangobmf.js:31 static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:33 static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 404\n"
 " Page not found"
 msgstr "Fehler 404\n Die Seite konnte nicht gefunden werden"
 
-#: static/djangobmf/js/djangobmf.js:34 static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:36 static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 405\n"
 " Method not allowed"
 msgstr "Fehler 405\nMethode nicht erlaubt"
 
-#: static/djangobmf/js/djangobmf.js:38 static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:40 static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 500\n"
 " An Error occured while rendering the page"
 msgstr "Fehler 500\n Ein Fehler ist beim erstellen der Seite aufgetreten."
 
-#: static/djangobmf/js/djangobmf.js:251 static/djangobmf/js/djangobmf.js:371
-#: static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:250 static/djangobmf/js/djangobmf.js:370
+#: static/djangobmf/js/djangobmf.js:695 static/djangobmf/js/djangobmf.js:696
+#: static/djangobmf/js/djangobmf.min.js:17
+#: static/djangobmf/js/djangobmf.min.js:20
 msgid ""
 "January February March April May June July August September October November"
 " December"
 msgstr "Januar Februar März April Mai Juni Juli August September Oktober November Dezember"
 
-#: static/djangobmf/js/djangobmf.js:252 static/djangobmf/js/djangobmf.js:372
-#: static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:251 static/djangobmf/js/djangobmf.js:371
+#: static/djangobmf/js/djangobmf.min.js:17
 msgid "Su Mo Tu We Th Fr Sa"
 msgstr "So Mo Di Mi Do Fr Sa"
 
-#: static/djangobmf/js/djangobmf.js:253 static/djangobmf/js/djangobmf.js:373
-#: static/djangobmf/js/djangobmf.min.js:16
+#: static/djangobmf/js/djangobmf.js:252 static/djangobmf/js/djangobmf.js:372
+#: static/djangobmf/js/djangobmf.js:699
+#: static/djangobmf/js/djangobmf.min.js:17
+#: static/djangobmf/js/djangobmf.min.js:20
 msgid "Sunday Monday Tuesday Wednesday Thursday Friday Saturday"
 msgstr "Sonntag Montag Dienstag Mittwoch Donnerstag Freitag Samstag"
+
+#: static/djangobmf/js/djangobmf.js:697
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "Jan. Feb. March April May June July August Sept. Oct. Nov. Dec."
+msgstr "Jan. Feb. März April Mai Juni Juli August Sept. Okt. Nov. Dez."
+
+#: static/djangobmf/js/djangobmf.js:698
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec"
+msgstr "Jan Feb Mär Apr Mai Jun Jul Aug Sep Okt Nov Dez"
+
+#: static/djangobmf/js/djangobmf.js:703
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "a.m."
+msgstr "vorm."
+
+#: static/djangobmf/js/djangobmf.js:703
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "p.m."
+msgstr "nachm."
+
+#: static/djangobmf/js/djangobmf.js:706
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "AM"
+msgstr "vorm."
+
+#: static/djangobmf/js/djangobmf.js:706
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "PM"
+msgstr "nachm."
+
+#: static/djangobmf/js/djangobmf.js:756
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "midnight"
+msgstr "Mitternacht"
+
+#: static/djangobmf/js/djangobmf.js:757
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "noon"
+msgstr "Mittags"
+
+#: static/djangobmf/js/djangobmf.js:835
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "seconds ago"
+msgstr "vor Sekunden"
+
+#: static/djangobmf/js/djangobmf.js:839
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "minutes ago"
+msgstr ""
+
+#: static/djangobmf/js/djangobmf.js:843
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "hours ago"
+msgstr ""
+
+#: static/djangobmf/js/djangobmf.js:847
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "days ago"
+msgstr ""
+
+#: static/djangobmf/js/djangobmf.js:1023
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "New entries"
+msgstr "Neue Einträge"
+
+#: static/djangobmf/js/djangobmf.js:1027
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "New comments"
+msgstr "Neue Kommentare"
+
+#: static/djangobmf/js/djangobmf.js:1031
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "Worflow changes"
+msgstr "Workflow Änderungen"
+
+#: static/djangobmf/js/djangobmf.js:1035
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "New files"
+msgstr "Neue Dateien"
+
+#: static/djangobmf/js/djangobmf.js:1039
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "Detected changes"
+msgstr "Beobachtete Änderungen"

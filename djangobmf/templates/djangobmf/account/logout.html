@@ -13,7 +13,7 @@
           <h3 class="panel-title"><span class="glyphicon glyphicon-lock"></span> {% trans "Logged out" %}</h3>
         </div>
         <div class="panel-body">
-          <a href="../login/" class="btn btn-lg btn-primary btn-block">{% trans "Login" %}</a>
+            <a href="{% url "djangobmf:login" %}" class="btn btn-lg btn-primary btn-block">{% trans "Login" %}</a>
         </div>
       </div>
     </div>

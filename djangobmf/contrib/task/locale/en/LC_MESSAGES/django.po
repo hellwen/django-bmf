@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-27 18:41+0100\n"
+"POT-Creation-Date: 2016-01-08 10:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,41 +17,48 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:41
+#: bmf_module.py:39
+msgid "Open Tasks"
+msgstr ""
+
+#: bmf_module.py:53
+msgid "Active Goals"
+msgstr ""
+
+#: bmf_module.py:67 categories.py:19 models.py:176
+msgid "Tasks"
+msgstr ""
+
+#: bmf_module.py:78
 msgid "My goals"
 msgstr ""
 
-#: bmf_module.py:54
+#: bmf_module.py:91
 msgid "Active goals"
 msgstr ""
 
-#: bmf_module.py:66 bmf_module.py:125
+#: bmf_module.py:103 bmf_module.py:162
 msgid "Archive"
 msgstr ""
 
-#: bmf_module.py:73
+#: bmf_module.py:110
 msgid "My tasks"
 msgstr ""
 
-#: bmf_module.py:86
+#: bmf_module.py:123
 msgid "Todolist"
 msgstr ""
 
-#: bmf_module.py:100
+#: bmf_module.py:137
 msgid "Availalbe tasks"
 msgstr ""
 
-#: bmf_module.py:113 templates/djangobmf_task/goal_bmfdetail.html:22
-#: templates/djangobmf_task/task_bmfrelated_project.html:9
+#: bmf_module.py:150 templates/djangobmf_task/goal_bmfdetail.html:21
 msgid "Open tasks"
 msgstr ""
 
 #: categories.py:13 models.py:60
 msgid "Goals"
-msgstr ""
-
-#: categories.py:19 models.py:176
-msgid "Tasks"
 msgstr ""
 
 #: forms.py:17
@@ -86,14 +93,6 @@ msgstr ""
 msgid "Task"
 msgstr ""
 
-#: templates/djangobmf_task/goal_bmfdetail.html:23
-msgid "Tasks on hold"
-msgstr ""
-
-#: templates/djangobmf_task/goal_bmfdetail.html:24
-msgid "Accomplished Tasks"
-msgstr ""
-
 #: templates/djangobmf_task/goal_bmflist.html:5
 msgid "Summary"
 msgstr ""
@@ -108,10 +107,6 @@ msgstr ""
 
 #: templates/djangobmf_task/goal_bmflist.html:26
 msgid "completed"
-msgstr ""
-
-#: templates/djangobmf_task/goal_bmfrelated_project.html:10
-msgid "Current goals"
 msgstr ""
 
 #: templates/djangobmf_task/task_bmflist.html:5

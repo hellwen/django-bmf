@@ -16,6 +16,31 @@ bmfapp.factory('ApiUrlFactory', ['$rootScope', function($rootScope) {
     }
 }]);
 
+// This factory uses the rootScope to generate a from a given type (req),
+// action(opt) and primary_key(opt)
+bmfapp.factory('LinkFactory', ['$location', '$rootScope', 'apiurl', 'appurl', 'ModuleFromCt', function($location, $rootScope, apiurl, appurl, ModuleFromCt) {
+    return function(type, module, pk, action) {
+        var view = $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1];
+        if (!module && view.module) module = view.module;
+        var url;
+
+        if (type == "create" && action && module) {
+            url = apiurl + 'module/' + module.ct + '/' + type + '/' + action + '/';
+        }
+
+        if (type == "detail" && module && pk) {
+            if (view && view.name in ["notification", "list"]) {
+                url = $location.path() + pk + '/';
+            }
+            else {
+                url = appurl + 'detail/' + module.app + '/' + module.model + '/' + pk + '/';
+            }
+        }
+
+        return url
+    }
+}]);
+
 
 /**
  * @description
@@ -172,7 +197,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
                 if (crumb.url == url) index = i;
             });
-            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
+            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; i--) {
                 delete $rootScope.bmf_breadcrumbs[i];
             }
 
@@ -186,6 +211,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
 
         // fire events (with updated breadcrumbs)
         if (view) $rootScope.bmfevent_dashboard(kwargs.dashboard);
+        $rootScope.bmfevent_object(module || null, kwargs.pk || null);
 
         return true
     }

@@ -17,7 +17,7 @@ class TestDashboard(Dashboard):
     slug = 'test'
 
 
-@register(dashboard=TestDashboard)
+@register
 class TaskModule(Module):
     model = TestView
     default = True

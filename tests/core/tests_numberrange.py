@@ -56,7 +56,7 @@ class ClassTests(TestCase):
 
         nr = Test()
         time = datetime.datetime(1999, 11, 15, 0, 0, 0, tzinfo=get_default_timezone())
-        self.assertEqual(nr.from_time(time), datetime.date(1999,11,15))
+        self.assertEqual(nr.from_time(time), datetime.date(1999, 11, 15))
 
     def test_time_conversion_native(self):
         class Test(NumberRange):
@@ -64,8 +64,7 @@ class ClassTests(TestCase):
 
         nr = Test()
         time = datetime.datetime(1999, 12, 14, 0, 0, 0)
-        self.assertEqual(nr.from_time(time), datetime.date(1999,12,14))
-
+        self.assertEqual(nr.from_time(time), datetime.date(1999, 12, 14))
 
     def test_name_range_month(self):
         class Test(NumberRange):

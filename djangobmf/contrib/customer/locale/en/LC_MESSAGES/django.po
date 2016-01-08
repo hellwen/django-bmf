@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-02 19:42+0100\n"
+"POT-Creation-Date: 2016-01-08 10:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,23 +17,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:25
+#: bmf_module.py:24
 msgid "Company"
 msgstr ""
 
-#: bmf_module.py:26 bmf_module.py:34 categories.py:13 models.py:75
+#: bmf_module.py:25 bmf_module.py:33 categories.py:13 models.py:75
+#: templates/djangobmf_customer/customer_bmflist.html:7
 msgid "Customer"
 msgstr ""
 
-#: bmf_module.py:47
+#: bmf_module.py:46 templates/djangobmf_customer/customer_bmflist.html:8
 msgid "Supplier"
 msgstr ""
 
-#: bmf_module.py:60
+#: bmf_module.py:59
 msgid "All"
 msgstr ""
 
-#: models.py:20
+#: models.py:20 templates/djangobmf_customer/customer_bmflist.html:5
 msgid "Name"
 msgstr ""
 
@@ -113,4 +114,12 @@ msgstr ""
 
 #: models.py:128
 msgid "Notes"
+msgstr ""
+
+#: templates/djangobmf_customer/customer_bmflist.html:6
+msgid "User"
+msgstr ""
+
+#: templates/djangobmf_customer/customer_bmflist.html:27
+msgid "None"
 msgstr ""

@@ -18,7 +18,7 @@ from .views import QuotationCreateView
 from .views import QuotationUpdateView
 
 
-@register(dashboard=Sales)
+@register
 class QuotationModule(Module):
     model = Quotation
     default = True
@@ -26,7 +26,7 @@ class QuotationModule(Module):
     update = QuotationUpdateView
 
 
-@register(dashboard=Sales)
+@register
 class QuotationProductModule(Module):
     model = QuotationProduct
     default = True

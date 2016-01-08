@@ -1,0 +1,47 @@
+{% load i18n djangobmf_angularjs %}{% spaceless %}
+<div ng-if="notification.enabled" id="bmf_message_box" class="panel panel-default">
+    <div class="panel-heading">
+        <span ng-if="notification.has_comments">
+            <a href="{% ng "notifyurl" %}" class="btn" bmf-notification="comments" data-enabled="{% ng "notification.comments" %}"></a>
+        &nbsp;</span>
+        <span ng-if="notification.has_workflow">
+            <a href="{% ng "notifyurl" %}" class="btn" bmf-notification="workflow" data-enabled="{% ng "notification.workflow" %}"></a>
+        &nbsp;</span>
+        <span ng-if="notification.has_detectchanges">
+            <a href="{% ng "notifyurl" %}" class="btn" bmf-notification="detectchanges" data-enabled="{% ng "notification.detectchanges" %}"></a>
+        &nbsp;</span>
+        <span ng-if="notification.has_files">
+            <a href="{% ng "notifyurl" %}" class="btn" bmf-notification="files" data-enabled="{% ng "notification.files" %}"></a>
+        &nbsp;</span>
+
+        <button ng-if="notification.has_comments" type="button" data-toggle="collapse" data-target="#bmf_message_form" data-parent="#bmf_message_box" class="btn btn-default pull-right">
+            <span class="glyphicon glyphicon-pencil"></span> {% trans "Write message" %}
+        </button>
+    </div>
+    <div class="panel-body">
+        <div ng-if="notification.has_comments" id="bmf_message_form" class="collapse out">
+            <form class="form" role="form" ng-submit="processForm()">
+                <div class="form-group">
+                    <input type="text" name="topic" class="form-control" placeholder="{% trans "Topic" %}" ng-model="formdata.topic">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" name="text" rows="8" placeholder="{% trans "Text" %}" ng-model="formdata.text"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">{% trans "Write message" %}</button>
+                </div>
+            </form>
+            <hr />
+        </div>
+        <div ng-repeat="d in data">
+            <h4 ng-if="d.action=='created'">{% trans "Item created"%}</h4>
+            <h4 ng-if="d.action=='changed'">{% trans "Item changed"%}</h4>
+            <strong ng-if="d.action=='workflow'">{% trans "State"%}: {% ng "d.json.new" %} &larr; {% ng "d.json.old" %} <br></strong>
+            <h4 ng-if="d.topic">{% ng "d.topic" %}</h4>
+            <div ng-if="d.formatted" ng-bind-html="d.formatted | mark_safe"></div>
+            <small class="text-muted">{% ng "d.user" %} <span bmf-time-ago="d.modified"></span></small>
+            <hr ng-if="!$last">
+        </div>
+    </div>
+</div>
+{% endspaceless %}

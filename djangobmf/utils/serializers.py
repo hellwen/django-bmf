@@ -4,7 +4,7 @@
 from django.core.serializers.json import DjangoJSONEncoder
 
 from djangobmf.currency import BaseCurrency
-from djangobmf.workflow import WorkflowContainer
+# from djangobmf.workflow import WorkflowContainer
 
 
 class DjangoBMFEncoder(DjangoJSONEncoder):

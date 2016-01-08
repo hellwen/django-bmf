@@ -1,6 +1,6 @@
 {
   "name": "django-bmf",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "repository": [],
   "license": "BSD-3-Clause",
   "devDependencies": {

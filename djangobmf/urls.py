@@ -17,13 +17,14 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import last_modified
 
 from djangobmf import get_version
+from djangobmf.core.views.activity import View as APIActivityListView
+from djangobmf.core.views.related import View as APIRelatedView
 from djangobmf.sites import site
 from djangobmf.views import Index
 from djangobmf.views.api import APIIndex
 from djangobmf.views.api import APIViewDetail
 from djangobmf.views.api import APIModuleListView
-from djangobmf.views.api import APIModuleDetailView
-from djangobmf.views.api import APIActivityListView
+# from djangobmf.views.api import APIModuleDetailView
 from djangobmf.views.api import NotificationCountAPI
 from djangobmf.views.api import NotificationListAPI
 from djangobmf.views.api import NotificationViewAPI
@@ -61,7 +62,8 @@ def i18n_javascript(request):
 urlpatterns = patterns(
     '',
     # VIEWS COVERED BY UI
-    url(r'^$',
+    url(
+        r'^$',
         Index.as_view(), name="dashboard"
     ),
     url(
@@ -95,6 +97,10 @@ urlpatterns = patterns(
         Index.as_view(),
         name="notification",
     ),
+    url(
+        r'^detail/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        Index.as_view(),
+    ),
 
     url(r'^accounts/', include('djangobmf.account.urls')),
 
@@ -115,11 +121,11 @@ urlpatterns = patterns(
         name="api",
     ),
     url(
-        r'^api/data/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        r'^api/related/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<field>[\w_]+)/(?P<pk>[0-9]+)/$',
         never_cache(
-            APIModuleDetailView.as_view()
+            APIRelatedView.as_view()
         ),
-        name="api",
+        name="api-related",
     ),
     url(
         r'^api/activity/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',

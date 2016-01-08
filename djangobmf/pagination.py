@@ -17,21 +17,20 @@ from rest_framework.utils.urls import replace_query_param
 from rest_framework.utils.urls import remove_query_param
 
 
-class ModulePagination(BasePagination):
+class PaginationMixin(BasePagination):
     template = 'rest_framework/pagination/previous_and_next.html'
-    page_size = 100
     invalid_page_message = _('Invalid page "{page_number}": {message}.')
+    page_size = None
 
     def paginate_queryset(self, queryset, request, view=None):
+        self.request = request
 
-        page_size = self.page_size
-
-        if not page_size:
+        if not self.page_size:
             self.page = None
             self.count = queryset.count()
             return list(queryset)
 
-        paginator = Paginator(queryset, page_size)
+        paginator = Paginator(queryset, self.page_size)
         page_number = request.query_params.get('page', 1)
         self.count = paginator.count
 
@@ -39,7 +38,8 @@ class ModulePagination(BasePagination):
             self.page = paginator.page(page_number)
         except InvalidPage as exc:
             msg = self.invalid_page_message.format(
-                page_number=page_number, message=six.text_type(exc)
+                page_number=page_number,
+                message=six.text_type(exc),
             )
             raise NotFound(msg)
 
@@ -47,7 +47,6 @@ class ModulePagination(BasePagination):
             # The browsable API should display pagination controls.
             self.display_page_controls = True
 
-        self.request = request
         return list(self.page)
 
     def get_paginated_response_data(self, data):
@@ -99,3 +98,7 @@ class ModulePagination(BasePagination):
         template = loader.get_template(self.template)
         context = Context(self.get_html_context())
         return template.render(context)
+
+
+class ModulePagination(PaginationMixin):
+    page_size = 100

@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.dashboards import ProjectManagement
+from djangobmf.core import Relationship
 from djangobmf.sites import Module
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
@@ -20,18 +20,55 @@ from .views import GoalCloneView
 from .views import GoalDetailView
 
 
-@register(dashboard=ProjectManagement)
+@register
 class TaskModule(Module):
     model = Task
     default = True
 
 
-@register(dashboard=ProjectManagement)
+@register
 class GoalModule(Module):
     model = Goal
     default = True
     clone = GoalCloneView
     detail = GoalDetailView
+
+
+@register(model=Task)
+class ProjectTaskRelationship(Relationship):
+    name = _("Open Tasks")
+    slug = "task"
+    field = "task_set"
+    model = "djangobmf_project.Project"
+    settings = "BMF_CONTRIB_PROJECT"
+
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
+            completed=False,
+        )
+
+
+@register(model=Goal)
+class ProjectGoalRelationship(Relationship):
+    name = _("Active Goals")
+    slug = "goal"
+    field = "goal_set"
+    model = "djangobmf_project.Project"
+    settings = "BMF_CONTRIB_PROJECT"
+
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(
+            completed=False,
+        )
+
+
+@register(model=Task)
+class GoalTasksRelationship(Relationship):
+    name = _("Tasks")
+    slug = "task"
+    field = "task_set"
+    model = "djangobmf_task.Goal"
+    settings = "BMF_CONTRIB_GOAL"
 
 
 @register(category=GoalCategory)

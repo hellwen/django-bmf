@@ -2,15 +2,51 @@
  * ui-directive
  */
 
-bmfapp.directive('bmfLink', ['ApiUrlFactory', function(ApiUrlFactory) {
+bmfapp.directive('bmfLink', ['$location', '$rootScope', 'apiurl', 'appurl', 'LinkFactory', 'ModuleFromCt', function($location, $rootScope, apiurl, appurl, LinkFactory, ModuleFromCt) {
+    return {
+        template: '<a ng-transclude></a>',
+        restrict: 'E',
+        priority: 10,
+        scope: false,
+        replace: true,
+        transclude: true,
+        link: function(scope, element, attr) {
+            var view = $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1];
+
+            var module;
+            if (attr.ct) module = ModuleFromCt(attr.ct) 
+            else if (scope.module) module = scope.module
+            else if (view.module) module = view.module
+
+            var pk;
+            if (attr.pk) pk = attr.pk
+            else if (view.kwargs.pk) pk = view.kwargs.pk
+
+            var href = LinkFactory(attr.type, module, pk, attr.action);
+
+            if (href) element.attr('href', href);
+        },
+    }
+}]);
+
+// manages links vom list views to detail views
+bmfapp.directive('bmfDetail', ['LinkFactory', function(LinkFactory) {
     return {
         restrict: 'A',
         scope: false,
         link: function(scope, element, attr) {
-            console.log(ApiUrlFactory('test'));
-        },
-    }
+            element.attr(
+                'href',
+                LinkFactory("detail", scope.module, attr.bmfDetail, undefined)
+            );
+
+            element.on('click', function(event) {
+                window.scrollTo(0,0);
+            });
+        }
+    };
 }]);
+
 
 // manages form modal calls
 bmfapp.directive('bmfForm', [function() {
@@ -119,22 +155,6 @@ bmfapp.directive('bmfForm', [function() {
                     });
                 });
             }
-        }
-    };
-}]);
-
-
-// manages links vom list views to detail views
-bmfapp.directive('bmfDetail', ["$location", function($location) {
-    return {
-        restrict: 'A',
-        scope: false,
-        link: function(scope, element, attr) {
-            element.on('click', function(event) {
-                var next = $location.path() + attr.bmfDetail + '/';
-                $location.path(next);
-                window.scrollTo(0,0);
-            });
         }
     };
 }]);
@@ -261,7 +281,7 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                 if (type == "list") {
                     view_list()
                 }
-                if (type == "detail") {
+                if (type == "detail" || type == "detail-base") {
                     view_detail()
                 }
                 if (type == "notification") {
@@ -317,10 +337,12 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                     // update vars
                     scope.module = view.module;
 
+                    // console.log(view.module);
                     scope.ui = {
                         notifications: null,
                         workflow: null,
                         views: null,
+                        related: [],
                     };
 
                     var url = view.module.base + view.kwargs.pk  + '/';
@@ -331,10 +353,11 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                         scope.template_html = response.data.html
 
                         if (response.data.views.activity.enabled) {
-                            var url = response.data.views.activity.url;
-                            $http.get(url).then(function(response) {
-                                scope.activities = response.data;
-                            });
+                        //  var url = response.data.views.activity.url;
+                        //  console.log("OLDURL", url)
+                        //  $http.get(url).then(function(response) {
+                        //      scope.activities = response.data;
+                        //  });
                         }
                     });
                 }
@@ -419,5 +442,317 @@ bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
                 }
             );
         }
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteRelated', [function() {
+    return {
+        restrict: 'C',
+        scope: {},
+        template: function(tElement, tAttrs) {
+            return tElement.html();
+        },
+        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', 'ModuleFromUrl', function($scope, $location, $http, ApiUrlFactory, ModuleFromUrl) {
+
+            $scope.scopename = "related";
+
+            $scope.visible = false;
+            $scope.parent_module = null;
+            $scope.module = null;
+            $scope.pk = null;
+
+            $scope.urlparam = undefined;
+            $scope.paginator = undefined;
+
+            function clear_data() {
+                $scope.data = [];
+                $scope.errors = [];
+            }
+            clear_data();
+
+            function set_dataurl() {
+                var search = $location.search();
+                $scope.urlparam = search.open;
+
+                if ($scope.urlparam) {
+                    $scope.dataurl = ApiUrlFactory(
+                        $scope.parent_module,
+                        'related',
+                        $scope.urlparam,
+                        $scope.pk
+                    ) + '?page=' + (search.rpage || 1);
+                }
+            }
+
+            $scope.$watch(function(scope) {return scope.dataurl}, get_data);
+
+            function get_data(url) {
+                clear_data();
+                if (!url) return false;
+                $http.get(url).then(function(response) {
+                    $scope.module = ModuleFromUrl(response.data.model.app_label, response.data.model.model_name);
+                    $scope.data = response.data.items;
+                    $scope.template_html = response.data.html;
+                    $scope.paginator = response.data.paginator;
+                });
+            }
+
+            $scope.open = function(slug) {
+                if (slug == $scope.urlparam) {
+                    $scope.urlparam = undefined;
+                }
+                else {
+                    $scope.urlparam = slug;
+                }
+                // changing the location will result in firing the event
+                // which reloads the data
+                $location.search('open', $scope.urlparam);
+            }
+
+            $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+                if (module && pk) {
+                    $scope.visible = true;
+                    $scope.parent_module = module;
+                    // $scope.module = module;
+                    $scope.pk = pk;
+                    set_dataurl();
+                }
+                else $scope.visible = false;
+            });
+        }],
+        link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {return scope.visible},
+                function(value) {
+                    if (value) {
+                        $element.show();
+                    }
+                    else {
+                        $element.hide();
+                    }
+                }
+            );
+
+        },
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteActivity', [function() {
+    return {
+        restrict: 'C',
+        scope: {},
+        template: function(tElement, tAttrs) {
+            return tElement.html();
+        },
+        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', function($scope, $location, $http, ApiUrlFactory) {
+
+            $scope.scopename = "activity";
+
+            // TODO event to update activity
+            // TODO add timer fire update event every two minutes
+
+            $scope.visible = false;
+            $scope.module = null;
+            $scope.pk = null;
+
+            function clear_data() {
+                $scope.formdata = {};
+                $scope.data = [];
+                $scope.errors = [];
+                $scope.notification = undefined;
+                $scope.paginator = undefined;
+            }
+            clear_data();
+
+            function set_dataurl() {
+                var search = $location.search();
+                $scope.notifyurl = ApiUrlFactory(
+                    $scope.module,
+                    'notification',
+                    'view',
+                    $scope.pk
+                );
+                $scope.dataurl = ApiUrlFactory(
+                    $scope.module,
+                    'activity',
+                    undefined,
+                    $scope.pk
+                ) + '?page=' + (search.apage || 1);
+            }
+            $scope.$watch(function(scope) {return scope.dataurl}, get_data);
+  
+            function get_data(url) {
+                clear_data();
+                if (!url) return false;
+                $http.get(url).then(function(response) {
+                    $scope.data = response.data.items;
+                    $scope.notification = response.data.notification;
+                    $scope.paginator = response.data.paginator;
+                });
+            }
+
+            $scope.processForm = function() {
+                var url = ApiUrlFactory(
+                    $scope.module,
+                    'activity',
+                    undefined,
+                    $scope.pk
+                );
+
+                $http({
+                    method: 'POST',
+                    data: $scope.formdata,
+                    url: url,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(function (response) {
+                    // success callback
+                    // console.log("success", this, response);
+                    get_data($scope.dataurl);
+                }, function (response) {
+                    // error callback
+                    console.log("ActivityForm - Error", response);
+                    alert(response.data.non_field_errors[0]);
+                });
+            }
+
+            $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+                if (module && pk) {
+                    $scope.visible = true;
+                    $scope.module = module;
+                    $scope.pk = pk;
+                    set_dataurl();
+                }
+                else $scope.visible = false;
+            });
+        }],
+        link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {return scope.visible},
+                function(value) {
+                    if (value) {
+                        $element.show();
+                    }
+                    else {
+                        $element.hide();
+                    }
+                }
+            );
+
+        },
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteTemplate', ['$compile', function($compile) {
+    return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {return scope.template_html},
+                function(value) {
+                    $element.hide()
+                    $element.html(value || '');
+                    $compile($element.contents())(scope);
+                    $element.show();
+                }
+            );
+        }
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteContent', [function() {
+    return {
+        restrict: 'C',
+        scope: {},
+        template: function(tElement, tAttrs) {
+            return tElement.html();
+        },
+        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', 'ModuleFromUrl', function($scope, $location, $http, ApiUrlFactory, ModuleFromUrl) {
+
+            $scope.scopename = "content";
+            $scope.visible = false;
+
+        //  $scope.parent_module = null;
+        //  $scope.module = null;
+        //  $scope.pk = null;
+
+        //  $scope.urlparam = undefined;
+        //  $scope.paginator = undefined;
+
+        //  function clear_data() {
+        //      $scope.data = [];
+        //      $scope.errors = [];
+        //  }
+        //  clear_data();
+
+        //  function set_dataurl() {
+        //      var search = $location.search();
+        //      $scope.urlparam = search.open;
+
+        //      if ($scope.urlparam) {
+        //          $scope.dataurl = ApiUrlFactory(
+        //              $scope.parent_module,
+        //              'related',
+        //              $scope.urlparam,
+        //              $scope.pk
+        //          ) + '?page=' + (search.rpage || 1);
+        //      }
+        //  }
+
+        //  $scope.$watch(function(scope) {return scope.dataurl}, get_data);
+
+        //  function get_data(url) {
+        //      clear_data();
+        //      if (!url) return false;
+        //      $http.get(url).then(function(response) {
+        //          $scope.module = ModuleFromUrl(response.data.model.app_label, response.data.model.model_name);
+        //          $scope.data = response.data.items;
+        //          $scope.template_html = response.data.html;
+        //          $scope.paginator = response.data.paginator;
+        //      });
+        //  }
+
+        //  $scope.open = function(slug) {
+        //      if (slug == $scope.urlparam) {
+        //          $scope.urlparam = undefined;
+        //      }
+        //      else {
+        //          $scope.urlparam = slug;
+        //      }
+        //      // changing the location will result in firing the event
+        //      // which reloads the data
+        //      $location.search('open', $scope.urlparam);
+        //  }
+
+        //  $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+        //      if (module && pk) {
+        //          $scope.visible = true;
+        //          $scope.parent_module = module;
+        //          // $scope.module = module;
+        //          $scope.pk = pk;
+        //          set_dataurl();
+        //      }
+        //      else $scope.visible = false;
+        //  });
+        }],
+        link: function(scope, $element) {
+          //scope.$watch(
+          //    function(scope) {return scope.visible},
+          //    function(value) {
+          //        if (value) {
+          //            $element.show();
+          //        }
+          //        else {
+          //            $element.hide();
+          //        }
+          //    }
+          //);
+        },
     };
 }]);

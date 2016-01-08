@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-27 18:41+0100\n"
+"POT-Creation-Date: 2016-01-08 10:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,24 +17,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:58
+#: bmf_module.py:49 categories.py:13 models.py:180
+msgid "Transactions"
+msgstr ""
+
+#: bmf_module.py:67
 msgid "All Accounts"
 msgstr ""
 
-#: bmf_module.py:65
+#: bmf_module.py:74
 msgid "Open transactions"
 msgstr ""
 
-#: bmf_module.py:75
+#: bmf_module.py:84
 msgid "Closed transactions"
 msgstr ""
 
-#: bmf_module.py:86
+#: bmf_module.py:95
 msgid "Transaction archive"
-msgstr ""
-
-#: categories.py:13 models.py:180
-msgid "Transactions"
 msgstr ""
 
 #: forms.py:34 models.py:245

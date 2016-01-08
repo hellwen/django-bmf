@@ -71,6 +71,7 @@ module.exports = (grunt) ->
           'static_files/js/ui-factory.js',
           'static_files/js/ui-controller.js',
           'static_files/js/ui-run.js',
+          'static_files/js/ui-close.js',
         ]
         dest: 'djangobmf/static/djangobmf/js/djangobmf.js'
 

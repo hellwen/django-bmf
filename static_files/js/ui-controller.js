@@ -4,7 +4,7 @@
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'ViewUrlconf', function($http, $rootScope, $scope, $window, ViewUrlconf) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', '$log', 'config', function($http, $rootScope, $scope, $window, $log, config) {
 
     /**
      * @description
@@ -13,6 +13,14 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
      *
      */
     $rootScope.bmf_api_base = angular.element.find('body')[0].dataset.api;
+
+    /**
+     * @description
+     *
+     * This scope stores the base url to the APP (needed for lookups)
+     *
+     */
+    $rootScope.bmf_app_base = angular.element.find('body')[0].dataset.app;
 
     /**
      * @description
@@ -68,7 +76,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
             args: ['dashboard', 'category', 'view'],
         },
         {
-            name: 'detail',
+            name: 'detail-base',
             parent: 'list',
             regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
             args: ['dashboard', 'category', 'view', 'pk'],
@@ -86,9 +94,15 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
             args: ['app_label', 'model_name'],
         },
         {
-            name: 'detail',
+            name: 'detail-base',
             parent: 'notification',
             regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['app_label', 'model_name', 'pk'],
+        },
+        {
+            name: 'detail',
+            parent: undefined,
+            regex: new RegExp('detail/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
             args: ['app_label', 'model_name', 'pk'],
         },
     ];
@@ -113,6 +127,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         }
     }
     $rootScope.bmfevent_dashboard = function(key) {
+        $log.debug(BMFEVENT_DASHBOARD, key)
         $rootScope.$broadcast(BMFEVENT_DASHBOARD, key);
     }
     $rootScope.bmfevent_data = function() {
@@ -127,6 +142,10 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         // TODO
         $rootScope.$broadcast(BMFEVENT_NAVIGATION);
     }
+    $rootScope.bmfevent_object = function(module, pk) {
+        $rootScope.$broadcast(BMFEVENT_OBJECT, module, pk);
+    }
+
     $rootScope.bmfevent_sidebar = function(dashboard_key) {
         $rootScope.bmf_dashboards.forEach(function(d, i) {
             if (d.key == dashboard_key) {
@@ -172,38 +191,24 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     $rootScope.bmf_last_dashboard = undefined;
     $rootScope.bmf_last_view = undefined;
 
-    // Load data from REST API
-    var url = angular.element.find('body')[0].dataset.api;
-    $http.get(url).then(function(response) {
-        // Update sidebar and Dashboard objects
-        var sidebar = {}
-        response.data.dashboards.forEach(function(element, index) {
-            sidebar[element.key] = element.categories;
-        });
-
-        var modules = {}
-        response.data.modules.forEach(function(element, index) {
-            modules[element.ct] = element;
-        });
-
-        $rootScope.bmf_modules = modules;
-        $rootScope.bmf_sidebars = sidebar;
-
-        $rootScope.bmf_ui = response.data.ui;
-        $rootScope.bmf_dashboards = response.data.dashboards;
-        $rootScope.bmf_debug = response.data.debug;
-        $rootScope.bmf_templates = response.data.templates;
-        $rootScope.bmf_navigation = response.data.navigation;
-
-        if ($rootScope.bmf_debug) {
-            console.log("BMF-API", response.data);
-        }
-        $rootScope.bmfevent_dashboard();
-
-        // load urlconf when all variables are set
-        ViewUrlconf(window.location.href);
+    // Update sidebar and Dashboard objects
+    var sidebar = {}
+    config.dashboards.forEach(function(element, index) {
+        sidebar[element.key] = element.categories;
     });
 
+    var modules = {}
+    config.modules.forEach(function(element, index) {
+        modules[element.ct] = element;
+    });
+
+    $rootScope.bmf_modules = modules;
+    $rootScope.bmf_sidebars = sidebar;
+
+    $rootScope.bmf_ui = config.ui;
+    $rootScope.bmf_dashboards = config.dashboards;
+    $rootScope.bmf_templates = config.templates;
+    $rootScope.bmf_navigation = config.navigation;
 }]);
 
 
@@ -250,9 +255,6 @@ bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $ro
 
     $scope.$on(BMFEVENT_DASHBOARD, function(event, key) {update(key)});
 
-    $scope.data = [];
-    $scope.current = undefined;
-
     function update(key) {
         var response = [];
         var data = [];
@@ -279,6 +281,8 @@ bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $ro
         $scope.data = data;
         $scope.current = current;
     }
+    update();
+
     $scope.update = update;
 }]);
 
@@ -365,6 +369,7 @@ bmfapp.controller('ActivityCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.data = {};
     $scope.processForm = function() {
         var url = $scope.$parent.$parent.ui.views.activity.url;
+
         $http({
             method: 'POST',
             data: $scope.data,

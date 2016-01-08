@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.dashboards import Sales
 from djangobmf.sites import Module
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
@@ -21,7 +20,7 @@ from .views import ProductDetailView
 from .views import ProductUpdateView
 
 
-@register(dashboard=Sales)
+@register
 class ProductModule(Module):
     model = Product
     default = True
@@ -30,7 +29,7 @@ class ProductModule(Module):
     update = ProductUpdateView
 
 
-@register(dashboard=Sales)
+@register
 class ProductTaxModule(Module):
     model = ProductTax
     default = True

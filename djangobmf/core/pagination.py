@@ -3,8 +3,12 @@
 
 from __future__ import unicode_literals
 
-from djangobmf.pagination import ModulePagination
+from djangobmf.pagination import PaginationMixin
 
 
-class NotificationPagination(ModulePagination):
+class ActivityPagination(PaginationMixin):
+    pass
+
+
+class RelatedPagination(PaginationMixin):
     pass

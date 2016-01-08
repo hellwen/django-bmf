@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.dashboards import HumanResources
 from djangobmf.sites import Module
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
@@ -17,7 +16,7 @@ from .views import TeamCreateView
 from .views import TeamUpdateView
 
 
-@register(dashboard=HumanResources)
+@register
 class TeamModule(Module):
     model = Team
     default = True
@@ -25,7 +24,7 @@ class TeamModule(Module):
     update = TeamUpdateView
 
 
-@register(dashboard=HumanResources)
+@register
 class TeamMemberModule(Module):
     model = TeamMember
     default = True

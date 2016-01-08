@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.dashboards import Accounting
+from djangobmf.core import Relationship
 from djangobmf.sites import Module
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
@@ -24,13 +24,13 @@ from .views import TransactionCreateView
 from .views import TransactionUpdateView
 
 
-@register(dashboard=Accounting)
+@register
 class AccountModule(Module):
     model = Account
     default = True
 
 
-@register(dashboard=Accounting)
+@register
 class TransactionModule(Module):
     model = Transaction
     default = True
@@ -38,10 +38,19 @@ class TransactionModule(Module):
     update = TransactionUpdateView
 
 
-@register(dashboard=Accounting)
+@register
 class TransactionItemModule(Module):
     model = TransactionItem
     default = True
+
+
+@register(model=TransactionItem)
+class AccountTransactionsRelationship(Relationship):
+    name = _("Transactions")
+    slug = "transactions"
+    field = "transactions"
+    model = "djangobmf_accounting.Account"
+    settings = "BMF_CONTRIB_ACCOUNT"
 
 
 site.register_settings('bmfcontrib_accounting', {

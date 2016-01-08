@@ -658,12 +658,15 @@ $(document).ready(function() {
  * django BMF Angular UI
  */
 
+(function() {
+
 var BMFEVENT_ACTIVITY = "bmf.event.update.activity";
 var BMFEVENT_CONTENT = "bmf.event.update.content";
 var BMFEVENT_DASHBOARD = "bmf.event.update.dashboard";
 var BMFEVENT_DATA = "bmf.event.update.data";
 var BMFEVENT_MODAL = "bmf.event.update.modal";
 var BMFEVENT_NAVIGATION = "bmf.event.update.navigation";
+var BMFEVENT_OBJECT = "bmf.event.update.object";
 var BMFEVENT_SIDEBAR = "bmf.event.update.sidebar";
 
 // INIT APP
@@ -673,11 +676,12 @@ var bmfapp = angular.module('djangoBMF', []);
  * ui-config
  */
 
-bmfapp.config(['$httpProvider', '$locationProvider', function($httpProvider, $locationProvider) {
+bmfapp.config(['$httpProvider', '$locationProvider', '$logProvider', 'config', function($httpProvider, $locationProvider, $logProvider, config) {
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $locationProvider.html5Mode(true).hashPrefix('!');
+    $logProvider.debugEnabled(config.debug);
 }]);
 
 bmfapp.filter('mark_safe', ['$sce', function($sce) {
@@ -854,15 +858,51 @@ bmfapp.filter('timesince', ['$filter', function($filter) {
  * ui-directive
  */
 
-bmfapp.directive('bmfLink', ['ApiUrlFactory', function(ApiUrlFactory) {
+bmfapp.directive('bmfLink', ['$location', '$rootScope', 'apiurl', 'appurl', 'LinkFactory', 'ModuleFromCt', function($location, $rootScope, apiurl, appurl, LinkFactory, ModuleFromCt) {
+    return {
+        template: '<a ng-transclude></a>',
+        restrict: 'E',
+        priority: 10,
+        scope: false,
+        replace: true,
+        transclude: true,
+        link: function(scope, element, attr) {
+            var view = $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1];
+
+            var module;
+            if (attr.ct) module = ModuleFromCt(attr.ct) 
+            else if (scope.module) module = scope.module
+            else if (view.module) module = view.module
+
+            var pk;
+            if (attr.pk) pk = attr.pk
+            else if (view.kwargs.pk) pk = view.kwargs.pk
+
+            var href = LinkFactory(attr.type, module, pk, attr.action);
+
+            if (href) element.attr('href', href);
+        },
+    }
+}]);
+
+// manages links vom list views to detail views
+bmfapp.directive('bmfDetail', ['LinkFactory', function(LinkFactory) {
     return {
         restrict: 'A',
         scope: false,
         link: function(scope, element, attr) {
-            console.log(ApiUrlFactory('test'));
-        },
-    }
+            element.attr(
+                'href',
+                LinkFactory("detail", scope.module, attr.bmfDetail, undefined)
+            );
+
+            element.on('click', function(event) {
+                window.scrollTo(0,0);
+            });
+        }
+    };
 }]);
+
 
 // manages form modal calls
 bmfapp.directive('bmfForm', [function() {
@@ -971,22 +1011,6 @@ bmfapp.directive('bmfForm', [function() {
                     });
                 });
             }
-        }
-    };
-}]);
-
-
-// manages links vom list views to detail views
-bmfapp.directive('bmfDetail', ["$location", function($location) {
-    return {
-        restrict: 'A',
-        scope: false,
-        link: function(scope, element, attr) {
-            element.on('click', function(event) {
-                var next = $location.path() + attr.bmfDetail + '/';
-                $location.path(next);
-                window.scrollTo(0,0);
-            });
         }
     };
 }]);
@@ -1113,7 +1137,7 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                 if (type == "list") {
                     view_list()
                 }
-                if (type == "detail") {
+                if (type == "detail" || type == "detail-base") {
                     view_detail()
                 }
                 if (type == "notification") {
@@ -1169,10 +1193,12 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                     // update vars
                     scope.module = view.module;
 
+                    // console.log(view.module);
                     scope.ui = {
                         notifications: null,
                         workflow: null,
                         views: null,
+                        related: [],
                     };
 
                     var url = view.module.base + view.kwargs.pk  + '/';
@@ -1183,10 +1209,11 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                         scope.template_html = response.data.html
 
                         if (response.data.views.activity.enabled) {
-                            var url = response.data.views.activity.url;
-                            $http.get(url).then(function(response) {
-                                scope.activities = response.data;
-                            });
+                        //  var url = response.data.views.activity.url;
+                        //  console.log("OLDURL", url)
+                        //  $http.get(url).then(function(response) {
+                        //      scope.activities = response.data;
+                        //  });
                         }
                     });
                 }
@@ -1274,6 +1301,318 @@ bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
     };
 }]);
 
+
+bmfapp.directive('bmfSiteRelated', [function() {
+    return {
+        restrict: 'C',
+        scope: {},
+        template: function(tElement, tAttrs) {
+            return tElement.html();
+        },
+        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', 'ModuleFromUrl', function($scope, $location, $http, ApiUrlFactory, ModuleFromUrl) {
+
+            $scope.scopename = "related";
+
+            $scope.visible = false;
+            $scope.parent_module = null;
+            $scope.module = null;
+            $scope.pk = null;
+
+            $scope.urlparam = undefined;
+            $scope.paginator = undefined;
+
+            function clear_data() {
+                $scope.data = [];
+                $scope.errors = [];
+            }
+            clear_data();
+
+            function set_dataurl() {
+                var search = $location.search();
+                $scope.urlparam = search.open;
+
+                if ($scope.urlparam) {
+                    $scope.dataurl = ApiUrlFactory(
+                        $scope.parent_module,
+                        'related',
+                        $scope.urlparam,
+                        $scope.pk
+                    ) + '?page=' + (search.rpage || 1);
+                }
+            }
+
+            $scope.$watch(function(scope) {return scope.dataurl}, get_data);
+
+            function get_data(url) {
+                clear_data();
+                if (!url) return false;
+                $http.get(url).then(function(response) {
+                    $scope.module = ModuleFromUrl(response.data.model.app_label, response.data.model.model_name);
+                    $scope.data = response.data.items;
+                    $scope.template_html = response.data.html;
+                    $scope.paginator = response.data.paginator;
+                });
+            }
+
+            $scope.open = function(slug) {
+                if (slug == $scope.urlparam) {
+                    $scope.urlparam = undefined;
+                }
+                else {
+                    $scope.urlparam = slug;
+                }
+                // changing the location will result in firing the event
+                // which reloads the data
+                $location.search('open', $scope.urlparam);
+            }
+
+            $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+                if (module && pk) {
+                    $scope.visible = true;
+                    $scope.parent_module = module;
+                    // $scope.module = module;
+                    $scope.pk = pk;
+                    set_dataurl();
+                }
+                else $scope.visible = false;
+            });
+        }],
+        link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {return scope.visible},
+                function(value) {
+                    if (value) {
+                        $element.show();
+                    }
+                    else {
+                        $element.hide();
+                    }
+                }
+            );
+
+        },
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteActivity', [function() {
+    return {
+        restrict: 'C',
+        scope: {},
+        template: function(tElement, tAttrs) {
+            return tElement.html();
+        },
+        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', function($scope, $location, $http, ApiUrlFactory) {
+
+            $scope.scopename = "activity";
+
+            // TODO event to update activity
+            // TODO add timer fire update event every two minutes
+
+            $scope.visible = false;
+            $scope.module = null;
+            $scope.pk = null;
+
+            function clear_data() {
+                $scope.formdata = {};
+                $scope.data = [];
+                $scope.errors = [];
+                $scope.notification = undefined;
+                $scope.paginator = undefined;
+            }
+            clear_data();
+
+            function set_dataurl() {
+                var search = $location.search();
+                $scope.notifyurl = ApiUrlFactory(
+                    $scope.module,
+                    'notification',
+                    'view',
+                    $scope.pk
+                );
+                $scope.dataurl = ApiUrlFactory(
+                    $scope.module,
+                    'activity',
+                    undefined,
+                    $scope.pk
+                ) + '?page=' + (search.apage || 1);
+            }
+            $scope.$watch(function(scope) {return scope.dataurl}, get_data);
+  
+            function get_data(url) {
+                clear_data();
+                if (!url) return false;
+                $http.get(url).then(function(response) {
+                    $scope.data = response.data.items;
+                    $scope.notification = response.data.notification;
+                    $scope.paginator = response.data.paginator;
+                });
+            }
+
+            $scope.processForm = function() {
+                var url = ApiUrlFactory(
+                    $scope.module,
+                    'activity',
+                    undefined,
+                    $scope.pk
+                );
+
+                $http({
+                    method: 'POST',
+                    data: $scope.formdata,
+                    url: url,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(function (response) {
+                    // success callback
+                    // console.log("success", this, response);
+                    get_data($scope.dataurl);
+                }, function (response) {
+                    // error callback
+                    console.log("ActivityForm - Error", response);
+                    alert(response.data.non_field_errors[0]);
+                });
+            }
+
+            $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+                if (module && pk) {
+                    $scope.visible = true;
+                    $scope.module = module;
+                    $scope.pk = pk;
+                    set_dataurl();
+                }
+                else $scope.visible = false;
+            });
+        }],
+        link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {return scope.visible},
+                function(value) {
+                    if (value) {
+                        $element.show();
+                    }
+                    else {
+                        $element.hide();
+                    }
+                }
+            );
+
+        },
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteTemplate', ['$compile', function($compile) {
+    return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, $element) {
+            scope.$watch(
+                function(scope) {return scope.template_html},
+                function(value) {
+                    $element.hide()
+                    $element.html(value || '');
+                    $compile($element.contents())(scope);
+                    $element.show();
+                }
+            );
+        }
+    };
+}]);
+
+
+bmfapp.directive('bmfSiteContent', [function() {
+    return {
+        restrict: 'C',
+        scope: {},
+        template: function(tElement, tAttrs) {
+            return tElement.html();
+        },
+        controller: ['$scope', '$location', '$http', 'ApiUrlFactory', 'ModuleFromUrl', function($scope, $location, $http, ApiUrlFactory, ModuleFromUrl) {
+
+            $scope.scopename = "content";
+            $scope.visible = false;
+
+        //  $scope.parent_module = null;
+        //  $scope.module = null;
+        //  $scope.pk = null;
+
+        //  $scope.urlparam = undefined;
+        //  $scope.paginator = undefined;
+
+        //  function clear_data() {
+        //      $scope.data = [];
+        //      $scope.errors = [];
+        //  }
+        //  clear_data();
+
+        //  function set_dataurl() {
+        //      var search = $location.search();
+        //      $scope.urlparam = search.open;
+
+        //      if ($scope.urlparam) {
+        //          $scope.dataurl = ApiUrlFactory(
+        //              $scope.parent_module,
+        //              'related',
+        //              $scope.urlparam,
+        //              $scope.pk
+        //          ) + '?page=' + (search.rpage || 1);
+        //      }
+        //  }
+
+        //  $scope.$watch(function(scope) {return scope.dataurl}, get_data);
+
+        //  function get_data(url) {
+        //      clear_data();
+        //      if (!url) return false;
+        //      $http.get(url).then(function(response) {
+        //          $scope.module = ModuleFromUrl(response.data.model.app_label, response.data.model.model_name);
+        //          $scope.data = response.data.items;
+        //          $scope.template_html = response.data.html;
+        //          $scope.paginator = response.data.paginator;
+        //      });
+        //  }
+
+        //  $scope.open = function(slug) {
+        //      if (slug == $scope.urlparam) {
+        //          $scope.urlparam = undefined;
+        //      }
+        //      else {
+        //          $scope.urlparam = slug;
+        //      }
+        //      // changing the location will result in firing the event
+        //      // which reloads the data
+        //      $location.search('open', $scope.urlparam);
+        //  }
+
+        //  $scope.$on(BMFEVENT_OBJECT, function(event, module, pk) {
+        //      if (module && pk) {
+        //          $scope.visible = true;
+        //          $scope.parent_module = module;
+        //          // $scope.module = module;
+        //          $scope.pk = pk;
+        //          set_dataurl();
+        //      }
+        //      else $scope.visible = false;
+        //  });
+        }],
+        link: function(scope, $element) {
+          //scope.$watch(
+          //    function(scope) {return scope.visible},
+          //    function(value) {
+          //        if (value) {
+          //            $element.show();
+          //        }
+          //        else {
+          //            $element.hide();
+          //        }
+          //    }
+          //);
+        },
+    };
+}]);
+
 /*
  * ui-factory
  */
@@ -1288,6 +1627,31 @@ bmfapp.factory('ApiUrlFactory', ['$rootScope', function($rootScope) {
         if (module) url += module.app + '/' + module.model + '/';
         if (action) url += action + '/';
         if (pk) url += pk + '/';
+        return url
+    }
+}]);
+
+// This factory uses the rootScope to generate a from a given type (req),
+// action(opt) and primary_key(opt)
+bmfapp.factory('LinkFactory', ['$location', '$rootScope', 'apiurl', 'appurl', 'ModuleFromCt', function($location, $rootScope, apiurl, appurl, ModuleFromCt) {
+    return function(type, module, pk, action) {
+        var view = $rootScope.bmf_breadcrumbs[$rootScope.bmf_breadcrumbs.length - 1];
+        if (!module && view.module) module = view.module;
+        var url;
+
+        if (type == "create" && action && module) {
+            url = apiurl + 'module/' + module.ct + '/' + type + '/' + action + '/';
+        }
+
+        if (type == "detail" && module && pk) {
+            if (view && view.name in ["notification", "list"]) {
+                url = $location.path() + pk + '/';
+            }
+            else {
+                url = appurl + 'detail/' + module.app + '/' + module.model + '/' + pk + '/';
+            }
+        }
+
         return url
     }
 }]);
@@ -1448,7 +1812,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
             $rootScope.bmf_breadcrumbs.forEach(function(crumb, i) {
                 if (crumb.url == url) index = i;
             });
-            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; $i--) {
+            if (index) for (var i=($rootScope.bmf_breadcrumbs.length - 1); i>index; i--) {
                 delete $rootScope.bmf_breadcrumbs[i];
             }
 
@@ -1462,6 +1826,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
 
         // fire events (with updated breadcrumbs)
         if (view) $rootScope.bmfevent_dashboard(kwargs.dashboard);
+        $rootScope.bmfevent_object(module || null, kwargs.pk || null);
 
         return true
     }
@@ -1473,7 +1838,7 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
 
 // this controller is evaluated first, it gets all
 // the data needed to access the bmf's views
-bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 'ViewUrlconf', function($http, $rootScope, $scope, $window, ViewUrlconf) {
+bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', '$log', 'config', function($http, $rootScope, $scope, $window, $log, config) {
 
     /**
      * @description
@@ -1482,6 +1847,14 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
      *
      */
     $rootScope.bmf_api_base = angular.element.find('body')[0].dataset.api;
+
+    /**
+     * @description
+     *
+     * This scope stores the base url to the APP (needed for lookups)
+     *
+     */
+    $rootScope.bmf_app_base = angular.element.find('body')[0].dataset.app;
 
     /**
      * @description
@@ -1537,7 +1910,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
             args: ['dashboard', 'category', 'view'],
         },
         {
-            name: 'detail',
+            name: 'detail-base',
             parent: 'list',
             regex: new RegExp('dashboard/([\\w-]+)/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
             args: ['dashboard', 'category', 'view', 'pk'],
@@ -1555,9 +1928,15 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
             args: ['app_label', 'model_name'],
         },
         {
-            name: 'detail',
+            name: 'detail-base',
             parent: 'notification',
             regex: new RegExp('notification/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
+            args: ['app_label', 'model_name', 'pk'],
+        },
+        {
+            name: 'detail',
+            parent: undefined,
+            regex: new RegExp('detail/([\\w-]+)/([\\w-]+)/([0-9]+)/$'),
             args: ['app_label', 'model_name', 'pk'],
         },
     ];
@@ -1582,6 +1961,7 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         }
     }
     $rootScope.bmfevent_dashboard = function(key) {
+        $log.debug(BMFEVENT_DASHBOARD, key)
         $rootScope.$broadcast(BMFEVENT_DASHBOARD, key);
     }
     $rootScope.bmfevent_data = function() {
@@ -1596,6 +1976,10 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
         // TODO
         $rootScope.$broadcast(BMFEVENT_NAVIGATION);
     }
+    $rootScope.bmfevent_object = function(module, pk) {
+        $rootScope.$broadcast(BMFEVENT_OBJECT, module, pk);
+    }
+
     $rootScope.bmfevent_sidebar = function(dashboard_key) {
         $rootScope.bmf_dashboards.forEach(function(d, i) {
             if (d.key == dashboard_key) {
@@ -1641,38 +2025,24 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     $rootScope.bmf_last_dashboard = undefined;
     $rootScope.bmf_last_view = undefined;
 
-    // Load data from REST API
-    var url = angular.element.find('body')[0].dataset.api;
-    $http.get(url).then(function(response) {
-        // Update sidebar and Dashboard objects
-        var sidebar = {}
-        response.data.dashboards.forEach(function(element, index) {
-            sidebar[element.key] = element.categories;
-        });
-
-        var modules = {}
-        response.data.modules.forEach(function(element, index) {
-            modules[element.ct] = element;
-        });
-
-        $rootScope.bmf_modules = modules;
-        $rootScope.bmf_sidebars = sidebar;
-
-        $rootScope.bmf_ui = response.data.ui;
-        $rootScope.bmf_dashboards = response.data.dashboards;
-        $rootScope.bmf_debug = response.data.debug;
-        $rootScope.bmf_templates = response.data.templates;
-        $rootScope.bmf_navigation = response.data.navigation;
-
-        if ($rootScope.bmf_debug) {
-            console.log("BMF-API", response.data);
-        }
-        $rootScope.bmfevent_dashboard();
-
-        // load urlconf when all variables are set
-        ViewUrlconf(window.location.href);
+    // Update sidebar and Dashboard objects
+    var sidebar = {}
+    config.dashboards.forEach(function(element, index) {
+        sidebar[element.key] = element.categories;
     });
 
+    var modules = {}
+    config.modules.forEach(function(element, index) {
+        modules[element.ct] = element;
+    });
+
+    $rootScope.bmf_modules = modules;
+    $rootScope.bmf_sidebars = sidebar;
+
+    $rootScope.bmf_ui = config.ui;
+    $rootScope.bmf_dashboards = config.dashboards;
+    $rootScope.bmf_templates = config.templates;
+    $rootScope.bmf_navigation = config.navigation;
 }]);
 
 
@@ -1719,9 +2089,6 @@ bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $ro
 
     $scope.$on(BMFEVENT_DASHBOARD, function(event, key) {update(key)});
 
-    $scope.data = [];
-    $scope.current = undefined;
-
     function update(key) {
         var response = [];
         var data = [];
@@ -1748,6 +2115,8 @@ bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $ro
         $scope.data = data;
         $scope.current = current;
     }
+    update();
+
     $scope.update = update;
 }]);
 
@@ -1834,6 +2203,7 @@ bmfapp.controller('ActivityCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.data = {};
     $scope.processForm = function() {
         var url = $scope.$parent.$parent.ui.views.activity.url;
+
         $http({
             method: 'POST',
             data: $scope.data,
@@ -1875,9 +2245,9 @@ bmfapp.controller('ActivityCtrl', ['$scope', '$http', function($scope, $http) {
  */
 
 
-bmfapp.run(['$rootScope', '$location', 'ViewUrlconf', function($rootScope, $location, ViewUrlconf) {
+bmfapp.run(['$rootScope', '$location', '$window', 'ViewUrlconf', function($rootScope, $location, $window, ViewUrlconf) {
     $rootScope.$on('$locationChangeStart', function(event, next, current) {
-        if (next != current && !ViewUrlconf(next)) {
+        if (!ViewUrlconf(next)) {
             // if the url is not managed by the framework, prevent default
             // action from the angularJS url management and redirect browser to the new url
             // if the url was changed
@@ -1888,3 +2258,32 @@ bmfapp.run(['$rootScope', '$location', 'ViewUrlconf', function($rootScope, $loca
         }
     });
 }]);
+
+(function() {
+    var injector = angular.injector(["ng"]);
+    var $http = injector.get("$http");
+    var apiurl = angular.element.find('body')[0].dataset.api;
+    var appurl = angular.element.find('body')[0].dataset.app;
+
+    bmfapp.constant("apiurl", apiurl);
+    bmfapp.constant("appurl", appurl);
+
+    $http.get(apiurl).then(function(response){
+        bmfapp.constant("config", response.data);
+
+        if (response.data.debug) {
+            console.debug("BMF-API", response.data);
+        }
+
+        angular.element(document).ready(function() {
+            // bootstrap angular
+            angular.bootstrap(document, ["djangoBMF"]);
+        });
+    }, function(response){
+        // error handling
+        console.error(response);
+        alert(gettext('Error!\nCould not load the Application'));
+    });
+}());
+
+}()); // close ui definition

@@ -8,7 +8,7 @@
 - run tests and recreate test env
 
 - update freeze on develop branch
-- update bower libs on develop branch
+- update bower libs on develop branch (bower update --save)
 
 - pypi:
   Remove old build directory

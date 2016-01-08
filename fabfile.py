@@ -70,7 +70,7 @@ def locale():
             check_locale()
 
     with lcd(BASEDIR):
-        local('tx pull')
+        local('tx pull -a')
 
     with lcd(BASEDIR + '/djangobmf'):
         local('%s %s compilemessages' % (PYTHON, MANAGE))

@@ -34,9 +34,7 @@ def main(modules, verbosity=2, failfast=False, contrib=None, nocontrib=False):
 
     # run flake8 first
     styleguide = get_style_guide(
-        # TODO: Check if we can read a config file
         # parse_argv=False,
-        # config_file="setup.cfg",
         ignore=["T000"],
         max_complexity=-1,
         doctests=False,
@@ -55,9 +53,10 @@ def main(modules, verbosity=2, failfast=False, contrib=None, nocontrib=False):
         ]
     )
 
-    styleguide.options.report.start()
-    styleguide.options.report.stop()
-    if styleguide.options.report.get_count() > 0:
+    report = styleguide.check_files()
+
+    if report.total_errors > 0:
+        print('Static code analysis failed with %s error(s)' % report.total_errors)
         sys.exit(True)
 
     # apply test settings

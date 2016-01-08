@@ -28,5 +28,7 @@ uwsgi \
   --vacuum \
   --die-on-term \
   --need-app \
+  --reload-on-exception \
+  --no-threads-wait \
   --disable-logging \
   --python-autoreload 5

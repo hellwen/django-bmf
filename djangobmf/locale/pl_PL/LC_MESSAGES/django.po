@@ -1,0 +1,678 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# Wojtek Hulak <wojtek.hulak@gmail.com>, 2016
+msgid ""
+msgstr ""
+"Project-Id-Version: django-bmf\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-01-08 10:28+0100\n"
+"PO-Revision-Date: 2016-01-08 11:10+0000\n"
+"Last-Translator: Wojtek Hulak <wojtek.hulak@gmail.com>\n"
+"Language-Team: Polish (Poland) (http://www.transifex.com/django-bmf/django-bmf/language/pl_PL/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: account/forms.py:19
+msgid "Username"
+msgstr "Użytkownik"
+
+#: account/forms.py:21
+msgid "Password"
+msgstr "Hasło"
+
+#: account/forms.py:29
+msgid "Old Password"
+msgstr "Stare Hasło"
+
+#: account/forms.py:32
+msgid "New Password"
+msgstr "Nowe Hasło"
+
+#: account/forms.py:35
+msgid "New Password confirmation"
+msgstr "Powtórz Nowe Hasło"
+
+#: core/currency.py:51
+#, python-format
+msgctxt "currency formatting"
+msgid "%(val)s %(sym)s"
+msgstr ""
+
+#: core/serializers/__init__.py:46
+msgid "You need to define a topic or a text"
+msgstr ""
+
+#: core/views/mixins.py:56
+msgid "You have no permission to access the object"
+msgstr "Nie masz uprawnień do dostępu do tego obiektu"
+
+#: core/views/mixins.py:57
+msgid "The object can not be found"
+msgstr "Obiekt nie został odnaleziony"
+
+#: core/views/related.py:41
+msgid "The object's relation can not be found"
+msgstr ""
+
+#: core/workflow.py:230
+#, python-format
+msgid "The state %s is not valid"
+msgstr ""
+
+#: core/workflow.py:238 core/workflow.py:365
+msgid "This transition is not valid"
+msgstr ""
+
+#: currency/EUR/bmf_module.py:14
+msgid "€"
+msgstr ""
+
+#: currency/EUR/bmf_module.py:15
+msgid "Euro"
+msgstr ""
+
+#: currency/USD/bmf_module.py:14
+msgid "$"
+msgstr ""
+
+#: currency/USD/bmf_module.py:15
+msgid "Dollar"
+msgstr "dolar"
+
+#: dashboards.py:27
+msgid "Accounting"
+msgstr ""
+
+#: dashboards.py:32
+msgid "Customer Relationship"
+msgstr "Relacje z Klientami"
+
+#: dashboards.py:37
+msgid "Document Management"
+msgstr "Zarządzanie Dokumentami"
+
+#: dashboards.py:42
+msgid "Human Resources"
+msgstr "Zasoby ludzkie"
+
+#: dashboards.py:47
+msgid "Project Management"
+msgstr "Zarządzanie projektem"
+
+#: dashboards.py:52
+msgid "Sales"
+msgstr "Sprzedaż"
+
+#: dashboards.py:57
+msgid "Time and attendance"
+msgstr ""
+
+#: dashboards.py:62
+msgid "Warehouse"
+msgstr ""
+
+#: fields/__init__.py:88
+msgid "Currency Field"
+msgstr ""
+
+#: fields/__init__.py:131
+msgid "Money Field"
+msgstr ""
+
+#: fields/workflow.py:19
+msgid "Workflow Field"
+msgstr ""
+
+#: fields/workflow.py:66
+#, python-format
+msgid "The workflow state \"%s\" is no valid"
+msgstr ""
+
+#: models/activity.py:25
+msgid "Comment"
+msgstr "Komentarz"
+
+#: models/activity.py:26 models/base.py:286 models/document.py:44
+msgid "Created"
+msgstr "Utworzony"
+
+#: models/activity.py:27
+msgid "Updated"
+msgstr "Zaktualizowany"
+
+#: models/activity.py:28
+msgid "Workflow"
+msgstr ""
+
+#: models/activity.py:29 models/document.py:21
+msgid "File"
+msgstr "Plik"
+
+#: models/activity.py:56 templates/djangobmf/site-activity.html:25
+msgid "Topic"
+msgstr ""
+
+#: models/activity.py:57 templates/djangobmf/site-activity.html:28
+msgid "Text"
+msgstr "Tekst"
+
+#: models/activity.py:59
+msgid "Action"
+msgstr "Działanie"
+
+#: models/activity.py:66
+msgid "Template"
+msgstr ""
+
+#: models/activity.py:73 models/base.py:273 models/document.py:43
+#: models/notification.py:40 models/renderer.py:68 models/report.py:41
+msgid "Modified"
+msgstr "Zmodyfikowany"
+
+#: models/activity.py:79 models/activity.py:80
+msgid "Activity"
+msgstr "Aktywność"
+
+#: models/base.py:300
+msgid "Modified by"
+msgstr "Zmodyfikowany przez"
+
+#: models/base.py:312
+msgid "Created by"
+msgstr "Utworzony przez"
+
+#: models/configuration.py:70 templates/djangobmf/configuration/index.html:20
+msgid "Application"
+msgstr "Aplikacja"
+
+#: models/configuration.py:73
+msgid "Fieldname"
+msgstr "Nazwa pola"
+
+#: models/configuration.py:75 templates/djangobmf/configuration/index.html:21
+msgid "Value"
+msgstr "Wartość"
+
+#: models/configuration.py:76 templates/djangobmf/notification/index.html:13
+#: templates/djangobmf/notification/index.html:17
+msgid "Active"
+msgstr "Aktywny"
+
+#: models/configuration.py:81 templates/djangobmf/base.html:69
+#: templates/djangobmf/configuration/edit.html:5
+#: templates/djangobmf/configuration/index.html:5
+#: templates/djangobmf/configuration/index.html:9
+msgid "Configuration"
+msgstr "Konfiguracja"
+
+#: models/configuration.py:82
+msgid "Configurations"
+msgstr "Konfiguracje"
+
+#: models/document.py:20 models/renderer.py:23
+#: templates/djangobmf/configuration/index.html:18
+#: templates/djangobmf/configuration/index.html:19
+#: templates/djangobmf/module_list.html:5
+msgid "Name"
+msgstr "Nazwa"
+
+#: models/document.py:55
+msgid "Document"
+msgstr "Dokument"
+
+#: models/document.py:56
+msgid "Documents"
+msgstr "Dokumenty"
+
+#: models/notification.py:30
+msgid "Triggered"
+msgstr ""
+
+#: models/notification.py:31 templates/djangobmf/notification/index.html:12
+#: templates/djangobmf/notification/index.html:16
+msgid "Unread"
+msgstr "Nieprzeczytany"
+
+#: models/notification.py:34
+msgid "New entry"
+msgstr "Nowy wpis"
+
+#: models/notification.py:35
+msgid "Comment written"
+msgstr "Napisano komentarz"
+
+#: models/notification.py:36
+msgid "File added"
+msgstr "Dodano plik"
+
+#: models/notification.py:37
+msgid "Object changed"
+msgstr "Obiekt został zmieniony"
+
+#: models/notification.py:38
+msgid "Workflowstate changed"
+msgstr ""
+
+#: models/notification.py:45
+msgid "Watched activity"
+msgstr ""
+
+#: models/notification.py:46
+msgid "Watched activities"
+msgstr ""
+
+#: models/renderer.py:26
+msgid "Size"
+msgstr "Rozmiar"
+
+#: models/renderer.py:29
+msgid "Letter"
+msgstr ""
+
+#: models/renderer.py:32
+msgid "Extra"
+msgstr "Ekstra"
+
+#: models/renderer.py:35 models/renderer.py:56
+msgid "Letter margin right"
+msgstr ""
+
+#: models/renderer.py:38 models/renderer.py:59
+msgid "Letter margin bottom"
+msgstr ""
+
+#: models/renderer.py:41
+msgid "Letter extra right"
+msgstr ""
+
+#: models/renderer.py:44
+msgid "Letter extra top"
+msgstr ""
+
+#: models/renderer.py:47
+msgid "Letter background"
+msgstr ""
+
+#: models/renderer.py:50
+msgid "Letter footer right"
+msgstr ""
+
+#: models/renderer.py:53
+msgid "Letter footer height"
+msgstr ""
+
+#: models/renderer.py:62
+msgid "Letter margin top"
+msgstr ""
+
+#: models/renderer.py:65
+msgid "Page background"
+msgstr ""
+
+#: models/renderer.py:71 models/renderer.py:72
+msgid "Renderer"
+msgstr ""
+
+#: models/report.py:21
+msgid "Key"
+msgstr "Klucz"
+
+#: models/report.py:44 templates/djangobmf/module_detail.html:32
+#: templates/djangobmf/module_detail.html:44
+msgid "Report"
+msgstr "Raport"
+
+#: models/report.py:45
+msgid "Reports"
+msgstr "Raporty"
+
+#: pagination.py:22
+#, python-brace-format
+msgid "Invalid page \"{page_number}\": {message}."
+msgstr "Błędna strona \"{page_number}\":{message}."
+
+#: templates/djangobmf/account/change_password.html:5
+#: templates/djangobmf/account/change_password.html:11
+#: templates/djangobmf/account/change_password.html:30
+msgid "Change password"
+msgstr "Zmiana hasła"
+
+#: templates/djangobmf/account/login.html:5
+#: templates/djangobmf/account/login.html:26
+#: templates/djangobmf/account/logout.html:16
+msgid "Login"
+msgstr "Logowanie"
+
+#: templates/djangobmf/account/login.html:11
+msgid "Please sign in"
+msgstr "Proszę się zarejestrować"
+
+#: templates/djangobmf/account/logout.html:5
+#: templates/djangobmf/account/modal_logout.html:6
+#: templates/djangobmf/account/modal_logout.html:11
+#: templates/djangobmf/base.html:80
+msgid "Logout"
+msgstr "Wyloguj"
+
+#: templates/djangobmf/account/logout.html:13
+msgid "Logged out"
+msgstr "Wylogowany"
+
+#: templates/djangobmf/account/modal_logout.html:8
+msgid "Are you sure you want to log out?"
+msgstr "Czy na pewno chcesz się wylogować?"
+
+#: templates/djangobmf/account/modal_logout.html:10
+#: templates/djangobmf/module_clone.html:8
+#: templates/djangobmf/module_create.html:8
+#: templates/djangobmf/module_update.html:8
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: templates/djangobmf/activities/file.html:4
+msgid "Append"
+msgstr "Dołącz"
+
+#: templates/djangobmf/activities/file.html:6
+#: templates/djangobmf/activities/message.html:9
+#: templates/djangobmf/activities/updated.html:7
+#: templates/djangobmf/activities/workflow.html:6
+msgid "Unknown"
+msgstr "Nieznany"
+
+#: templates/djangobmf/activities/file.html:6
+#: templates/djangobmf/activities/message.html:9
+#: templates/djangobmf/activities/updated.html:7
+#: templates/djangobmf/activities/workflow.html:6
+msgid "before"
+msgstr "przed"
+
+#: templates/djangobmf/activities/updated.html:4
+#: templates/djangobmf/site-activity.html:38
+msgid "Item changed"
+msgstr "Pozycja została zmieniona"
+
+#: templates/djangobmf/activities/updated.html:11
+msgid "The following attributes were changed"
+msgstr ""
+
+#: templates/djangobmf/activities/workflow.html:4
+#: templates/djangobmf/site-activity.html:39
+msgid "State"
+msgstr "Stan"
+
+#: templates/djangobmf/api/detail-default.html:3
+msgid "Caution"
+msgstr ""
+
+#: templates/djangobmf/api/detail-default.html:3
+msgid "The template to render a page for this object is missing"
+msgstr ""
+
+#: templates/djangobmf/api/detail.html:28
+#: templates/djangobmf/api/detail.html:31
+msgid "Edit"
+msgstr "Edytuj"
+
+#: templates/djangobmf/api/list.html:4 templates/djangobmf/api/list.html:8
+msgid "Add"
+msgstr "Dodaj"
+
+#: templates/djangobmf/api/list_template_not_found.html:2
+msgid "Template not found"
+msgstr ""
+
+#: templates/djangobmf/api/list_template_not_found.html:3
+msgid "Please create"
+msgstr "Proszę utworzyć"
+
+#: templates/djangobmf/api/notification.html:7
+msgid "Global settings"
+msgstr "Ustawienia globalne"
+
+#: templates/djangobmf/api/notification.html:17
+#: templates/djangobmf/notification/index.html:5
+#: templates/djangobmf/notification/index.html:49 views/api.py:199
+msgid "Notifications"
+msgstr "Powiadomienia"
+
+#: templates/djangobmf/api/notification.html:25
+msgid "new"
+msgstr "nowy"
+
+#: templates/djangobmf/base.html:32
+msgid "Toogle navigation"
+msgstr ""
+
+#: templates/djangobmf/base.html:42
+#: templates/djangobmf/dashboard/sitebar.html:3
+msgid "Dashboards"
+msgstr "Panel kontrolny"
+
+#: templates/djangobmf/base.html:63
+msgid "Settings"
+msgstr "Ustawienia"
+
+#: templates/djangobmf/base.html:72
+msgid "Administration"
+msgstr "Administracja"
+
+#: templates/djangobmf/base.html:77
+msgid "Change Password"
+msgstr "Zmiana Hasła"
+
+#: templates/djangobmf/base_modal.html:4
+#: templates/djangobmf/module_delete.html:30
+#: templates/djangobmf/module_modal_base.html:4
+#: templates/djangobmf/module_workflow.html:18
+#: templates/djangobmf/notification/create.html:8
+#: templates/djangobmf/notification/update.html:8
+msgid "Close"
+msgstr "Zamknij"
+
+#: templates/djangobmf/configuration/edit.html:13
+msgid "Save"
+msgstr "Zapisz"
+
+#: templates/djangobmf/configuration/index.html:22
+msgid "Required"
+msgstr "Wymagany"
+
+#: templates/djangobmf/configuration/index.html:23
+msgid "Changed"
+msgstr ""
+
+#: templates/djangobmf/dashboard/create.html:4
+msgid "Create dashboard"
+msgstr ""
+
+#: templates/djangobmf/dashboard/delete.html:4
+msgid "Delete dashboard"
+msgstr ""
+
+#: templates/djangobmf/dashboard/sitebar.html:12
+msgid "Click on \"add\" to create a new dashboard"
+msgstr ""
+
+#: templates/djangobmf/dashboard/sitebar.html:18
+msgid "Module overview"
+msgstr ""
+
+#: templates/djangobmf/message/index.html:5
+msgid "Messages"
+msgstr "Wiadomości"
+
+#: templates/djangobmf/module_clone.html:5
+#, python-format
+msgid "Copy %(object)s"
+msgstr ""
+
+#: templates/djangobmf/module_clone.html:9
+#: templates/djangobmf/module_update.html:9
+msgid "Save Changes"
+msgstr "Zapisano zmiany"
+
+#: templates/djangobmf/module_create.html:5
+#, python-format
+msgid "Create %(object)s"
+msgstr ""
+
+#: templates/djangobmf/module_create.html:9
+msgid "Create object"
+msgstr ""
+
+#: templates/djangobmf/module_delete.html:9
+#, python-format
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would result in deleting "
+"related objects, but your account doesn't have permission to delete the "
+"following types of objects:"
+msgstr ""
+
+#: templates/djangobmf/module_delete.html:16
+#, python-format
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would require deleting the"
+" following protected related objects:"
+msgstr ""
+
+#: templates/djangobmf/module_delete.html:24
+#, python-format
+msgid ""
+"Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? "
+"All of the following related items will be deleted:"
+msgstr ""
+
+#: templates/djangobmf/module_delete.html:32
+msgid "Delete Object"
+msgstr ""
+
+#: templates/djangobmf/module_detail.html:10
+msgid "Files"
+msgstr "Pliki"
+
+#: templates/djangobmf/module_detail_default.html:6
+#, python-format
+msgid "No default template found for the detail view of \"%(obj)s\"."
+msgstr ""
+
+#: templates/djangobmf/module_report.html:6
+msgid "Report not found"
+msgstr "Raport nie został znaleziony"
+
+#: templates/djangobmf/module_report.html:7
+msgid "You must configure this report in the admin interface"
+msgstr "Musisz skonfigurować ten raport w interfejsie administratora"
+
+#: templates/djangobmf/module_update.html:5
+#, python-format
+msgid "Change %(object)s"
+msgstr ""
+
+#: templates/djangobmf/module_workflow.html:5
+msgid "State could not be changed"
+msgstr "Nie można zmienić stanu"
+
+#: templates/djangobmf/module_workflow.html:8
+msgid ""
+"This object is not valid. You need to edit it in order to change it's state."
+msgstr ""
+
+#: templates/djangobmf/notification/create.html:5
+#: templates/djangobmf/notification/update.html:5
+msgid "Update Notification"
+msgstr ""
+
+#: templates/djangobmf/notification/create.html:9
+#: templates/djangobmf/notification/update.html:9
+msgid "Save changes"
+msgstr "Zapisz zmiany"
+
+#: templates/djangobmf/notification/index.html:14
+#: templates/djangobmf/notification/index.html:18
+#: templates/djangobmf/notification/index.html:109
+msgid "All"
+msgstr "Wszystko"
+
+#: templates/djangobmf/notification/index.html:23
+msgid "Default settings"
+msgstr "Ustawienia domyślne"
+
+#: templates/djangobmf/notification/index.html:43
+msgid "Select a category to edit the default settings"
+msgstr ""
+
+#: templates/djangobmf/notification/index.html:87
+msgid "You dont have notifications"
+msgstr "Nie masz powiadomień"
+
+#: templates/djangobmf/notification/index.html:95
+msgid "Previous"
+msgstr "Poprzedni"
+
+#: templates/djangobmf/notification/index.html:98
+msgid "Next"
+msgstr "Następny"
+
+#: templates/djangobmf/report_html_base.html:110
+msgid "Email"
+msgstr "Email"
+
+#: templates/djangobmf/report_html_base.html:111
+msgid "Phone"
+msgstr "Telefon"
+
+#: templates/djangobmf/report_html_base.html:112
+msgid "Fax"
+msgstr ""
+
+#: templates/djangobmf/report_html_base.html:114
+msgid "You may add extra content in this placeholder"
+msgstr ""
+
+#: templates/djangobmf/report_html_base.html:134
+#, python-format
+msgid "Page %(current)s of %(all)s"
+msgstr ""
+
+#: templates/djangobmf/site-activity.html:18
+#: templates/djangobmf/site-activity.html:31
+msgid "Write message"
+msgstr ""
+
+#: templates/djangobmf/site-activity.html:37
+msgid "Item created"
+msgstr "Utworzono pozycję"
+
+#: templates/djangobmf/wizard/index.html:5
+#: templates/djangobmf/wizard/index.html:9
+msgid "Wizard"
+msgstr "Kreator"
+
+#: templatetags/djangobmf_forms.py:127
+msgid "empty"
+msgstr "pusty"
+
+#: views/module.py:378 views/module.py:384
+msgid "Object deleted"
+msgstr ""
+
+#: views/module.py:399
+#, python-format
+msgid "Cannot delete %(name)s"
+msgstr ""
+
+#: views/module.py:403
+msgid "Are you sure?"
+msgstr "Czy na pewno?"
+
+#: views/module.py:474
+#, python-format
+msgid "No %(verbose_name)s found matching the query"
+msgstr ""

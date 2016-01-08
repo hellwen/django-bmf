@@ -22,9 +22,9 @@ from djangobmf.conf import settings as bmfsettings
 from djangobmf.core.employee import Employee
 from djangobmf.decorators import login_required
 from djangobmf.document.forms import UploadDocument
-from djangobmf.models import Activity
+# from djangobmf.models import Activity
 from djangobmf.models import Document
-from djangobmf.models import Notification
+# from djangobmf.models import Notification
 from djangobmf.permissions import AjaxPermission
 from djangobmf.utils.serializers import DjangoBMFEncoder
 from djangobmf.views.defaults import bad_request
@@ -154,7 +154,8 @@ class BaseMixin(object):
         """
 
         # add the site object to every request
-        setattr(self.request, 'djangobmf_site', apps.get_app_config(bmfsettings.APP_LABEL).site)
+        setattr(self.request, 'djangobmf_appconfig', apps.get_app_config(bmfsettings.APP_LABEL))
+        setattr(self.request, 'djangobmf_site', self.request.djangobmf_appconfig.site)
 
         # add the authenticated user and employee to the request (as a lazy queryset)
         self.request.user.djangobmf = Employee(self.request.user)
@@ -194,30 +195,6 @@ class BaseMixin(object):
                 return server_error(self.request)
 
         return response
-
-#   # TODO check this function, maybe we can move it to a separate class
-#   def update_notification(self, count=None):
-#       """
-#       This function is used by django BMF to update the notifications
-#       used in the BMF-Framework
-#       """
-#       logger.debug("Updating notifications for %s" % self.request.user)
-
-#       # get all session data
-#       session_data = self._read_session_data()
-
-#       # manipulate session
-#       session_data["notification_last_update"] = datetime.datetime.utcnow().isoformat()
-#       if count is None:
-#           session_data["notification_count"] = Notification.objects.filter(
-#               unread=True,
-#               user=self.request.user,
-#           ).count()
-#       else:
-#           session_data["notification_count"] = count
-
-#       # update session
-#       self._write_session_data(session_data)
 
 
 class BaseAPIMixin(BaseMixin):
@@ -445,10 +422,10 @@ class ModuleAjaxMixin(ModuleBaseMixin, AjaxMixin):
         return ctx
 
     def render_valid_form(self, context):
-    #   if 'redirect' not in context and not self.model._bmfmeta.only_related:
-    #       context.update({
-    #           'redirect': self.get_success_url(),
-    #       })
+        #   if 'redirect' not in context and not self.model._bmfmeta.only_related:
+        #       context.update({
+        #           'redirect': self.get_success_url(),
+        #       })
         return super(ModuleAjaxMixin, self).render_valid_form(context)
 
 

@@ -4,41 +4,42 @@
 from __future__ import unicode_literals
 
 from django.core.urlresolvers import reverse_lazy
-from django.http import Http404
-from django.views.generic import DetailView
+# from django.http import Http404
+# from django.views.generic import DetailView
+from django.views.generic import TemplateView
 from django.views.generic import RedirectView
 # from django.utils import six
 # from django.utils.encoding import force_text
 
 from djangobmf.sites import site
-from djangobmf.models import Dashboard
+# from djangobmf.models import Dashboard
 
 from .mixins import ViewMixin
 
 
-class DashboardIndex(ViewMixin, DetailView):
+class DashboardIndex(ViewMixin, TemplateView):
     context_object_name = 'object'
-    model = Dashboard
-    dashboard = None
     template_name = "djangobmf/dashboard/detail.html"
 
-    def get_dashboard(self):
-        if "dashboard" in self.kwargs:
-            return site.get_dashboard(self.kwargs["dashboard"])
-        return None
+#   dashboard = None
+#   model = Dashboard
+#   def get_dashboard(self):
+#       if "dashboard" in self.kwargs:
+#           return site.get_dashboard(self.kwargs["dashboard"])
+#       return None
 
-    def get_object(self):
-        if "dashboard" in self.kwargs:
-            try:
-                self.dashboard = site.get_dashboard(self.kwargs["dashboard"])
-            except KeyError:
-                raise Http404
+#   def get_object(self):
+#       if "dashboard" in self.kwargs:
+#           try:
+#               self.dashboard = site.get_dashboard(self.kwargs["dashboard"])
+#           except KeyError:
+#               raise Http404
 
-        self.object = Dashboard.objects.get_or_create(
-            key=self.kwargs.get('dashboard', None)
-        )
+#       self.object = Dashboard.objects.get_or_create(
+#           key=self.kwargs.get('dashboard', None)
+#       )
 
-        return self.object
+#       return self.object
 
 
 class Redirect(RedirectView):

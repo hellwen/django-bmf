@@ -18,7 +18,4 @@
     {% endif %}
   </div>
 </div>
-
 {% include "djangobmf_task/task_inctable.html" with object_list=tasks.open title=_("Open tasks") add=True %}
-{% include "djangobmf_task/task_inctable.html" with object_list=tasks.hold title=_("Tasks on hold") %}
-{% include "djangobmf_task/task_inctable.html" with object_list=tasks.done title=_("Accomplished Tasks") %}

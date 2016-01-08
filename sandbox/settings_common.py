@@ -59,6 +59,7 @@ LANGUAGES = (
     (u'de', 'German'),
     (u'en', 'English'),
     (u'ru', 'Russian'),
+    (u'pl', 'Polish'),
 )
 
 # List of callables that know how to import templates from various sources.

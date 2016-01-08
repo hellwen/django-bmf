@@ -5,8 +5,10 @@ from __future__ import unicode_literals
 
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
+# from django.db.models import Model
 
 from djangobmf.conf import settings
+from djangobmf.core import Relationship
 from djangobmf.core.category import Category
 from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
@@ -33,6 +35,7 @@ __all__ = [
 # queries). Importing this to early leads to an exception
 # which is a feature and not a bug.
 if apps.apps_ready:  # pragma: no branch
+    bmfappconfig = apps.get_app_config(settings.APP_LABEL)
     site = apps.get_app_config(settings.APP_LABEL).site
 
     class register(object):  # noqa
@@ -71,14 +74,17 @@ if apps.apps_ready:  # pragma: no branch
                 category.add_view(cls)
                 logger.debug('Registered View "%s" to %s', cls.__name__, category.__class__.__name__)
 
-            elif issubclass(cls, Module):
-                if "dashboard" not in self.kwargs:
+            elif issubclass(cls, Relationship):
+                if "model" not in self.kwargs:
                     raise ImproperlyConfigured(
-                        'You need to define a dashbord, when registering the module %s',
-                        cls,
+                        'You need to define a module when registering the view %s',
+                        cls.__name__,
                     )
-                dashboard = self.register_dashboard(self.kwargs["dashboard"])
-                dashboard.add_module(cls)
+                bmfappconfig.bmfregister_relationship(cls, self.kwargs["model"])
+
+            elif issubclass(cls, Module):
+                instance = bmfappconfig.bmfregister_module(cls)
+                site.modules[cls.model] = instance
 
             elif issubclass(cls, Report):
                 if "dashboard" not in self.kwargs:

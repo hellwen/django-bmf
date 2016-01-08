@@ -3,29 +3,27 @@
 
 from __future__ import unicode_literals
 
-from django.apps import apps
+# from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
+# from django.db.models.fields.related import ManyToOneRel
+# from django.db.models.fields.related import ManyToManyField
 from django.http import Http404
-from django.template import TemplateDoesNotExist
+# from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.template.loader import select_template
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.models import Activity
 from djangobmf.models import Notification
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
-from djangobmf.filters import RelatedFilterBackend
-from djangobmf.permissions import ActivityPermission
 from djangobmf.permissions import ModuleViewPermission
 from djangobmf.permissions import NotificationPermission
 from djangobmf.pagination import ModulePagination
-from djangobmf.core.serializers import ActivitySerializer
 from djangobmf.core.serializers import NotificationViewSerializer
 from djangobmf.core.serializers import NotificationListSerializer
-from djangobmf.core.pagination import NotificationPagination
+# from djangobmf.core.pagination import NotificationPagination
 from djangobmf.views.mixins import BaseMixin
 
 from rest_framework.generics import GenericAPIView
@@ -33,7 +31,7 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
-from rest_framework.mixins import DestroyModelMixin
+# from rest_framework.mixins import DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
@@ -66,55 +64,49 @@ class APIIndex(BaseMixin, APIView):
         """
         """
         site = request.djangobmf_site
+        appconfig = request.djangobmf_appconfig
+
+        # === Relationships ---------------------------------------------------
+        relations = {}
+        for relation in appconfig.bmf_relations:
+
+            # check permissions
+            perm = '%s.view_%s'
+
+            info = relation._model._meta.app_label, relation._model._meta.model_name
+            if not self.request.user.has_perms([perm % info]):
+                continue
+
+            info = relation._related_model._meta.app_label, relation._related_model._meta.model_name
+            if not self.request.user.has_perms([perm]):
+                continue
+
+            ct_target = ContentType.objects.get_for_model(relation._model).pk
+
+            data = OrderedDict([
+                ('app_label', relation._related_model._meta.app_label),
+                ('model_name', relation._related_model._meta.model_name),
+                ('name', relation.name),
+                ('slug', relation.slug),
+                ('template', relation.template),
+            ])
+
+            if ct_target in relations.keys():
+                relations[ct_target].append(data)
+            else:
+                relations[ct_target] = [data]
 
         # === Modules ---------------------------------------------------------
 
         modules = []
-        for ct, model in site.models.items():
+        # for ct, model in site.models.items():
+        for module in appconfig.bmf_modules:
+            model = module.model
+            ct = ContentType.objects.get_for_model(model).pk
 
             info = model._meta.app_label, model._meta.model_name
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
-                related = []
-                for name, related_model in [
-                   (
-                       i.name,
-                       i.related_model,
-                   )
-                   for i in model._meta.get_fields()
-                   if hasattr(i.related_model, '_bmfmeta')
-                   and self.request.user.has_perms([
-                       '%s.view_%s' % (
-                           i.related_model._meta.app_label,
-                           i.related_model._meta.model_name,
-                       )
-                   ])
-                ]:
-                    related_ct = ContentType.objects.get_for_model(related_model)
-                    template = '%s/%s_bmfrelated/%s_%s.html' % (
-                        related_model._meta.app_label,
-                        related_model._meta.model_name,
-                        model._meta.model_name,
-                        name,
-                    )
-
-                    try:
-                        get_template(template)
-                        html = "<h1>TODO</h1>"  # TODO
-                    except TemplateDoesNotExist:
-                        html = None
-
-                    related.append((name, OrderedDict([
-                        ('ct', related_ct.pk),
-                        ('template', template),
-                        ('html', html),
-                        ('data',
-                            reverse('djangobmf:api', request=request, format=format, kwargs={
-                                'app': related_model._meta.app_label,
-                                'model': related_model._meta.model_name,
-                            })
-                        ),
-                    ])))
 
                 modules.append(OrderedDict([
                     ('app', model._meta.app_label),
@@ -135,7 +127,7 @@ class APIIndex(BaseMixin, APIView):
                         'model': model._meta.model_name,
                     })),
                     ('only_related', model._bmfmeta.only_related),
-                    ('related', OrderedDict(related)),
+                    ('relations', relations.get(ct, [])),
                     ('creates', [
                         {
                             "name": i[1],
@@ -229,7 +221,7 @@ class APIIndex(BaseMixin, APIView):
                 ('notification', OrderedDict([
                     ('url', reverse('djangobmf:notification')),
                     ('data', reverse('djangobmf:notification')),
-                ])), 
+                ])),
             ])),
             ('debug', settings.DEBUG),
         ]))
@@ -265,15 +257,19 @@ class APIViewDetail(BaseMixin, APIView):
 
 
 class ViewSet(ModelMixin, BaseMixin, ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    permission_classes = [ModuleViewPermission,]
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    permission_classes = [
+        ModuleViewPermission,
+    ]
+    filter_backends = (ViewFilterBackend, RangeFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
 
 
 class APIModuleListView(ModelMixin, BaseMixin, ListModelMixin, CreateModelMixin, GenericAPIView):
-    permission_classes = [ModuleViewPermission,]
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+    permission_classes = [
+        ModuleViewPermission,
+    ]
+    filter_backends = (ViewFilterBackend, RangeFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
 
@@ -281,9 +277,11 @@ class APIModuleListView(ModelMixin, BaseMixin, ListModelMixin, CreateModelMixin,
         return self.list(request, *args, **kwargs)
 
 
-class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
-    permission_classes = [ModuleViewPermission,]
-    filter_backends = (ViewFilterBackend, RangeFilterBackend, RelatedFilterBackend)
+class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, GenericAPIView):
+    permission_classes = [
+        ModuleViewPermission,
+    ]
+    filter_backends = (ViewFilterBackend, RangeFilterBackend)
     pagination_class = ModulePagination
     paginate_by = 100
 
@@ -291,34 +289,17 @@ class APIModuleDetailView(ModelMixin, BaseMixin, RetrieveModelMixin, UpdateModel
         return self.retrieve(request, *args, **kwargs)
 
 
-class APIActivityListView(BaseMixin, CreateModelMixin, ListModelMixin, GenericAPIView):
-    permission_classes = [ActivityPermission,]
-    serializer_class = ActivitySerializer
-
-    def get_queryset(self):
-        # check if the user has access to the object
-        obj = self.get_bmfobject(self.kwargs.get('pk', None))
-
-        return Activity.objects.filter(
-            parent_id=self.kwargs.get('pk', None),
-            parent_ct=self.get_bmfcontenttype(),
-        ).select_related('user')
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-
 class NotificationMixin(BaseMixin):
-    permission_classes = [NotificationPermission,]
+    permission_classes = [
+        NotificationPermission,
+    ]
 
     def get_queryset(self):
         return Notification.objects.filter(
             user=self.request.user,
             watch_ct=self.get_bmfcontenttype(),
         )
+
 
 class NotificationViewAPI(NotificationMixin, UpdateModelMixin, RetrieveModelMixin, GenericAPIView):
     serializer_class = NotificationViewSerializer

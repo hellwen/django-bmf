@@ -18,7 +18,7 @@ from .views import InvoiceCreateView
 from .views import InvoiceUpdateView
 
 
-@register(dashboard=Accounting)
+@register
 class InvoiceModule(Module):
     model = Invoice
     default = True
@@ -26,7 +26,7 @@ class InvoiceModule(Module):
     update = InvoiceUpdateView
 
 
-@register(dashboard=Accounting)
+@register
 class InvoiceProductModule(Module):
     model = InvoiceProduct
     default = True
