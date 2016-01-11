@@ -160,3 +160,6 @@ class ArchiveTasks(ViewMixin):
     model = Task
     slug = 'archive'
     name = _("Archive")
+
+    def filter_queryset(self, request, queryset, view):
+        return queryset.order_by('-modified')

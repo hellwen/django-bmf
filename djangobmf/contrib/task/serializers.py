@@ -52,6 +52,7 @@ class TaskSerializer(ModuleSerializer):
             'goal_summary',
             'employee',
             'employee_name',
+            'due_date',
             'modified',
             'modified_date',
         )
