@@ -449,7 +449,8 @@ bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
 bmfapp.directive('bmfSiteRelated', [function() {
     return {
         restrict: 'C',
-        scope: {},
+        scope: {
+        },
         template: function(tElement, tAttrs) {
             return tElement.html();
         },

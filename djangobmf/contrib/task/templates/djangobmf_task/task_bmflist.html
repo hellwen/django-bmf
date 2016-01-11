@@ -1,4 +1,4 @@
-{% load i18n %}{% spaceless %}
+{% load i18n djangobmf_angularjs %}{% spaceless %}
 <table class="table table-striped table-condensed table-hover">
     <thead>
         <tr>
@@ -7,48 +7,41 @@
             <th width="15%">{% trans "State" %}</th>
         </tr>
     </thead>
-  {% if add %}
-  <tfoot>
-    <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td class="text-right">
-          <a class="btn btn-xs bmf-edit btn-success" href="{% url "djangobmf:moduleapi_djangobmf_task_task:create" "default" %}?data[goal]={{ object.pk }}&amp;data[project]={{ object.project_id|default:"" }}">
-          <span class="glyphicon glyphicon-plus"></span>
-        </a>
-      </td>
-    </tr>
-  </tfoot>
-  {% endif %}
+    <tfoot ng-if="scopename=='related'">
+      <tr>
+        <td colspan="3" class="text-right">
+            <!--a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_task_task:create" "default" %}?data[goal]={{ object.pk }}&amp;data[project]={{ object.project_id|default:"" }}"-->
+            <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_task_task:create" "default" %}">
+            <span class="glyphicon glyphicon-plus"></span>
+          </a>
+        </td>
+      </tr>
+    </tfoot>
     <tbody>
-    {% verbatim %}
         <tr ng-repeat="obj in data" ng-class="obj.state == 'cancelled' || obj.state == 'finished' ? 'text-muted' : ''">
             <td>
                 <span ng-if="obj.completed == false" class="glyphicon glyphicon-unchecked"></span>
                 <span ng-if="obj.completed == true" class="glyphicon glyphicon-check"></span>
                 <span>&nbsp;</span>
-                <a bmf-detail="{{ obj.pk }}" href="#">{{ obj.summary }}</a>
+                <a bmf-detail="{% ng "obj.pk" %}" href="#">{% ng "obj.summary" %}</a>
                 <span>&nbsp;</span>
-                <span ng-if="obj.state == 'review'" class="label label-info">{{ obj.state_name }}</span>
-                <span ng-if="obj.state == 'started'" class="label label-primary">{{ obj.state_name }}</span>
-                <span ng-if="obj.state == 'hold'" class="label label-default">{{ obj.state_name }}</span>
-                <span ng-if="obj.state == 'todo'" class="label label-warning">{{ obj.state_name }}</span>
-
+                <span ng-if="obj.state == 'review'" class="label label-info">{% ng "obj.state_name" %}</span>
+                <span ng-if="obj.state == 'started'" class="label label-primary">{% ng "obj.state_name" %}</span>
+                <span ng-if="obj.state == 'hold'" class="label label-default">{% ng "obj.state_name" %}</span>
+                <span ng-if="obj.state == 'todo'" class="label label-warning">{% ng "obj.state_name" %}</span>
                 <span ng-if="obj.project || obj.goal" class="text-muted"><br><small>
-                    <strong ng-if="obj.project">{{ obj.project_name }}&nbsp;</strong>
-                    <span ng-if="obj.goal">{{ obj.goal_summary }}</span>
+                    <strong ng-if="obj.project">{% ng "obj.project_name" %}&nbsp;</strong>
+                    <span ng-if="obj.goal">{% ng "obj.goal_summary" %}</span>
                 </small></span>
             </td>
             <td>
-                <span ng-if="obj.employee != null">{{ obj.employee_name }}</span>
-                <span ng-if="obj.employee == null">{% endverbatim %}{% trans "None" %}{% verbatim %}</span>
-                <span ng-if="obj.due_date"><br><small>{% endverbatim %}{% trans "Due" %}{% verbatim %}{{ obj.due_date }}</small></span>
+                <span ng-if="obj.employee != null">{% ng "obj.employee_name" %}</span>
+                <span ng-if="obj.employee == null">{% trans "None" %}</span>
+                <span ng-if="obj.due_date"><br><small>{% trans "Due" %}: {% ng "obj.due_date" %}</small></span>
             </td>
-            <td>{{ obj.state_name }}<br><small>{{ obj.modified_date }}</small>
+            <td>{% ng "obj.state_name" %}<br><small>{% ng "obj.modified_date" %}</small>
             </td>
         </tr>
-    {% endverbatim %}
     </tbody>
 </table>
 {% endspaceless %}
