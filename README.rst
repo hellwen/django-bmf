@@ -57,11 +57,15 @@ Credits
 
 * `django`_
 * `django-rest-framework`_
+* `angularjs`_
+* `bootstrap`_
 
 .. _Github: https://github.com/django-bmf/django-bmf
 .. _Issue Tracker: https://github.com/django-bmf/django-bmf/issues
 .. _django: http://www.djangoproject.com
 .. _django-rest-framework: http://www.django-rest-framework.org
+.. _angularjs: http://www.angularjs.org
+.. _bootstrap: http://www.getbootstrap.com
 
 .. |Build status| image:: https://api.travis-ci.org/django-bmf/django-bmf.svg?branch=develop
    :target: http://travis-ci.org/django-bmf/django-bmf
