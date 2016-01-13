@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.http import Http404
 
 from rest_framework.permissions import BasePermission
@@ -14,10 +15,10 @@ class AjaxPermission(BasePermission):
     Only allow Ajax requests
     """
     def has_permission(self, request, view):
-        return request.is_ajax()
+        return request.is_ajax() or settings.DEBUG
 
     def has_object_permission(self, request, view, obj):
-        return request.is_ajax()
+        return request.is_ajax() or settings.DEBUG
 
 
 class BaseModulePermission(BasePermission):
