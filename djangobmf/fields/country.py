@@ -4,12 +4,37 @@
 from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.six import text_type
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import get_language
 
 import pycountry
+import gettext as gettext_module
+
+
+# Translations are cached in a dictionary for every language.
+_translations = {}
+
+
+def gettext(value):
+    global _translations
+
+    if not settings.USE_I18N:
+        return value
+
+    language = get_language()
+    if language not in _translations:
+        _translations[language] = gettext_module.translation(
+            domain='iso3166',
+            localedir=pycountry.LOCALES_DIR,
+            languages=[language],
+            codeset='utf-8',
+            fallback=True,
+        )
+    return _translations[language].gettext(value)
 
 
 @python_2_unicode_compatible
@@ -22,7 +47,11 @@ class CountryContainer(object):
 
     @property
     def name(self):
-        return self.obj.name
+        return gettext(self.obj.name)
+
+    @property
+    def official_name(self):
+        return gettext(self.obj.official_name)
 
     @property
     def key(self):
