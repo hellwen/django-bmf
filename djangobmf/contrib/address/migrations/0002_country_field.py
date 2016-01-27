@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='address',
             name='country',
-            field=models.CharField(null=True, verbose_name='Country OLD', help_text='This field will be removed in an upcoming release of djangobmf', max_length=255),
+            field=models.CharField(null=True, verbose_name='Country OLD', help_text='This field will be removed in an upcoming release of djangobmf', max_length=255, blank=True),
         ),
         migrations.RenameField(
             model_name='address',
@@ -25,6 +25,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='address',
             name='country',
-            field=djangobmf.fields.country.CountryField(editable=False, null=True),
+            field=djangobmf.fields.country.CountryField(null=True),
         ),
     ]

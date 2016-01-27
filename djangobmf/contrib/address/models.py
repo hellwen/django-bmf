@@ -52,7 +52,10 @@ class AbstractAddress(BaseAddress):
     zip = models.CharField(_('Zipcode'), max_length=255, null=True, blank=False, )
     city = models.CharField(_('City'), max_length=255, null=True, blank=False, )
     state = models.CharField(_('State'), max_length=255, null=True, blank=True, )
-    old_country = models.CharField(_('Country OLD'), max_length=255, null=True, blank=False, help_text="This field will be removed in an upcoming release of djangobmf")
+    old_country = models.CharField(
+        _('Country OLD'), max_length=255, null=True, blank=True,
+        help_text="This field will be removed in an upcoming release of djangobmf"
+    )
     country = CountryField(_('Country'))
 
     class Meta(BaseAddress.Meta):
