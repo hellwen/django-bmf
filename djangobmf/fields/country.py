@@ -54,6 +54,14 @@ class CountryContainer(object):
         return gettext(self.obj.official_name)
 
     @property
+    def int_name(self):
+        return self.obj.name
+
+    @property
+    def int_official_name(self):
+        return self.obj.official_name
+
+    @property
     def key(self):
         return self.obj.alpha3
 
