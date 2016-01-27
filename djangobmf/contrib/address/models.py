@@ -71,7 +71,7 @@ class AbstractAddress(BaseAddress):
                 'zip': self.zip,
                 'city': self.city,
                 'state': self.state,
-                'country': self.country,
+                'country': self.country.alpha2,
             }
         )
 
@@ -83,7 +83,7 @@ class AbstractAddress(BaseAddress):
             name,
             self.street,
             self.city,
-            self.country,
+            self.country.alpha2,
         )
 
 
