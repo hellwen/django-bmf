@@ -77,6 +77,7 @@ setup(
         'djangorestframework>=3.1,<3.4',
         'markdown',
         'pytz',
+        'pycountry',
     ],
     include_package_data=True,
     zip_safe=False,

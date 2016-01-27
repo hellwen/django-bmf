@@ -63,4 +63,4 @@ class WorkflowField(with_metaclass(models.SubfieldBase, models.CharField)):
         if (isinstance(value, WorkflowContainer) and isinstance(value.obj, self.workflow)) \
                 or value in self.workflow._states:
             return value
-        raise ValidationError(_('The workflow state "%s" is no valid') % value)
+        raise ValidationError(_('The workflow state "%s" is not valid') % value)
