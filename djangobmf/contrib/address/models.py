@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.conf import settings
 from djangobmf.models import BMFModel
+from djangobmf.fields import CountryField
 
 from .serializers import AddressSerializer
 
@@ -51,7 +52,8 @@ class AbstractAddress(BaseAddress):
     zip = models.CharField(_('Zipcode'), max_length=255, null=True, blank=False, )
     city = models.CharField(_('City'), max_length=255, null=True, blank=False, )
     state = models.CharField(_('State'), max_length=255, null=True, blank=True, )
-    country = models.CharField(_('Country'), max_length=255, null=True, blank=False, )
+    old_country = models.CharField(_('Country OLD'), max_length=255, null=True, blank=False, help_text="This field will be removed in an upcoming release of djangobmf")
+    country = CountryField(_('Country'))
 
     class Meta(BaseAddress.Meta):
         abstract = True
