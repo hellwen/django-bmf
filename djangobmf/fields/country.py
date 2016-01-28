@@ -4,80 +4,13 @@
 from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
-from django.conf import settings
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.six import text_type
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import get_language
+
+from djangobmf.widgets import CountrySelect
+from djangobmf.widgets.country import CountryContainer
 
 import pycountry
-import gettext as gettext_module
-
-
-# Translations are cached in a dictionary for every language.
-_translations = {}
-
-
-def gettext(value):
-    global _translations
-
-    if not settings.USE_I18N:
-        return value
-
-    language = get_language()
-    if language not in _translations:
-        _translations[language] = gettext_module.translation(
-            domain='iso3166',
-            localedir=pycountry.LOCALES_DIR,
-            languages=[language],
-            codeset='utf-8',
-            fallback=True,
-        )
-    return _translations[language].gettext(value)
-
-
-@python_2_unicode_compatible
-class CountryContainer(object):
-    """
-    """
-
-    def __init__(self, value):
-        self.obj = pycountry.countries.get(alpha3=value)
-
-    @property
-    def name(self):
-        return gettext(self.obj.name)
-
-    @property
-    def official_name(self):
-        return gettext(self.obj.official_name)
-
-    @property
-    def int_name(self):
-        return self.obj.name
-
-    @property
-    def int_official_name(self):
-        return self.obj.official_name
-
-    @property
-    def key(self):
-        return self.obj.alpha3
-
-    @property
-    def alpha2(self):
-        return self.obj.alpha2
-
-    @property
-    def alpha3(self):
-        return self.obj.alpha3
-
-    def __str__(self):
-        return text_type(self.obj.alpha3)
-
-    def __len__(self):
-        return 3
 
 
 class CountryField(models.CharField):
@@ -92,6 +25,7 @@ class CountryField(models.CharField):
         defaults = {
             'blank': False,
             'editable': True,
+            'choices': (),
         }
         defaults.update(kwargs)
         defaults.update({
@@ -105,6 +39,13 @@ class CountryField(models.CharField):
         del kwargs["null"]
         del kwargs["max_length"]
         return name, path, args, kwargs
+
+    def formfield(self, **kwargs):
+        defaults = {
+            'widget': CountrySelect(choices=self.choices),
+        }
+        defaults.update(kwargs)
+        return super(CountryField, self).formfield(**defaults)
 
     def from_db_value(self, value, expression, connection, context):
         if value is None:
