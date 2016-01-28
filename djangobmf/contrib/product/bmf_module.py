@@ -26,6 +26,7 @@ class ProductModule(Module):
     default = True
     create = ProductCreateView
     update = ProductUpdateView
+    detail = ProductDetailView
 
 
 @register
@@ -68,6 +69,3 @@ class AllProducts(ViewMixin):
     model = Product
     name = _("All products")
     slug = "all"
-
-
-register(ProductDetailView, model=Product)

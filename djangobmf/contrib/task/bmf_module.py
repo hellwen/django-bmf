@@ -31,6 +31,7 @@ class GoalModule(Module):
     model = Goal
     default = True
     clone = GoalCloneView
+    detail = GoalDetailView
 
 
 @register(model=Task)
@@ -164,4 +165,3 @@ class ArchiveTasks(ViewMixin):
         return queryset.order_by('-modified')
 
 
-register(GoalDetailView, model=Goal)

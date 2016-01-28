@@ -53,6 +53,7 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
     """
     Object internally used to register modules
     """
+    detail = ModuleDetail
     create = ModuleCreateView
     delete = ModuleDeleteView
     update = ModuleUpdateView
@@ -69,7 +70,8 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
     def __init__(self):
         self.dashboards = []
         self.manager = {}
-        self.detail_view = ModuleDetail.as_view(model=self.model)
+        self.detail_view = self.detail.as_view(model=self.model)
+
         self.create_view = self.create
         self.delete_view = self.delete
         self.update_view = self.update
