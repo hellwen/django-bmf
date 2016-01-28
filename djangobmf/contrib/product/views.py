@@ -4,7 +4,6 @@
 from __future__ import unicode_literals
 
 from djangobmf.models import Configuration
-from djangobmf.sites import register
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDetail
 from djangobmf.views import ModuleUpdateView
@@ -28,7 +27,6 @@ class ProductUpdateView(ModuleUpdateView):
     form_class = ProductUpdateForm
 
 
-@register
 class ProductDetailView(ModuleDetail):
 
     def get_context_data(self, **kwargs):

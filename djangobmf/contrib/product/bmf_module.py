@@ -15,6 +15,7 @@ from .categories import ProductCategory
 from .models import Product
 from .models import ProductTax
 from .models import PRODUCT_SERVICE
+from .views import ProductDetailView
 from .views import ProductCreateView
 from .views import ProductUpdateView
 
@@ -67,3 +68,6 @@ class AllProducts(ViewMixin):
     model = Product
     name = _("All products")
     slug = "all"
+
+
+register(ProductDetailView, model=Product)

@@ -8,6 +8,7 @@ from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured
 # from django.core.paginator import EmptyPage
 # from django.core.paginator import PageNotAnInteger
 # from django.core.paginator import Paginator
@@ -24,8 +25,11 @@ from django.views.generic import CreateView
 from django.views.generic import DeleteView
 from django.views.generic import DetailView
 from django.views.generic import UpdateView
+from django.views.generic.base import View
+from django.views.generic.base import ContextMixin
 from django.views.generic.edit import BaseFormView
 from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.detail import SingleObjectTemplateResponseMixin
 # from django.template.loader import get_template
 # from django.template.loader import select_template
 # from django.template import TemplateDoesNotExist
@@ -72,15 +76,27 @@ logger = logging.getLogger(__name__)
 # --- detail, forms and api ---------------------------------------------------
 
 
-class ModuleDetail(DetailView):
-    model = None
-    object = None
+class ModuleDetail(SingleObjectTemplateResponseMixin, ContextMixin, View):
     context_object_name = 'object'
     template_name_suffix = '_bmfdetail'
+    default_template = "djangobmf/api/detail-default.html"
+    model = None
+
+    def get_object(self):
+        raise ImproperlyConfigured(
+            "ModuleDetail must be provided with an object or "
+            "an implementation of 'get_object()'"
+        )
+
+    def get(self, request, object=None, *args, **kwargs):
+        self.object = object or self.get_object()
+        context = self.get_context_data(**{
+            self.context_object_name: self.object,
+        })
+        return self.render_to_response(context)
 
     def get_template_names(self):
-        return super(ModuleDetail, self).get_template_names() \
-            + ["djangobmf/api/detail-default.html"]
+        return super(ModuleDetail, self).get_template_names() + [self.default_template]
 
 
 class ModuleReportView(ModuleViewMixin, DetailView):

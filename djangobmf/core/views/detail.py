@@ -3,6 +3,9 @@
 
 from __future__ import unicode_literals
 
+from django.apps import apps
+from djangobmf.conf import settings
+
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -16,6 +19,7 @@ from collections import OrderedDict
 
 class View(BaseMixin, GenericAPIView):
     permission_classes = [DetailPermission]
+    bmfconfig = apps.get_app_config(settings.APP_LABEL)
 
     def dispatch(self, *args, **kwargs):
         self.get_bmfmodel()
@@ -32,6 +36,8 @@ class View(BaseMixin, GenericAPIView):
         self.object = self.get_bmfobject(self.kwargs.get('pk', None))
         serialized = self.get_serializer_class()(self.object)
         meta = self.object._bmfmeta
+        module = self.bmfconfig.bmf_modules[self.object.__class__]
+        related_response = module.detail_view(request, object=self.object)
 
         try:
             notification = Notification.objects.get(
@@ -47,7 +53,7 @@ class View(BaseMixin, GenericAPIView):
 
         return Response(OrderedDict([
             ('object', serialized.data),
-            ('html', ''),
+            ('html', related_response.rendered_content.strip()),
             ('views', {
                 'update': reverse(
                     'djangobmf:moduleapi_%s_%s:update' % (

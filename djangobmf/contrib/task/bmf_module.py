@@ -16,6 +16,7 @@ from .models import Task
 from .models import Goal
 # from .permissions import GoalPermission
 # from .permissions import TaskPermission
+from .views import GoalDetailView
 from .views import GoalCloneView
 
 
@@ -161,3 +162,6 @@ class ArchiveTasks(ViewMixin):
 
     def filter_queryset(self, request, queryset, view):
         return queryset.order_by('-modified')
+
+
+register(GoalDetailView, model=Goal)
