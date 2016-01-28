@@ -26,7 +26,7 @@ class BMFConfig(AppConfig):
 
     def __init__(self, *args, **kwargs):
         super(BMFConfig, self).__init__(*args, **kwargs)
-        self.bmf_modules = []
+        self.bmf_modules = {}
         self.bmf_relations = []
 
     def ready(self):
@@ -37,14 +37,12 @@ class BMFConfig(AppConfig):
         """
         register a module with the framework
         """
-        for mod in self.bmf_modules:
-            if mod.model == module.model:
-                raise AlreadyRegistered(
-                    'The module %s is already registered' % module.model.__name__
-                )
-        mod = module()
-        self.bmf_modules.append(mod)
-        return mod
+        if module.model in self.bmf_modules:
+            raise AlreadyRegistered(
+                'The module %s is already registered' % module.model.__name__
+            )
+        self.bmf_modules[module.model] = module()
+        return self.bmf_modules[module.model]
 
     def bmfregister_relationship(self, relationship, model):
         r = relationship()

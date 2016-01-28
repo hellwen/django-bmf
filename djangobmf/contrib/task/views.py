@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 
 from djangobmf.views import ModuleCloneView
-from djangobmf.views import ModuleDetailView
+from djangobmf.views import ModuleDetail
 
 from .forms import GoalCloneForm
 
@@ -35,7 +35,7 @@ class GoalCloneView(ModuleCloneView):
                 task.save()
 
 
-class GoalDetailView(ModuleDetailView):
+class GoalDetailView(ModuleDetail):
     def get_context_data(self, **kwargs):
         tasks = {
             'open': [],

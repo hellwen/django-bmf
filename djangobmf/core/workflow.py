@@ -333,6 +333,7 @@ class WorkflowContainer(object):
                 [
                     OrderedDict((
                         ('name', force_text(s.name)),
+                        ('action', k),
                         ('url', reverse(
                             'djangobmf:moduleapi_%s_%s:workflow' % (
                                 self.django_object._meta.app_label,

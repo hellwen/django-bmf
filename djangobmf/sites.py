@@ -14,6 +14,7 @@ from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
 from djangobmf.core.report import Report
 from djangobmf.core.viewmixin import ViewMixin
+from djangobmf.views.module import ModuleDetail
 
 import logging
 logger = logging.getLogger(__name__)
@@ -95,10 +96,32 @@ if apps.apps_ready:  # pragma: no branch
                 dashboard = self.register_dashboard(self.kwargs["dashboard"])
                 dashboard.add_report(cls)
 
+            elif issubclass(cls, ModuleDetail):
+                if "model" in self.kwargs:
+                    model = self.kwargs["model"]
+                else:
+                    model = cls.model
+
+                if not model:
+                    raise ImproperlyConfigured(
+                        'You need to define a model, when registering the DetailView "%s"',
+                        cls.__name__,
+                    )
+
+                try:
+                    bmfappconfig.bmf_modules[model].detail_view = cls.as_view(model=model)
+                except KeyError:
+                    raise ImproperlyConfigured(
+                        'Can not register DetailView "%s", because the corresponding '
+                        'model %s is not registered with djangobmf',
+                        cls.__name__,
+                        model.__class__.__name__,
+                    )
+
             else:
                 raise ImproperlyConfigured(
                     'You can not register %s with django-bmf',
-                    cls,
+                    cls.__name__,
                 )
 
     __all__ += [

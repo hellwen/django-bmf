@@ -8,6 +8,7 @@ from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured
 # from django.core.paginator import EmptyPage
 # from django.core.paginator import PageNotAnInteger
 # from django.core.paginator import Paginator
@@ -24,8 +25,11 @@ from django.views.generic import CreateView
 from django.views.generic import DeleteView
 from django.views.generic import DetailView
 from django.views.generic import UpdateView
+from django.views.generic.base import View
+from django.views.generic.base import ContextMixin
 from django.views.generic.edit import BaseFormView
 from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.detail import SingleObjectTemplateResponseMixin
 # from django.template.loader import get_template
 # from django.template.loader import select_template
 # from django.template import TemplateDoesNotExist
@@ -36,17 +40,13 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
-from .mixins import AjaxMixin
 from .mixins import ModuleSearchMixin
-from .mixins import ModuleBaseMixin
 from .mixins import ModuleAjaxMixin
 from .mixins import ModuleViewMixin
 # from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
 
-from djangobmf.core.serializers import NotificationViewSerializer
-from djangobmf.models import Notification
 from djangobmf.models import Report
 from djangobmf.permissions import AjaxPermission
 from djangobmf.permissions import ModuleViewPermission
@@ -58,7 +58,7 @@ from djangobmf.signals import activity_create
 from djangobmf.signals import activity_update
 # from djangobmf.utils.deprecation import RemovedInNextBMFVersionWarning
 
-from rest_framework.reverse import reverse
+# from rest_framework.reverse import reverse
 
 import copy
 # import datetime
@@ -76,92 +76,27 @@ logger = logging.getLogger(__name__)
 # --- detail, forms and api ---------------------------------------------------
 
 
-class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
-    """
-    show the details of an entry
-    """
-    default_permission_classes = [ModuleViewPermission, AjaxPermission]
+class ModuleDetail(SingleObjectTemplateResponseMixin, ContextMixin, View):
     context_object_name = 'object'
     template_name_suffix = '_bmfdetail'
-    reports = []
+    default_template = "djangobmf/api/detail-default.html"
+    model = None
 
-    def get_ajax_context(self, **context):
-        # shortcut
-        ct = ContentType.objects.get_for_model(self.object)
-        meta = self.object._bmfmeta
+    def get_object(self):
+        raise ImproperlyConfigured(
+            "ModuleDetail must be provided with an object or "
+            "an implementation of 'get_object()'"
+        )
 
-        try:
-            notification = Notification.objects.get(
-                user=self.request.user,
-                watch_ct=ct,
-                watch_id=self.object.pk
-            )
-            if notification.unread:
-                notification.unread = False
-                notification.save()
-        except Notification.DoesNotExist:
-            notification = Notification(
-                user=self.request.user,
-                watch_ct=ct,
-                watch_id=self.object.pk,
-                unread=False,
-            )
-
-        context.update({
-            'views': {
-                'update': reverse(
-                    'djangobmf:moduleapi_%s_%s:update' % (
-                        self.object._meta.app_label,
-                        self.object._meta.model_name,
-                    ),
-                    format=None,
-                    request=self.request,
-                    kwargs={'pk': self.object.pk},
-                ),
-                'delete': reverse(
-                    'djangobmf:moduleapi_%s_%s:delete' % (
-                        self.object._meta.app_label,
-                        self.object._meta.model_name,
-                    ),
-                    format=None,
-                    request=self.request,
-                    kwargs={'pk': self.object.pk},
-                ),
-                'comments': self.object._bmfmeta.has_comments,
-                'activity': {
-                    'enabled': self.object._bmfmeta.has_activity,
-                    'url': reverse(
-                        'djangobmf:api-activity',
-                        format=None,
-                        request=self.request,
-                        kwargs={
-                            'pk': self.object.pk,
-                            'app': self.object._meta.app_label,
-                            'model': self.object._meta.model_name,
-                        },
-                    ),
-                },
-            },
-            'workflow': meta.workflow.serialize(self.request) if meta.workflow else None,
-            'notifications': {
-                'data': NotificationViewSerializer(notification).data,
-                'url': reverse(
-                    'djangobmf:api-notification',
-                    format=None,
-                    request=self.request,
-                    kwargs={
-                        'pk': self.object.pk,
-                        'app': self.object._meta.app_label,
-                        'model': self.object._meta.model_name,
-                    },
-                ),
-            },
+    def get(self, request, object=None, *args, **kwargs):
+        self.object = object or self.get_object()
+        context = self.get_context_data(**{
+            self.context_object_name: self.object,
         })
-        return context
+        return self.render_to_response(context)
 
-    def get_template_names(self, related=True):
-        return super(ModuleDetailView, self).get_template_names() \
-            + ["djangobmf/api/detail-default.html"]
+    def get_template_names(self):
+        return super(ModuleDetail, self).get_template_names() + [self.default_template]
 
 
 class ModuleReportView(ModuleViewMixin, DetailView):
