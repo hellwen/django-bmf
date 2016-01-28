@@ -90,10 +90,5 @@ class CountrySelect(Select):
         else:
             for country in pycountry.countries.objects:
                 data.append((country.alpha3, gettext(country.name)))
-                print(
-                    country.name,
-                    gettext(country.name),
-                    unicodedata.normalize('NFKD', gettext(country.name))
-                )
 
         self.choices = list(sorted(data, key=lambda x: unicodedata.normalize('NFKD', x[1])))

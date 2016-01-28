@@ -10,8 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 from djangobmf.widgets import CountrySelect
 from djangobmf.widgets.country import CountryContainer
 
-import pycountry
-
 
 class CountryField(models.CharField):
     """
