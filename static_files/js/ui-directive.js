@@ -459,6 +459,7 @@ bmfapp.directive('bmfSiteRelated', [function() {
             $scope.scopename = "related";
 
             $scope.visible = false;
+            $scope.hidden_selector = undefined;
             $scope.parent_module = null;
             $scope.module = null;
             $scope.pk = null;
@@ -475,6 +476,12 @@ bmfapp.directive('bmfSiteRelated', [function() {
             function set_dataurl() {
                 var search = $location.search();
                 $scope.urlparam = search.open;
+                if (search.open) {
+                    $scope.hidden_selector = search.hidden;
+                }
+                else {
+                    $scope.hidden_selector = undefined;
+                }
 
                 if ($scope.urlparam) {
                     $scope.dataurl = ApiUrlFactory(
