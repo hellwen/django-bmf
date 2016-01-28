@@ -133,6 +133,12 @@ class Settings(object):
         return getattr(djsettings, 'BMF_CONTRIB_TRANSACTIONITEM')
 
     @property
+    def DEBUG_JS(self):  # noqa
+        if djsettings.DEBUG:
+            return getattr(djsettings, 'BMF_DEBUG_JS', False)
+        return False
+
+    @property
     def REPORTING_SERVER(self):  # noqa
         return getattr(djsettings, 'BMF_REPORTING_SERVER', None)
 
