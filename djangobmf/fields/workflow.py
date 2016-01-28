@@ -17,6 +17,9 @@ class WorkflowField(with_metaclass(models.SubfieldBase, models.CharField)):
     can not be edited
     """
     description = _("Workflow Field")
+    default_error_messages = {
+        'invalid_state': _('%(name)s is not a valid workflow state'),
+    }
 
     def __init__(self, workflow, *args, **kwargs):
         self.workflow = workflow
@@ -63,4 +66,8 @@ class WorkflowField(with_metaclass(models.SubfieldBase, models.CharField)):
         if (isinstance(value, WorkflowContainer) and isinstance(value.obj, self.workflow)) \
                 or value in self.workflow._states:
             return value
-        raise ValidationError(_('The workflow state "%s" is not valid') % value)
+        raise ValidationError(
+            self.error_messages['invalid_state'],
+            code='invalid_state',
+            params={'name': value}
+        )
