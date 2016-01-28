@@ -4,8 +4,9 @@
 from __future__ import unicode_literals
 
 from djangobmf.models import Configuration
+from djangobmf.sites import register
 from djangobmf.views import ModuleCreateView
-from djangobmf.views import ModuleDetailView
+from djangobmf.views import ModuleDetail
 from djangobmf.views import ModuleUpdateView
 
 from .forms import ProductUpdateForm
@@ -27,7 +28,8 @@ class ProductUpdateView(ModuleUpdateView):
     form_class = ProductUpdateForm
 
 
-class ProductDetailView(ModuleDetailView):
+@register
+class ProductDetailView(ModuleDetail):
 
     def get_context_data(self, **kwargs):
         unit_exact, net, gross, used_taxes = self.object.calc_tax(

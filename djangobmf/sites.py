@@ -14,6 +14,7 @@ from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
 from djangobmf.core.report import Report
 from djangobmf.core.viewmixin import ViewMixin
+from djangobmf.views.module import DetailView
 
 import logging
 logger = logging.getLogger(__name__)
@@ -94,6 +95,10 @@ if apps.apps_ready:  # pragma: no branch
                     )
                 dashboard = self.register_dashboard(self.kwargs["dashboard"])
                 dashboard.add_report(cls)
+
+            elif issubclass(cls, DetailView):
+                # TODO
+                pass
 
             else:
                 raise ImproperlyConfigured(

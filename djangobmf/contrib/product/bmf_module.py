@@ -16,7 +16,6 @@ from .models import Product
 from .models import ProductTax
 from .models import PRODUCT_SERVICE
 from .views import ProductCreateView
-from .views import ProductDetailView
 from .views import ProductUpdateView
 
 
@@ -25,7 +24,6 @@ class ProductModule(Module):
     model = Product
     default = True
     create = ProductCreateView
-    detail = ProductDetailView
     update = ProductUpdateView
 
 

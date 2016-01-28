@@ -17,7 +17,6 @@ from .models import Goal
 # from .permissions import GoalPermission
 # from .permissions import TaskPermission
 from .views import GoalCloneView
-from .views import GoalDetailView
 
 
 @register
@@ -31,7 +30,6 @@ class GoalModule(Module):
     model = Goal
     default = True
     clone = GoalCloneView
-    detail = GoalDetailView
 
 
 @register(model=Task)

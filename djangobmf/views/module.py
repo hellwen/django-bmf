@@ -76,91 +76,13 @@ logger = logging.getLogger(__name__)
 # --- detail, forms and api ---------------------------------------------------
 
 
-class ModuleDetailView(ModuleBaseMixin, AjaxMixin, DetailView):
-    """
-    show the details of an entry
-    """
-    default_permission_classes = [ModuleViewPermission, AjaxPermission]
+class ModuleDetail(DetailView):
+    model = None
     context_object_name = 'object'
     template_name_suffix = '_bmfdetail'
-    reports = []
 
-    def get_ajax_context(self, **context):
-        # shortcut
-        ct = ContentType.objects.get_for_model(self.object)
-        meta = self.object._bmfmeta
-
-        try:
-            notification = Notification.objects.get(
-                user=self.request.user,
-                watch_ct=ct,
-                watch_id=self.object.pk
-            )
-            if notification.unread:
-                notification.unread = False
-                notification.save()
-        except Notification.DoesNotExist:
-            notification = Notification(
-                user=self.request.user,
-                watch_ct=ct,
-                watch_id=self.object.pk,
-                unread=False,
-            )
-
-        context.update({
-            'views': {
-                'update': reverse(
-                    'djangobmf:moduleapi_%s_%s:update' % (
-                        self.object._meta.app_label,
-                        self.object._meta.model_name,
-                    ),
-                    format=None,
-                    request=self.request,
-                    kwargs={'pk': self.object.pk},
-                ),
-                'delete': reverse(
-                    'djangobmf:moduleapi_%s_%s:delete' % (
-                        self.object._meta.app_label,
-                        self.object._meta.model_name,
-                    ),
-                    format=None,
-                    request=self.request,
-                    kwargs={'pk': self.object.pk},
-                ),
-                'comments': self.object._bmfmeta.has_comments,
-                'activity': {
-                    'enabled': self.object._bmfmeta.has_activity,
-                    'url': reverse(
-                        'djangobmf:api-activity',
-                        format=None,
-                        request=self.request,
-                        kwargs={
-                            'pk': self.object.pk,
-                            'app': self.object._meta.app_label,
-                            'model': self.object._meta.model_name,
-                        },
-                    ),
-                },
-            },
-            'workflow': meta.workflow.serialize(self.request) if meta.workflow else None,
-            'notifications': {
-                'data': NotificationViewSerializer(notification).data,
-                'url': reverse(
-                    'djangobmf:api-notification',
-                    format=None,
-                    request=self.request,
-                    kwargs={
-                        'pk': self.object.pk,
-                        'app': self.object._meta.app_label,
-                        'model': self.object._meta.model_name,
-                    },
-                ),
-            },
-        })
-        return context
-
-    def get_template_names(self, related=True):
-        return super(ModuleDetailView, self).get_template_names() \
+    def get_template_names(self):
+        return super(ModuleView, self).get_template_names() \
             + ["djangobmf/api/detail-default.html"]
 
 
