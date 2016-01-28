@@ -19,16 +19,16 @@ class CountryField(models.CharField):
         'invalid_country': _('%(name)s is not a valid 3-char country code'),
     }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, choices=(), *args, **kwargs):
+        self.choices = choices
         defaults = {
             'blank': False,
             'editable': True,
-            'choices': (),
         }
         defaults.update(kwargs)
         defaults.update({
-            'max_length': 3,
             'null': True,
+            'max_length': 3,
         })
         super(CountryField, self).__init__(**defaults)
 
