@@ -10,8 +10,8 @@ from django.utils import six
 from django.utils.text import slugify
 
 from djangobmf.permissions import ModulePermission
+from djangobmf.views import Index
 # from djangobmf.views import ModuleCloneView
-from djangobmf.views import ModuleDetail
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
 from djangobmf.views import ModuleFormAPI
@@ -136,6 +136,7 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
 
         urlpatterns = patterns(
             '',
+            url(r'^$', Index.as_view(), name='index'),
             url(
                 r'^update/(?P<pk>[0-9]+)/$',
                 self.update.as_view(

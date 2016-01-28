@@ -11,8 +11,6 @@ from django.test.client import RequestFactory
 # from djangobmf.views import ModuleActivityMixin
 # from djangobmf.views import ModuleFilesMixin
 # from djangobmf.views import ModuleFormMixin
-from djangobmf.views import ModuleDetailView
-# from djangobmf.views import ModuleAutoDetailView
 from djangobmf.views import ModuleReportView
 from djangobmf.views import ModuleCloneView
 from djangobmf.views import ModuleUpdateView
@@ -42,26 +40,6 @@ class ViewsTests(TestCase):
 #       obj.model = TestView
 #       obj.template_name = 'test.html'
 #       self.assertEqual(obj.get_template_names(), ['test.html'])
-
-    @expectedFailure
-    def test_views_ModuleActivityMixin(self):
-        self.assertTrue(False)  # TODO NOT IMPLEMENTED
-
-    @expectedFailure
-    def test_views_ModuleFilesMixin(self):
-        self.assertTrue(False)  # TODO NOT IMPLEMENTED
-
-    @expectedFailure
-    def test_views_ModuleFormMixin(self):
-        self.assertTrue(False)  # TODO NOT IMPLEMENTED
-
-    @expectedFailure
-    def test_views_ModuleDetailView(self):
-        self.assertTrue(False)  # TODO NOT IMPLEMENTED
-
-    @expectedFailure
-    def test_views_ModuleAutoDetailView(self):
-        self.assertTrue(False)  # TODO NOT IMPLEMENTED
 
     @expectedFailure
     def test_views_ModuleReportView(self):

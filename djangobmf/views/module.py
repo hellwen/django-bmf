@@ -36,17 +36,13 @@ from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
-from .mixins import AjaxMixin
 from .mixins import ModuleSearchMixin
-from .mixins import ModuleBaseMixin
 from .mixins import ModuleAjaxMixin
 from .mixins import ModuleViewMixin
 # from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
 
-from djangobmf.core.serializers import NotificationViewSerializer
-from djangobmf.models import Notification
 from djangobmf.models import Report
 from djangobmf.permissions import AjaxPermission
 from djangobmf.permissions import ModuleViewPermission
@@ -58,7 +54,7 @@ from djangobmf.signals import activity_create
 from djangobmf.signals import activity_update
 # from djangobmf.utils.deprecation import RemovedInNextBMFVersionWarning
 
-from rest_framework.reverse import reverse
+# from rest_framework.reverse import reverse
 
 import copy
 # import datetime
@@ -82,7 +78,7 @@ class ModuleDetail(DetailView):
     template_name_suffix = '_bmfdetail'
 
     def get_template_names(self):
-        return super(ModuleView, self).get_template_names() \
+        return super(ModuleDetail, self).get_template_names() \
             + ["djangobmf/api/detail-default.html"]
 
 

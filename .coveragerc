@@ -5,3 +5,4 @@ omit=djangobmf/contrib/*/search_indexes.py,djangobmf/search_indexes.py
 
 [report]
 precision = 2
+fail_under = 80

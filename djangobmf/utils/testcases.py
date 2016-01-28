@@ -162,17 +162,6 @@ class ModuleTestFactory(SuperuserMixin, BaseTestCase):
                 response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
                 self.assertTrue(response.status_code in [200, 403])
 
-    def test_module_detail(self):
-        for model in self.models:
-            ns = model._bmfmeta.namespace_api
-
-            for obj in model.objects.all():
-                url = reverse('%s:detail' % ns, kwargs={
-                    'pk': obj.pk,
-                })
-                response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-                self.assertTrue(response.status_code in [200])
-
     def test_module_api_data(self):
         for model in self.models:
 
@@ -182,6 +171,18 @@ class ModuleTestFactory(SuperuserMixin, BaseTestCase):
             })
             response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
             self.assertEqual(response.status_code, 200)
+
+    def test_module_api_detail(self):
+        for model in self.models:
+
+            for obj in model.objects.all():
+                url = reverse('%s:api-detail' % settings.APP_LABEL, kwargs={
+                    'app': model._meta.app_label,
+                    'model': model._meta.model_name,
+                    'pk': obj.pk,
+                })
+                response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+                self.assertTrue(response.status_code in [200])
 
     def get_views(self):
         for model in self.models:
