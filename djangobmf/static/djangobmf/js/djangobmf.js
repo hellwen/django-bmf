@@ -1201,7 +1201,8 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                         related: [],
                     };
 
-                    var url = view.module.base + view.kwargs.pk  + '/';
+                    var url = ApiUrlFactory(view.module, 'detail', null, view.kwargs.pk);
+                    console.log(url);
                     $http.get(url).then(function(response) {
                         scope.ui.workflow = response.data.workflow;
                         scope.ui.views = response.data.views;

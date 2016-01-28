@@ -74,6 +74,7 @@ logger = logging.getLogger(__name__)
 
 class ModuleDetail(DetailView):
     model = None
+    object = None
     context_object_name = 'object'
     template_name_suffix = '_bmfdetail'
 

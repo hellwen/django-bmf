@@ -113,10 +113,6 @@ class APIIndex(BaseMixin, APIView):
                     ('model', model._meta.model_name),
                     ('ct', ct),
                     ('name', model._meta.verbose_name_plural),
-                    ('base', reverse('djangobmf:moduleapi_%s_%s:index' % (
-                        model._meta.app_label,
-                        model._meta.model_name,
-                    ))),
                     ('watch_function', model._bmfmeta.has_watchfunction),
                     ('data', reverse('djangobmf:api', request=request, format=format, kwargs={
                         'app': model._meta.app_label,

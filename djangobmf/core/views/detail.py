@@ -47,7 +47,7 @@ class View(BaseMixin, GenericAPIView):
 
         return Response(OrderedDict([
             ('object', serialized.data),
-            ('html', None),
+            ('html', ''),
             ('views', {
                 'update': reverse(
                     'djangobmf:moduleapi_%s_%s:update' % (
