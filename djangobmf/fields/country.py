@@ -19,8 +19,7 @@ class CountryField(models.CharField):
         'invalid_country': _('%(name)s is not a valid 3-char country code'),
     }
 
-    def __init__(self, choices=(), *args, **kwargs):
-        self.choices = choices
+    def __init__(self, *args, **kwargs):
         defaults = {
             'blank': False,
             'editable': True,
@@ -40,7 +39,7 @@ class CountryField(models.CharField):
 
     def formfield(self, **kwargs):
         defaults = {
-            'widget': CountrySelect(choices=self.choices),
+            'widget': CountrySelect(),
         }
         defaults.update(kwargs)
         return super(CountryField, self).formfield(**defaults)
