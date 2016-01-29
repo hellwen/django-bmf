@@ -345,20 +345,13 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                         related: [],
                     };
 
-                    var url = view.module.base + view.kwargs.pk  + '/';
+                    var url = ApiUrlFactory(view.module, 'detail', null, view.kwargs.pk);
                     $http.get(url).then(function(response) {
                         scope.ui.workflow = response.data.workflow;
                         scope.ui.views = response.data.views;
                         scope.ui.notifications = response.data.notifications;
                         scope.template_html = response.data.html
-
-                        if (response.data.views.activity.enabled) {
-                        //  var url = response.data.views.activity.url;
-                        //  console.log("OLDURL", url)
-                        //  $http.get(url).then(function(response) {
-                        //      scope.activities = response.data;
-                        //  });
-                        }
+                        $rootScope.bmfevent_objectdata(response.data.object);
                     });
                 }
 
@@ -449,7 +442,8 @@ bmfapp.directive('bmfTemplate', ['$compile', function($compile) {
 bmfapp.directive('bmfSiteRelated', [function() {
     return {
         restrict: 'C',
-        scope: {},
+        scope: {
+        },
         template: function(tElement, tAttrs) {
             return tElement.html();
         },
@@ -458,7 +452,9 @@ bmfapp.directive('bmfSiteRelated', [function() {
             $scope.scopename = "related";
 
             $scope.visible = false;
+            $scope.hidden_selector = undefined;
             $scope.parent_module = null;
+            $scope.parent_object = null;
             $scope.module = null;
             $scope.pk = null;
 
@@ -474,6 +470,12 @@ bmfapp.directive('bmfSiteRelated', [function() {
             function set_dataurl() {
                 var search = $location.search();
                 $scope.urlparam = search.open;
+                if (search.open) {
+                    $scope.hidden_selector = search.hidden;
+                }
+                else {
+                    $scope.hidden_selector = undefined;
+                }
 
                 if ($scope.urlparam) {
                     $scope.dataurl = ApiUrlFactory(
@@ -486,6 +488,10 @@ bmfapp.directive('bmfSiteRelated', [function() {
             }
 
             $scope.$watch(function(scope) {return scope.dataurl}, get_data);
+
+            $scope.$on(BMFEVENT_OBJECTDATA, function(event, data) {
+                $scope.parent_object = data;
+            });
 
             function get_data(url) {
                 clear_data();

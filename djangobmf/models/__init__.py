@@ -4,7 +4,6 @@
 from __future__ import unicode_literals
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import signals
 from django.dispatch import receiver
 
@@ -14,6 +13,7 @@ from djangobmf.signals import activity_update
 from djangobmf.signals import activity_addfile
 from djangobmf.signals import activity_workflow
 from djangobmf.tasks import djangobmf_user_watch
+from djangobmf.utils.serializers import DjangoBMFEncoder
 
 import json
 
@@ -131,7 +131,7 @@ def object_changed(sender, instance, **kwargs):
                 parent_ct=ContentType.objects.get_for_model(sender),
                 parent_id=instance.pk,
                 action=ACTION_UPDATED,
-                text=json.dumps(changes, cls=DjangoJSONEncoder),
+                text=json.dumps(changes, cls=DjangoBMFEncoder),
             )
             history.save()
 
@@ -147,7 +147,7 @@ def new_state(sender, instance, **kwargs):
             text=json.dumps({
                 'old': instance._bmfmeta.workflow.initial,
                 'new': instance._bmfmeta.workflow.key,
-            }, cls=DjangoJSONEncoder),
+            }, cls=DjangoBMFEncoder),
         )
         history.save()
 
@@ -164,7 +164,7 @@ def new_file(sender, instance, file, **kwargs):
                 'pk': file.pk,
                 'size': file.size,
                 'name': '%s' % file,
-            }, cls=DjangoJSONEncoder),
+            }, cls=DjangoBMFEncoder),
         )
         history.save()
 

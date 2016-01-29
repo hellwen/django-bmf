@@ -3,6 +3,10 @@
 *.pyc
 *-journal
 
+/djangobmf/static/djangobmf/js/bootstrap\.min\.js
+/djangobmf/static/djangobmf/js/djangobmf\.js
+/djangobmf/static/djangobmf/js/jquery\.cookie\.min\.js
+
 /\.tox
 /\.coverage*
 /coverage\.xml

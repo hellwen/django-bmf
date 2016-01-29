@@ -11,9 +11,9 @@ from django.utils.text import slugify
 
 from djangobmf.permissions import ModulePermission
 # from djangobmf.views import ModuleCloneView
-from djangobmf.views import ModuleDetailView
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
+from djangobmf.views import ModuleDetail
 from djangobmf.views import ModuleFormAPI
 # from djangobmf.views import ModuleReportView
 from djangobmf.views import ModuleUpdateView
@@ -53,10 +53,9 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
     """
     Object internally used to register modules
     """
-    detail = ModuleDetailView
+    detail = ModuleDetail
     create = ModuleCreateView
     delete = ModuleDeleteView
-    detail = ModuleDetailView
     update = ModuleUpdateView
     permissions = ModulePermission
 
@@ -71,11 +70,10 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
     def __init__(self):
         self.dashboards = []
         self.manager = {}
+        self.detail_view = self.detail.as_view(model=self.model)
 
-        self.detail_view = self.detail
         self.create_view = self.create
         self.delete_view = self.delete
-        self.detail_view = self.detail
         self.update_view = self.update
 
     def list_reports(self):
@@ -140,23 +138,6 @@ class Module(six.with_metaclass(ModuleMetaclass, object)):
 
         urlpatterns = patterns(
             '',
-            # TODO: Replace me with dummy view
-            url(
-                r'^$',
-                self.detail.as_view(
-                    module=self,
-                    model=self.model
-                ),
-                name='index',
-            ),
-            url(
-                r'^(?P<pk>[0-9]+)/$',
-                self.detail.as_view(
-                    module=self,
-                    model=self.model
-                ),
-                name='detail',
-            ),
             url(
                 r'^update/(?P<pk>[0-9]+)/$',
                 self.update.as_view(

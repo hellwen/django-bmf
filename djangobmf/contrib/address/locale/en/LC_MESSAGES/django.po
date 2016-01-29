@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-08 10:28+0100\n"
+"POT-Creation-Date: 2016-01-29 02:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,64 +21,68 @@ msgstr ""
 msgid "All Addresses"
 msgstr ""
 
-#: categories.py:13 models.py:29
+#: categories.py:13 models.py:30
 #: templates/djangobmf_address/address_bmflist.html:5
 msgid "Address"
 msgstr ""
 
-#: models.py:22
+#: models.py:23
 msgid "Is active"
 msgstr ""
 
-#: models.py:23
+#: models.py:24
 msgid "Is billing"
 msgstr ""
 
-#: models.py:24
+#: models.py:25
 msgid "Is shipping"
 msgstr ""
 
-#: models.py:25
+#: models.py:26
 msgid "Default billing"
 msgstr ""
 
-#: models.py:26
+#: models.py:27
 msgid "Default shipping"
 msgstr ""
 
-#: models.py:30
+#: models.py:31
 msgid "Addresses"
 msgstr ""
 
-#: models.py:48
+#: models.py:49
 msgid "Name"
 msgstr ""
 
-#: models.py:49
+#: models.py:50
 msgid "Name2"
 msgstr ""
 
-#: models.py:50
+#: models.py:51
 msgid "Street"
 msgstr ""
 
-#: models.py:51
+#: models.py:52
 msgid "Zipcode"
 msgstr ""
 
-#: models.py:52
+#: models.py:53
 msgid "City"
 msgstr ""
 
-#: models.py:53
+#: models.py:54
 msgid "State"
 msgstr ""
 
-#: models.py:54
+#: models.py:56
+msgid "Country OLD"
+msgstr ""
+
+#: models.py:59
 msgid "Country"
 msgstr ""
 
-#: models.py:65
+#: models.py:70
 #, python-format
 msgid ""
 "%(name)s %(name2)s\n"
@@ -86,14 +90,25 @@ msgid ""
 "%(city)s, %(state)s, %(zip)s, %(country)s"
 msgstr ""
 
-#: templates/djangobmf_address/address_bmflist.html:6
-msgid "Customer"
+#: templates/djangobmf_address/address_bmfdetail.html:11
+msgid "Active"
 msgstr ""
 
+#: templates/djangobmf_address/address_bmfdetail.html:12
 #: templates/djangobmf_address/address_bmflist.html:7
 msgid "Billing"
 msgstr ""
 
+#: templates/djangobmf_address/address_bmfdetail.html:12
+#: templates/djangobmf_address/address_bmfdetail.html:13
+msgid "default"
+msgstr ""
+
+#: templates/djangobmf_address/address_bmfdetail.html:13
 #: templates/djangobmf_address/address_bmflist.html:8
 msgid "Shipping"
+msgstr ""
+
+#: templates/djangobmf_address/address_bmflist.html:6
+msgid "Customer"
 msgstr ""

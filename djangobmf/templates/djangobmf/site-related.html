@@ -1,6 +1,6 @@
 {% load djangobmf_angularjs %}{% spaceless %}
 <div ng-if="parent_module.relations.length>0">
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs" ng-if="parent_module.relations.length>1 || !hidden_selector">
         <li ng-repeat="d in parent_module.relations | orderBy:'name'" ng-class="d.slug==urlparam ? 'active' : ''" role="presentation">
             <a ng-click="open(d.slug)" href="#">{% ng "d.name" %}</a>
         </li>

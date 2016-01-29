@@ -1,0 +1,16 @@
+{% load i18n %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{ object.name }}</h3>
+  </div>
+  <div class="panel-body">
+      {{ object.as_report | linebreaks }}
+  </div>
+  <div class="panel-footer">
+      <ul>
+          <li>{% trans "Active" %}: {{ object.is_active | yesno }}</li>
+          <li>{% trans "Billing" %}: {{ object.is_billing | yesno }} {% if object.default_billing %}({% trans "default" %}){% endif %}</li>
+          <li>{% trans "Shipping" %}: {{ object.is_shipping | yesno }} {% if object.default_shipping %}({% trans "default" %}){% endif %}</li>
+      </ul>
+  </div>
+</div>

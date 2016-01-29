@@ -22,6 +22,12 @@ class ModuleSerializer(ModelSerializer):
         return names
 
 
+class CountryField(CharField):
+    def to_representation(self, value):
+        return value.alpha3
+ModuleSerializer.serializer_field_mapping[fields.CountryField] = CountryField
+
+
 class MoneyField(DecimalField):
     def to_representation(self, value):
         return value.value

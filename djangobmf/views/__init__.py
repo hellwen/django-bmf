@@ -8,7 +8,7 @@ from django.views.generic import TemplateView
 from .module import ModuleCloneView
 from .module import ModuleCreateView
 from .module import ModuleDeleteView
-from .module import ModuleDetailView
+from .module import ModuleDetail
 from .module import ModuleFormAPI
 from .module import ModuleReportView
 from .module import ModuleUpdateView
@@ -22,7 +22,7 @@ __all__ = (
     'ModuleCloneView',
     'ModuleCreateView',
     'ModuleDeleteView',
-    'ModuleDetailView',
+    'ModuleDetail',
     'ModuleFormAPI',
     'ModuleReportView',
     'ModuleUpdateView',

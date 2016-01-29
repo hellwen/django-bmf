@@ -12,8 +12,9 @@ from djangobmf.conf import settings
 from djangobmf.currency import BaseCurrency
 
 # from .configobj import ConfigField
-from .models.file import FileField
-from .workflow import WorkflowField
+from djangobmf.fields.country import CountryField
+from djangobmf.fields.models.file import FileField
+from djangobmf.fields.workflow import WorkflowField
 
 import logging
 logger = logging.getLogger(__name__)
@@ -22,32 +23,12 @@ logger = logging.getLogger(__name__)
 __all__ = [
     'OLDWorkflowField',
     'ConfigField',
+    'CountryField',
     'WorkflowField',
     'CurrencyField',
     'MoneyField',
     'FileField',
 ]
-
-
-class OLDWorkflowField(with_metaclass(django_models.SubfieldBase, django_models.CharField)):
-    """
-    OLD DONT USE
-    """
-    description = "Workflow field"
-
-    def __init__(self, **kwargs):
-        # TODO ADD REMOVAL WARNING
-        defaults = {
-            'max_length': 32,  # max length
-            'db_index': True,
-        }
-        defaults.update(kwargs)
-        defaults.update({
-            'null': True,
-            'blank': True,
-            'editable': False,
-        })
-        super(OLDWorkflowField, self).__init__(**defaults)
 
 
 # Currency and Money
@@ -187,3 +168,24 @@ class MoneyField(django_models.DecimalField):
         if isinstance(value, BaseCurrency):
             value = value.value
         return super(MoneyField, self).get_db_prep_save(value, *args, **kwargs)
+
+
+class OLDWorkflowField(with_metaclass(django_models.SubfieldBase, django_models.CharField)):
+    """
+    OLD DONT USE ITS GOING TO BE REMOVED, WITH DJANGOBMF 0.0.3 or 0.0.4
+    """
+    description = "Workflow field"
+
+    def __init__(self, **kwargs):
+        # TODO ADD REMOVAL WARNING
+        defaults = {
+            'max_length': 32,  # max length
+            'db_index': True,
+        }
+        defaults.update(kwargs)
+        defaults.update({
+            'null': True,
+            'blank': True,
+            'editable': False,
+        })
+        super(OLDWorkflowField, self).__init__(**defaults)

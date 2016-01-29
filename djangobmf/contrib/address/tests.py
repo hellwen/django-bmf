@@ -31,7 +31,7 @@ class AddressModuleTests(ModuleMixin, DemoDataMixin, TestCase):
             'zip': '24342',
             'city': 'city',
             'state': 'state',
-            'country': 'country',
+            'country': 'DEU',
             'is_active': '1',
         })
         self.assertNotEqual(data["object_pk"], 0)

@@ -4,7 +4,6 @@
         <tr>
             <th width="60%">{% trans "Name" %}</th>
             <th width="40%">{% trans "Customer" %}</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -16,11 +15,6 @@
                 <span>&nbsp;<a bmf-detail="{{ obj.pk }}" href="#">{{ obj.name }}</a></span>
             </td>
             <td>{{ obj.customer_name }}</td>
-            <td class="text-right">
-            <a class="btn btn-xs btn-bmfdetail" href="{{ obj.bmfdetail }}">
-                <span class="glyphicon glyphicon-list"></span>
-            </a>
-        </td>
       </tr>
     {% endverbatim %}
     </tbody>

@@ -126,6 +126,7 @@ class BaseMixin(object):
         """
         return self.request.session.get("djangobmf", {
             'version': get_version(),
+            'debugjs': bmfsettings.DEBUG_JS,
         })
 
     def _write_session_data(self, data):

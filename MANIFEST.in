@@ -1,5 +1,11 @@
 include README.rst
 include LICENSE
+
 recursive-include djangobmf/ *
+
+exclude djangobmf/static/djangobmf/js/bootstrap.min.js
+exclude djangobmf/static/djangobmf/js/djangobmf.js
+exclude djangobmf/static/djangobmf/js/jquery.cookie.min.js
+
 recursive-exclude * *.py[co]
 recursive-exclude * __pycache__

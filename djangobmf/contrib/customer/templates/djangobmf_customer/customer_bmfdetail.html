@@ -1,0 +1,39 @@
+{% load i18n djangobmf_markup %}
+<h1>
+{% if object.is_company %}
+<span class="glyphicon glyphicon-home"></span>
+{% else %}
+<span class="glyphicon glyphicon-user"></span>
+{% endif %}
+{{ object.name }}
+{% if object.number %}<small>{{ object.number }}</small>{% endif %}
+</h1>
+
+<ol class="breadcrumb">
+  <li>{% if object.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</li>
+  {% if object.is_customer %}<li>{% trans "Customer" %}</li>{% endif %}
+  {% if object.is_supplier %}<li>{% trans "Supplier" %}</li>{% endif %}
+</ol>
+
+<ul>
+    <li>user: {{ object.user }}</li>
+    <li>project: {{ object.project }}</li>
+    <li>employee at: {{ object.employee_at }}</li>
+    <li>asset: {{ object.asset_account }}</li>
+    <li>liability: {{ object.liability_account }}</li>
+    <li>name2: {{ object.name2 }}</li>
+    <li>job_position: {{ object.job_position }}</li>
+    <li>title: {{ object.title }}</li>
+    <li>office: {{ object.phone_office }}</li>
+    <li>private: {{ object.phone_private }}</li>
+    <li>mobile: {{ object.phone_mobile }}</li>
+    <li>email: {{ object.email }}</li>
+    <li>fax: {{ object.fax }}</li>
+    <li>website: {{ object.website }}</li>
+</ul>
+
+{% if object.notes %}
+<div class="panel panel-default">
+  <div class="panel-body">{{ object.notes|bmfmarkup }}</div>
+</div>
+{% endif %}

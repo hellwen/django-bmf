@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-08 10:28+0100\n"
+"POT-Creation-Date: 2016-01-29 02:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,11 +22,13 @@ msgid "Company"
 msgstr ""
 
 #: bmf_module.py:25 bmf_module.py:33 categories.py:13 models.py:75
+#: templates/djangobmf_customer/customer_bmfdetail.html:14
 #: templates/djangobmf_customer/customer_bmflist.html:7
 msgid "Customer"
 msgstr ""
 
-#: bmf_module.py:46 templates/djangobmf_customer/customer_bmflist.html:8
+#: bmf_module.py:46 templates/djangobmf_customer/customer_bmfdetail.html:15
+#: templates/djangobmf_customer/customer_bmflist.html:8
 msgid "Supplier"
 msgstr ""
 
@@ -114,6 +116,14 @@ msgstr ""
 
 #: models.py:128
 msgid "Notes"
+msgstr ""
+
+#: templates/djangobmf_customer/customer_bmfdetail.html:13
+msgid "Active"
+msgstr ""
+
+#: templates/djangobmf_customer/customer_bmfdetail.html:13
+msgid "Inactive"
 msgstr ""
 
 #: templates/djangobmf_customer/customer_bmflist.html:6

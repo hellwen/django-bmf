@@ -16,8 +16,8 @@ from .models import Task
 from .models import Goal
 # from .permissions import GoalPermission
 # from .permissions import TaskPermission
-from .views import GoalCloneView
 from .views import GoalDetailView
+from .views import GoalCloneView
 
 
 @register
@@ -41,6 +41,7 @@ class ProjectTaskRelationship(Relationship):
     field = "task_set"
     model = "djangobmf_project.Project"
     settings = "BMF_CONTRIB_PROJECT"
+    template = "djangobmf_task/task_related_project.html"
 
     def filter_queryset(self, request, queryset, view):
         return queryset.filter(
@@ -55,6 +56,7 @@ class ProjectGoalRelationship(Relationship):
     field = "goal_set"
     model = "djangobmf_project.Project"
     settings = "BMF_CONTRIB_PROJECT"
+    template = "djangobmf_task/goal_related_project.html"
 
     def filter_queryset(self, request, queryset, view):
         return queryset.filter(
@@ -69,6 +71,7 @@ class GoalTasksRelationship(Relationship):
     field = "task_set"
     model = "djangobmf_task.Goal"
     settings = "BMF_CONTRIB_GOAL"
+    template = "djangobmf_task/task_related_goal.html"
 
 
 @register(category=GoalCategory)
@@ -160,3 +163,6 @@ class ArchiveTasks(ViewMixin):
     model = Task
     slug = 'archive'
     name = _("Archive")
+
+    def filter_queryset(self, request, queryset, view):
+        return queryset.order_by('-modified')
