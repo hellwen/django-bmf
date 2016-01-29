@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.forms.widgets import Select
+from django.utils.encoding import force_text
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.six import text_type
 from django.utils.translation import get_language
@@ -91,4 +92,7 @@ class CountrySelect(Select):
             for country in pycountry.countries:
                 data.append((country.alpha3, gettext(country.name)))
 
-        self.choices = list(sorted(data, key=lambda x: unicodedata.normalize('NFKD', x[1])))
+        self.choices = list(sorted(
+            data,
+            key=lambda x: unicodedata.normalize('NFKD', force_text(x[1]))
+        ))
