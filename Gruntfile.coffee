@@ -14,7 +14,7 @@ module.exports = (grunt) ->
         files: [
           {
               expand: true
-              cwd: 'bower_components/bootstrap/fonts'
+              cwd: 'node_modules/bootstrap/fonts'
               src: ['glyphicons*']
               dest: 'djangobmf/static/djangobmf/fonts/'
           },
@@ -23,7 +23,7 @@ module.exports = (grunt) ->
         files: [
           {
               expand: true
-              cwd: 'bower_components'
+              cwd: 'node_modules'
               src: [
                 'jquery/dist/jquery.min.js',
                 'jquery/dist/jquery.min.map',
@@ -50,7 +50,7 @@ module.exports = (grunt) ->
       djangobmf:
         src: [
             'bower_components/jquery-cookie/jquery.cookie.js',
-            'bower_components/bootstrap/dist/js/bootstrap.js',
+            'node_modules/bootstrap/dist/js/bootstrap.js',
             'djangobmf/static/djangobmf/js/djangobmf.js',
         ]
         dest: 'djangobmf/static/djangobmf/js/djangobmf.min.js'
