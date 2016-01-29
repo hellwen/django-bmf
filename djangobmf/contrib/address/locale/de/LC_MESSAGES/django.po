@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-08 10:28+0100\n"
-"PO-Revision-Date: 2016-01-08 09:34+0000\n"
+"POT-Creation-Date: 2016-01-29 02:30+0100\n"
+"PO-Revision-Date: 2016-01-29 01:32+0000\n"
 "Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
 "Language-Team: German (http://www.transifex.com/django-bmf/django-bmf/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -22,64 +22,68 @@ msgstr ""
 msgid "All Addresses"
 msgstr ""
 
-#: categories.py:13 models.py:29
+#: categories.py:13 models.py:30
 #: templates/djangobmf_address/address_bmflist.html:5
 msgid "Address"
 msgstr "Adress"
 
-#: models.py:22
+#: models.py:23
 msgid "Is active"
 msgstr "Ist aktiv"
 
-#: models.py:23
+#: models.py:24
 msgid "Is billing"
 msgstr ""
 
-#: models.py:24
+#: models.py:25
 msgid "Is shipping"
 msgstr ""
 
-#: models.py:25
+#: models.py:26
 msgid "Default billing"
 msgstr ""
 
-#: models.py:26
+#: models.py:27
 msgid "Default shipping"
 msgstr ""
 
-#: models.py:30
+#: models.py:31
 msgid "Addresses"
 msgstr "Adressen"
 
-#: models.py:48
+#: models.py:49
 msgid "Name"
 msgstr "Name"
 
-#: models.py:49
+#: models.py:50
 msgid "Name2"
 msgstr "Name2"
 
-#: models.py:50
+#: models.py:51
 msgid "Street"
 msgstr "Straße"
 
-#: models.py:51
+#: models.py:52
 msgid "Zipcode"
 msgstr "Postleitzahl"
 
-#: models.py:52
+#: models.py:53
 msgid "City"
 msgstr "Stadt"
 
-#: models.py:53
+#: models.py:54
 msgid "State"
 msgstr "Bundesland"
 
-#: models.py:54
+#: models.py:56
+msgid "Country OLD"
+msgstr ""
+
+#: models.py:59
 msgid "Country"
 msgstr "Land"
 
-#: models.py:65
+#: models.py:70
 #, python-format
 msgid ""
 "%(name)s %(name2)s\n"
@@ -87,14 +91,25 @@ msgid ""
 "%(city)s, %(state)s, %(zip)s, %(country)s"
 msgstr ""
 
-#: templates/djangobmf_address/address_bmflist.html:6
-msgid "Customer"
+#: templates/djangobmf_address/address_bmfdetail.html:11
+msgid "Active"
 msgstr ""
 
+#: templates/djangobmf_address/address_bmfdetail.html:12
 #: templates/djangobmf_address/address_bmflist.html:7
 msgid "Billing"
 msgstr ""
 
+#: templates/djangobmf_address/address_bmfdetail.html:12
+#: templates/djangobmf_address/address_bmfdetail.html:13
+msgid "default"
+msgstr ""
+
+#: templates/djangobmf_address/address_bmfdetail.html:13
 #: templates/djangobmf_address/address_bmflist.html:8
 msgid "Shipping"
+msgstr ""
+
+#: templates/djangobmf_address/address_bmflist.html:6
+msgid "Customer"
 msgstr ""

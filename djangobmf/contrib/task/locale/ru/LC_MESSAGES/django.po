@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-08 10:28+0100\n"
-"PO-Revision-Date: 2016-01-08 09:35+0000\n"
+"POT-Creation-Date: 2016-01-29 02:30+0100\n"
+"PO-Revision-Date: 2016-01-29 01:32+0000\n"
 "Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
 "Language-Team: Russian (http://www.transifex.com/django-bmf/django-bmf/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -22,39 +22,39 @@ msgstr ""
 msgid "Open Tasks"
 msgstr ""
 
-#: bmf_module.py:53
+#: bmf_module.py:54
 msgid "Active Goals"
 msgstr ""
 
-#: bmf_module.py:67 categories.py:19 models.py:176
+#: bmf_module.py:69 categories.py:19 models.py:176
 msgid "Tasks"
 msgstr "Задачи"
 
-#: bmf_module.py:78
+#: bmf_module.py:81
 msgid "My goals"
 msgstr "Мои цели"
 
-#: bmf_module.py:91
+#: bmf_module.py:94
 msgid "Active goals"
 msgstr "Активные цели"
 
-#: bmf_module.py:103 bmf_module.py:162
+#: bmf_module.py:106 bmf_module.py:165
 msgid "Archive"
 msgstr "Архив"
 
-#: bmf_module.py:110
+#: bmf_module.py:113
 msgid "My tasks"
 msgstr "Мои задачи"
 
-#: bmf_module.py:123
+#: bmf_module.py:126
 msgid "Todolist"
 msgstr "Список задач"
 
-#: bmf_module.py:137
+#: bmf_module.py:140
 msgid "Availalbe tasks"
 msgstr "Доступные задачи"
 
-#: bmf_module.py:150 templates/djangobmf_task/goal_bmfdetail.html:21
+#: bmf_module.py:153
 msgid "Open tasks"
 msgstr "Открытые задачи"
 
@@ -115,35 +115,20 @@ msgid "Name"
 msgstr "Имя"
 
 #: templates/djangobmf_task/task_bmflist.html:6
-#: templates/djangobmf_task/task_inctable.html:6
 msgid "Employee"
 msgstr "Сотрудник"
 
 #: templates/djangobmf_task/task_bmflist.html:7
-#: templates/djangobmf_task/task_inctable.html:7
 msgid "State"
 msgstr "Статус"
 
-#: templates/djangobmf_task/task_bmflist.html:44
-#: templates/djangobmf_task/task_inctable.html:45
+#: templates/djangobmf_task/task_bmflist.html:29
 msgid "None"
 msgstr "Пусто"
 
-#: templates/djangobmf_task/task_inctable.html:35
-msgid "review"
-msgstr "обзор"
-
-#: templates/djangobmf_task/task_inctable.html:36
-msgid "started"
-msgstr "начато"
-
-#: templates/djangobmf_task/task_inctable.html:37
-msgid "hold"
-msgstr "заморожено"
-
-#: templates/djangobmf_task/task_inctable.html:38
-msgid "todo"
-msgstr "требуется выполнить"
+#: templates/djangobmf_task/task_bmflist.html:30
+msgid "Due"
+msgstr ""
 
 #: workflows.py:22 workflows.py:64
 msgid "Open"
