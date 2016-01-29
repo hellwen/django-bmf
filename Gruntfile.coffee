@@ -45,11 +45,11 @@ module.exports = (grunt) ->
         mangle: true
         preserveComments: /^!|@preserve|@license|@cc_on/i
       jquerycookie:
-        src: ['bower_components/jquery-cookie/jquery.cookie.js']
+        src: ['node_modules/jquery.cookie/jquery.cookie.js']
         dest: 'djangobmf/static/djangobmf/js/jquery.cookie.min.js'
       djangobmf:
         src: [
-            'bower_components/jquery-cookie/jquery.cookie.js',
+            'node_modules/jquery.cookie/jquery.cookie.js',
             'node_modules/bootstrap/dist/js/bootstrap.js',
             'djangobmf/static/djangobmf/js/djangobmf.js',
         ]

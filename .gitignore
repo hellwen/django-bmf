@@ -15,7 +15,6 @@
 /dist
 /static
 /reports
-/bower_components
 /node_modules
 /static_files/build
 /htmlcov
