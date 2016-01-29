@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # ex:set fileencoding=utf-8:
-# flake8: noqa
 
 from __future__ import unicode_literals
 
@@ -61,7 +60,7 @@ class CountryContainerTests(TestCase):
 
     def test_len(self):
         self.assertEqual(len(self.container), 3)
- 
+
 
 @override_settings(USE_I18N=True, LANGUAGE_CODE="de")
 class CountrySelectTests(TestCase):
