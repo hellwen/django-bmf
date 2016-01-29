@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-08 10:28+0100\n"
-"PO-Revision-Date: 2016-01-08 10:59+0000\n"
+"POT-Creation-Date: 2016-01-29 02:30+0100\n"
+"PO-Revision-Date: 2016-01-29 01:32+0000\n"
 "Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
 "Language-Team: Polish (Poland) (http://www.transifex.com/django-bmf/django-bmf/language/pl_PL/)\n"
 "MIME-Version: 1.0\n"
@@ -21,39 +21,39 @@ msgstr ""
 msgid "Open Tasks"
 msgstr ""
 
-#: bmf_module.py:53
+#: bmf_module.py:54
 msgid "Active Goals"
 msgstr ""
 
-#: bmf_module.py:67 categories.py:19 models.py:176
+#: bmf_module.py:69 categories.py:19 models.py:176
 msgid "Tasks"
 msgstr ""
 
-#: bmf_module.py:78
+#: bmf_module.py:81
 msgid "My goals"
 msgstr ""
 
-#: bmf_module.py:91
+#: bmf_module.py:94
 msgid "Active goals"
 msgstr ""
 
-#: bmf_module.py:103 bmf_module.py:162
+#: bmf_module.py:106 bmf_module.py:165
 msgid "Archive"
 msgstr ""
 
-#: bmf_module.py:110
+#: bmf_module.py:113
 msgid "My tasks"
 msgstr ""
 
-#: bmf_module.py:123
+#: bmf_module.py:126
 msgid "Todolist"
 msgstr ""
 
-#: bmf_module.py:137
+#: bmf_module.py:140
 msgid "Availalbe tasks"
 msgstr ""
 
-#: bmf_module.py:150 templates/djangobmf_task/goal_bmfdetail.html:21
+#: bmf_module.py:153
 msgid "Open tasks"
 msgstr ""
 
@@ -114,34 +114,19 @@ msgid "Name"
 msgstr "Nazwa"
 
 #: templates/djangobmf_task/task_bmflist.html:6
-#: templates/djangobmf_task/task_inctable.html:6
 msgid "Employee"
 msgstr ""
 
 #: templates/djangobmf_task/task_bmflist.html:7
-#: templates/djangobmf_task/task_inctable.html:7
 msgid "State"
 msgstr "Stan"
 
-#: templates/djangobmf_task/task_bmflist.html:44
-#: templates/djangobmf_task/task_inctable.html:45
+#: templates/djangobmf_task/task_bmflist.html:29
 msgid "None"
 msgstr ""
 
-#: templates/djangobmf_task/task_inctable.html:35
-msgid "review"
-msgstr ""
-
-#: templates/djangobmf_task/task_inctable.html:36
-msgid "started"
-msgstr ""
-
-#: templates/djangobmf_task/task_inctable.html:37
-msgid "hold"
-msgstr ""
-
-#: templates/djangobmf_task/task_inctable.html:38
-msgid "todo"
+#: templates/djangobmf_task/task_bmflist.html:30
+msgid "Due"
 msgstr ""
 
 #: workflows.py:22 workflows.py:64
