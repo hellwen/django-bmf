@@ -212,7 +212,6 @@ bmfapp.factory('ViewUrlconf', ['$rootScope', 'ViewFromUrl', 'ModuleFromCt', 'Mod
         // fire events (with updated breadcrumbs)
         if (view) $rootScope.bmfevent_dashboard(kwargs.dashboard);
         $rootScope.bmfevent_object(module || null, kwargs.pk || null);
-
         return true
     }
 }]);

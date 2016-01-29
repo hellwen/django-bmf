@@ -1,0 +1,14 @@
+{% extends "djangobmf_task/goal_bmflist.html" %}
+{% load i18n djangobmf_angularjs %}
+
+{% block related_tfoot %}{% spaceless %}
+<tfoot ng-if="scopename=='related'">
+    <tr>
+        <td colspan="3" class="text-right">
+            <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_task_goal:create" "default" %}?data[project]={% ng "parent_object.pk" %}">
+                <span class="glyphicon glyphicon-plus"></span>
+            </a>
+        </td>
+    </tr>
+</tfoot>
+{% endspaceless %}{% endblock %}

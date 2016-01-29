@@ -9,22 +9,6 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     /**
      * @description
      *
-     * This scope stores the base url to the API (needed for lookups)
-     *
-     */
-    $rootScope.bmf_api_base = angular.element.find('body')[0].dataset.api;
-
-    /**
-     * @description
-     *
-     * This scope stores the base url to the APP (needed for lookups)
-     *
-     */
-    $rootScope.bmf_app_base = angular.element.find('body')[0].dataset.app;
-
-    /**
-     * @description
-     *
      * This scope stores the currently active module
      *
      */
@@ -144,6 +128,10 @@ bmfapp.controller('FrameworkCtrl', ['$http', '$rootScope', '$scope', '$window', 
     }
     $rootScope.bmfevent_object = function(module, pk) {
         $rootScope.$broadcast(BMFEVENT_OBJECT, module, pk);
+    }
+    $rootScope.bmfevent_objectdata = function(data) {
+        $log.debug(BMFEVENT_OBJECTDATA, data)
+        $rootScope.$broadcast(BMFEVENT_OBJECTDATA, data);
     }
 
     $rootScope.bmfevent_sidebar = function(dashboard_key) {

@@ -7,16 +7,6 @@
             <th width="15%">{% trans "State" %}</th>
         </tr>
     </thead>
-    <tfoot ng-if="scopename=='related'">
-      <tr>
-        <td colspan="3" class="text-right">
-            <!--a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_task_task:create" "default" %}?data[goal]={{ object.pk }}&amp;data[project]={{ object.project_id|default:"" }}"-->
-            <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_task_task:create" "default" %}">
-            <span class="glyphicon glyphicon-plus"></span>
-          </a>
-        </td>
-      </tr>
-    </tfoot>
     <tbody>
         <tr ng-repeat="obj in data" ng-class="obj.state == 'cancelled' || obj.state == 'finished' ? 'text-muted' : ''">
             <td>
@@ -43,5 +33,16 @@
             </td>
         </tr>
     </tbody>
+    {% block related_tfoot %}
+    <tfoot ng-if="scopename=='related'">
+      <tr>
+        <td colspan="3" class="text-right">
+          <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_task_task:create" "default" %}">
+            <span class="glyphicon glyphicon-plus"></span>
+          </a>
+        </td>
+      </tr>
+    </tfoot>
+    {% endblock %}
 </table>
 {% endspaceless %}

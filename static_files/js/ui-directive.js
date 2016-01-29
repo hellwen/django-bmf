@@ -351,14 +351,7 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                         scope.ui.views = response.data.views;
                         scope.ui.notifications = response.data.notifications;
                         scope.template_html = response.data.html
-
-                        if (response.data.views.activity.enabled) {
-                        //  var url = response.data.views.activity.url;
-                        //  console.log("OLDURL", url)
-                        //  $http.get(url).then(function(response) {
-                        //      scope.activities = response.data;
-                        //  });
-                        }
+                        $rootScope.bmfevent_objectdata(response.data.object);
                     });
                 }
 
@@ -461,6 +454,7 @@ bmfapp.directive('bmfSiteRelated', [function() {
             $scope.visible = false;
             $scope.hidden_selector = undefined;
             $scope.parent_module = null;
+            $scope.parent_object = null;
             $scope.module = null;
             $scope.pk = null;
 
@@ -494,6 +488,10 @@ bmfapp.directive('bmfSiteRelated', [function() {
             }
 
             $scope.$watch(function(scope) {return scope.dataurl}, get_data);
+
+            $scope.$on(BMFEVENT_OBJECTDATA, function(event, data) {
+                $scope.parent_object = data;
+            });
 
             function get_data(url) {
                 clear_data();

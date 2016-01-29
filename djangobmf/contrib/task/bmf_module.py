@@ -41,6 +41,7 @@ class ProjectTaskRelationship(Relationship):
     field = "task_set"
     model = "djangobmf_project.Project"
     settings = "BMF_CONTRIB_PROJECT"
+    template = "djangobmf_task/task_related_project.html"
 
     def filter_queryset(self, request, queryset, view):
         return queryset.filter(
@@ -55,6 +56,7 @@ class ProjectGoalRelationship(Relationship):
     field = "goal_set"
     model = "djangobmf_project.Project"
     settings = "BMF_CONTRIB_PROJECT"
+    template = "djangobmf_task/goal_related_project.html"
 
     def filter_queryset(self, request, queryset, view):
         return queryset.filter(
@@ -69,6 +71,7 @@ class GoalTasksRelationship(Relationship):
     field = "task_set"
     model = "djangobmf_task.Goal"
     settings = "BMF_CONTRIB_GOAL"
+    template = "djangobmf_task/task_related_goal.html"
 
 
 @register(category=GoalCategory)
