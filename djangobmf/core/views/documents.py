@@ -35,11 +35,14 @@ class View(BaseMixin, ViewSet):
             return self.object
 
         try:
-            self.object = self.get_queryset().get(pk=1)
+            self.object = self.get_queryset().get(pk=pk)
         except self.get_queryset().model.DoesNotExist:
             raise Http404
 
-        self.related_object = self.object.content_object
+        # using the content_object indirectly ensures the filter-option
+        # used to embed permissions for objects
+        self.related_object = self.get_bmfobject(self.object.content_object.pk)
+
         return self.object
 
     def list(self, request, app=None, model=None, pk=None):
@@ -60,6 +63,16 @@ class View(BaseMixin, ViewSet):
                 is_static=True,
             )
         return Response(queryset.objects.values_list('pk', flat=True))
+
+    def list_customer(self, request):
+        """
+        """
+        pass
+
+    def list_project(self, request):
+        """
+        """
+        pass
 
     def create(self, request, app=None, model=None, pk=None):
         """
