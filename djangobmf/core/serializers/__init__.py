@@ -7,6 +7,7 @@ from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.models import Activity
+from djangobmf.models import Document
 from djangobmf.models import Notification
 from djangobmf.models.activity import ACTION_COMMENT
 from djangobmf.models.activity import ACTION_UPDATED
@@ -86,6 +87,17 @@ class ActivitySerializer(ModelSerializer):
         if obj.action == ACTION_COMMENT:
             return 'comment'
         return None
+
+
+class DocumentsSerializer(ModelSerializer):
+
+    class Meta:
+        model = Document
+        fields = [
+            'name', 'mimetype', 'desciption', 'file',
+            'size', 'sha1', 'is_static', 'modified',
+            'created',
+        ]
 
 
 class NotificationViewSerializer(ModelSerializer):

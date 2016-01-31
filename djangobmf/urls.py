@@ -19,6 +19,7 @@ from django.views.decorators.http import last_modified
 from djangobmf import get_version
 from djangobmf.core.views.activity import View as APIActivityListView
 from djangobmf.core.views.detail import View as APIDetailView
+from djangobmf.core.views.documents import View as APIDocumentsView
 from djangobmf.core.views.related import View as APIRelatedView
 from djangobmf.sites import site
 from djangobmf.views import Index
@@ -182,6 +183,41 @@ urlpatterns = patterns(
             )
         ),
         name="api-view",
+    ),
+    url(
+        r'^api/documents/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        never_cache(
+            APIDocumentsView.as_view({'get': 'list', 'post': 'create'})
+        ),
+        name="api-documents",
+    ),
+    url(
+        r'^api/documents/$',
+        never_cache(
+            APIDocumentsView.as_view({'get': 'list', 'post': 'create'})
+        ),
+        name="api-documents",
+    ),
+    url(
+        r'^api/documents/(?P<pk>[0-9]+)/$',
+        never_cache(
+            APIDocumentsView.as_view({
+                'get': 'detail',
+                'post': 'update',
+                'put': 'update_file',
+                'delete': 'destroy',
+            })
+        ),
+        name="api-documents",
+    ),
+    url(
+        r'^api/documents/(?P<pk>[0-9]+)/download/$',
+        never_cache(
+            APIDocumentsView.as_view({
+                'get': 'download',
+            })
+        ),
+        name="api-document-download",
     ),
 
     # --- Configuration
