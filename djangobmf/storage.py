@@ -10,13 +10,13 @@ from django.utils.module_loading import import_string
 from djangobmf.conf import settings
 
 
-class BMFStorage(FileSystemStorage):
+class Storage(FileSystemStorage):
     def __init__(self):
 
         assert settings.DOCUMENT_ROOT, "django BMF module needs a setting BMF_DOCUMENT_ROOT"
         assert settings.DOCUMENT_URL, "django BMF module needs a setting BMF_DOCUMENT_URL"
 
-        super(BMFStorage, self).__init__(
+        super(Storage, self).__init__(
             location=settings.DOCUMENT_ROOT,
             base_url=settings.DOCUMENT_URL,
             file_permissions_mode=settings.DOCUMENT_PERMISSIONS_FILE,
@@ -28,7 +28,7 @@ class BMFStorage(FileSystemStorage):
             if self.exists(name):
                 self.delete(name)
             return name
-        return super(BMFStorage, self).get_available_name(name)
+        return super(Storage, self).get_available_name(name)
 
 
 class DefaultStorage(LazyObject):

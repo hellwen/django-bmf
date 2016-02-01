@@ -35,6 +35,7 @@ class Document(models.Model):
         blank=True,
         related_name="documents",
         on_delete=models.SET_NULL,
+        editable=False,
     )
 
     project = models.ForeignKey(
@@ -43,6 +44,7 @@ class Document(models.Model):
         blank=True,
         related_name="documents",
         on_delete=models.SET_NULL,
+        editable=False,
     )
 
     content_type = models.ForeignKey(

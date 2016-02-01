@@ -89,7 +89,7 @@ class View(BaseMixin, ViewSet):
 
         queryset = self.filter_queryset(queryset)
 
-        serializer = self.get_serializer(queryset, many=True, list=True)
+        serializer = self.get_serializer(queryset, many=True, list=True, request=self.request)
 
         return Response(serializer.data)
 
@@ -115,7 +115,7 @@ class View(BaseMixin, ViewSet):
         get the details of a document
         """
         instance = self.get_object(pk)
-        serializer = self.get_serializer(instance)
+        serializer = self.get_serializer(instance, detail=True, request=self.request)
         return Response(serializer.data)
 
     def destroy(self, request, pk):

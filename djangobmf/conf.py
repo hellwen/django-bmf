@@ -145,7 +145,7 @@ class Settings(object):
     @property
     def DOCUMENT_STORAGE(self):  # noqa
         if not hasattr(djsettings, 'BMF_DOCUMENT_STORAGE'):
-            setattr(djsettings, 'BMF_DOCUMENT_STORAGE', 'djangobmf.storage.BMFStorage')
+            setattr(djsettings, 'BMF_DOCUMENT_STORAGE', 'djangobmf.storage.Storage')
         return getattr(djsettings, 'BMF_DOCUMENT_STORAGE')
 
     @property

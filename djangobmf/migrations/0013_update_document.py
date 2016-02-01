@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='customer',
-            field=models.ForeignKey(blank=True, related_name='documents', to=settings.BMF_CONTRIB_CUSTOMER, null=True, on_delete=django.db.models.deletion.SET_NULL),
+            field=models.ForeignKey(blank=True, related_name='documents', to=settings.BMF_CONTRIB_CUSTOMER, null=True, on_delete=django.db.models.deletion.SET_NULL, editable=False),
         ),
         migrations.AddField(
             model_name='document',
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='project',
-            field=models.ForeignKey(blank=True, related_name='documents', to=settings.BMF_CONTRIB_PROJECT, null=True, on_delete=django.db.models.deletion.SET_NULL),
+            field=models.ForeignKey(blank=True, related_name='documents', to=settings.BMF_CONTRIB_PROJECT, null=True, on_delete=django.db.models.deletion.SET_NULL, editable=False),
         ),
         migrations.AddField(
             model_name='document',
