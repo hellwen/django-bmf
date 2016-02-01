@@ -5,9 +5,10 @@ from __future__ import unicode_literals
 
 from django.utils.text import get_valid_filename
 from django.utils.timezone import now
-from django.utils.encoding import force_text, smart_str
+from django.utils.encoding import force_text
+from django.utils.encoding import smart_str
 
-from djangobmf.settings import STORAGE_STATIC_PREFIX
+from djangobmf.conf import settings
 
 import uuid
 import os
@@ -16,7 +17,7 @@ import os
 def generate_filename(instance, filename, uuidfunction=uuid.uuid4):
     prefix = []
     if getattr(instance, 'is_static', False):
-        prefix.append(STORAGE_STATIC_PREFIX)
+        prefix.append(settings.DOCUMENT_STATIC_PREFIX)
         if getattr(instance, 'content_type', None):
             prefix.append('%s' % instance.content_type.name)
             if getattr(instance, 'content_id'):

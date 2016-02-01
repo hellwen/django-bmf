@@ -11,7 +11,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.conf import settings as bmfsettings
-from djangobmf.document.storage import BMFStorage
+from djangobmf.storage import default_storage
 from djangobmf.tasks import generate_sha1
 from djangobmf.utils.generate_filename import generate_filename
 
@@ -23,7 +23,7 @@ class Document(models.Model):
     name = models.CharField(_('Name'), max_length=120, null=True, blank=True, editable=False)
     mimetype = models.CharField(_('Mimetype'), max_length=50, editable=False, null=True)
     description = models.TextField(_('Description'), blank=True, null=True)
-    file = models.FileField(_('File'), upload_to=generate_filename, storage=BMFStorage())
+    file = models.FileField(_('File'), upload_to=generate_filename, storage=default_storage)
     size = models.PositiveIntegerField(null=True, blank=True, editable=False)
     sha1 = models.CharField(_('SHA1'), max_length=40, editable=False, null=True)
 
@@ -93,24 +93,3 @@ class Document(models.Model):
 
         if hasattr(self.content_object, 'bmfget_customer'):
             self.customer = self.content_object.bmfget_customer()
-
-    @models.permalink
-    def get_update_url(self):
-        """
-        A permalink to the default view of this model in the BMF-System
-        """
-        return ('djangobmf:documents-update', (), {"pk": self.pk})
-
-    @models.permalink
-    def get_download_url(self):
-        """
-        A permalink to the default view of this model in the BMF-System
-        """
-        return ('djangobmf:document-get', (), {"pk": self.pk})
-
-    @models.permalink
-    def bmffile_download(self):
-        """
-        A permalink to the default view of this model in the BMF-System
-        """
-        return ('djangobmf:document-get', (), {"pk": self.pk})

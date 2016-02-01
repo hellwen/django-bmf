@@ -133,10 +133,56 @@ class Settings(object):
         return getattr(djsettings, 'BMF_CONTRIB_TRANSACTIONITEM')
 
     @property
+    def DEBUG(self):  # noqa
+        return getattr(djsettings, 'DEBUG', False)
+
+    @property
     def DEBUG_JS(self):  # noqa
-        if djsettings.DEBUG:
+        if self.DEBUG:
             return getattr(djsettings, 'BMF_DEBUG_JS', False)
         return False
+
+    @property
+    def DOCUMENT_STORAGE(self):  # noqa
+        if not hasattr(djsettings, 'BMF_DOCUMENT_STORAGE'):
+            setattr(djsettings, 'BMF_DOCUMENT_STORAGE', 'djangobmf.storage.BMFStorage')
+        return getattr(djsettings, 'BMF_DOCUMENT_STORAGE')
+
+    @property
+    def DOCUMENT_ROOT(self):  # noqa
+        if not hasattr(djsettings, 'BMF_DOCUMENT_ROOT'):
+            setattr(djsettings, 'BMF_DOCUMENT_ROOT', None)
+        return getattr(djsettings, 'BMF_DOCUMENT_ROOT')
+
+    @property
+    def DOCUMENT_URL(self):  # noqa
+        if not hasattr(djsettings, 'BMF_DOCUMENT_URL'):
+            setattr(djsettings, 'BMF_DOCUMENT_URL', None)
+        return getattr(djsettings, 'BMF_DOCUMENT_URL')
+
+    @property
+    def DOCUMENT_STATIC_PREFIX(self):  # noqa
+        if not hasattr(djsettings, 'BMF_DOCUMENT_STATIC_PREFIX'):
+            setattr(djsettings, 'BMF_DOCUMENT_STATIC_PREFIX', 'static')
+        return getattr(djsettings, 'BMF_DOCUMENT_STATIC_PREFIX')
+
+    @property
+    def DOCUMENT_SENDTYPE(self):  # noqa
+        if not hasattr(djsettings, 'BMF_DOCUMENT_SENDTYPE'):
+            setattr(djsettings, 'BMF_DOCUMENT_SENDTYPE', None)
+        return getattr(djsettings, 'BMF_DOCUMENT_SENDTYPE')
+
+    @property
+    def DOCUMENT_PERMISSIONS_FILE(self):  # noqa
+        if not hasattr(djsettings, 'BMF_DOCUMENT_PERMISSIONS_FILE'):
+            setattr(djsettings, 'BMF_DOCUMENT_PERMISSIONS_FILE', djsettings.FILE_UPLOAD_PERMISSIONS)
+        return getattr(djsettings, 'BMF_DOCUMENT_PERMISSIONS_FILE')
+
+    @property
+    def DOCUMENT_PERMISSIONS_DIR(self):  # noqa
+        if not hasattr(djsettings, 'BMF_DOCUMENT_PERMISSIONS_DIR'):
+            setattr(djsettings, 'BMF_DOCUMENT_PERMISSIONS_DIR', djsettings.FILE_UPLOAD_DIRECTORY_PERMISSIONS)
+        return getattr(djsettings, 'BMF_DOCUMENT_PERMISSIONS_DIR')
 
     @property
     def REPORTING_SERVER(self):  # noqa

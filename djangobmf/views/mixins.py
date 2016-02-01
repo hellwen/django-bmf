@@ -21,10 +21,6 @@ from djangobmf import get_version
 from djangobmf.conf import settings as bmfsettings
 from djangobmf.core.employee import Employee
 from djangobmf.decorators import login_required
-from djangobmf.document.forms import UploadDocument
-# from djangobmf.models import Activity
-from djangobmf.models import Document
-# from djangobmf.models import Notification
 from djangobmf.permissions import AjaxPermission
 from djangobmf.utils.serializers import DjangoBMFEncoder
 from djangobmf.views.defaults import bad_request
@@ -467,23 +463,6 @@ class ModuleSearchMixin(object):
             return "%s__search" % field_name[1:]
         else:
             return "%s__icontains" % field_name
-
-
-class ModuleFilesMixin(object):
-    """
-    Parse files to view (as a context variable)
-    """
-
-    def get_context_data(self, **kwargs):
-        if self.model._bmfmeta.has_files:
-            ct = ContentType.objects.get_for_model(self.object)
-
-            kwargs.update({
-                'has_files': True,
-                'history_file_form': UploadDocument,
-                'files': Document.objects.filter(content_type=ct, content_id=self.object.pk),
-            })
-        return super(ModuleFilesMixin, self).get_context_data(**kwargs)
 
 
 class ModuleFormMixin(object):

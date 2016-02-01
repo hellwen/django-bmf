@@ -15,9 +15,9 @@ from rest_framework.exceptions import PermissionDenied
 
 class BaseMixin(object):
 
-    def dispatch(self, *args, **kwargs):
-        setattr(self.request, 'djangobmf_appconfig', apps.get_app_config(settings.APP_LABEL))
-        return super(BaseMixin, self).dispatch(*args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        setattr(request, 'djangobmf_appconfig', apps.get_app_config(settings.APP_LABEL))
+        return super(BaseMixin, self).dispatch(request, *args, **kwargs)
 
     def get_bmfcontenttype(self):
         """

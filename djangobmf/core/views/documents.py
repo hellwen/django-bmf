@@ -3,17 +3,24 @@
 
 from __future__ import unicode_literals
 
+from django.core.servers.basehttp import FileWrapper
 from django.http import Http404
+from django.http import HttpResponse
 
-from rest_framework.viewsets import ViewSet
+# from rest_framework.mixins import CreateModelMixin
+# from rest_framework.mixins import RetrieveModelMixin
+# from rest_framework.mixins import UpdateModelMixin
+# from rest_framework.mixins import DestroyModelMixin
 from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
 
 from djangobmf.core.pagination import DocumentsPagination
 from djangobmf.core.serializers import DocumentsSerializer
 from djangobmf.core.views.mixins import BaseMixin
 from djangobmf.models import Document
+from djangobmf.conf import settings
 
-# import os
+import os
 
 
 class View(BaseMixin, ViewSet):
@@ -30,18 +37,26 @@ class View(BaseMixin, ViewSet):
     def get_queryset(self):
         return Document.objects.all()
 
+    def filter_queryset(self, queryset):
+        return queryset
+
     def get_object(self, pk):
         if hasattr(self, "object"):
             return self.object
 
         try:
-            self.object = self.get_queryset().get(pk=pk)
+            self.object = self.filter_queryset(self.get_queryset()).get(pk=pk)
         except self.get_queryset().model.DoesNotExist:
             raise Http404
 
         # using the content_object indirectly ensures the filter-option
         # used to embed permissions for objects
-        self.related_object = self.get_bmfobject(self.object.content_object.pk)
+        if self.object.content_object:
+            self.related_object = self.get_bmfobject(self.object.content_object.pk)
+        else:
+            self.related_object = None
+
+        # self.check_object_permissions(self.request, self.object, self.related_object)
 
         return self.object
 
@@ -85,8 +100,9 @@ class View(BaseMixin, ViewSet):
         """
         get the details of a document
         """
-        obj = self.get_object(pk)
-        return Response('Not implemented %s' % obj.pk)
+        instance = self.get_object(pk)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
     def destroy(self, request, pk):
         """
@@ -114,35 +130,35 @@ class View(BaseMixin, ViewSet):
         download the document (filestream-response)
         """
         obj = self.get_object(pk)
-        return Response('Not implemented %s' % obj.pk)
 
-'''
-from django.views.static import serve
-from djangobmf.signals import activity_addfile
-from django.conf import settings
-from django.http import HttpResponse, HttpResponseForbidden, Http404
-from django.views.static import serve
-def sendfile(request, fileobject, allowed=True):
-  if not allowed and not request.user.is_superuser:
-    return HttpResponseForbidden()
+        sendtype = settings.DOCUMENT_SENDTYPE
+        filename = os.path.basename(obj.file.name)
+        filepath = obj.file.path
+        fileuri = obj.file.url
 
-  if not fileobject:
-    return Http404
+        if not os.path.exists(filepath):
+            raise Http404
 
-  sendtype = getattr(settings,"BMF_DOCUMENTS_SEND",None)
+        # Nginx (untested)
+        if sendtype == "xaccel" and not settings.DEBUG:
+            response = HttpResponse()
+            response['Content-Type'] = 'application/force-download'
+            response['Content-Disposition'] = 'attachment; filename=%s' % filename
+            response['X-Accel-Redirect'] = fileuri
+            return response
 
-  if sendtype == "accelredirect" and not settings.DEBUG:
-    response = HttpResponse()
-    response['Content-Type'] = ''
-    response['X-Accel-Redirect'] = fileobject.url # TODO not tested if this works with apache
-    return response
+        # Lighthttpd or Apache with mod_xsendfile (untested)
+        if sendtype == "xsendfile" and not settings.DEBUG:
+            response = HttpResponse()
+            response['Content-Type'] = 'application/force-download'
+            response['Content-Disposition'] = 'attachment; filename=%s' % filename
+            response['X-Sendfile'] = filepath
+            return response
 
-  if sendtype == "sendfile" and not settings.DEBUG:
-    response = HttpResponse()
-    response['Content-Type'] = ''
-    response['X-Sendfile'] = (os.path.join(settings.BMF_DOCUMENTS_ROOT, fileobject.url)).encode('utf-8')
-    return response
-
-  # serve with django
-  return serve(request,fileobject.url[len(settings.BMF_DOCUMENTS_URL):],document_root=settings.BMF_DOCUMENTS_ROOT)
-'''
+        # Serve file with django
+        wrapper = FileWrapper(obj.file)
+        response = HttpResponse(wrapper)
+        response['Content-Type'] = obj.mimetype
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+        response['Content-Length'] = obj.file.size
+        return response

@@ -6,7 +6,7 @@ import djangobmf.utils.generate_filename
 import django.db.models.deletion
 import django.utils.timezone
 from django.conf import settings
-import djangobmf.document.storage
+import djangobmf.storage
 
 
 class Migration(migrations.Migration):
@@ -160,7 +160,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(verbose_name='Name', max_length=120, null=True, editable=False, blank=True)),
-                ('file', models.FileField(upload_to=djangobmf.utils.generate_filename.generate_filename, storage=djangobmf.document.storage.BMFStorage(), verbose_name='File')),
+                ('file', models.FileField(upload_to=djangobmf.utils.generate_filename.generate_filename, storage=djangobmf.storage.default_storage, verbose_name='File')),
                 ('size', models.PositiveIntegerField(null=True, editable=False, blank=True)),
                 ('is_static', models.BooleanField(default=False)),
                 ('content_id', models.PositiveIntegerField(null=True, editable=False, blank=True)),
