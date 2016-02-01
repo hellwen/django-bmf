@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
 from djangobmf.core.pagination import DocumentsPagination
-from djangobmf.core.serializers import DocumentsSerializer
+from djangobmf.core.serializers.documents import DocumentsSerializer
 from djangobmf.core.views.mixins import BaseMixin
 from djangobmf.models import Document
 from djangobmf.conf import settings
@@ -36,6 +36,15 @@ class View(BaseMixin, ViewSet):
 
     def get_queryset(self):
         return Document.objects.all()
+
+    def get_serializer(self, *args, **kwargs):
+
+        kwargs['context'] = {
+            'request': self.request,
+            'format': self.format_kwarg,
+            'view': self,
+        }
+        return self.serializer_class(*args, **kwargs)
 
     def filter_queryset(self, queryset):
         return queryset
@@ -77,7 +86,12 @@ class View(BaseMixin, ViewSet):
             queryset = self.get_queryset().filter(
                 is_static=True,
             )
-        return Response(queryset.objects.values_list('pk', flat=True))
+
+        queryset = self.filter_queryset(queryset)
+
+        serializer = self.get_serializer(queryset, many=True, list=True)
+
+        return Response(serializer.data)
 
     def list_customer(self, request):
         """
