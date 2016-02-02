@@ -7,13 +7,10 @@ from django.core.servers.basehttp import FileWrapper
 from django.http import Http404
 from django.http import HttpResponse
 
-# from rest_framework.mixins import CreateModelMixin
-# from rest_framework.mixins import RetrieveModelMixin
-# from rest_framework.mixins import UpdateModelMixin
-# from rest_framework.mixins import DestroyModelMixin
-from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
+# from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
+from djangobmf.core.filters.documents import DocumentFilter
 from djangobmf.core.pagination import DocumentsPagination
 from djangobmf.core.serializers.documents import DocumentsSerializer
 from djangobmf.core.views.mixins import BaseMixin
@@ -23,13 +20,14 @@ from djangobmf.conf import settings
 import os
 
 
-class View(BaseMixin, ViewSet):
+class View(BaseMixin, ModelViewSet):
     """
     List, upload, update and delete documents
     """
-    # permission_classes = [ActivityPermission]
+    permission_classes = []
     serializer_class = DocumentsSerializer
     pagination_class = DocumentsPagination
+    filter_classes = [DocumentFilter]
 
     def get_view_name(self):
         return 'Documents'
@@ -38,23 +36,23 @@ class View(BaseMixin, ViewSet):
         return Document.objects.all()
 
     def get_serializer(self, *args, **kwargs):
-
         kwargs['context'] = {
             'request': self.request,
             'format': self.format_kwarg,
             'view': self,
+            'many': kwargs.get('many', False)
         }
         return self.serializer_class(*args, **kwargs)
 
     def filter_queryset(self, queryset):
         return queryset
 
-    def get_object(self, pk):
+    def get_object(self):
         if hasattr(self, "object"):
             return self.object
 
         try:
-            self.object = self.filter_queryset(self.get_queryset()).get(pk=pk)
+            self.object = self.filter_queryset(self.get_queryset()).get(pk=self.kwargs['pk'])
         except self.get_queryset().model.DoesNotExist:
             raise Http404
 
@@ -65,85 +63,39 @@ class View(BaseMixin, ViewSet):
         else:
             self.related_object = None
 
-        # self.check_object_permissions(self.request, self.object, self.related_object)
+        self.check_object_permissions(self.request, self.object)
 
         return self.object
 
-    def list(self, request, app=None, model=None, pk=None):
-        """
-        list either unattached files or files attached to another model
-        (depending if ``app`` and ``model`` is set by the request uri)
-        """
-        if app and model and pk:
-            self.related_object = self.get_bmfobject(pk)
-            queryset = self.get_queryset().filter(
-                is_static=False,
-                content_type=self.get_bmfcontenttype(),
-                content_id=self.related_object.pk
-            )
-        else:
-            self.related_object = None
-            queryset = self.get_queryset().filter(
-                is_static=True,
-            )
+#   def list(self, request, app=None, model=None, pk=None):
+#       """
+#       list either unattached files or files attached to another model
+#       (depending if ``app`` and ``model`` is set by the request uri)
+#       """
+#       if app and model and pk:
+#           self.related_object = self.get_bmfobject(pk)
+#           queryset = self.get_queryset().filter(
+#               is_static=False,
+#               content_type=self.get_bmfcontenttype(),
+#               content_id=self.related_object.pk
+#           )
+#       else:
+#           self.related_object = None
+#           queryset = self.get_queryset().filter(
+#               is_static=True,
+#           )
 
-        queryset = self.filter_queryset(queryset)
+#       queryset = self.filter_queryset(queryset)
 
-        serializer = self.get_serializer(queryset, many=True, list=True, request=self.request)
+#       serializer = self.get_serializer(queryset, many=True, list=True, request=self.request)
 
-        return Response(serializer.data)
-
-    def list_customer(self, request):
-        """
-        """
-        pass
-
-    def list_project(self, request):
-        """
-        """
-        pass
-
-    def create(self, request, app=None, model=None, pk=None):
-        """
-        create a new file - attached to a document, if ``model`` and ``app``
-        is set by the request uri
-        """
-        return Response('Not implemented')
-
-    def detail(self, request, pk):
-        """
-        get the details of a document
-        """
-        instance = self.get_object(pk)
-        serializer = self.get_serializer(instance, detail=True, request=self.request)
-        return Response(serializer.data)
-
-    def destroy(self, request, pk):
-        """
-        delete a document
-        """
-        obj = self.get_object(pk)
-        return Response('Not implemented %s' % obj.pk)
-
-    def update(self, request, pk):
-        """
-        update the document
-        """
-        obj = self.get_object(pk)
-        return Response('Not implemented %s' % obj.pk)
-
-    def update_file(self, request, pk):
-        """
-        update only the file of the document
-        """
-        obj = self.get_object(pk)
-        return Response('Not implemented %s' % obj.pk)
+#       return Response(serializer.data)
 
     def download(self, request, pk):
         """
         download the document (filestream-response)
         """
-        obj = self.get_object(pk)
+        obj = self.get_object()
 
         sendtype = settings.DOCUMENT_SENDTYPE
         filename = os.path.basename(obj.file.name)

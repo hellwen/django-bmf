@@ -186,37 +186,28 @@ urlpatterns = patterns(
     ),
     url(
         r'^api/documents/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
-        never_cache(
-            APIDocumentsView.as_view({'get': 'list', 'post': 'create'})
-        ),
+        APIDocumentsView.as_view({'get': 'list', 'post': 'create'}),
         name="api-documents",
     ),
     url(
         r'^api/documents/$',
-        never_cache(
-            APIDocumentsView.as_view({'get': 'list', 'post': 'create'})
-        ),
+        APIDocumentsView.as_view({'get': 'list', 'post': 'create'}),
         name="api-documents",
     ),
     url(
         r'^api/documents/(?P<pk>[0-9]+)/$',
-        never_cache(
-            APIDocumentsView.as_view({
-                'get': 'detail',
-                'post': 'update',
-                'put': 'update_file',
-                'delete': 'destroy',
-            })
-        ),
+        APIDocumentsView.as_view({
+            'get': 'retrieve',
+            'post': 'update',
+            'delete': 'destroy',
+        }),
         name="api-documents",
     ),
     url(
         r'^api/documents/(?P<pk>[0-9]+)/download/$',
-        never_cache(
-            APIDocumentsView.as_view({
-                'get': 'download',
-            })
-        ),
+        APIDocumentsView.as_view({
+            'get': 'download',
+        }),
         name="api-document-download",
     ),
 

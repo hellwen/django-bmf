@@ -15,19 +15,19 @@ from djangobmf.storage import default_storage
 from djangobmf.tasks import generate_sha1
 from djangobmf.utils.generate_filename import generate_filename
 
-import mimetypes
-
 
 @python_2_unicode_compatible
 class Document(models.Model):
     name = models.CharField(_('Name'), max_length=120, null=True, blank=True, editable=False)
-    mimetype = models.CharField(_('Mimetype'), max_length=50, editable=False, null=True)
+    mimetype = models.CharField(_('Mimetype'), max_length=120, editable=False, null=True)
+    encoding = models.CharField(_('Encoding'), max_length=60, editable=False, null=True)
     description = models.TextField(_('Description'), blank=True, null=True)
     file = models.FileField(_('File'), upload_to=generate_filename, storage=default_storage)
     size = models.PositiveIntegerField(null=True, blank=True, editable=False)
     sha1 = models.CharField(_('SHA1'), max_length=40, editable=False, null=True)
 
     is_static = models.BooleanField(default=False)
+    file_exists = models.BooleanField(default=True)
 
     customer = models.ForeignKey(
         bmfsettings.CONTRIB_CUSTOMER,
@@ -75,20 +75,23 @@ class Document(models.Model):
         get_latest_by = "modified"
         abstract = True
 
+    def __init__(self, *args, **kwargs):
+        super(Document, self).__init__(*args, **kwargs)
+        self.original_name = self.name
+
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
+        self.clean()
         super(Document, self).save(*args, **kwargs)
         generate_sha1(self.pk)
 
     def clean(self):
-        if self.file:
-            self.size = self.file.size
-            self.mimetype = mimetypes.guess_type(self.file.name)[0]
 
-        if not self.name:
-            self.name = self.file.name.split(r'/')[-1]
+        name = self.file.name.split(r'/')[-1]
+        if not self.name or self.original_name == self.name:
+            self.name = name
 
         if hasattr(self.content_object, 'bmfget_project'):
             self.project = self.content_object.bmfget_project()

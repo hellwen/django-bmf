@@ -12,18 +12,13 @@ from rest_framework.reverse import reverse
 
 class DocumentsSerializer(ModelSerializer):
     download = SerializerMethodField()
-    details = SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        list_serializer = kwargs.pop('list', False)
-        detail_serializer = kwargs.pop('list', False)
-
+        self.request = kwargs['context']['request']
         super(DocumentsSerializer, self).__init__(*args, **kwargs)
-
-        if list_serializer or detail_serializer:
+        if self.request.method.lower() == "get":
             self.fields.pop('file')
-            if list_serializer:
+            if kwargs['context']['many']:
                 self.fields.pop('description')
                 self.fields.pop('sha1')
                 self.fields.pop('is_static')
@@ -42,5 +37,5 @@ class DocumentsSerializer(ModelSerializer):
         fields = [
             'pk', 'name', 'mimetype', 'description', 'file',
             'size', 'sha1', 'is_static', 'modified',
-            'created', 'download', 'details',
+            'created', 'download',
         ]

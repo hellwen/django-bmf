@@ -26,26 +26,36 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='customer',
-            field=models.ForeignKey(blank=True, related_name='documents', to=settings.BMF_CONTRIB_CUSTOMER, null=True, on_delete=django.db.models.deletion.SET_NULL, editable=False),
+            field=models.ForeignKey(null=True, related_name='documents', to=settings.BMF_CONTRIB_CUSTOMER, on_delete=django.db.models.deletion.SET_NULL, blank=True, editable=False),
         ),
         migrations.AddField(
             model_name='document',
             name='description',
-            field=models.TextField(blank=True, verbose_name='Description', null=True),
+            field=models.TextField(null=True, verbose_name='Description', blank=True),
+        ),
+        migrations.AddField(
+            model_name='document',
+            name='encoding',
+            field=models.CharField(max_length=60, null=True, editable=False, verbose_name='Encoding'),
+        ),
+        migrations.AddField(
+            model_name='document',
+            name='file_exists',
+            field=models.BooleanField(default=True),
         ),
         migrations.AddField(
             model_name='document',
             name='mimetype',
-            field=models.CharField(editable=False, max_length=50, verbose_name='Mimetype', null=True),
+            field=models.CharField(max_length=120, null=True, editable=False, verbose_name='Mimetype'),
         ),
         migrations.AddField(
             model_name='document',
             name='project',
-            field=models.ForeignKey(blank=True, related_name='documents', to=settings.BMF_CONTRIB_PROJECT, null=True, on_delete=django.db.models.deletion.SET_NULL, editable=False),
+            field=models.ForeignKey(null=True, related_name='documents', to=settings.BMF_CONTRIB_PROJECT, on_delete=django.db.models.deletion.SET_NULL, blank=True, editable=False),
         ),
         migrations.AddField(
             model_name='document',
             name='sha1',
-            field=models.CharField(editable=False, max_length=40, verbose_name='SHA1', null=True),
+            field=models.CharField(max_length=40, null=True, editable=False, verbose_name='SHA1'),
         ),
     ]

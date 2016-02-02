@@ -9,6 +9,7 @@ from djangobmf.decorators import optional_celery
 from djangobmf.notification.tasks import djangobmf_user_watch
 
 import hashlib
+import mimetypes
 
 
 __all__ = [
@@ -31,13 +32,35 @@ def generate_sha1(pk):
 
     try:
         obj.file.open('rb')
+
+        exists = True
+        size = obj.file.size
+        mimetype, encoding = mimetypes.guess_type(obj.file.name)
+
         if obj.file.multiple_chunks():
             for chunk in obj.file.chunks():
                 hash.update(chunk)
         else:
             hash.update(obj.file.read())
+
         obj.file.close()
-        Document.objects.filter(pk=pk).update(sha1=hash.hexdigest())
+
+        sha1 = hash.hexdigest()
 
     except FileNotFoundError:
-        pass
+        exists = False
+        size = None
+        mimetype = None
+        encoding = None
+        sha1 = None
+
+    if sha1 != obj.sha1 or exists != obj.file_exists or mimetype != obj.mimetype \
+            or encoding != obj.encoding or size != obj.size:
+
+        Document.objects.filter(pk=pk).update(
+            sha1=sha1,
+            file_exists=exists,
+            mimetype=mimetype,
+            encoding=encoding,
+            size=size,
+        )
