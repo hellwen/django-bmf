@@ -3,9 +3,9 @@
 
 from __future__ import unicode_literals
 
-from django.core.servers.basehttp import FileWrapper
 from django.http import Http404
 from django.http import HttpResponse
+from django.http import FileResponse
 
 # from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -122,8 +122,7 @@ class View(BaseMixin, ModelViewSet):
             return response
 
         # Serve file with django
-        wrapper = FileWrapper(obj.file)
-        response = HttpResponse(wrapper)
+        response = FileResponse(obj.file)
         response['Content-Type'] = obj.mimetype
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
         response['Content-Length'] = obj.file.size
