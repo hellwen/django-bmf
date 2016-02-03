@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import djangobmf.fields.models.file
+import djangobmf.fields.file
 
 
 class Migration(migrations.Migration):
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='renderer',
             name='letter_background',
-            field=djangobmf.fields.models.file.FileField(null=True, verbose_name='Letter background', related_name='+', to='djangobmf.Document'),
+            field=djangobmf.fields.file.FileField(null=True, verbose_name='Letter background', related_name='+', to='djangobmf.Document'),
         ),
         migrations.AddField(
             model_name='renderer',
@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='renderer',
             name='page_background',
-            field=djangobmf.fields.models.file.FileField(null=True, verbose_name='Page background', related_name='+', to='djangobmf.Document'),
+            field=djangobmf.fields.file.FileField(null=True, verbose_name='Page background', related_name='+', to='djangobmf.Document'),
         ),
         migrations.AddField(
             model_name='renderer',

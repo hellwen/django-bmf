@@ -11,7 +11,7 @@ from djangobmf.conf import settings
 from djangobmf.models import BMFModel
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
-from djangobmf.fields.models import FileField
+from djangobmf.fields import FileField
 
 import datetime
 from decimal import Decimal
