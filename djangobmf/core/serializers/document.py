@@ -18,7 +18,7 @@ class DocumentSerializer(ModelSerializer):
         super(DocumentSerializer, self).__init__(*args, **kwargs)
         if self.request.method.lower() == "get":
             self.fields.pop('file')
-            if kwargs['context']['many']:
+            if kwargs['context'].get('many', False):
                 self.fields.pop('description')
                 self.fields.pop('sha1')
                 self.fields.pop('is_static')

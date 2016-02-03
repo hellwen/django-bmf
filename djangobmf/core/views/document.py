@@ -103,6 +103,9 @@ class View(BaseMixin, ModelViewSet):
         if not os.path.exists(filepath):
             raise Http404
 
+        if not request.method == "GET":
+            return HttpResponse()
+
         # Nginx (untested)
         if sendtype == "xaccel" and not settings.DEBUG:
             response = HttpResponse()

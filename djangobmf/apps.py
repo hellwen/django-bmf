@@ -14,6 +14,7 @@ from django.utils.module_loading import module_has_submodule
 from django.utils.module_loading import import_module
 
 from djangobmf.conf import settings as bmfsettings
+from djangobmf.core.relationship import DocumentRelationship
 
 import logging
 logger = logging.getLogger(__name__)
@@ -41,7 +42,16 @@ class BMFConfig(AppConfig):
             raise AlreadyRegistered(
                 'The module %s is already registered' % module.model.__name__
             )
+
         self.bmf_modules[module.model] = module()
+
+        # register files if module has them
+        if module.model._bmfmeta.has_files:
+            document = self.get_model('Document')
+            class FileDownload(DocumentRelationship):
+                model = module.model
+            self.bmfregister_relationship(FileDownload, document)
+
         return self.bmf_modules[module.model]
 
     def bmfregister_relationship(self, relationship, model):
