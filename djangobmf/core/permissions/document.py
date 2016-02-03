@@ -29,15 +29,15 @@ class DocumentPermission(BasePermission):
     }
 
     def get_perms(self, request, view):
-        related = view.get_related_object()
         kwargs = {
             'bmf': settings.APP_LABEL,
             'document': 'document',
         }
         perms_map = self._methods_map_document[request.method]
 
+        related = view.get_related_object()
         if related:
-            perms_map += self._methods_map_related[request.method]
+            perms_map = perms_map + self._methods_map_related[request.method]
             kwargs.update({
                 'app': view.model._meta.app_label,
                 'model': view.model._meta.model_name,
