@@ -73,6 +73,7 @@ class Document(models.Model):
         verbose_name = _('Document')
         verbose_name_plural = _('Documents')
         get_latest_by = "modified"
+        permissions = [('view_document', 'Can view documents')]
         abstract = True
 
     def __init__(self, *args, **kwargs):

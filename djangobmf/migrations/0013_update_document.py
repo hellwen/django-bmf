@@ -63,4 +63,8 @@ class Migration(migrations.Migration):
             name='name',
             field=models.CharField(verbose_name='Name', blank=True, null=True, max_length=120),
         ),
+        migrations.AlterModelOptions(
+            name='document',
+            options={'verbose_name_plural': 'Documents', 'get_latest_by': 'modified', 'verbose_name': 'Document', 'permissions': [('view_document', 'Can view documents')]},
+        ),
     ]

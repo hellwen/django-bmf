@@ -11,7 +11,7 @@ from django.http import FileResponse
 from rest_framework.viewsets import ModelViewSet
 
 from djangobmf.core.filters.document import DocumentFilter
-from djangobmf.core.permissions import DocumentPermission
+from djangobmf.core.permissions.document import DocumentPermission
 from djangobmf.core.pagination import DocumentPagination
 from djangobmf.core.serializers.document import DocumentSerializer
 from djangobmf.core.views.mixins import BaseMixin

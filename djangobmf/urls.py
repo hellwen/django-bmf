@@ -198,7 +198,8 @@ urlpatterns = patterns(
         r'^api/documents/(?P<pk>[0-9]+)/$',
         APIDocumentsView.as_view({
             'get': 'retrieve',
-            'post': 'update',
+            'patch': 'partial_update',
+            'put': 'update',
             'delete': 'destroy',
         }),
         name="api-documents",
