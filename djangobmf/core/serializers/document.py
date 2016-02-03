@@ -10,12 +10,12 @@ from rest_framework.serializers import SerializerMethodField
 from rest_framework.reverse import reverse
 
 
-class DocumentsSerializer(ModelSerializer):
+class DocumentSerializer(ModelSerializer):
     download = SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs['context']['request']
-        super(DocumentsSerializer, self).__init__(*args, **kwargs)
+        super(DocumentSerializer, self).__init__(*args, **kwargs)
         if self.request.method.lower() == "get":
             self.fields.pop('file')
             if kwargs['context']['many']:

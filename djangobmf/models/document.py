@@ -18,7 +18,7 @@ from djangobmf.utils.generate_filename import generate_filename
 
 @python_2_unicode_compatible
 class Document(models.Model):
-    name = models.CharField(_('Name'), max_length=120, null=True, blank=True, editable=False)
+    name = models.CharField(_('Name'), max_length=120, null=True, blank=True)
     mimetype = models.CharField(_('Mimetype'), max_length=120, editable=False, null=True)
     encoding = models.CharField(_('Encoding'), max_length=60, editable=False, null=True)
     description = models.TextField(_('Description'), blank=True, null=True)
@@ -26,7 +26,7 @@ class Document(models.Model):
     size = models.PositiveIntegerField(null=True, blank=True, editable=False)
     sha1 = models.CharField(_('SHA1'), max_length=40, editable=False, null=True)
 
-    is_static = models.BooleanField(default=False)
+    is_static = models.BooleanField(default=True, editable=False)
     file_exists = models.BooleanField(default=True)
 
     customer = models.ForeignKey(

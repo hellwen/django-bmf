@@ -34,7 +34,7 @@ class BaseMixin(object):
             return self.model
 
         if 'app' not in self.kwargs or 'model' not in self.kwargs:
-            raise LookupError()
+            raise LookupError('Can not find a model instance')
 
         # Raises also a LookupError, when it does not find a model
         self.model = apps.get_model(self.kwargs.get('app'), self.kwargs.get('model'))

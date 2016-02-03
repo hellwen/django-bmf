@@ -10,7 +10,7 @@ class ActivityPagination(PaginationMixin):
     pass
 
 
-class DocumentsPagination(PaginationMixin):
+class DocumentPagination(PaginationMixin):
     pass
 
 

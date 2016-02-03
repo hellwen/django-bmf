@@ -19,7 +19,7 @@ from django.views.decorators.http import last_modified
 from djangobmf import get_version
 from djangobmf.core.views.activity import View as APIActivityListView
 from djangobmf.core.views.detail import View as APIDetailView
-from djangobmf.core.views.documents import View as APIDocumentsView
+from djangobmf.core.views.document import View as APIDocumentsView
 from djangobmf.core.views.related import View as APIRelatedView
 from djangobmf.sites import site
 from djangobmf.views import Index

@@ -10,9 +10,10 @@ from django.http import FileResponse
 # from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from djangobmf.core.filters.documents import DocumentFilter
-from djangobmf.core.pagination import DocumentsPagination
-from djangobmf.core.serializers.documents import DocumentsSerializer
+from djangobmf.core.filters.document import DocumentFilter
+from djangobmf.core.permissions import DocumentPermission
+from djangobmf.core.pagination import DocumentPagination
+from djangobmf.core.serializers.document import DocumentSerializer
 from djangobmf.core.views.mixins import BaseMixin
 from djangobmf.models import Document
 from djangobmf.conf import settings
@@ -24,10 +25,10 @@ class View(BaseMixin, ModelViewSet):
     """
     List, upload, update and delete documents
     """
-    permission_classes = []
-    serializer_class = DocumentsSerializer
-    pagination_class = DocumentsPagination
-    filter_classes = [DocumentFilter]
+    permission_classes = [DocumentPermission]
+    serializer_class = DocumentSerializer
+    pagination_class = DocumentPagination
+    filter_backends = [DocumentFilter]
 
     def get_view_name(self):
         return 'Documents'
@@ -44,52 +45,49 @@ class View(BaseMixin, ModelViewSet):
         }
         return self.serializer_class(*args, **kwargs)
 
-    def filter_queryset(self, queryset):
-        return queryset
+    def get_related_object(self):
+        if not hasattr(self, 'related_object'):
+            if 'model' in self.kwargs and 'app' in self.kwargs and 'pk' in self.kwargs:
+                self.related_object = self.get_bmfobject(self.kwargs['pk'])
+            else:
+                self.related_object = None
+        return self.related_object
 
     def get_object(self):
         if hasattr(self, "object"):
             return self.object
 
+        queryset = self.get_queryset()
+
         try:
-            self.object = self.filter_queryset(self.get_queryset()).get(pk=self.kwargs['pk'])
-        except self.get_queryset().model.DoesNotExist:
+            obj = queryset.get(pk=self.kwargs['pk'])
+        except queryset.model.DoesNotExist:
             raise Http404
 
-        # using the content_object indirectly ensures the filter-option
+        # using the content_object indirectly ensures the filter-option is
         # used to embed permissions for objects
-        if self.object.content_object:
-            self.related_object = self.get_bmfobject(self.object.content_object.pk)
+        if obj.content_object:
+            self.model = obj.content_object.__class__
+            self.related_object = self.get_bmfobject(obj.content_object.pk)
         else:
+            self.model = None
             self.related_object = None
 
-        self.check_object_permissions(self.request, self.object)
+        self.check_object_permissions(self.request, obj)
+
+        self.object = obj
 
         return self.object
 
-#   def list(self, request, app=None, model=None, pk=None):
-#       """
-#       list either unattached files or files attached to another model
-#       (depending if ``app`` and ``model`` is set by the request uri)
-#       """
-#       if app and model and pk:
-#           self.related_object = self.get_bmfobject(pk)
-#           queryset = self.get_queryset().filter(
-#               is_static=False,
-#               content_type=self.get_bmfcontenttype(),
-#               content_id=self.related_object.pk
-#           )
-#       else:
-#           self.related_object = None
-#           queryset = self.get_queryset().filter(
-#               is_static=True,
-#           )
+    def perform_create(self, serializer):
+        if self.get_related_object():
+            serializer.validated_data['is_static'] = False
+            serializer.validated_data['content_type'] = self.get_bmfcontenttype()
+            serializer.validated_data['content_id'] = self.related_object.pk
+        else:
+            serializer.validated_data['is_static'] = True
 
-#       queryset = self.filter_queryset(queryset)
-
-#       serializer = self.get_serializer(queryset, many=True, list=True, request=self.request)
-
-#       return Response(serializer.data)
+        serializer.save()
 
     def download(self, request, pk):
         """

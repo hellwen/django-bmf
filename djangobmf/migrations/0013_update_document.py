@@ -58,4 +58,9 @@ class Migration(migrations.Migration):
             name='sha1',
             field=models.CharField(max_length=40, null=True, editable=False, verbose_name='SHA1'),
         ),
+        migrations.AlterField(
+            model_name='document',
+            name='name',
+            field=models.CharField(verbose_name='Name', blank=True, null=True, max_length=120),
+        ),
     ]

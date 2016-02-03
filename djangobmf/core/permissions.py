@@ -54,3 +54,14 @@ class DetailPermission(BasePermission):
             'model': view.model._meta.model_name,
         }
         return [perm % kwargs for perm in self._methods_map[method]]
+
+
+class DocumentPermission(Permission):
+
+    def has_permission(self, request, view):
+        print('HAS_PERMISSION', hasattr(view, 'related_object'))
+        return True
+
+    def has_object_permission(self, obj, request, view):
+        print('HAS_OBJECT_PERMISSION', hasattr(view, 'related_object'))
+        return True
