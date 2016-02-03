@@ -48,8 +48,10 @@ class BMFConfig(AppConfig):
         # register files if module has them
         if module.model._bmfmeta.has_files:
             document = self.get_model('Document')
+
             class FileDownload(DocumentRelationship):
                 model = module.model
+
             self.bmfregister_relationship(FileDownload, document)
 
         return self.bmf_modules[module.model]

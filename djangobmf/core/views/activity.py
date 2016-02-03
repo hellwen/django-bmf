@@ -8,8 +8,8 @@ from rest_framework.mixins import CreateModelMixin
 from rest_framework.mixins import ListModelMixin
 
 from djangobmf.core.pagination import ActivityPagination
-from djangobmf.core.serializers import ActivitySerializer
-from djangobmf.core.serializers import NotificationViewSerializer
+from djangobmf.core.serializers.activity import ActivitySerializer
+from djangobmf.core.serializers.notification import NotificationViewSerializer
 from djangobmf.models import Activity
 from djangobmf.models import Notification
 from djangobmf.permissions import ActivityPermission

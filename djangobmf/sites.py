@@ -8,7 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 # from django.db.models import Model
 
 from djangobmf.conf import settings
-from djangobmf.core import Relationship
+from djangobmf.core.relationship import Relationship
 from djangobmf.core.category import Category
 from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 __all__ = [
+    'Relationship',
     'Category',
     'Dashboard',
     'Module',
