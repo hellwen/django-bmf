@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 
-from djangobmf.models import Document
+# from djangobmf.models import Document
 
 from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import SerializerMethodField
@@ -33,7 +33,7 @@ class DocumentSerializer(ModelSerializer):
         )
 
     class Meta:
-        model = Document
+        model = "djangobmf.Document"
         fields = [
             'pk', 'name', 'mimetype', 'description', 'file',
             'size', 'sha1', 'is_static', 'modified',

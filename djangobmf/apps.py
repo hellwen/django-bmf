@@ -15,6 +15,7 @@ from django.utils.module_loading import import_module
 
 from djangobmf.conf import settings as bmfsettings
 from djangobmf.core.relationship import DocumentRelationship
+from djangobmf.core.serializers.document import DocumentSerializer
 
 import logging
 logger = logging.getLogger(__name__)
@@ -51,6 +52,7 @@ class BMFConfig(AppConfig):
 
             class FileDownload(DocumentRelationship):
                 model = module.model
+                serializer = DocumentSerializer
 
             self.bmfregister_relationship(FileDownload, document)
 

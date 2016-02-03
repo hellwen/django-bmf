@@ -11,8 +11,6 @@ from django.template.loader import select_template
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.core.serializers.document import DocumentSerializer
-
 import re
 
 import logging
@@ -114,7 +112,6 @@ class Relationship(six.with_metaclass(RelationshipMetaclass, RelationshipMixin))
 class DocumentRelationship(six.with_metaclass(RelationshipMetaclass, RelationshipMixin)):
     name = _('Documents')
     slug = 'documents'
-    serializer = DocumentSerializer
 
     def get_queryset(self, obj):
         return obj.djangobmf_document
