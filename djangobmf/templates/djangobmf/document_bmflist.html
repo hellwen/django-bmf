@@ -1,0 +1,34 @@
+{% load i18n djangobmf_angularjs %}{% spaceless %}
+<table class="table table-striped table-condensed table-hover">
+    <thead>
+        <tr>
+            <th width="60%">{% trans "Name" %}</th>
+            <th width="40%">{% trans "Changed" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="obj in data">
+            <td>
+                <a ng-href="{% ng "obj.download" %}">
+                    {% ng "obj.name" %}
+                    ({% ng "obj.size | filesize" %})
+                </a>
+                <br><small>{% ng "obj.sha1" %} (sha1)</small>
+            </td>
+            <td>
+                {% ng "obj.modified" %}
+                <br><small>{% ng "obj.mimetype" %}</small>
+            </td>
+        </tr>
+    </tbody>
+    <!--tfoot ng-if="scopename=='related'">
+      <tr>
+        <td colspan="2" class="text-right">
+          <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_task_goal:create" "default" %}">
+            <span class="glyphicon glyphicon-plus"></span>
+          </a>
+        </td>
+      </tr>
+    </tfoot -->
+</table>
+{% endspaceless %}
