@@ -110,7 +110,7 @@ class View(BaseMixin, ModelViewSet):
         if sendtype == "xaccel" and not settings.DEBUG:
             response = HttpResponse()
             response['Content-Type'] = 'application/force-download'
-            response['Content-Disposition'] = 'attachment; filename=%s' % filename
+            response['Content-Disposition'] = 'inline; filename=%s' % filename
             response['X-Accel-Redirect'] = fileuri
             return response
 
@@ -118,13 +118,13 @@ class View(BaseMixin, ModelViewSet):
         if sendtype == "xsendfile" and not settings.DEBUG:
             response = HttpResponse()
             response['Content-Type'] = 'application/force-download'
-            response['Content-Disposition'] = 'attachment; filename=%s' % filename
+            response['Content-Disposition'] = 'inline; filename=%s' % filename
             response['X-Sendfile'] = filepath
             return response
 
         # Serve file with django
         response = FileResponse(obj.file)
         response['Content-Type'] = obj.mimetype
-        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+        response['Content-Disposition'] = 'inline; filename=%s' % filename
         response['Content-Length'] = obj.file.size
         return response

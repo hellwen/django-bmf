@@ -9,14 +9,14 @@
     <tbody>
         <tr ng-repeat="obj in data">
             <td>
-                <a ng-href="{% ng "obj.download" %}">
+                <a ng-href="{% ng "obj.download" %}" target="_blank">
                     {% ng "obj.name" %}
                     ({% ng "obj.size | filesize" %})
                 </a>
                 <br><small>{% ng "obj.sha1" %} (sha1)</small>
             </td>
             <td>
-                {% ng "obj.modified" %}
+                {% ng "obj.modified | django_datetime" %}
                 <br><small>{% ng "obj.mimetype" %}</small>
             </td>
         </tr>
