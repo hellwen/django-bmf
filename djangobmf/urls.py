@@ -176,7 +176,7 @@ urlpatterns = patterns(
         kwargs={'action': 'list'},
     ),
     url(
-        r'^api/view/(?P<db>[\w_]+)/(?P<cat>[\w_]+)/(?P<view>[\w_]+)/$',
+        r'^api/view/(?P<db>[\w-]+)/(?P<cat>[\w-]+)/(?P<view>[\w-]+)/$',
         cache_page(CACHE_TIME, key_prefix=VERSION)(
             last_modified(lambda req, **kw: now())(
                 APIViewDetail.as_view()
