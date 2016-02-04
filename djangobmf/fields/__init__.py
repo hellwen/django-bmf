@@ -14,6 +14,8 @@ from djangobmf.currency import BaseCurrency
 # from .configobj import ConfigField
 from djangobmf.fields.country import CountryField
 from djangobmf.fields.file import FileField
+from djangobmf.fields.file import ObjectFileField
+from djangobmf.fields.file import StaticFileField
 from djangobmf.fields.workflow import WorkflowField
 
 import logging
@@ -28,6 +30,8 @@ __all__ = [
     'CurrencyField',
     'MoneyField',
     'FileField',
+    'ObjectFileField',
+    'StaticFileField',
 ]
 
 

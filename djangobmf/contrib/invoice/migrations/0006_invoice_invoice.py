@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import djangobmf.fields.file
+import djangobmf.fields
 
 
 class Migration(migrations.Migration):
@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='invoice',
             name='invoice',
-            field=djangobmf.fields.file.FileField(null=True, verbose_name='Invoice'),
+            field=djangobmf.fields.ObjectFileField(null=True, verbose_name='Invoice'),
         ),
     ]
