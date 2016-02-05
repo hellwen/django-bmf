@@ -90,17 +90,17 @@ urlpatterns = patterns(
         name="notification",
     ),
     url(
-        r'^notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/$',
+        r'^notification/(?P<app>[\w]+)/(?P<model>[\w]+)/$',
         Index.as_view(),
         name="notification",
     ),
     url(
-        r'^notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        r'^notification/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<pk>[0-9]+)/$',
         Index.as_view(),
         name="notification",
     ),
     url(
-        r'^detail/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        r'^detail/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<pk>[0-9]+)/$',
         Index.as_view(),
     ),
 
@@ -130,21 +130,21 @@ urlpatterns = patterns(
         name="api-detail",
     ),
     url(
-        r'^api/related/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<field>[\w_]+)/(?P<pk>[0-9]+)/$',
+        r'^api/related/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<field>[\w_]+)/(?P<pk>[0-9]+)/$',
         never_cache(
             APIRelatedView.as_view()
         ),
         name="api-related",
     ),
     url(
-        r'^api/activity/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        r'^api/activity/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<pk>[0-9]+)/$',
         never_cache(
             APIActivityListView.as_view()
         ),
         name="api-activity",
     ),
     url(
-        r'^api/notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/view/$',
+        r'^api/notification/(?P<app>[\w]+)/(?P<model>[\w]+)/view/$',
         never_cache(
             NotificationViewAPI.as_view()
         ),
@@ -152,7 +152,7 @@ urlpatterns = patterns(
         kwargs={'action': 'view'},
     ),
     url(
-        r'^api/notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/view/(?P<pk>[0-9]+)/$',
+        r'^api/notification/(?P<app>[\w]+)/(?P<model>[\w]+)/view/(?P<pk>[0-9]+)/$',
         never_cache(
             NotificationViewAPI.as_view()
         ),
@@ -168,7 +168,7 @@ urlpatterns = patterns(
         kwargs={'action': 'count'},
     ),
     url(
-        r'^api/notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/list/$',
+        r'^api/notification/(?P<app>[\w]+)/(?P<model>[\w]+)/list/$',
         never_cache(
             NotificationListAPI.as_view()
         ),
@@ -185,7 +185,7 @@ urlpatterns = patterns(
         name="api-view",
     ),
     url(
-        r'^api/documents/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        r'^api/documents/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<pk>[0-9]+)/$',
         APIDocumentsView.as_view({'get': 'list', 'post': 'create'}),
         name="api-documents",
     ),
@@ -217,7 +217,7 @@ urlpatterns = patterns(
         r'^config/$', ConfigurationView.as_view(), name="configuration",
     ),
     url(
-        r'^config/(?P<app_label>[\w_]+)/(?P<name>[\w_]+)/$',
+        r'^config/(?P<app_label>[\w]+)/(?P<name>[\w]+)/$',
         ConfigurationEdit.as_view(), name="configuration",
     ),
 
@@ -226,11 +226,11 @@ urlpatterns = patterns(
         Redirect.as_view(), name="detail",
     ),
     url(
-        r'^detail/(?P<model_name>[\w_]+)/$',
+        r'^detail/(?P<model_name>[\w]+)/$',
         Redirect.as_view(), name="detail",
     ),
     url(
-        r'^detail/(?P<model_name>[\w_]+)/(?P<app_label>[\w_]+)/$',
+        r'^detail/(?P<model_name>[\w]+)/(?P<app_label>[\w]+)/$',
         Redirect.as_view(), name="detail",
     ),
     #   r'^detail/' via sites
