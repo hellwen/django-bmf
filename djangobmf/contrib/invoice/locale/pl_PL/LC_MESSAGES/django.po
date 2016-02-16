@@ -40,7 +40,7 @@ msgstr ""
 
 #: models.py:39
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: models.py:87
 msgid "Due"
@@ -68,7 +68,7 @@ msgstr ""
 
 #: models.py:184
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 #: templates/djangobmf_invoice/invoice_bmfdetail.html:5
 msgid "Quotation"
@@ -76,15 +76,15 @@ msgstr ""
 
 #: templates/djangobmf_invoice/invoice_bmfdetail.html:6
 msgid "Project"
-msgstr ""
+msgstr "Projekt"
 
 #: templates/djangobmf_invoice/invoice_bmfdetail.html:7
 msgid "Customer"
-msgstr ""
+msgstr "Klient/Użytkownik"
 
 #: templates/djangobmf_invoice/invoice_bmfdetail.html:8
 msgid "Employee"
-msgstr ""
+msgstr "Pracownik"
 
 #: templates/djangobmf_invoice/invoice_bmfdetail.html:35
 msgid "Net"
