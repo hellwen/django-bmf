@@ -168,14 +168,13 @@ if __name__ == '__main__':
              'environment variable or "test_sqlite" will be used.')
     options = parser.parse_args()
 
-    if options.contrib:
-        os.environ['DJANGO_SETTINGS_MODULE'] = 'sandbox.settings_venv'
+    os.environ['DJANGOBMF_RUNTESTS'] = '1'
 
     if options.settings:
         os.environ['DJANGO_SETTINGS_MODULE'] = options.settings
     else:
         if "DJANGO_SETTINGS_MODULE" not in os.environ:
-            os.environ['DJANGO_SETTINGS_MODULE'] = 'sandbox.settings_test'
+            os.environ['DJANGO_SETTINGS_MODULE'] = 'sandbox.settings'
 
     main(
         options.modules,
