@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-29 02:30+0100\n"
-"PO-Revision-Date: 2016-01-29 01:32+0000\n"
+"POT-Creation-Date: 2016-02-16 17:24+0100\n"
+"PO-Revision-Date: 2016-02-16 16:25+0000\n"
 "Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
 "Language-Team: Russian (http://www.transifex.com/django-bmf/django-bmf/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -18,32 +18,30 @@ msgstr ""
 "Language: ru\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: static/djangobmf/js/djangobmf.js:30 static/djangobmf/js/djangobmf.min.js:17
+#: static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 403\n"
 " You don't have permission to view this page"
 msgstr "Ошибка 403. У вас нет прав на просмотр данной страницы"
 
-#: static/djangobmf/js/djangobmf.js:33 static/djangobmf/js/djangobmf.min.js:17
+#: static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 404\n"
 " Page not found"
 msgstr "Ошибка 404. Страница не найдена"
 
-#: static/djangobmf/js/djangobmf.js:36 static/djangobmf/js/djangobmf.min.js:17
+#: static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 405\n"
 " Method not allowed"
 msgstr "Ошибка 405. Метод недопустим."
 
-#: static/djangobmf/js/djangobmf.js:40 static/djangobmf/js/djangobmf.min.js:17
+#: static/djangobmf/js/djangobmf.min.js:17
 msgid ""
 "Error 500\n"
 " An Error occured while rendering the page"
 msgstr "Ошибка 500. Произошла ошибка при отображении страницы"
 
-#: static/djangobmf/js/djangobmf.js:250 static/djangobmf/js/djangobmf.js:370
-#: static/djangobmf/js/djangobmf.js:699 static/djangobmf/js/djangobmf.js:700
 #: static/djangobmf/js/djangobmf.min.js:17
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid ""
@@ -51,104 +49,91 @@ msgid ""
 " December"
 msgstr "Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь"
 
-#: static/djangobmf/js/djangobmf.js:251 static/djangobmf/js/djangobmf.js:371
 #: static/djangobmf/js/djangobmf.min.js:17
 msgid "Su Mo Tu We Th Fr Sa"
 msgstr "Вс Пн Вт Ср Чт Пт Сб"
 
-#: static/djangobmf/js/djangobmf.js:252 static/djangobmf/js/djangobmf.js:372
-#: static/djangobmf/js/djangobmf.js:703
 #: static/djangobmf/js/djangobmf.min.js:17
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "Sunday Monday Tuesday Wednesday Thursday Friday Saturday"
 msgstr "Воскресенье Понедельник Вторник Среда Четверг Пятница Суббота"
 
-#: static/djangobmf/js/djangobmf.js:701
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "Jan. Feb. March April May June July August Sept. Oct. Nov. Dec."
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:702
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:707
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "a.m."
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:707
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "p.m."
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:710
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "AM"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:710
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "PM"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:760
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "midnight"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:761
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "noon"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:839
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "seconds ago"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:843
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "minutes ago"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:847
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "hours ago"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:851
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "days ago"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:1035
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "bytes KB MB GB TB PB"
+msgstr ""
+
+#: static/djangobmf/js/djangobmf.min.js:20
+msgid "1 byte"
+msgstr ""
+
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "New entries"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:1039
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "New comments"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:1043
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "Worflow changes"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:1047
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "New files"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:1051
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid "Detected changes"
 msgstr ""
 
-#: static/djangobmf/js/djangobmf.js:2279
 #: static/djangobmf/js/djangobmf.min.js:20
 msgid ""
 "Error!\n"

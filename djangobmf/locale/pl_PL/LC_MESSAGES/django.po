@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-29 02:30+0100\n"
-"PO-Revision-Date: 2016-01-29 01:32+0000\n"
+"POT-Creation-Date: 2016-02-16 17:24+0100\n"
+"PO-Revision-Date: 2016-02-16 16:25+0000\n"
 "Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
 "Language-Team: Polish (Poland) (http://www.transifex.com/django-bmf/django-bmf/language/pl_PL/)\n"
 "MIME-Version: 1.0\n"
@@ -28,7 +28,7 @@ msgstr "Hasło"
 
 #: account/forms.py:29
 msgid "Old Password"
-msgstr "Stare Hasło"
+msgstr "Poprzednie Hasło"
 
 #: account/forms.py:32
 msgid "New Password"
@@ -42,11 +42,15 @@ msgstr "Powtórz Nowe Hasło"
 #, python-format
 msgctxt "currency formatting"
 msgid "%(val)s %(sym)s"
-msgstr ""
+msgstr "%(val)s %(sym)s"
 
-#: core/serializers/__init__.py:46
+#: core/relationship.py:113 models/document.py:74
+msgid "Documents"
+msgstr "Dokumenty"
+
+#: core/serializers/activity.py:44
 msgid "You need to define a topic or a text"
-msgstr ""
+msgstr "Musisz podać temat lub tekst"
 
 #: core/views/mixins.py:56
 msgid "You have no permission to access the object"
@@ -58,28 +62,28 @@ msgstr "Obiekt nie został odnaleziony"
 
 #: core/views/related.py:41
 msgid "The object's relation can not be found"
-msgstr ""
+msgstr "Powiązany obiekt nie został znaleziony"
 
 #: core/workflow.py:230
 #, python-format
 msgid "The state %s is not valid"
-msgstr ""
+msgstr "Status %s nie jest prawidłowy"
 
 #: core/workflow.py:238 core/workflow.py:366
 msgid "This transition is not valid"
-msgstr ""
+msgstr "To przejście (zmiana statusu) nie jest prawidłowe"
 
 #: currency/EUR/bmf_module.py:14
 msgid "€"
-msgstr ""
+msgstr "euro"
 
 #: currency/EUR/bmf_module.py:15
 msgid "Euro"
-msgstr ""
+msgstr "Euro"
 
 #: currency/USD/bmf_module.py:14
 msgid "$"
-msgstr ""
+msgstr "dolar"
 
 #: currency/USD/bmf_module.py:15
 msgid "Dollar"
@@ -87,7 +91,7 @@ msgstr "dolar"
 
 #: dashboards.py:27
 msgid "Accounting"
-msgstr ""
+msgstr "Księgowość"
 
 #: dashboards.py:32
 msgid "Customer Relationship"
@@ -111,43 +115,43 @@ msgstr "Sprzedaż"
 
 #: dashboards.py:57
 msgid "Time and attendance"
-msgstr ""
+msgstr "Terminarz"
 
 #: dashboards.py:62
 msgid "Warehouse"
-msgstr ""
+msgstr "Magazyn"
 
-#: fields/__init__.py:69
+#: fields/__init__.py:73
 msgid "Currency Field"
-msgstr ""
+msgstr "Pole waluty"
 
-#: fields/__init__.py:112
+#: fields/__init__.py:116
 msgid "Money Field"
-msgstr ""
+msgstr "Pole wartości"
 
 #: fields/country.py:17
 msgid "Country Field"
-msgstr ""
+msgstr "Pole Kraju"
 
 #: fields/country.py:19
 #, python-format
 msgid "%(name)s is not a valid 3-char country code"
-msgstr ""
+msgstr "%(name)s nie jest prawidłowym 2-3-znakowym kodem kraju"
 
 #: fields/workflow.py:19
 msgid "Workflow Field"
-msgstr ""
+msgstr "Pole przepływu"
 
 #: fields/workflow.py:21
 #, python-format
 msgid "%(name)s is not a valid workflow state"
-msgstr ""
+msgstr "%(name)s nie jest prawidłowym stanem procesu"
 
 #: models/activity.py:25
 msgid "Comment"
 msgstr "Komentarz"
 
-#: models/activity.py:26 models/base.py:286 models/document.py:44
+#: models/activity.py:26 models/base.py:286 models/document.py:62
 msgid "Created"
 msgstr "Utworzony"
 
@@ -157,15 +161,15 @@ msgstr "Zaktualizowany"
 
 #: models/activity.py:28
 msgid "Workflow"
-msgstr ""
+msgstr "Przepływ"
 
-#: models/activity.py:29 models/document.py:21
+#: models/activity.py:29 models/document.py:25
 msgid "File"
 msgstr "Plik"
 
 #: models/activity.py:56 templates/djangobmf/site-activity.html:25
 msgid "Topic"
-msgstr ""
+msgstr "Temat"
 
 #: models/activity.py:57 templates/djangobmf/site-activity.html:28
 msgid "Text"
@@ -177,9 +181,9 @@ msgstr "Działanie"
 
 #: models/activity.py:66
 msgid "Template"
-msgstr ""
+msgstr "Szablon"
 
-#: models/activity.py:73 models/base.py:273 models/document.py:43
+#: models/activity.py:73 models/base.py:273 models/document.py:61
 #: models/notification.py:40 models/renderer.py:68 models/report.py:41
 msgid "Modified"
 msgstr "Zmodyfikowany"
@@ -224,24 +228,37 @@ msgstr "Konfiguracja"
 msgid "Configurations"
 msgstr "Konfiguracje"
 
-#: models/document.py:20 models/renderer.py:23
+#: models/document.py:21 models/renderer.py:23
 #: templates/djangobmf/configuration/index.html:18
 #: templates/djangobmf/configuration/index.html:19
+#: templates/djangobmf/document_bmflist.html:5
 #: templates/djangobmf/module_list.html:5
 msgid "Name"
 msgstr "Nazwa"
 
-#: models/document.py:55
+#: models/document.py:22
+msgid "Mimetype"
+msgstr ""
+
+#: models/document.py:23
+msgid "Encoding"
+msgstr ""
+
+#: models/document.py:24
+msgid "Description"
+msgstr ""
+
+#: models/document.py:27
+msgid "SHA1"
+msgstr ""
+
+#: models/document.py:73
 msgid "Document"
 msgstr "Dokument"
 
-#: models/document.py:56
-msgid "Documents"
-msgstr "Dokumenty"
-
 #: models/notification.py:30
 msgid "Triggered"
-msgstr ""
+msgstr "Uruchomione"
 
 #: models/notification.py:31 templates/djangobmf/notification/index.html:12
 #: templates/djangobmf/notification/index.html:16
@@ -266,15 +283,15 @@ msgstr "Obiekt został zmieniony"
 
 #: models/notification.py:38
 msgid "Workflowstate changed"
-msgstr ""
+msgstr "Zmieniono status przepływu"
 
 #: models/notification.py:45
 msgid "Watched activity"
-msgstr ""
+msgstr "Obserwowana aktywność"
 
 #: models/notification.py:46
 msgid "Watched activities"
-msgstr ""
+msgstr "Obserwowane aktywności"
 
 #: models/renderer.py:26
 msgid "Size"
@@ -282,7 +299,7 @@ msgstr "Rozmiar"
 
 #: models/renderer.py:29
 msgid "Letter"
-msgstr ""
+msgstr "Czcionka"
 
 #: models/renderer.py:32
 msgid "Extra"
@@ -290,11 +307,11 @@ msgstr "Ekstra"
 
 #: models/renderer.py:35 models/renderer.py:56
 msgid "Letter margin right"
-msgstr ""
+msgstr "Czcionka prawego marginesu"
 
 #: models/renderer.py:38 models/renderer.py:59
 msgid "Letter margin bottom"
-msgstr ""
+msgstr "Czciona dolnego marginesu"
 
 #: models/renderer.py:41
 msgid "Letter extra right"
@@ -306,11 +323,11 @@ msgstr ""
 
 #: models/renderer.py:47
 msgid "Letter background"
-msgstr ""
+msgstr "Czcionka tła"
 
 #: models/renderer.py:50
 msgid "Letter footer right"
-msgstr ""
+msgstr "Czcionka stopki prawa"
 
 #: models/renderer.py:53
 msgid "Letter footer height"
@@ -318,15 +335,15 @@ msgstr ""
 
 #: models/renderer.py:62
 msgid "Letter margin top"
-msgstr ""
+msgstr "Czcionka nagłówka"
 
 #: models/renderer.py:65
 msgid "Page background"
-msgstr ""
+msgstr "Tło strony"
 
 #: models/renderer.py:71 models/renderer.py:72
 msgid "Renderer"
-msgstr ""
+msgstr "Usługa"
 
 #: models/report.py:21
 msgid "Key"
@@ -409,7 +426,7 @@ msgstr "Pozycja została zmieniona"
 
 #: templates/djangobmf/activities/updated.html:11
 msgid "The following attributes were changed"
-msgstr ""
+msgstr "Następujące atrybuty zostały zmienione"
 
 #: templates/djangobmf/activities/workflow.html:4
 #: templates/djangobmf/site-activity.html:39
@@ -418,11 +435,11 @@ msgstr "Stan"
 
 #: templates/djangobmf/api/detail-default.html:3
 msgid "Caution"
-msgstr ""
+msgstr "Ostrzeżenie"
 
 #: templates/djangobmf/api/detail-default.html:3
 msgid "The template to render a page for this object is missing"
-msgstr ""
+msgstr "Szablon wyświetlania tego obiektu jest nieprawidłowy"
 
 #: templates/djangobmf/api/detail.html:28
 #: templates/djangobmf/api/detail.html:31
@@ -435,7 +452,7 @@ msgstr "Dodaj"
 
 #: templates/djangobmf/api/list_template_not_found.html:2
 msgid "Template not found"
-msgstr ""
+msgstr "Nie odnaleziono szablonu"
 
 #: templates/djangobmf/api/list_template_not_found.html:3
 msgid "Please create"
@@ -457,7 +474,7 @@ msgstr "nowy"
 
 #: templates/djangobmf/base.html:32
 msgid "Toogle navigation"
-msgstr ""
+msgstr "Nawigowanie"
 
 #: templates/djangobmf/base.html:42
 #: templates/djangobmf/dashboard/sitebar.html:3
@@ -494,24 +511,25 @@ msgid "Required"
 msgstr "Wymagany"
 
 #: templates/djangobmf/configuration/index.html:23
+#: templates/djangobmf/document_bmflist.html:6
 msgid "Changed"
-msgstr ""
+msgstr "Zmieniony"
 
 #: templates/djangobmf/dashboard/create.html:4
 msgid "Create dashboard"
-msgstr ""
+msgstr "Utwórz Panel Kontrolny"
 
 #: templates/djangobmf/dashboard/delete.html:4
 msgid "Delete dashboard"
-msgstr ""
+msgstr "Usuń Panel Kontrolny"
 
 #: templates/djangobmf/dashboard/sitebar.html:12
 msgid "Click on \"add\" to create a new dashboard"
-msgstr ""
+msgstr "Kliknij \"Dodaj\" aby utworzyć nowy Panel Kontrolny"
 
 #: templates/djangobmf/dashboard/sitebar.html:18
 msgid "Module overview"
-msgstr ""
+msgstr "Opis modułu"
 
 #: templates/djangobmf/message/index.html:5
 msgid "Messages"
@@ -520,7 +538,7 @@ msgstr "Wiadomości"
 #: templates/djangobmf/module_clone.html:5
 #, python-format
 msgid "Copy %(object)s"
-msgstr ""
+msgstr "Skopiowano %(object)s"
 
 #: templates/djangobmf/module_clone.html:9
 #: templates/djangobmf/module_update.html:9
@@ -530,11 +548,11 @@ msgstr "Zapisano zmiany"
 #: templates/djangobmf/module_create.html:5
 #, python-format
 msgid "Create %(object)s"
-msgstr ""
+msgstr "Utworzono %(object)s"
 
 #: templates/djangobmf/module_create.html:9
 msgid "Create object"
-msgstr ""
+msgstr "Tworzenie obiektu"
 
 #: templates/djangobmf/module_delete.html:9
 #, python-format
@@ -542,25 +560,25 @@ msgid ""
 "Deleting the %(object_name)s '%(escaped_object)s' would result in deleting "
 "related objects, but your account doesn't have permission to delete the "
 "following types of objects:"
-msgstr ""
+msgstr "Usunięcie %(object_name)s '%(escaped_object)s' spowoduje usunięcie powiązanych obiektów, ale nie masz uprawnień do usuwania następujących typów obiektów:"
 
 #: templates/djangobmf/module_delete.html:16
 #, python-format
 msgid ""
 "Deleting the %(object_name)s '%(escaped_object)s' would require deleting the"
 " following protected related objects:"
-msgstr ""
+msgstr "Usunięcie obiektu %(object_name)s '%(escaped_object)s' wymaga usunięcia następujących zabezpieczonych, powiązanych obiektów:"
 
 #: templates/djangobmf/module_delete.html:24
 #, python-format
 msgid ""
 "Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? "
 "All of the following related items will be deleted:"
-msgstr ""
+msgstr "Czy na pewno chcesz usunąć %(object_name)s \"%(escaped_object)s\"? Wszystkie powiązane pozycje zostaną również usunięte:"
 
 #: templates/djangobmf/module_delete.html:32
 msgid "Delete Object"
-msgstr ""
+msgstr "Kasowanie Obiektu"
 
 #: templates/djangobmf/module_detail.html:10
 msgid "Files"
@@ -569,7 +587,7 @@ msgstr "Pliki"
 #: templates/djangobmf/module_detail_default.html:6
 #, python-format
 msgid "No default template found for the detail view of \"%(obj)s\"."
-msgstr ""
+msgstr "Domyślny szablon dla widoku szczegółowego obiekty \"%(obj)s\" nie został znaleziony"
 
 #: templates/djangobmf/module_report.html:6
 msgid "Report not found"
@@ -582,7 +600,7 @@ msgstr "Musisz skonfigurować ten raport w interfejsie administratora"
 #: templates/djangobmf/module_update.html:5
 #, python-format
 msgid "Change %(object)s"
-msgstr ""
+msgstr "Zmieniono %(object)s"
 
 #: templates/djangobmf/module_workflow.html:5
 msgid "State could not be changed"
@@ -591,12 +609,12 @@ msgstr "Nie można zmienić stanu"
 #: templates/djangobmf/module_workflow.html:8
 msgid ""
 "This object is not valid. You need to edit it in order to change it's state."
-msgstr ""
+msgstr "Ten obiekt nie jest poprawny. Możesz zmienić kolejność aby zmianić jego stan."
 
 #: templates/djangobmf/notification/create.html:5
 #: templates/djangobmf/notification/update.html:5
 msgid "Update Notification"
-msgstr ""
+msgstr "Powiadomienie zostało zaktualizowane"
 
 #: templates/djangobmf/notification/create.html:9
 #: templates/djangobmf/notification/update.html:9
@@ -615,7 +633,7 @@ msgstr "Ustawienia domyślne"
 
 #: templates/djangobmf/notification/index.html:43
 msgid "Select a category to edit the default settings"
-msgstr ""
+msgstr "Wybierz kategorię aby edytować domyślne ustawienia"
 
 #: templates/djangobmf/notification/index.html:87
 msgid "You dont have notifications"
@@ -639,21 +657,21 @@ msgstr "Telefon"
 
 #: templates/djangobmf/report_html_base.html:112
 msgid "Fax"
-msgstr ""
+msgstr "Faks"
 
 #: templates/djangobmf/report_html_base.html:114
 msgid "You may add extra content in this placeholder"
-msgstr ""
+msgstr "W tym miejscu możesz dodać dodatkową zawartość(treść)"
 
 #: templates/djangobmf/report_html_base.html:134
 #, python-format
 msgid "Page %(current)s of %(all)s"
-msgstr ""
+msgstr "Strona %(current)s z %(all)s"
 
 #: templates/djangobmf/site-activity.html:18
 #: templates/djangobmf/site-activity.html:31
 msgid "Write message"
-msgstr ""
+msgstr "Napisz komentarz"
 
 #: templates/djangobmf/site-activity.html:37
 msgid "Item created"
@@ -670,12 +688,12 @@ msgstr "pusty"
 
 #: views/module.py:313 views/module.py:319
 msgid "Object deleted"
-msgstr ""
+msgstr "Usunięto obiekt"
 
 #: views/module.py:334
 #, python-format
 msgid "Cannot delete %(name)s"
-msgstr ""
+msgstr "Nie można usunąć %(name)s"
 
 #: views/module.py:338
 msgid "Are you sure?"
@@ -684,4 +702,4 @@ msgstr "Czy na pewno?"
 #: views/module.py:409
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
-msgstr ""
+msgstr "Nie znaleziono rekordów spełniających warunek %(verbose_name)s dla tego zapytania"
