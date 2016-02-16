@@ -83,6 +83,8 @@ def main(modules, verbosity=2, failfast=False, contrib=None, nocontrib=False):
 
         path = os.path.join(os.path.dirname(__file__), "tests")
         for module in os.listdir(path):
+            if module == "templates":
+                continue
             if os.path.isdir(os.path.join(path, module)) and module[0] != '_':
                 modules.append('tests.%s' % module)
 
