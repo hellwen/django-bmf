@@ -83,6 +83,8 @@ def main(modules, verbosity=2, failfast=False, contrib=None, nocontrib=False):
 
         path = os.path.join(os.path.dirname(__file__), "tests")
         for module in os.listdir(path):
+            if module == "templates":
+                continue
             if os.path.isdir(os.path.join(path, module)) and module[0] != '_':
                 modules.append('tests.%s' % module)
 
@@ -168,14 +170,13 @@ if __name__ == '__main__':
              'environment variable or "test_sqlite" will be used.')
     options = parser.parse_args()
 
-    if options.contrib:
-        os.environ['DJANGO_SETTINGS_MODULE'] = 'sandbox.settings_venv'
+    os.environ['DJANGOBMF_RUNTESTS'] = '1'
 
     if options.settings:
         os.environ['DJANGO_SETTINGS_MODULE'] = options.settings
     else:
         if "DJANGO_SETTINGS_MODULE" not in os.environ:
-            os.environ['DJANGO_SETTINGS_MODULE'] = 'sandbox.settings_test'
+            os.environ['DJANGO_SETTINGS_MODULE'] = 'sandbox.settings'
 
     main(
         options.modules,

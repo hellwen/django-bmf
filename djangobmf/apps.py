@@ -14,6 +14,7 @@ from django.utils.module_loading import module_has_submodule
 from django.utils.module_loading import import_module
 
 from djangobmf.conf import settings as bmfsettings
+from djangobmf.core.relationship import DocumentRelationship
 
 import logging
 logger = logging.getLogger(__name__)
@@ -41,7 +42,20 @@ class BMFConfig(AppConfig):
             raise AlreadyRegistered(
                 'The module %s is already registered' % module.model.__name__
             )
+
         self.bmf_modules[module.model] = module()
+
+        # register files if module has them
+        if module.model._bmfmeta.has_files:
+
+            from djangobmf.core.serializers.document import DocumentSerializer
+
+            class FileDownload(DocumentRelationship):
+                model = module.model
+                serializer = DocumentSerializer
+
+            self.bmfregister_relationship(FileDownload, self.get_model("Document"))
+
         return self.bmf_modules[module.model]
 
     def bmfregister_relationship(self, relationship, model):
@@ -79,10 +93,6 @@ class ModuleTemplate(AppConfig):
 
             # load instructions of bmf_module.py
             import_module('%s.%s' % (self.name, "bmf_module"))
-
-        #   # see if model needs a number_cycle
-        #   for model in [m for m in self.models.values() if hasattr(m, '_bmfmeta') and m._bmfmeta.number_cycle]:
-        #       self.bmf_config.site.register_numbercycle(model)
 
         logger.debug('App "%s" (%s) is ready' % (
             self.verbose_name,

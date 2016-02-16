@@ -35,7 +35,7 @@ msgstr ""
 
 #: models.py:74
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: models.py:75 templates/djangobmf_quotation/quotation_bmfdetail.html:16
 msgid "Valid until"
@@ -71,19 +71,19 @@ msgstr ""
 
 #: models.py:199
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 #: templates/djangobmf_quotation/quotation_bmfdetail.html:5
 msgid "Project"
-msgstr ""
+msgstr "Projekt"
 
 #: templates/djangobmf_quotation/quotation_bmfdetail.html:6
 msgid "Customer"
-msgstr ""
+msgstr "Klient/Użytkownik"
 
 #: templates/djangobmf_quotation/quotation_bmfdetail.html:7
 msgid "Employee"
-msgstr ""
+msgstr "Pracownik"
 
 #: templates/djangobmf_quotation/quotation_bmfdetail.html:12
 msgid "Invoice"

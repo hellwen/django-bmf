@@ -21,8 +21,8 @@ from djangobmf.filters import RangeFilterBackend
 from djangobmf.permissions import ModuleViewPermission
 from djangobmf.permissions import NotificationPermission
 from djangobmf.pagination import ModulePagination
-from djangobmf.core.serializers import NotificationViewSerializer
-from djangobmf.core.serializers import NotificationListSerializer
+from djangobmf.core.serializers.notification import NotificationViewSerializer
+from djangobmf.core.serializers.notification import NotificationListSerializer
 # from djangobmf.core.pagination import NotificationPagination
 from djangobmf.views.mixins import BaseMixin
 

@@ -1,5 +1,3 @@
-
-
 Version 0.3
 ====================================
 
@@ -39,4 +37,5 @@ Products finished
 Version 0.9
 ====================================
 
+Documentation
 First beta-release

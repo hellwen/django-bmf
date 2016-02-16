@@ -14,6 +14,10 @@ from rest_framework.serializers import ModelSerializer
 
 class ModuleSerializer(ModelSerializer):
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(ModuleSerializer, self).__init__(*args, **kwargs)
+
     def get_field_names(self, *args, **kwargs):
         names = super(ModuleSerializer, self).get_field_names(*args, **kwargs)
 
@@ -38,9 +42,3 @@ class WorkflowField(CharField):
     def to_representation(self, value):
         return value.key
 ModuleSerializer.serializer_field_mapping[fields.WorkflowField] = WorkflowField
-
-
-# class DocumentSerializer(serializers.HyperlinkedModelSerializer):
-#   class Meta:
-#       model = apps.get_model('djangobmf', 'Document')
-#       fields = ['pk']

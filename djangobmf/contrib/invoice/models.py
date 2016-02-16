@@ -11,7 +11,7 @@ from djangobmf.conf import settings
 from djangobmf.models import BMFModel
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
-from djangobmf.fields.models import FileField
+from djangobmf.fields import ObjectFileField
 
 import datetime
 from decimal import Decimal
@@ -33,7 +33,7 @@ class BaseInvoice(BMFModel):
         null=True, on_delete=models.SET_NULL,
     )
     invoice_number = models.CharField(_('Invoice number'), max_length=255, null=True, blank=False)
-    invoice = FileField(verbose_name=_('Invoice'), null=True)
+    invoice = ObjectFileField(verbose_name=_('Invoice'), null=True)
     products = models.ManyToManyField(settings.CONTRIB_PRODUCT, through='InvoiceProduct', editable=False)
     net = models.FloatField(editable=False, blank=True, null=True)
     date = models.DateField(_("Date"), null=True, blank=False)

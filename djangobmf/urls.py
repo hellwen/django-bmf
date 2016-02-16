@@ -19,6 +19,7 @@ from django.views.decorators.http import last_modified
 from djangobmf import get_version
 from djangobmf.core.views.activity import View as APIActivityListView
 from djangobmf.core.views.detail import View as APIDetailView
+from djangobmf.core.views.document import View as APIDocumentsView
 from djangobmf.core.views.related import View as APIRelatedView
 from djangobmf.sites import site
 from djangobmf.views import Index
@@ -89,17 +90,17 @@ urlpatterns = patterns(
         name="notification",
     ),
     url(
-        r'^notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/$',
+        r'^notification/(?P<app>[\w]+)/(?P<model>[\w]+)/$',
         Index.as_view(),
         name="notification",
     ),
     url(
-        r'^notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        r'^notification/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<pk>[0-9]+)/$',
         Index.as_view(),
         name="notification",
     ),
     url(
-        r'^detail/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        r'^detail/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<pk>[0-9]+)/$',
         Index.as_view(),
     ),
 
@@ -129,21 +130,21 @@ urlpatterns = patterns(
         name="api-detail",
     ),
     url(
-        r'^api/related/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<field>[\w_]+)/(?P<pk>[0-9]+)/$',
+        r'^api/related/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<field>[\w_]+)/(?P<pk>[0-9]+)/$',
         never_cache(
             APIRelatedView.as_view()
         ),
         name="api-related",
     ),
     url(
-        r'^api/activity/(?P<app>[\w_]+)/(?P<model>[\w_]+)/(?P<pk>[0-9]+)/$',
+        r'^api/activity/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<pk>[0-9]+)/$',
         never_cache(
             APIActivityListView.as_view()
         ),
         name="api-activity",
     ),
     url(
-        r'^api/notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/view/$',
+        r'^api/notification/(?P<app>[\w]+)/(?P<model>[\w]+)/view/$',
         never_cache(
             NotificationViewAPI.as_view()
         ),
@@ -151,7 +152,7 @@ urlpatterns = patterns(
         kwargs={'action': 'view'},
     ),
     url(
-        r'^api/notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/view/(?P<pk>[0-9]+)/$',
+        r'^api/notification/(?P<app>[\w]+)/(?P<model>[\w]+)/view/(?P<pk>[0-9]+)/$',
         never_cache(
             NotificationViewAPI.as_view()
         ),
@@ -167,7 +168,7 @@ urlpatterns = patterns(
         kwargs={'action': 'count'},
     ),
     url(
-        r'^api/notification/(?P<app>[\w_]+)/(?P<model>[\w_]+)/list/$',
+        r'^api/notification/(?P<app>[\w]+)/(?P<model>[\w]+)/list/$',
         never_cache(
             NotificationListAPI.as_view()
         ),
@@ -175,7 +176,7 @@ urlpatterns = patterns(
         kwargs={'action': 'list'},
     ),
     url(
-        r'^api/view/(?P<db>[\w_]+)/(?P<cat>[\w_]+)/(?P<view>[\w_]+)/$',
+        r'^api/view/(?P<db>[\w-]+)/(?P<cat>[\w-]+)/(?P<view>[\w-]+)/$',
         cache_page(CACHE_TIME, key_prefix=VERSION)(
             last_modified(lambda req, **kw: now())(
                 APIViewDetail.as_view()
@@ -183,13 +184,40 @@ urlpatterns = patterns(
         ),
         name="api-view",
     ),
+    url(
+        r'^api/documents/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<pk>[0-9]+)/$',
+        APIDocumentsView.as_view({'get': 'list', 'post': 'create'}),
+        name="api-documents",
+    ),
+    url(
+        r'^api/documents/$',
+        APIDocumentsView.as_view({'get': 'list', 'post': 'create'}),
+        name="api-documents",
+    ),
+    url(
+        r'^api/documents/(?P<pk>[0-9]+)/$',
+        APIDocumentsView.as_view({
+            'get': 'retrieve',
+            'patch': 'partial_update',
+            'put': 'update',
+            'delete': 'destroy',
+        }),
+        name="api-documents",
+    ),
+    url(
+        r'^api/documents/(?P<pk>[0-9]+)/download/$',
+        APIDocumentsView.as_view({
+            'get': 'download',
+        }),
+        name="api-document-download",
+    ),
 
     # --- Configuration
     url(
         r'^config/$', ConfigurationView.as_view(), name="configuration",
     ),
     url(
-        r'^config/(?P<app_label>[\w_]+)/(?P<name>[\w_]+)/$',
+        r'^config/(?P<app_label>[\w]+)/(?P<name>[\w]+)/$',
         ConfigurationEdit.as_view(), name="configuration",
     ),
 
@@ -198,11 +226,11 @@ urlpatterns = patterns(
         Redirect.as_view(), name="detail",
     ),
     url(
-        r'^detail/(?P<model_name>[\w_]+)/$',
+        r'^detail/(?P<model_name>[\w]+)/$',
         Redirect.as_view(), name="detail",
     ),
     url(
-        r'^detail/(?P<model_name>[\w_]+)/(?P<app_label>[\w_]+)/$',
+        r'^detail/(?P<model_name>[\w]+)/(?P<app_label>[\w]+)/$',
         Redirect.as_view(), name="detail",
     ),
     #   r'^detail/' via sites
@@ -216,7 +244,6 @@ urlpatterns = patterns(
     #   r'^dashboard/(?P<dashboard>[\w-]+)/' via sites
 
 
-    url(r'^document/', include('djangobmf.document.urls')),
     url(r'^i18n/', i18n_javascript, name="jsi18n"),
     #  url(r'^messages/', include('djangobmf.message.urls')),
     url(r'^wizard/$', WizardView.as_view(), name="wizard"),

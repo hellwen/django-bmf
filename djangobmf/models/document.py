@@ -10,24 +10,42 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.document.storage import BMFStorage
-
+from djangobmf.conf import settings as bmfsettings
+from djangobmf.storage import default_storage
+from djangobmf.tasks import generate_sha1
 from djangobmf.utils.generate_filename import generate_filename
 
 
 @python_2_unicode_compatible
 class Document(models.Model):
-    name = models.CharField(_('Name'), max_length=120, null=True, blank=True, editable=False)
-    file = models.FileField(_('File'), upload_to=generate_filename, storage=BMFStorage())
+    name = models.CharField(_('Name'), max_length=120, null=True, blank=True)
+    mimetype = models.CharField(_('Mimetype'), max_length=120, editable=False, null=True)
+    encoding = models.CharField(_('Encoding'), max_length=60, editable=False, null=True)
+    description = models.TextField(_('Description'), blank=True, null=True)
+    file = models.FileField(_('File'), upload_to=generate_filename, storage=default_storage)
     size = models.PositiveIntegerField(null=True, blank=True, editable=False)
-    # mime = models.CharField(_('Mime-Type'), max_length=120, null=True, blank=True, editable=False)
+    sha1 = models.CharField(_('SHA1'), max_length=40, editable=False, null=True)
 
-    is_static = models.BooleanField(default=False)
+    is_static = models.BooleanField(default=True, editable=False)
+    file_exists = models.BooleanField(default=True)
 
-    # this fields are added due to a soft dependency to customer and projects
-    # because djangobmf can't relay on those models to be present!
-    customer_pk = models.PositiveIntegerField(null=True, blank=True, editable=False, db_index=True)
-    project_pk = models.PositiveIntegerField(null=True, blank=True, editable=False, db_index=True)
+    customer = models.ForeignKey(
+        bmfsettings.CONTRIB_CUSTOMER,
+        null=True,
+        blank=True,
+        related_name="documents",
+        on_delete=models.SET_NULL,
+        editable=False,
+    )
+
+    project = models.ForeignKey(
+        bmfsettings.CONTRIB_PROJECT,
+        null=True,
+        blank=True,
+        related_name="documents",
+        on_delete=models.SET_NULL,
+        editable=False,
+    )
 
     content_type = models.ForeignKey(
         ContentType,
@@ -55,27 +73,29 @@ class Document(models.Model):
         verbose_name = _('Document')
         verbose_name_plural = _('Documents')
         get_latest_by = "modified"
+        permissions = [('view_document', 'Can view documents')]
         abstract = True
+
+    def __init__(self, *args, **kwargs):
+        super(Document, self).__init__(*args, **kwargs)
+        self.original_name = self.name
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.clean()
+        super(Document, self).save(*args, **kwargs)
+        generate_sha1(self.pk)
+
     def clean(self):
-        if self.file:
-            self.size = self.file.size
 
-        if not self.name:
-            self.name = self.file.name.split(r'/')[-1]
+        name = self.file.name.split(r'/')[-1]
+        if not self.name or self.original_name == self.name:
+            self.name = name
 
-        if hasattr(self, 'project') and hasattr(self.content_object, 'bmfget_project'):
-            self.project_pk = getattr(self.content_object.bmfget_project(), 'pk', None)
+        if hasattr(self.content_object, 'bmfget_project'):
+            self.project = self.content_object.bmfget_project()
 
-        if hasattr(self, 'customer') and hasattr(self.content_object, 'bmfget_customer'):
-            self.customer_pk = getattr(self.content_object.bmfget_customer(), 'pk', None)
-
-    @models.permalink
-    def bmffile_download(self):
-        """
-        A permalink to the default view of this model in the BMF-System
-        """
-        return ('djangobmf:document-get', (), {"pk": self.pk})
+        if hasattr(self.content_object, 'bmfget_customer'):
+            self.customer = self.content_object.bmfget_customer()

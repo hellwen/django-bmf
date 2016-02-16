@@ -9,6 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Model
 from django.template.loader import select_template
 from django.utils import six
+from django.utils.translation import ugettext_lazy as _
 
 import re
 
@@ -33,7 +34,12 @@ class RelationshipMetaclass(type):
         if not getattr(new_cls, 'model', None):
             raise ImproperlyConfigured('No model attribute defined in %s.' % new_cls)
 
-        if isinstance(new_cls.model, Model):
+        try:
+            ismodel = issubclass(new_cls.model, Model)
+        except:
+            ismodel = False
+
+        if ismodel:
             new_cls._model = new_cls.model
         elif hasattr(new_cls, 'settings'):
             new_cls._model = apps.get_model(getattr(settings, new_cls.settings, new_cls.model))
@@ -52,7 +58,7 @@ class RelationshipMetaclass(type):
         return new_cls
 
 
-class Relationship(six.with_metaclass(RelationshipMetaclass, object)):
+class RelationshipMixin(object):
     _related_model = None
     settings = None
     template = None
@@ -80,6 +86,17 @@ class Relationship(six.with_metaclass(RelationshipMetaclass, object)):
         return data
 
     def get_queryset(self, obj):
+        raise NotImplementedError(
+            'You need to define a get_queryset method '
+            'in %s' % self.__class__.__name__
+        )
+
+    def filter_queryset(self, request, queryset, view):
+        return queryset.all()
+
+
+class Relationship(six.with_metaclass(RelationshipMetaclass, RelationshipMixin)):
+    def get_queryset(self, obj):
         """
         This function resolves the field value to the the queryset provided by
         the django relationship or needs to be overwritten
@@ -91,5 +108,10 @@ class Relationship(six.with_metaclass(RelationshipMetaclass, object)):
             )
         return getattr(obj, self.field)
 
-    def filter_queryset(self, request, queryset, view):
-        return queryset.all()
+
+class DocumentRelationship(six.with_metaclass(RelationshipMetaclass, RelationshipMixin)):
+    name = _('Documents')
+    slug = 'documents'
+
+    def get_queryset(self, obj):
+        return obj.djangobmf_document

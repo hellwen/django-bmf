@@ -105,63 +105,63 @@ class TaskModuleTests(ModuleMixin, DemoDataMixin, TestCase):
     def test_task_workflows(self):
         """
         """
-#       goal1 = Goal(summary="Goal1", project_id=1)
-#       goal1.clean()
-#       goal1.save()
+        goal1 = Goal(summary="Goal1", project_id=1)
+        goal1.clean()
+        goal1.save()
 
-#       goal2 = Goal(summary="Goal2", project_id=1, referee_id=2)
-#       goal2.clean()
-#       goal2.save()
+        goal2 = Goal(summary="Goal2", project_id=1, referee_id=2)
+        goal2.clean()
+        goal2.save()
 
-#       goal2.bmfget_customer()
-#       goal2.bmfget_project()
+        goal2.bmfget_customer()
+        goal2.bmfget_project()
 
-#       goal3 = Goal(summary="Goal3")
-#       goal3.clean()
-#       goal3.save()
+        goal3 = Goal(summary="Goal3")
+        goal3.clean()
+        goal3.save()
 
-#       goal3.bmfget_customer()
+        goal3.bmfget_customer()
 
-#       task1 = Task(summary="Task1", goal=goal1)
-#       task1.clean()
-#       task1.save()
+        task1 = Task(summary="Task1", goal=goal1)
+        task1.clean()
+        task1.save()
 
-#       task2 = Task(summary="Task2", goal=goal2)
-#       task2.clean()
-#       task2.save()
+        task2 = Task(summary="Task2", goal=goal2)
+        task2.clean()
+        task2.save()
 
-#       task3 = Task(summary="Task3", project_id=1)
-#       task3.clean()
-#       task3.save()
+        task3 = Task(summary="Task3", project_id=1)
+        task3.clean()
+        task3.save()
 
-#       Project = task3.project._default_manager
+        Project = task3.project._default_manager
 
-#       task3.get_goal_queryset(Goal.objects.all())
+        task3.get_goal_queryset(Goal.objects.all())
 
-#       task4 = Task(summary="Task4")
-#       task4.clean()
-#       task4.save()
+        task4 = Task(summary="Task4")
+        task4.clean()
+        task4.save()
 
-#       task5 = Task(summary="Task5", due_date='2014-01-01')
-#       task5.clean()
-#       task5.save()
+        task5 = Task(summary="Task5", due_date='2014-01-01')
+        task5.clean()
+        task5.save()
 
-#       task5.get_project_queryset(Project.all())
-#       task5.get_goal_queryset(Goal.objects.all())
+        task5.get_project_queryset(Project.all())
+        task5.get_goal_queryset(Goal.objects.all())
 
-#       task6 = Task(summary="Task6", due_date='2014-01-01', goal=goal1)
-#       task6.clean()
-#       task6.save()
+        task6 = Task(summary="Task6", due_date='2014-01-01', goal=goal1)
+        task6.clean()
+        task6.save()
 
-#       task6.get_project_queryset(Project.all())
+        task6.get_project_queryset(Project.all())
 
-#       task7 = Task(summary="Task7", goal=goal1, employee_id=1)
-#       task7.clean()
-#       task7.save()
+        task7 = Task(summary="Task7", goal=goal1, employee_id=1)
+        task7.clean()
+        task7.save()
 
-#       task8 = Task(summary="Task8", due_date='3014-01-01', goal=goal1)
-#       task8.clean()
-#       task8.save()
+        task8 = Task(summary="Task8", due_date='3014-01-01', goal=goal1)
+        task8.clean()
+        task8.save()
 
 #       namespace = Task._bmfmeta.namespace_api
 

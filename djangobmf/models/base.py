@@ -337,6 +337,18 @@ class BMFModelBase(ModelBase):
             )
             field.contribute_to_class(cls, 'djangobmf_notification')
 
+        # TODO add model from app config
+        if cls._bmfmeta.has_files:
+            try:
+                cls._meta.get_field('djangobmf_document')
+            except (models.FieldDoesNotExist, AppRegistryNotReady):
+                field = GenericRelation(
+                    "djangobmf.Document",
+                    content_type_field='content_type',
+                    object_id_field='content_id',
+                )
+                field.contribute_to_class(cls, 'djangobmf_document')
+
         # instancemethod: bmfget_project
         def bmfget_project(self):
             """

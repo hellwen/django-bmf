@@ -18,16 +18,23 @@ class FileField(models.ForeignKey):
             del kwargs['to']
         super(FileField, self).__init__(self.model_class, related_name=related_name, **kwargs)
 
-#   def formfield(self, **kwargs):
-#       # This is a fairly standard way to set up some defaults
-#       # while letting the caller override them.
-#       defaults = {
-#           'form_class': self.default_form_class,
-#           'rel': self.rel,
-#       }
-#       defaults.update(kwargs)
-#       return super(FilerFileField, self).formfield(**defaults)
-#   pass
+    def formfield(self, **kwargs):
+        # This is a fairly standard way to set up some defaults
+        # while letting the caller override them.
+        defaults = {
+            # 'form_class': self.default_form_class,
+            'rel': self.rel,
+        }
+        defaults.update(kwargs)
+        return super(FileField, self).formfield(**kwargs)
+
+
+class StaticFileField(FileField):
+    pass
+
+
+class ObjectFileField(FileField):
+    pass
 
 
 '''
@@ -135,35 +142,4 @@ class AdminFileFormField(forms.ModelChoiceField):
     def widget_attrs(self, widget):
         widget.required = self.required
         return {}
-
-
-class FilerFileField(models.ForeignKey):
-    default_form_class = AdminFileFormField
-    default_model_class = File
-
-    def __init__(self, **kwargs):
-        # We hard-code the `to` argument for ForeignKey.__init__
-        if "to" in kwargs.keys():  # pragma: no cover
-            old_to = kwargs.pop("to")
-            dfl = "%s.%s" % (
-                    self.default_model_class._meta.app_label,
-                    self.default_model_class.__name__
-            )
-            if old_to != dfl:
-                msg = "%s can only be a ForeignKey to %s; %s passed" % (
-                    self.__class__.__name__, self.default_model_class.__name__, old_to
-                )
-                warnings.warn(msg, SyntaxWarning)
-        kwargs['to'] = self.default_model_class
-        super(FilerFileField, self).__init__(**kwargs)
-
-    def formfield(self, **kwargs):
-        # This is a fairly standard way to set up some defaults
-        # while letting the caller override them.
-        defaults = {
-            'form_class': self.default_form_class,
-            'rel': self.rel,
-        }
-        defaults.update(kwargs)
-        return super(FilerFileField, self).formfield(**defaults)
 '''

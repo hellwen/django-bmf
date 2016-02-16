@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-29 02:30+0100\n"
-"PO-Revision-Date: 2016-01-29 01:32+0000\n"
+"POT-Creation-Date: 2016-02-16 17:24+0100\n"
+"PO-Revision-Date: 2016-02-16 16:25+0000\n"
 "Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
 "Language-Team: Russian (http://www.transifex.com/django-bmf/django-bmf/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -44,7 +44,11 @@ msgctxt "currency formatting"
 msgid "%(val)s %(sym)s"
 msgstr ""
 
-#: core/serializers/__init__.py:46
+#: core/relationship.py:113 models/document.py:74
+msgid "Documents"
+msgstr "Документы"
+
+#: core/serializers/activity.py:44
 msgid "You need to define a topic or a text"
 msgstr ""
 
@@ -117,11 +121,11 @@ msgstr "Учет времени и присутствие"
 msgid "Warehouse"
 msgstr "Склад"
 
-#: fields/__init__.py:69
+#: fields/__init__.py:73
 msgid "Currency Field"
 msgstr ""
 
-#: fields/__init__.py:112
+#: fields/__init__.py:116
 msgid "Money Field"
 msgstr ""
 
@@ -147,7 +151,7 @@ msgstr ""
 msgid "Comment"
 msgstr "Комментарий"
 
-#: models/activity.py:26 models/base.py:286 models/document.py:44
+#: models/activity.py:26 models/base.py:286 models/document.py:62
 msgid "Created"
 msgstr "Создан"
 
@@ -159,7 +163,7 @@ msgstr "Обновлен"
 msgid "Workflow"
 msgstr "Рабочий процесс"
 
-#: models/activity.py:29 models/document.py:21
+#: models/activity.py:29 models/document.py:25
 msgid "File"
 msgstr "Файл"
 
@@ -179,7 +183,7 @@ msgstr "Действие"
 msgid "Template"
 msgstr "Шаблон"
 
-#: models/activity.py:73 models/base.py:273 models/document.py:43
+#: models/activity.py:73 models/base.py:273 models/document.py:61
 #: models/notification.py:40 models/renderer.py:68 models/report.py:41
 msgid "Modified"
 msgstr "Изменен"
@@ -224,20 +228,33 @@ msgstr "Конфигурация"
 msgid "Configurations"
 msgstr "Конфигурации"
 
-#: models/document.py:20 models/renderer.py:23
+#: models/document.py:21 models/renderer.py:23
 #: templates/djangobmf/configuration/index.html:18
 #: templates/djangobmf/configuration/index.html:19
+#: templates/djangobmf/document_bmflist.html:5
 #: templates/djangobmf/module_list.html:5
 msgid "Name"
 msgstr "Имя"
 
-#: models/document.py:55
+#: models/document.py:22
+msgid "Mimetype"
+msgstr ""
+
+#: models/document.py:23
+msgid "Encoding"
+msgstr ""
+
+#: models/document.py:24
+msgid "Description"
+msgstr ""
+
+#: models/document.py:27
+msgid "SHA1"
+msgstr ""
+
+#: models/document.py:73
 msgid "Document"
 msgstr "Документ"
-
-#: models/document.py:56
-msgid "Documents"
-msgstr "Документы"
 
 #: models/notification.py:30
 msgid "Triggered"
@@ -494,6 +511,7 @@ msgid "Required"
 msgstr "Обязательный"
 
 #: templates/djangobmf/configuration/index.html:23
+#: templates/djangobmf/document_bmflist.html:6
 msgid "Changed"
 msgstr "Изменено"
 

@@ -6,7 +6,7 @@ import django.db.models.deletion
 import djangobmf.utils.generate_filename
 from django.conf import settings
 import django.utils.timezone
-import djangobmf.document.storage
+import djangobmf.storage
 
 
 class Migration(migrations.Migration):
@@ -160,9 +160,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
                 ('name', models.CharField(blank=True, max_length=120, verbose_name='Name', null=True, editable=False)),
-                ('file', models.FileField(upload_to=djangobmf.utils.generate_filename.generate_filename, storage=djangobmf.document.storage.BMFStorage(), verbose_name='File')),
+                ('file', models.FileField(upload_to=djangobmf.utils.generate_filename.generate_filename, storage=djangobmf.storage.default_storage, verbose_name='File')),
                 ('size', models.PositiveIntegerField(blank=True, null=True, editable=False)),
-                ('is_static', models.BooleanField(default=False)),
+                ('is_static', models.BooleanField(default=True, editable=False)),
                 ('content_id', models.PositiveIntegerField(blank=True, null=True, editable=False)),
                 ('modified', models.DateTimeField(auto_now=True, verbose_name='Modified', null=True)),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created', null=True)),

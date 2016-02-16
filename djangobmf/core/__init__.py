@@ -3,9 +3,9 @@
 
 from __future__ import unicode_literals
 
-from .relationship import Relationship
+# from .relationship import Relationship
 
 
 __all__ = (
-    'Relationship',
+    # 'Relationship',
 )

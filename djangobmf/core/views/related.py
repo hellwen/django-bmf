@@ -21,7 +21,7 @@ class View(BaseMixin, ListModelMixin, GenericAPIView):
     def get_serializer_class(self):
         if hasattr(self.relation, 'serializer'):
             return getattr(self.relation, 'serializer')
-        if hasattr(self.relation._model, '_bmfmeta'):
+        if hasattr(self.relation._related_model, '_bmfmeta'):
             return self.relation._related_model._bmfmeta.serializer_class
         raise NotImplementedError(
             'You need to use a model managed by djangobmf or '

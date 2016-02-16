@@ -10,5 +10,9 @@ class ActivityPagination(PaginationMixin):
     pass
 
 
+class DocumentPagination(PaginationMixin):
+    pass
+
+
 class RelatedPagination(PaginationMixin):
     pass

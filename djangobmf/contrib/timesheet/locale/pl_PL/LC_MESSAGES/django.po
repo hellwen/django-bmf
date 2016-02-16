@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Wojtek Hulak <wojtek.hulak@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-01-08 10:28+0100\n"
-"PO-Revision-Date: 2014-09-21 02:22+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2016-02-01 07:37+0000\n"
+"Last-Translator: Wojtek Hulak <wojtek.hulak@gmail.com>\n"
 "Language-Team: Polish (Poland) (http://www.transifex.com/django-bmf/django-bmf/language/pl_PL/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,43 +20,43 @@ msgstr ""
 
 #: bmf_module.py:31
 msgid "My timesheets"
-msgstr ""
+msgstr "Mój Terminarz"
 
 #: bmf_module.py:44
 msgid "Archive"
-msgstr ""
+msgstr "Archiwalne"
 
 #: categories.py:13 models.py:57
 msgid "Timesheets"
-msgstr ""
+msgstr "Terminarze"
 
 #: models.py:32
 msgid "Title"
-msgstr ""
+msgstr "Tytuł"
 
 #: models.py:33
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 #: models.py:56
 msgid "Timesheet"
-msgstr ""
+msgstr "Terminarz"
 
 #: templates/djangobmf_timesheet/timesheet_bmflist.html:5
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: templates/djangobmf_timesheet/timesheet_bmflist.html:6
 msgid "Subject"
-msgstr ""
+msgstr "Temat"
 
 #: templates/djangobmf_timesheet/timesheet_bmflist.html:7
 msgid "Employee"
-msgstr ""
+msgstr "Pracownik"
 
 #: templates/djangobmf_timesheet/timesheet_bmflist.html:8
 msgid "Time"
-msgstr ""
+msgstr "Godzina"
 
 #: templates/djangobmf_timesheet/timesheet_bmflist.html:16 workflows.py:21
 msgid "Active"
@@ -63,16 +64,16 @@ msgstr "Aktywny"
 
 #: workflows.py:22
 msgid "Finished"
-msgstr ""
+msgstr "Zakończony"
 
 #: workflows.py:23
 msgid "Validated"
-msgstr ""
+msgstr "Sprawdzony"
 
 #: workflows.py:27
 msgid "Finish"
-msgstr ""
+msgstr "Zakończ"
 
 #: workflows.py:32
 msgid "Validate"
-msgstr ""
+msgstr "Sprawdź"

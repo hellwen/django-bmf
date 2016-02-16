@@ -167,3 +167,21 @@ bmfapp.filter('timesince', ['$filter', function($filter) {
         return filter_function(value);
     }
 }]);
+
+// https://gist.github.com/thomseddon/3511330
+bmfapp.filter('filesize', [function() {
+    return function(value, precision) {
+        if (typeof precision === 'undefined') precision = 2;
+        var bytes = parseInt(value);
+        var base = 1000;
+        var units = gettext("bytes KB MB GB TB PB").split(" ");
+
+        if (bytes == NaN) return '0 ' + units[0];
+        if (bytes == 1) return gettext('1 byte');
+
+        var log = (Math.log(bytes) / Math.log(base)).toFixed(1).split('.');
+        var size = parseInt(log[0]);
+        if (log[1] > 7)  size += 1;
+        return (bytes / Math.pow(base, size)).toFixed(precision).split('.').join(get_format("DECIMAL_SEPARATOR")) + ' ' + units[size];
+    }
+}]);

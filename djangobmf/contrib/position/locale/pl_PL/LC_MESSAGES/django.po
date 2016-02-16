@@ -31,7 +31,7 @@ msgstr ""
 
 #: models.py:44 templates/djangobmf_position/position_bmflist_old.html:8
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: models.py:45 templates/djangobmf_position/position_bmflist_old.html:9
 msgid "Name"
@@ -51,7 +51,7 @@ msgstr ""
 
 #: models.py:61
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 #: models.py:90
 msgid "Position"
@@ -63,8 +63,8 @@ msgstr ""
 
 #: templates/djangobmf_position/position_bmflist_old.html:11
 msgid "Project"
-msgstr ""
+msgstr "Projekt"
 
 #: templates/djangobmf_position/position_bmflist_old.html:12
 msgid "Employee"
-msgstr ""
+msgstr "Pracownik"

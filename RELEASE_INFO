@@ -1,6 +1,6 @@
 
 - create a release branch
-- bump version (setup.py, bowser.json and package.json)
+- bump version (setup.py and package.json)
 - build newest englisch translations (django + djangojs)
 - push translations
 - pull translations
@@ -8,10 +8,8 @@
 - run tests and recreate test env
 
 - update freeze on develop branch
-- update bower libs on develop branch (bower update --save)
+- update npm libs on develop branch (npm update --save-dev)
 
 - pypi:
   Remove old build directory
-  python setup.py register
-  python setup.py bdist_wheel upload
-  python setup.py sdist upload
+  python setup.py register bdist_wheel sdist upload
