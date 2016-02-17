@@ -77,5 +77,4 @@ class CountryField(models.CharField):
         """
         serialization
         """
-        value = self.val_from_obj(obj)
-        return self.get_prep_value(value)
+        return self.get_prep_value(obj)

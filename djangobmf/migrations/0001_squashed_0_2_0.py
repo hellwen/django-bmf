@@ -11,8 +11,6 @@ import djangobmf.storage
 
 class Migration(migrations.Migration):
 
-    replaces = [('djangobmf', '0001_version_0_2_0'), ('djangobmf', '0008_activity_meta_options'), ('djangobmf', '0009_soft_dependency_for_projects_and_customer')]
-
     dependencies = [
         ('contenttypes', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
