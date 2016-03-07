@@ -9,10 +9,11 @@
 
 /\.tox
 /\.coverage*
-/coverage\.xml
-/junit\.xml
 /build
+/coverage\.xml
+/database\.sqlite
 /dist
+/junit\.xml
 /static
 /reports
 /node_modules
@@ -22,5 +23,4 @@
 /virtenv
 /docs/build
 /sandbox/static/
-/sandbox/database\.sqlite
 /sandbox/local_settings.py
