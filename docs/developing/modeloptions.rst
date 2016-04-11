@@ -123,13 +123,3 @@ Default: ``state``
 
     If the model has a workflow (and the workflow has valid transitions)
     a field is added to you model. The field has the name of this attribute.
-
-
-
-
-
-
-
-
-
-
