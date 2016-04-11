@@ -1,0 +1,1 @@
+{% load i18n %}{% trans "Monday" %} - {% blocktrans %}Thursday{% endblocktrans %}
