@@ -1,0 +1,8 @@
+{% extends options.template_extends %}
+{% load i18n %}
+
+{% block title %}{% trans "Missing report" %}{% endblock %}
+{% block document %}
+<h1>{% trans "Missing report template" %}</h1>
+{% trans "Template" %}: {{ template_name }}
+{% endblock %}

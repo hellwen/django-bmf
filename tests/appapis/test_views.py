@@ -7,11 +7,6 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.test.client import RequestFactory
 
-# from djangobmf.views import ModuleListView
-# from djangobmf.views import ModuleActivityMixin
-# from djangobmf.views import ModuleFilesMixin
-# from djangobmf.views import ModuleFormMixin
-from djangobmf.views import ModuleReportView
 from djangobmf.views import ModuleCloneView
 from djangobmf.views import ModuleUpdateView
 from djangobmf.views import ModuleCreateView
@@ -40,10 +35,6 @@ class ViewsTests(TestCase):
 #       obj.model = TestView
 #       obj.template_name = 'test.html'
 #       self.assertEqual(obj.get_template_names(), ['test.html'])
-
-    @expectedFailure
-    def test_views_ModuleReportView(self):
-        self.assertTrue(False)  # TODO NOT IMPLEMENTED
 
     @expectedFailure
     def test_views_ModuleCloneView(self):

@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 # from django.http import HttpResponse
 
 # from djangobmf.core.report import Report as BaseReport
-from djangobmf.models.renderer import Renderer
+# from djangobmf.models.renderer import Renderer
 
 
 class Report(models.Model):
@@ -30,14 +30,14 @@ class Report(models.Model):
         help_text="Connect a Report to an BMF-Model", on_delete=models.CASCADE,
         editable=False,
     )
-    renderer = models.ForeignKey(
-        Renderer,
-        related_name="reports",
-        null=True,
-        blank=True,
-        help_text="Connect a Report to an Renderer",
-        on_delete=models.SET_NULL,
-    )
+#   renderer = models.ForeignKey(
+#       Renderer,
+#       related_name="reports",
+#       null=True,
+#       blank=True,
+#       help_text="Connect a Report to an Renderer",
+#       on_delete=models.SET_NULL,
+#   )
     modified = models.DateTimeField(_("Modified"), auto_now=True, editable=False,)
 
     class Meta:

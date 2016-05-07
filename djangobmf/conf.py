@@ -185,8 +185,10 @@ class Settings(object):
         return getattr(djsettings, 'BMF_DOCUMENT_PERMISSIONS_DIR')
 
     @property
-    def REPORTING_SERVER(self):  # noqa
-        return getattr(djsettings, 'BMF_REPORTING_SERVER', None)
+    def REPORTING(self):  # noqa
+        return getattr(djsettings, 'BMF_REPORTING', {
+            'pdf': ['djangobmf.models.PDFRenderer'],
+        })
 
     @property
     def DEFAULT_CURRENCY(self):  # noqa

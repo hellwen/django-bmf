@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from django.contrib.admin.utils import NestedObjects
 from django.contrib.auth import get_permission_codename
-from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ImproperlyConfigured
@@ -42,14 +42,11 @@ from django.utils.translation import ugettext
 
 from .mixins import ModuleSearchMixin
 from .mixins import ModuleAjaxMixin
-from .mixins import ModuleViewMixin
 # from .mixins import ModuleFilesMixin
 from .mixins import ModuleFormMixin
 from .mixins import ReadOnlyMixin
 
-from djangobmf.models import Report
 from djangobmf.permissions import AjaxPermission
-from djangobmf.permissions import ModuleViewPermission
 from djangobmf.permissions import ModuleClonePermission
 from djangobmf.permissions import ModuleCreatePermission
 from djangobmf.permissions import ModuleDeletePermission
@@ -97,31 +94,6 @@ class ModuleDetail(SingleObjectTemplateResponseMixin, ContextMixin, View):
 
     def get_template_names(self):
         return super(ModuleDetail, self).get_template_names() + [self.default_template]
-
-
-class ModuleReportView(ModuleViewMixin, DetailView):
-    """
-    render a report
-    """
-    permission_classes = [ModuleViewPermission]
-    context_object_name = 'object'
-
-    def get_template_names(self):
-        return ["djangobmf/module_report.html"]
-
-    def get(self, request, *args, **kwargs):
-        response = super(ModuleReportView, self).get(request, *args, **kwargs)
-
-        ct = ContentType.objects.get_for_model(self.get_object())
-        try:
-            report = Report.objects.get(contenttype=ct)
-            return report.render(self.get_filename(), self.request, self.get_context_data())
-        except Report.DoesNotExist:
-            # return "no view configured" page
-            return response
-
-    def get_filename(self):
-        return "report"
 
 
 class ModuleCloneView(ModuleFormMixin, ModuleAjaxMixin, UpdateView):

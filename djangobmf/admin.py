@@ -8,12 +8,12 @@ from django.contrib import admin
 from djangobmf.models import Configuration
 from djangobmf.models import Document
 from djangobmf.models import Report
-from djangobmf.models import Renderer
+from djangobmf.models import PDFRenderer
 
 
 admin.site.register(Configuration)
 admin.site.register(Report)
-admin.site.register(Renderer)
+admin.site.register(PDFRenderer)
 
 
 @admin.register(Document)
