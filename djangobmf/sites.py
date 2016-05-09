@@ -12,9 +12,10 @@ from djangobmf.core.relationship import Relationship
 from djangobmf.core.category import Category
 from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
-from djangobmf.core.report import Report
 from djangobmf.core.viewmixin import ViewMixin
 from djangobmf.views.module import ModuleDetail
+from djangobmf.views.report import ReportBaseView as Report
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -41,6 +42,9 @@ if apps.apps_ready:  # pragma: no branch
     site = apps.get_app_config(settings.APP_LABEL).site
 
     class register(object):  # noqa
+        """
+        """
+
         def __init__(self, cls=None, **kwargs):
             self.kwargs = kwargs
             if cls:
@@ -89,13 +93,14 @@ if apps.apps_ready:  # pragma: no branch
                 site.modules[cls.model] = instance
 
             elif issubclass(cls, Report):
-                if "dashboard" not in self.kwargs:
-                    raise ImproperlyConfigured(
-                        'You need to define a dashbord, when registering the report %s',
-                        cls,
-                    )
-                dashboard = self.register_dashboard(self.kwargs["dashboard"])
-                dashboard.add_report(cls)
+                pass
+            #   if "dashboard" not in self.kwargs:
+            #       raise ImproperlyConfigured(
+            #           'You need to define a dashbord, when registering the report %s',
+            #           cls,
+            #       )
+            #   dashboard = self.register_dashboard(self.kwargs["dashboard"])
+            #   dashboard.add_report(cls)
 
             elif issubclass(cls, ModuleDetail):
                 if "model" in self.kwargs:

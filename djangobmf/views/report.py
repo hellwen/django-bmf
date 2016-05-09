@@ -89,7 +89,10 @@ class ReportBaseView(ModuleViewMixin, DetailView):
         response['Content-Length'] = len(data)
 
         if send and disposition:
-            response['Content-Disposition'] = '%s; filename=%s' % (disposition, filename)
+            response['Content-Disposition'] = '%s; filename=%s' % (
+                disposition,
+                filename,
+            )
 
         return response
 
@@ -125,7 +128,11 @@ class ReportBaseView(ModuleViewMixin, DetailView):
         ct = ContentType.objects.get_for_model(self.get_object())
         try:
             report = Report.objects.get(contenttype=ct)
-            return report.render(self.get_filename(), self.request, self.get_context_data())
+            return report.render(
+                self.get_filename(),
+                self.request,
+                self.get_context_data(),
+            )
         except Report.DoesNotExist:
             # return "no view configured" page
             return response
