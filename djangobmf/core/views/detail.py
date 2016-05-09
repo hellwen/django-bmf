@@ -74,5 +74,9 @@ class View(BaseMixin, GenericAPIView):
                     kwargs={'pk': self.object.pk},
                 ),
             }),
+            ('reports', dict([
+                (k, r['class'].verbose_name)
+                for k, r in self.request.djangobmf_appconfig.bmf_modules[self.model].detail_reports.items()
+            ])),
             ('workflow', meta.workflow.serialize(self.request) if meta.workflow else None),
         ]))

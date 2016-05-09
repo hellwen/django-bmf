@@ -3,16 +3,14 @@
 
 from __future__ import unicode_literals
 
-from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
 
-from djangobmf.models import Report
-from djangobmf.models import PDFRenderer
+# from djangobmf.models import Report
 from djangobmf.permissions import ModuleViewPermission
 from djangobmf.views.mixins import ModuleViewMixin
-
-from djangobmf.contrib.task.models import Task
 
 # from .mixins import ModuleViewPermissionMixin
 # from .mixins import ModuleViewMixin
@@ -36,6 +34,9 @@ class ReportBaseView(ModuleViewMixin, DetailView):
 
     # adds a suffix to the reports template_name path
     report_template_name_suffix = None
+
+    # define the view's verbose name
+    verbose_name = _("Report")
 
     def get_filename(self):
         """
@@ -100,6 +101,7 @@ class ReportBaseView(ModuleViewMixin, DetailView):
         """
         """
         pass
+#       return PDFRenderer.objects.get(pk=1)
 
     # OLD -------------------------------------------------
 
@@ -123,36 +125,37 @@ class ReportBaseView(ModuleViewMixin, DetailView):
     needs_pk = False
 
     def get(self, request, *args, **kwargs):
-        response = super(ReportBaseView, self).get(request, *args, **kwargs)
-
-        ct = ContentType.objects.get_for_model(self.get_object())
-        try:
-            report = Report.objects.get(contenttype=ct)
-            return report.render(
-                self.get_filename(),
-                self.request,
-                self.get_context_data(),
-            )
-        except Report.DoesNotExist:
-            # return "no view configured" page
-            return response
-
-
-class ReportFormView(ReportBaseView):
-    """
-    render a report
-    """
-    pass
-
-
-class ReportDirectView(ReportBaseView):
-    """
-    render a report
-    """
-    model = Task
-
-    def get_renderer(self):
-        return PDFRenderer.objects.get(pk=1)
-
-    def get(self, request, *args, **kwargs):
         return self.get_report(request=self.request)
+
+#       response = super(ReportBaseView, self).get(request, *args, **kwargs)
+#       ct = ContentType.objects.get_for_model(self.get_object())
+#       try:
+#           report = Report.objects.get(contenttype=ct)
+#           return report.render(
+#               self.get_filename(),
+#               self.request,
+#               self.get_context_data(),
+#           )
+#       except Report.DoesNotExist:
+#           # return "no view configured" page
+#           return response
+
+
+# ass ReportFormView(ReportBaseView):
+#   """
+#   render a report
+#   """
+#   pass
+
+
+# ass ReportDirectView(ReportBaseView):
+#   """
+#   render a report
+#   """
+#   model = Task
+
+#   def get_renderer(self):
+#       return PDFRenderer.objects.get(pk=1)
+
+#   def get(self, request, *args, **kwargs):
+#       return self.get_report(request=self.request)

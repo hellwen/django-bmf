@@ -26,12 +26,12 @@ __all__ = [
     'Category',
     'Dashboard',
     'Module',
-    'Report',
+    'PDFReport',
     'ViewMixin',
 ]
 
 
-class Report(ReportBaseView):
+class PDFReport(ReportBaseView):
     renderer_class = apps.get_model(settings.APP_LABEL, "PDFRenderer")
 
 
@@ -91,12 +91,14 @@ if apps.apps_ready:  # pragma: no branch
                         cls.__name__,
                     )
                 bmfappconfig.bmfregister_relationship(cls, self.kwargs["model"])
+                return cls
 
             elif issubclass(cls, Module):
                 instance = bmfappconfig.bmfregister_module(cls)
                 site.modules[cls.model] = instance
+                return cls
 
-            elif issubclass(cls, Report):
+            elif issubclass(cls, ReportBaseView):
                 if "slug" not in self.kwargs:
                     raise ImproperlyConfigured(
                         'You need to define a slug, when registering the report %s',
@@ -119,6 +121,7 @@ if apps.apps_ready:  # pragma: no branch
                     bmfappconfig.bmfregister_detail_report(cls, self.kwargs["slug"])
                 else:
                     bmfappconfig.bmfregister_list_report(cls, self.kwargs["slug"])
+                return cls
 
             elif issubclass(cls, ModuleDetail):
                 if "model" in self.kwargs:
@@ -141,6 +144,7 @@ if apps.apps_ready:  # pragma: no branch
                         cls.__name__,
                         model.__class__.__name__,
                     )
+                return cls
 
             else:
                 raise ImproperlyConfigured(
