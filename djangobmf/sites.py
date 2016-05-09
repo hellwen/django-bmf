@@ -14,7 +14,7 @@ from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
 from djangobmf.core.viewmixin import ViewMixin
 from djangobmf.views.module import ModuleDetail
-from djangobmf.views.report import ReportBaseView as Report
+from djangobmf.views.report import ReportBaseView
 
 
 import logging
@@ -29,6 +29,10 @@ __all__ = [
     'Report',
     'ViewMixin',
 ]
+
+
+class Report(ReportBaseView):
+    renderer_class = apps.get_model(settings.APP_LABEL, "PDFRenderer")
 
 
 # shortcut to the site instance to provide a simple
@@ -93,14 +97,28 @@ if apps.apps_ready:  # pragma: no branch
                 site.modules[cls.model] = instance
 
             elif issubclass(cls, Report):
-                pass
-            #   if "dashboard" not in self.kwargs:
-            #       raise ImproperlyConfigured(
-            #           'You need to define a dashbord, when registering the report %s',
-            #           cls,
-            #       )
-            #   dashboard = self.register_dashboard(self.kwargs["dashboard"])
-            #   dashboard.add_report(cls)
+                if "slug" not in self.kwargs:
+                    raise ImproperlyConfigured(
+                        'You need to define a slug, when registering the report %s',
+                        cls,
+                    )
+
+                if not getattr(cls, "model", None):
+                    raise ImproperlyConfigured(
+                        '%s needs a model attribute',
+                        cls,
+                    )
+
+                if not getattr(cls, "renderer_class", None):
+                    raise ImproperlyConfigured(
+                        '%s needs a renderer_class attribute',
+                        cls,
+                    )
+
+                if cls.has_object:
+                    bmfappconfig.bmfregister_detail_report(cls, self.kwargs["slug"])
+                else:
+                    bmfappconfig.bmfregister_list_report(cls, self.kwargs["slug"])
 
             elif issubclass(cls, ModuleDetail):
                 if "model" in self.kwargs:

@@ -74,6 +74,12 @@ class BMFConfig(AppConfig):
                 )
         self.bmf_relations.append(r)
 
+    def bmfregister_list_report(self, report, name):
+        pass
+
+    def bmfregister_detail_report(self, report, name):
+        pass
+
 
 class ModuleTemplate(AppConfig):
     bmf_label = bmfsettings.APP_LABEL
