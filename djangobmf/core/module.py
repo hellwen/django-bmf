@@ -69,10 +69,14 @@ class Module(object):
 
     # TODO
     def get_update_view(self):
+        """
+        """
         pass
 
     # TODO
     def get_delete_view(self):
+        """
+        """
         pass
 
     def get_detail_view(self, request, *args, **kwargs):
@@ -81,13 +85,18 @@ class Module(object):
         """
         if hasattr(self, '_detail_view'):
             return self._detail_view(request, *args, **kwargs)
-        self._detail_view = self.detail_view.as_view(module=self, model=self.model)
+        self._detail_view = self.detail_view.as_view(
+            module=self,
+            model=self.model
+        )
         return self._detail_view(request, *args, **kwargs)
 
     # --- serialization -------------------------------------------------------
 
     # TODO
     def serialize_class(self):
+        """
+        """
         return OrderedDict([
             ('ct', self.get_contenttype().pk),
             ('app', self.model._meta.app_label),
@@ -99,12 +108,16 @@ class Module(object):
 
     # TODO
     def serialize_object(self, obj):
+        """
+        """
         return {}
 
     # --- workflow ------------------------------------------------------------
 
     # TODO
     def validate_workflow(self):
+        """
+        """
         if self.workflow_class:
             if not issubclass(self.workflow_class, Workflow):
                 raise ImproperlyConfigured(
@@ -116,20 +129,28 @@ class Module(object):
             # self.workflow = self.workflow_class()
 
     def has_workflow(self):
+        """
+        """
         return bool(self.workflow_class)
 
     # TODO
     def get_workflow_states(self, obj):
+        """
+        """
         pass
 
     # TODO
     def get_workflow_transitions(self, obj, state_name):
+        """
+        """
         pass
 
     # --- permissions ---------------------------------------------------------
 
     # TODO
     def get_permissions(self, obj):
+        """
+        """
         pass
 
     # --- Create views --------------------------------------------------------
@@ -142,6 +163,8 @@ class Module(object):
 
     # TODO
     def get_create_views(self):
+        """
+        """
         pass
         # {
         #     "name": i[1],
@@ -152,10 +175,14 @@ class Module(object):
 
     # TODO
     def get_create_view(self, name):
+        """
+        """
         pass
 
     # TODO
     def add_create_view(self, name, view):
+        """
+        """
         pass
         self._has_create_views = True
 
@@ -169,14 +196,20 @@ class Module(object):
 
     # TODO
     def get_clone_views(self):
+        """
+        """
         pass
 
     # TODO
     def get_clone_view(self, name):
+        """
+        """
         pass
 
     # TODO
     def add_clone_view(self, name, view):
+        """
+        """
         pass
         self._has_clone_views = True
 
@@ -190,14 +223,20 @@ class Module(object):
 
     # TODO
     def get_class_reports(self):
+        """
+        """
         pass
 
     # TODO
     def get_class_report(self, name):
+        """
+        """
         pass
 
     # TODO
     def add_class_report(self, name, report):
+        """
+        """
         pass
 
     # --- Object specific reports ---------------------------------------------
@@ -210,14 +249,20 @@ class Module(object):
 
     # TODO
     def get_object_reports(self):
+        """
+        """
         pass
 
     # TODO
     def get_object_report(self, name):
+        """
+        """
         pass
 
     # TODO
     def add_object_report(self, name, report):
+        """
+        """
         pass
 
     # --- Class specific custom apis ------------------------------------------
@@ -230,14 +275,20 @@ class Module(object):
 
     # TODO
     def get_class_apis(self):
+        """
+        """
         pass
 
     # TODO
     def get_class_api(self, name):
+        """
+        """
         pass
 
     # TODO
     def add_class_api(self, name, view):
+        """
+        """
         pass
 
     # --- Object specific custom apis -----------------------------------------
@@ -250,14 +301,20 @@ class Module(object):
 
     # TODO
     def get_object_apis(self):
+        """
+        """
         pass
 
     # TODO
     def get_object_api(self, name):
+        """
+        """
         pass
 
     # TODO
     def add_object_api(self, name, view):
+        """
+        """
         pass
 
     # --- Object specific custom apis -----------------------------------------
@@ -270,32 +327,46 @@ class Module(object):
 
     # TODO
     def get_relations(self):
+        """
+        """
         pass
         # ('relations', relations.get(ct, [])),
 
     # TODO
     def get_relation(self, name):
+        """
+        """
         pass
 
     # TODO
     def add_relation(self, name, relation):
+        """
+        """
         pass
 
     # --- number ranges -------------------------------------------------------
 
     def has_numberranges(self):
+        """
+        """
         pass
 
     # TODO
     def get_numberranges(self):
+        """
+        """
         pass
 
     # TODO
     def get_numberrange(self, name):
+        """
+        """
         pass
 
     # TODO
     def add_numberrange(self, name, number_range):
+        """
+        """
         pass
 
     # --- Signals -------------------------------------------------------------
@@ -500,18 +571,3 @@ class Module(object):
             urlpatterns += self.api_urlpatterns
 
         return urlpatterns
-
-#   has_logging = False
-#   has_comments = False
-#   has_files = False
-
-#   observed_fields = []
-#   search_fields = []
-
-#   clone = None
-#   primary = True
-#   report = None
-
-#   def __init__odl(self):
-#       self.dashboards = []
-#       self.manager = {}
