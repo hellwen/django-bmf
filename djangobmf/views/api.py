@@ -234,7 +234,7 @@ class APIViewDetail(BaseMixin, APIView):
                 'djangobmf/api/list-table-default.html',
             ]).render().strip()
             context['html'] = html
-            context['reports'] = request.djangobmf_appconfig.bmf_modules[view.model].list_reports
+            # context['reports'] = request.djangobmf_appconfig.bmf_modules[view.model].list_reports
 
         return Response(context)
 

@@ -38,14 +38,16 @@ class Module(object):
     workflow_class = None
     workflow_field_name = "state"
 
-    def __init__(self, config):
+    detail_view = ModuleDetail
+
+    def __init__(self, bmfconfig):
         # validation
         if not hasattr(self, 'model'):
             raise ImproperlyConfigured(
                 'No model defined in %s.' % self.__class__
             )
 
-        self.config = config
+        self.bmfconfig = bmfconfig
 
         self.signals_setup()
         self.validate_workflow()
@@ -54,7 +56,6 @@ class Module(object):
         self.create_view = self.create
         self.delete_view = self.delete
         self.update_view = self.update
-        self.detail_view = self.detail.as_view(model=self.model)
 
     # --- misc ----------------------------------------------------------------
 
@@ -66,17 +67,26 @@ class Module(object):
 
     # --- single views --------------------------------------------------------
 
+    # TODO
     def get_update_view(self):
         pass
 
+    # TODO
     def get_delete_view(self):
         pass
 
-    def get_detail_view(self):
-        pass
+    def get_detail_view(self, request, *args, **kwargs):
+        """
+        generates a detail-view response
+        """
+        if hasattr(self, '_detail_view'):
+            return self._detail_view(request, *args, **kwargs)
+        self._detail_view = self.detail_view.as_view(module=self, model=self.model)
+        return self._detail_view(request, *args, **kwargs)
 
     # --- serialization -------------------------------------------------------
 
+    # TODO
     def serialize_class(self):
         return OrderedDict([
             ('ct', self.get_contenttype().pk),
@@ -87,11 +97,13 @@ class Module(object):
             ('relations', self.get_relations()),
         ])
 
+    # TODO
     def serialize_object(self, obj):
         return {}
 
     # --- workflow ------------------------------------------------------------
 
+    # TODO
     def validate_workflow(self):
         if self.workflow_class:
             if not issubclass(self.workflow_class, Workflow):
@@ -106,14 +118,17 @@ class Module(object):
     def has_workflow(self):
         return bool(self.workflow_class)
 
+    # TODO
     def get_workflow_states(self, obj):
         pass
 
+    # TODO
     def get_workflow_transitions(self, obj, state_name):
         pass
 
     # --- permissions ---------------------------------------------------------
 
+    # TODO
     def get_permissions(self, obj):
         pass
 
@@ -125,6 +140,7 @@ class Module(object):
         """
         return getattr(self, '_has_create_views', False)
 
+    # TODO
     def get_create_views(self):
         pass
         # {
@@ -134,9 +150,11 @@ class Module(object):
         #     }),
         # } for i in model._bmfmeta.create_views
 
+    # TODO
     def get_create_view(self, name):
         pass
 
+    # TODO
     def add_create_view(self, name, view):
         pass
         self._has_create_views = True
@@ -149,12 +167,15 @@ class Module(object):
         """
         return getattr(self, '_has_clone_views', False)
 
+    # TODO
     def get_clone_views(self):
         pass
 
+    # TODO
     def get_clone_view(self, name):
         pass
 
+    # TODO
     def add_clone_view(self, name, view):
         pass
         self._has_clone_views = True
@@ -167,12 +188,15 @@ class Module(object):
         """
         return getattr(self, '_has_class_reports', False)
 
+    # TODO
     def get_class_reports(self):
         pass
 
+    # TODO
     def get_class_report(self, name):
         pass
 
+    # TODO
     def add_class_report(self, name, report):
         pass
 
@@ -184,12 +208,15 @@ class Module(object):
         """
         return getattr(self, '_has_object_reports', False)
 
+    # TODO
     def get_object_reports(self):
         pass
 
+    # TODO
     def get_object_report(self, name):
         pass
 
+    # TODO
     def add_object_report(self, name, report):
         pass
 
@@ -201,12 +228,15 @@ class Module(object):
         """
         return getattr(self, '_has_class_apis', False)
 
+    # TODO
     def get_class_apis(self):
         pass
 
+    # TODO
     def get_class_api(self, name):
         pass
 
+    # TODO
     def add_class_api(self, name, view):
         pass
 
@@ -218,12 +248,15 @@ class Module(object):
         """
         return getattr(self, '_has_object_apis', False)
 
+    # TODO
     def get_object_apis(self):
         pass
 
+    # TODO
     def get_object_api(self, name):
         pass
 
+    # TODO
     def add_object_api(self, name, view):
         pass
 
@@ -235,13 +268,16 @@ class Module(object):
         """
         return getattr(self, '_has_relations', False)
 
+    # TODO
     def get_relations(self):
         pass
         # ('relations', relations.get(ct, [])),
 
+    # TODO
     def get_relation(self, name):
         pass
 
+    # TODO
     def add_relation(self, name, relation):
         pass
 
@@ -250,12 +286,15 @@ class Module(object):
     def has_numberranges(self):
         pass
 
+    # TODO
     def get_numberranges(self):
         pass
 
+    # TODO
     def get_numberrange(self, name):
         pass
 
+    # TODO
     def add_numberrange(self, name, number_range):
         pass
 

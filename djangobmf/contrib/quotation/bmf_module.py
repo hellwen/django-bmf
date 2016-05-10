@@ -51,7 +51,7 @@ class AllQuotations(ViewMixin):
     slug = "all"
 
 
-@register(name="quotation")
+@register(slug="quotation")
 class QuotationReport(PDFReport):
     model = QuotationProduct
     has_object = True

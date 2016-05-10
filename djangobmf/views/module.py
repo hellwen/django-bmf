@@ -78,6 +78,7 @@ class ModuleDetail(SingleObjectTemplateResponseMixin, ContextMixin, View):
     template_name_suffix = '_bmfdetail'
     default_template = "djangobmf/api/detail-default.html"
     model = None
+    module = None
 
     def get_object(self):
         raise ImproperlyConfigured(

@@ -37,7 +37,7 @@ class View(BaseMixin, GenericAPIView):
         serialized = self.get_serializer_class()(self.object)
         meta = self.object._bmfmeta
         module = self.bmfconfig.bmf_modules[self.object.__class__]
-        related_response = module.detail_view(request, object=self.object)
+        related_response = module.get_detail_view(request, object=self.object)
 
         try:
             notification = Notification.objects.get(
@@ -74,9 +74,9 @@ class View(BaseMixin, GenericAPIView):
                     kwargs={'pk': self.object.pk},
                 ),
             }),
-            ('reports', dict([
-                (k, r['class'].verbose_name)
-                for k, r in self.request.djangobmf_appconfig.bmf_modules[self.model].detail_reports.items()
-            ])),
             ('workflow', meta.workflow.serialize(self.request) if meta.workflow else None),
+            # ('reports', dict([
+            #     (k, r['class'].verbose_name)
+            #     for k, r in self.request.djangobmf_appconfig.bmf_modules[self.model].detail_reports.items()
+            # ])),
         ]))
