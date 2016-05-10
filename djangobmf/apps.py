@@ -34,6 +34,12 @@ class BMFConfig(AppConfig):
         from djangobmf.core.site import Site
         self.site = Site(namespace=self.label, app_name=self.label)
 
+    def get_bmfmodule(self, model):
+        return self.bmf_modules.get(model, None)
+
+    def register_bmfmodule(self, module):
+        return self.bmfregister_module(module)
+
     def bmfregister_module(self, module):
         """
         register a module with the framework
@@ -43,7 +49,7 @@ class BMFConfig(AppConfig):
                 'The module %s is already registered' % module.model.__name__
             )
 
-        self.bmf_modules[module.model] = module()
+        self.bmf_modules[module.model] = module(self)
 
         # register files if module has them
         if module.model._bmfmeta.has_files:

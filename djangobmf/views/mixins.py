@@ -368,7 +368,6 @@ class ModuleBaseMixin(object):
             'bmfmodule': {
                 'verbose_name_plural': self.model._meta.verbose_name_plural,
                 'create_views': self.model._bmfmeta.create_views,
-                'report_views': self.model._bmfmeta.report_views,
                 'model': self.model,
                 # 'contenttype': ContentType.objects.get_for_model(self.model).pk,
                 # 'has_report': self.model._bmfmeta.has_report,
