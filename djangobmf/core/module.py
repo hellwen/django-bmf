@@ -3,12 +3,12 @@
 
 from __future__ import unicode_literals
 
+from django.conf.urls import patterns
+from django.conf.urls import url
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import signals
-
-from django.conf.urls import patterns
-from django.conf.urls import url
+from django.http import Http404
 from django.utils import six
 from django.utils.text import slugify
 
@@ -278,20 +278,35 @@ class Module(object):
                 self.bmfconfig.get_model("Report").objects.filter(pk=data['pk']).update(enabled=False)
         return items
 
-    # TODO
     def get_object_report(self, slug):
         """
         """
-        pass
+        obj = self.bmfconfig.get_model("Report").objects.get(
+            contenttype=self.get_contenttype(),
+            enabled=True,
+            slug=slug,
+        )
+        if not obj.renderer:
+            logger.error('No renderer defined')
+            raise Http404
 
-    # TODO
+        if obj.renderer_view in self._object_reports:
+            report = self._object_reports[obj.renderer_view]
+
+            if not report["view"]:
+                report["view"] = report["class"].as_view()
+
+            return report['view'], obj.renderer
+        else:
+            raise Http404
+
     def add_object_report(self, report):
         """
         """
         name = report.__module__ + '.' + report.__name__
         self._object_reports[name] = {
             'class': report,
-            'view': report.as_view(),
+            'view': None,  # the view is added by get_object_report
         }
 
     # --- Class specific custom apis ------------------------------------------

@@ -80,7 +80,7 @@ class ReportBaseView(ModuleViewMixin, DetailView):
         if "template_name" not in kwargs:
             kwargs["template_name"] = self.report_template_name()
 
-        suffix, mime, data, send = self.get_renderer().render(**kwargs)
+        suffix, mime, data, send = self.kwargs['renderer'].render(**kwargs)
 
         filename = '%s.%s' % (self.get_filename(), suffix)
         disposition = self.get_disposition()
@@ -96,12 +96,6 @@ class ReportBaseView(ModuleViewMixin, DetailView):
             )
 
         return response
-
-    def get_renderer(self):
-        """
-        """
-        pass
-#       return PDFRenderer.objects.get(pk=1)
 
     # OLD -------------------------------------------------
 
@@ -126,36 +120,3 @@ class ReportBaseView(ModuleViewMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         return self.get_report(request=self.request)
-
-#       response = super(ReportBaseView, self).get(request, *args, **kwargs)
-#       ct = ContentType.objects.get_for_model(self.get_object())
-#       try:
-#           report = Report.objects.get(contenttype=ct)
-#           return report.render(
-#               self.get_filename(),
-#               self.request,
-#               self.get_context_data(),
-#           )
-#       except Report.DoesNotExist:
-#           # return "no view configured" page
-#           return response
-
-
-# ass ReportFormView(ReportBaseView):
-#   """
-#   render a report
-#   """
-#   pass
-
-
-# ass ReportDirectView(ReportBaseView):
-#   """
-#   render a report
-#   """
-#   model = Task
-
-#   def get_renderer(self):
-#       return PDFRenderer.objects.get(pk=1)
-
-#   def get(self, request, *args, **kwargs):
-#       return self.get_report(request=self.request)

@@ -14,6 +14,9 @@ from rest_framework.exceptions import PermissionDenied
 
 
 class BaseMixin(object):
+    object = None
+    model = None
+    module = None
 
     def dispatch(self, request, *args, **kwargs):
         setattr(request, 'djangobmf_appconfig', apps.get_app_config(settings.APP_LABEL))
@@ -38,7 +41,17 @@ class BaseMixin(object):
 
         # Raises also a LookupError, when it does not find a model
         self.model = apps.get_model(self.kwargs.get('app'), self.kwargs.get('model'))
+
         return self.model
+
+    def get_bmfmodule(self):
+        if getattr(self, 'module', None):
+            return self.module
+
+        # load the module
+        config = self.request.djangobmf_appconfig
+        self.module = config.get_bmfmodule(self.get_bmfmodel())
+        return self.module
 
     def get_bmfqueryset(self, filter=True):
         if filter:
