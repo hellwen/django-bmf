@@ -51,7 +51,8 @@ class AllInvoices(ViewMixin):
     date_resolution = "month"
 
 
-@register(slug="invoice")
+@register(name="invoice")
 class InvoiceReport(PDFReport):
     model = Invoice
+    verbose_name = _('Print Invoice')
     has_object = True

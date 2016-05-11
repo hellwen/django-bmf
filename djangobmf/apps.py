@@ -35,6 +35,9 @@ class BMFConfig(AppConfig):
         self.site = Site(namespace=self.label, app_name=self.label)
 
     def get_bmfmodule(self, model):
+        """
+        returs a module instance when called with a model class
+        """
         return self.bmf_modules.get(model, None)
 
     def register_bmfmodule(self, module):

@@ -51,7 +51,8 @@ class AllQuotations(ViewMixin):
     slug = "all"
 
 
-@register(slug="quotation")
+@register(name="quotation")
 class QuotationReport(PDFReport):
-    model = QuotationProduct
+    model = Quotation
+    verbose_name = _('Print Quotation')
     has_object = True

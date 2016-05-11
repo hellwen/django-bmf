@@ -99,29 +99,14 @@ if apps.apps_ready:  # pragma: no branch
                 return cls
 
             elif issubclass(cls, ReportBaseView):
-                if "slug" not in self.kwargs:
-                    raise ImproperlyConfigured(
-                        'You need to define a slug, when registering the report %s',
-                        cls,
-                    )
-
-                if not getattr(cls, "model", None):
-                    raise ImproperlyConfigured(
-                        '%s needs a model attribute',
-                        cls,
-                    )
-
-                if not getattr(cls, "renderer_class", None):
-                    raise ImproperlyConfigured(
-                        '%s needs a renderer_class attribute',
-                        cls,
-                    )
-
-                if cls.has_object:
-                    bmfappconfig.bmfregister_detail_report(cls, self.kwargs["slug"])
+                module = bmfappconfig.get_bmfmodule(getattr(cls, "model", None))
+                if module:
+                    module.add_report(cls)
                 else:
-                    bmfappconfig.bmfregister_list_report(cls, self.kwargs["slug"])
-                return cls
+                    raise ImproperlyConfigured(
+                        '%s needs a model witch is registered with the bmf-framework',
+                        cls,
+                    )
 
             else:
                 raise ImproperlyConfigured(

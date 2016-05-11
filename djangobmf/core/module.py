@@ -49,6 +49,9 @@ class Module(object):
 
         self.bmfconfig = bmfconfig
 
+        self._class_reports = {}
+        self._object_reports = {}
+
         self.signals_setup()
         self.validate_workflow()
 
@@ -213,13 +216,23 @@ class Module(object):
         pass
         self._has_clone_views = True
 
-    # --- Class specific reports ----------------------------------------------
+    # --- Functions for both report types -------------------------------------
 
-    def has_class_reports(self):
+    def add_report(self, report):
         """
-        return True if the module has one or more class reports
         """
-        return getattr(self, '_has_class_reports', False)
+        if not getattr(report, "renderer_class", None):
+            raise ImproperlyConfigured(
+                '%s needs a renderer_class attribute',
+                report,
+            )
+
+        if report.has_object:
+            return self.add_object_report(report)
+        else:
+            return self.add_class_report(report)
+
+    # --- Class specific reports ----------------------------------------------
 
     # TODO
     def get_class_reports(self):
@@ -234,36 +247,51 @@ class Module(object):
         pass
 
     # TODO
-    def add_class_report(self, name, report):
+    def add_class_report(self, report):
         """
         """
-        pass
+        self._class_reports[report.__name__] = {
+            'class': report,
+        }
 
     # --- Object specific reports ---------------------------------------------
 
-    def has_object_reports(self):
-        """
-        return True if the module has one or more object reports
-        """
-        return getattr(self, '_has_object_reports', False)
-
-    # TODO
     def get_object_reports(self):
         """
+        Returns all available reports
+        """
+        qs = self.bmfconfig.get_model("Report").objects.filter(
+            contenttype=self.get_contenttype(),
+            enabled=True
+        ).values('pk', 'name', 'slug', 'renderer_view')
+        items = []
+        for data in qs:
+            cls = self._object_reports[data['renderer_view']]
+            if data['renderer_view'] in self._object_reports:
+                items.append({
+                    'name': data['name'],
+                    'slug': data['slug'],
+                    'verbose_name': cls['class'].verbose_name,
+                })
+            else:
+                self.bmfconfig.get_model("Report").objects.filter(pk=data['pk']).update(enabled=False)
+        return items
+
+    # TODO
+    def get_object_report(self, slug):
+        """
         """
         pass
 
     # TODO
-    def get_object_report(self, name):
+    def add_object_report(self, report):
         """
         """
-        pass
-
-    # TODO
-    def add_object_report(self, name, report):
-        """
-        """
-        pass
+        name = report.__module__ + '.' + report.__name__
+        self._object_reports[name] = {
+            'class': report,
+            'view': report.as_view(),
+        }
 
     # --- Class specific custom apis ------------------------------------------
 
@@ -373,7 +401,7 @@ class Module(object):
 
     def signals_setup(self):
         """
-        bind own signal methods to the djangos signals
+        Bind own signal methods to the djangos signals
         """
         logger.debug("Setup signals for %s", self.__class__.__name__)
         signals.pre_delete.connect(self.signal_pre_delete, sender=self.model)
@@ -385,37 +413,37 @@ class Module(object):
 
     def signal_pre_delete(self, *args, **kwargs):
         """
-        this function is called bevor a model instance is deleted
+        This function is called bevor a model instance is deleted
         """
         pass
 
     def signal_pre_init(self, *args, **kwargs):
         """
-        this function is called bevor a model instance is initialized
+        This function is called bevor a model instance is initialized
         """
         pass
 
     def signal_pre_save(self, *args, **kwargs):
         """
-        this function is called bevor a model instance is saved
+        This function is called bevor a model instance is saved
         """
         pass
 
     def signal_post_delete(self, *args, **kwargs):
         """
-        this function is called after a model instance is deleted
+        This function is called after a model instance is deleted
         """
         pass
 
     def signal_post_init(self, *args, **kwargs):
         """
-        this function is called after a model instance is initialized
+        This function is called after a model instance is initialized
         """
         pass
 
     def signal_post_save(self, *args, **kwargs):
         """
-        this function is called after a model instance is saved
+        This function is called after a model instance is saved
         """
         pass
 

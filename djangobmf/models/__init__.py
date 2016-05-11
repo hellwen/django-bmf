@@ -32,7 +32,7 @@ from .document import Document as AbstractDocument
 from .notification import Notification as AbstractNotification
 from .numberrange import NumberRange as AbstractNumberRange
 from .renderer import PDFRenderer as AbstractPDFRenderer
-# from .report import Report as AbstractReport
+from .report import Report as AbstractReport
 
 
 __all__ = (
@@ -95,10 +95,10 @@ class PDFRenderer(AbstractPDFRenderer):
         app_label = settings.APP_LABEL
 
 
-# class Report(AbstractReport):
-#     class Meta(AbstractReport.Meta):
-#         abstract = False
-#         app_label = settings.APP_LABEL
+class Report(AbstractReport):
+    class Meta(AbstractReport.Meta):
+        abstract = False
+        app_label = settings.APP_LABEL
 
 
 @receiver(activity_create)
