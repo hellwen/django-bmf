@@ -3,9 +3,7 @@
 <h2>Header (todo):</h2>
 <ul>
     <li>clone-view</li>
-    <li>report-view(s)</li>
     <li>notifications</li>
-    <li>files (?)</li>
 </ul>
 -->
 <div class="clearfix">
@@ -19,11 +17,15 @@
                 </ul>
         </div>
         <div ng-if="ui.workflow && ui.workflow.transitions.length == 0" class="btn-group">
-            <button type="button" class="btn btn-default disabled">{{ ui.workflow.name }} <span class="caret"></span></button>
+            <button type="button" class="btn btn-print disabled">{{ ui.workflow.name }} <span class="caret"></span></button>
+        </div>
+        {% endverbatim %}
+        <div ng-if="ui.reports.length == 1" class="btn-group">
+            <a ng-href="{% ng "ui.reports[0].url" %}" class="btn btn-bmfreport">{% ng "ui.reports[0].verbose_name" %}</a>
         </div>
     </div>
     <div class="btn-toolbar pull-right" role="toolbar">
-
+        {% verbatim %}
         <div ng-if="!ui.workflow || ui.workflow && ui.workflow.update" class="btn-group">
             <a class="btn btn-bmfupdate" bmf-form="update" href="{{ ui.views.update }}"><span class="glyphicon glyphicon-wrench"></span> {% endverbatim %}{% trans "Edit" %}{% verbatim %}</a>
         </div>
@@ -37,7 +39,7 @@
         <div ng-if="ui.workflow && !ui.workflow.delete" class="btn-group">
             <a class="btn btn-default disabled" href="#"><span class="glyphicon glyphicon-trash"></span></a>
         </div>
-
+        {% endverbatim %}
     </div>
 </div>
 <hr>
@@ -53,4 +55,4 @@
     <div class="panel-body">
     </div>
 -->
-{% endverbatim %}{% endspaceless %}
+{% endspaceless %}

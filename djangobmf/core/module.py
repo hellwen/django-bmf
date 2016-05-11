@@ -272,6 +272,7 @@ class Module(object):
                     'name': data['name'],
                     'slug': data['slug'],
                     'verbose_name': cls['class'].verbose_name,
+                    'has_form': bool(cls['class'].form_class),
                 })
             else:
                 self.bmfconfig.get_model("Report").objects.filter(pk=data['pk']).update(enabled=False)

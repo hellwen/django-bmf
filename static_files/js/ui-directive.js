@@ -348,6 +348,18 @@ bmfapp.directive('bmfContent', ['$compile', '$rootScope', '$http', 'ApiUrlFactor
                     var url = ApiUrlFactory(view.module, 'detail', null, view.kwargs.pk);
                     $http.get(url).then(function(response) {
                         scope.ui.workflow = response.data.workflow;
+                        scope.ui.reports = [];
+                        for (var key in response.data.reports) {
+                            var report = response.data.reports[key];
+                            console.log("REPORT", report)
+                            var url = ApiUrlFactory(view.module, 'report', report.slug, view.kwargs.pk);
+                            scope.ui.reports[key] = {
+                                verbose_name: report.verbose_name,
+                                name: report.name,
+                                has_form: report.has_form,
+                                url: url
+                            }
+                        }
                         scope.ui.views = response.data.views;
                         scope.ui.notifications = response.data.notifications;
                         scope.template_html = response.data.html
