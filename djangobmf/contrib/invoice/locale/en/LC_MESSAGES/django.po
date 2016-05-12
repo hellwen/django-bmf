@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-08 10:28+0100\n"
+"POT-Creation-Date: 2016-05-12 13:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bmf_module.py:38
+#: bmf_module.py:37
 msgid "Open invoices"
 msgstr ""
 
-#: bmf_module.py:50
+#: bmf_module.py:49
 msgid "All invoices"
+msgstr ""
+
+#: bmf_module.py:57
+msgid "Print Invoice"
 msgstr ""
 
 #: categories.py:13 models.py:48
@@ -94,49 +98,49 @@ msgstr ""
 msgid "Gross"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:4
-#: templates/djangobmf_invoice/invoice_htmlreport.html:18
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:4
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:18
 #, python-format
 msgid "Invoice %(name)s"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:11
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:11
 msgid "Your contact person"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:24
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:24
 msgid "Dear Valued Customer,"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:33
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:33
 msgid "Quantity"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:34
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:34
 msgid "Article"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:35
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:35
 msgid "Tax"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:36
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:36
 msgid "Unit price"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:37
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:37
 msgid "Total price"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:63
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:63
 msgid "Subtotal"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:73
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:73
 msgid "Billing amount"
 msgstr ""
 
-#: templates/djangobmf_invoice/invoice_htmlreport.html:81
+#: templates/djangobmf_invoice/invoice_bmfreport_detail.html:81
 msgid "With kind regards"
 msgstr ""
 
