@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-bmf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-08 10:28+0100\n"
-"PO-Revision-Date: 2014-09-21 02:22+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2016-05-12 13:04+0200\n"
+"PO-Revision-Date: 2016-05-12 11:09+0000\n"
+"Last-Translator: Sebastian Braun <sebastian@elmnt.de>\n"
 "Language-Team: Polish (Poland) (http://www.transifex.com/django-bmf/django-bmf/language/pl_PL/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,12 +17,16 @@ msgstr ""
 "Language: pl_PL\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: bmf_module.py:38
+#: bmf_module.py:37
 msgid "Open quotations"
 msgstr ""
 
-#: bmf_module.py:51
+#: bmf_module.py:50
 msgid "All quotations"
+msgstr ""
+
+#: bmf_module.py:57
+msgid "Print Quotation"
 msgstr ""
 
 #: categories.py:13 models.py:83
@@ -97,49 +101,49 @@ msgstr ""
 msgid "Gross"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:4
-#: templates/djangobmf_quotation/quotation_htmlreport.html:18
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:4
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:18
 #, python-format
 msgid "Quotation %(name)s"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:11
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:11
 msgid "Your contact person"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:24
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:24
 msgid "Dear Valued Customer,"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:30
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:30
 msgid "Quantity"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:31
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:31
 msgid "Article"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:32
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:32
 msgid "Tax"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:33
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:33
 msgid "Unit price"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:34
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:34
 msgid "Total price"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:60
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:60
 msgid "Subtotal"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:70
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:70
 msgid "Billing amount"
 msgstr ""
 
-#: templates/djangobmf_quotation/quotation_htmlreport.html:77
+#: templates/djangobmf_quotation/quotation_bmfreport_detail.html:77
 msgid "With kind regards"
 msgstr ""
 
