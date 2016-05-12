@@ -62,7 +62,7 @@ class Module(object):
 
     # --- misc ----------------------------------------------------------------
 
-    def get_contenttype(self):
+    def get_contenttype(self):  # pragma: no cover
         """
         returns the models contenttype
         """
@@ -311,12 +311,6 @@ class Module(object):
 
     # --- Class specific custom apis ------------------------------------------
 
-    def has_class_apis(self):
-        """
-        return True if the module has one or more class apis
-        """
-        return getattr(self, '_has_class_apis', False)
-
     # TODO
     def get_class_apis(self):
         """
@@ -336,12 +330,6 @@ class Module(object):
         pass
 
     # --- Object specific custom apis -----------------------------------------
-
-    def has_object_apis(self):
-        """
-        return True if the module has one or more object apis
-        """
-        return getattr(self, '_has_object_apis', False)
 
     # TODO
     def get_object_apis(self):
@@ -474,9 +462,6 @@ class Module(object):
     detail_urlpatterns = None
     api_urlpatterns = None
 
-    def list_reports(self):
-        return []
-
     def list_creates(self):
         if hasattr(self, 'listed_creates'):
             return self.listed_creates
@@ -507,7 +492,6 @@ class Module(object):
         return patterns('')
 
     def get_api_urls(self):
-        reports = self.list_reports()
         creates = self.list_creates()
 
         urlpatterns = patterns(
@@ -580,19 +564,6 @@ class Module(object):
                         form_view=view,
                     ),
                     name='create-form',
-                ),
-            )
-
-        for key, label, view in reports:
-            urlpatterns += patterns(
-                '',
-                url(
-                    r'^report/(?P<pk>[0-9]+)/(?P<key>%s)/$' % key,
-                    view.as_view(
-                        module=self,
-                        model=self.model
-                    ),
-                    name='report',
                 ),
             )
 
