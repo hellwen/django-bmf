@@ -128,7 +128,10 @@ MEDIA_URL = '/media/'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "tests", "templates")],
+        'DIRS': [
+            os.path.join(BASE_DIR, "tests", "templates"),
+            os.path.join(BASE_DIR, "sandbox", "templates"),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'debug': True,
