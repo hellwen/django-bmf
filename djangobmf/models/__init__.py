@@ -31,7 +31,7 @@ from .configuration import Configuration as AbstractConfiguration
 from .document import Document as AbstractDocument
 from .notification import Notification as AbstractNotification
 from .numberrange import NumberRange as AbstractNumberRange
-from .renderer import Renderer as AbstractRenderer
+from .renderer import PDFRenderer as AbstractPDFRenderer
 from .report import Report as AbstractReport
 
 
@@ -89,8 +89,8 @@ class NumberRange(AbstractNumberRange):
         app_label = settings.APP_LABEL
 
 
-class Renderer(AbstractRenderer):
-    class Meta(AbstractRenderer.Meta):
+class PDFRenderer(AbstractPDFRenderer):
+    class Meta(AbstractPDFRenderer.Meta):
         abstract = False
         app_label = settings.APP_LABEL
 

@@ -5,6 +5,7 @@ Version 0.3.0 (currently in development)
 Version 0.2.X
 ========================================
 
+* Added PDF-Reports
 * Related data on detail views
 * Added a CountryField validated by ``pycountry``
 * Added polish translation

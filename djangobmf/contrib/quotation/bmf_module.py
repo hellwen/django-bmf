@@ -5,9 +5,8 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.dashboards import Sales
 from djangobmf.sites import Module
-from djangobmf.sites import Report
+from djangobmf.sites import PDFReport
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
 
@@ -52,6 +51,8 @@ class AllQuotations(ViewMixin):
     slug = "all"
 
 
-@register(dashboard=Sales)
-class QuotationReport(Report):
-    model = QuotationProduct
+@register(name="quotation")
+class QuotationReport(PDFReport):
+    model = Quotation
+    verbose_name = _('Print Quotation')
+    has_object = True

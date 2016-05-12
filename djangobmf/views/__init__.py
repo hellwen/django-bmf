@@ -10,7 +10,6 @@ from .module import ModuleCreateView
 from .module import ModuleDeleteView
 from .module import ModuleDetail
 from .module import ModuleFormAPI
-from .module import ModuleReportView
 from .module import ModuleUpdateView
 from .module import ModuleWorkflowView
 
@@ -24,7 +23,6 @@ __all__ = (
     'ModuleDeleteView',
     'ModuleDetail',
     'ModuleFormAPI',
-    'ModuleReportView',
     'ModuleUpdateView',
     'ModuleWorkflowView',
     'ModuleViewMixin',

@@ -21,6 +21,7 @@ from djangobmf.core.views.activity import View as APIActivityListView
 from djangobmf.core.views.detail import View as APIDetailView
 from djangobmf.core.views.document import View as APIDocumentsView
 from djangobmf.core.views.related import View as APIRelatedView
+from djangobmf.core.views.report import View as APIReportView
 from djangobmf.sites import site
 from djangobmf.views import Index
 from djangobmf.views.api import APIIndex
@@ -135,6 +136,13 @@ urlpatterns = patterns(
             APIRelatedView.as_view()
         ),
         name="api-related",
+    ),
+    url(
+        r'^api/report/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<slug>[\w_]+)/(?P<pk>[0-9]+)/$',
+        never_cache(
+            APIReportView.as_view()
+        ),
+        name="api-report",
     ),
     url(
         r'^api/activity/(?P<app>[\w]+)/(?P<model>[\w]+)/(?P<pk>[0-9]+)/$',

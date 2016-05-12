@@ -36,8 +36,8 @@ class View(BaseMixin, GenericAPIView):
         self.object = self.get_bmfobject(self.kwargs.get('pk', None))
         serialized = self.get_serializer_class()(self.object)
         meta = self.object._bmfmeta
-        module = self.bmfconfig.bmf_modules[self.object.__class__]
-        related_response = module.detail_view(request, object=self.object)
+        module = self.bmfconfig.get_bmfmodule(self.object.__class__)
+        related_response = module.get_detail_view(request, object=self.object)
 
         try:
             notification = Notification.objects.get(
@@ -75,4 +75,5 @@ class View(BaseMixin, GenericAPIView):
                 ),
             }),
             ('workflow', meta.workflow.serialize(self.request) if meta.workflow else None),
+            ('reports', module.get_object_reports()),
         ]))

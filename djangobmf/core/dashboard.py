@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from django.conf.urls import patterns
 # from django.conf.urls import url
-from django.contrib.admin.sites import AlreadyRegistered
+# from django.contrib.admin.sites import AlreadyRegistered
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import six
 from django.utils.text import slugify
@@ -119,18 +119,18 @@ class Dashboard(six.with_metaclass(DashboardMetaclass, object)):
         #         )
         return urlpatterns
 
-    def add_report(self, report_class):
-        """
-        Adds a report to the dashboard
-        """
-        for report in self.reports:
-            if isinstance(report_class, report):
-                raise AlreadyRegistered('The report %s is already registered' % report_class.__name__)
+    # def add_report(self, report_class):
+    #     """
+    #     Adds a report to the dashboard
+    #     """
+    #     for report in self.reports:
+    #         if isinstance(report_class, report):
+    #             raise AlreadyRegistered('The report %s is already registered' % report_class.__name__)
 
-        report = report_class()
-        self.reports.append(report)
-        logger.debug('Registered Report "%s"', report.key)
-        return report
+    #     report = report_class()
+    #     self.reports.append(report)
+    #     logger.debug('Registered Report "%s"', report.key)
+    #     return report
 
     def get_module(self, model):
         return self.site.modules[model]

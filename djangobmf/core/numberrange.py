@@ -54,9 +54,12 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
     _TYPE_COUNTER = 'c'
 
     settings = None
+    default_time_field = "created"
     lookup = {}
 
-    def name(self, obj, time_field="created"):
+    def name(self, obj, time_field=None):
+        if not time_field:
+            time_field = self.default_time_field
         ct = ContentType.objects.get_for_model(obj)
 
         if self.type == self._TYPE_COUNTER:
@@ -80,7 +83,9 @@ class NumberRange(six.with_metaclass(NumberRangeMetaclass, object)):
 
         return self.generate_name(date, counter)
 
-    def delete(self, obj, time_field="created"):
+    def delete(self, obj, time_field=None):
+        if not time_field:
+            time_field = self.default_time_field
         ct = ContentType.objects.get_for_model(obj)
         date = self.from_time(getattr(obj, time_field))
 

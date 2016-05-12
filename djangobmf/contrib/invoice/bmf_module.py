@@ -5,9 +5,8 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.dashboards import Accounting
 from djangobmf.sites import Module
-from djangobmf.sites import Report
+from djangobmf.sites import PDFReport
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
 
@@ -52,6 +51,8 @@ class AllInvoices(ViewMixin):
     date_resolution = "month"
 
 
-@register(dashboard=Accounting)
-class InvoiceReport(Report):
+@register(name="invoice")
+class InvoiceReport(PDFReport):
     model = Invoice
+    verbose_name = _('Print Invoice')
+    has_object = True

@@ -1,4 +1,4 @@
-Django==1.8.12
+Django==1.8.13
 pytz==2015.7
 djangorestframework==3.3.2
 Markdown==2.6.5

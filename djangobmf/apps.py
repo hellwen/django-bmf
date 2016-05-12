@@ -34,6 +34,15 @@ class BMFConfig(AppConfig):
         from djangobmf.core.site import Site
         self.site = Site(namespace=self.label, app_name=self.label)
 
+    def get_bmfmodule(self, model):
+        """
+        returs a module instance when called with a model class
+        """
+        return self.bmf_modules.get(model, None)
+
+    def register_bmfmodule(self, module):
+        return self.bmfregister_module(module)
+
     def bmfregister_module(self, module):
         """
         register a module with the framework
@@ -43,7 +52,7 @@ class BMFConfig(AppConfig):
                 'The module %s is already registered' % module.model.__name__
             )
 
-        self.bmf_modules[module.model] = module()
+        self.bmf_modules[module.model] = module(self)
 
         # register files if module has them
         if module.model._bmfmeta.has_files:
@@ -67,6 +76,36 @@ class BMFConfig(AppConfig):
                     'Can not register the relationship %s' % relationship.__name__
                 )
         self.bmf_relations.append(r)
+
+    def bmfregister_list_report(self, report, name):
+        pass
+#       if report.model not in self.bmf_modules:
+#           raise ImproperlyConfigured(
+#               'Model %s is not registered' % report.model.__class__
+#           )
+#       if name in self.bmf_modules[report.model].list_reports:
+#           raise AlreadyRegistered(
+#               'Can not register the report %s' % report.__name__
+#           )
+#       self.bmf_modules[report.model].list_reports[name] = {
+#           'class': report,
+#           'view': report.as_view(),
+#       }
+
+    def bmfregister_detail_report(self, report, name):
+        pass
+#       if report.model not in self.bmf_modules:
+#           raise ImproperlyConfigured(
+#               'Model %s is not registered' % report.model.__class__
+#           )
+#       if name in self.bmf_modules[report.model].detail_reports:
+#           raise AlreadyRegistered(
+#               'Can not register the report %s' % report.__name__
+#           )
+#       self.bmf_modules[report.model].detail_reports[name] = {
+#           'class': report,
+#           'view': report.as_view(),
+#       }
 
 
 class ModuleTemplate(AppConfig):

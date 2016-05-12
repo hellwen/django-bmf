@@ -264,5 +264,67 @@
  },
  "model": "djangobmf.configuration",
  "pk": 8
+},
+{
+ "pk": 1,
+ "model": "djangobmf.report",
+ "fields": {
+  "contenttype": [
+   "djangobmf_quotation",
+   "quotation"
+  ],
+  "renderer_ct": [
+   "djangobmf",
+   "pdfrenderer"
+  ],
+  "slug": "default",
+  "name": "Default",
+  "enabled": true,
+  "has_object": true,
+  "renderer_view": "djangobmf.contrib.quotation.bmf_module.QuotationReport",
+  "renderer_pk": 1
+ }
+},
+{
+ "pk": 2,
+ "model": "djangobmf.report",
+ "fields": {
+  "contenttype": [
+   "djangobmf_invoice",
+   "invoice"
+  ],
+  "renderer_ct": [
+   "djangobmf",
+   "pdfrenderer"
+  ],
+  "slug": "default",
+  "name": "Default",
+  "enabled": true,
+  "has_object": true,
+  "renderer_view": "djangobmf.contrib.invoice.bmf_module.InvoiceReport",
+  "renderer_pk": 1
+ }
+},
+{
+ "pk": 1,
+ "fields": {
+  "letter_margin_bottom": 10,
+  "template_extends": "",
+  "form": "A",
+  "page_margin_left": null,
+  "letter_margin_left": null,
+  "letter_margin_top": null,
+  "letter": true,
+  "page_margin_top": 20,
+  "letter_margin_right": 40,
+  "size": "A4",
+  "letter_background": null,
+  "name": "Test",
+  "page_margin_right": 40,
+  "modified": "2016-05-11T23:13:24.195Z",
+  "page_background": null,
+  "page_margin_bottom": 10
+ },
+ "model": "djangobmf.pdfrenderer"
 }
 ]

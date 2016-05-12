@@ -8,12 +8,26 @@ from django.contrib import admin
 from djangobmf.models import Configuration
 from djangobmf.models import Document
 from djangobmf.models import Report
-from djangobmf.models import Renderer
+from djangobmf.models import PDFRenderer
+
+from djangobmf.forms import ReportCreateForm
+from djangobmf.forms import ReportUpdateForm
 
 
 admin.site.register(Configuration)
-admin.site.register(Report)
-admin.site.register(Renderer)
+admin.site.register(PDFRenderer)
+
+
+@admin.register(Report)
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ('name', 'contenttype', 'renderer_ct', 'enabled', 'has_object')
+    list_filter = ('enabled', 'has_object')
+
+    def get_form(self, request, obj=None, **kwargs):
+        if obj:
+            return ReportUpdateForm
+        else:
+            return ReportCreateForm
 
 
 @admin.register(Document)

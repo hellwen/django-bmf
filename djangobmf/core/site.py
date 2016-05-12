@@ -14,7 +14,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from djangobmf.core.module import Module
 from djangobmf.models import Configuration
-from djangobmf.models import Report
+# from djangobmf.models import Report
 
 from rest_framework.routers import DefaultRouter
 
@@ -66,18 +66,6 @@ class Site(object):
             return True
 
         logger.debug('Site activation started')
-
-        # ~~~~ reports ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        for dashboard in self.dashboards:
-            for report in dashboard.reports:
-                ct = ContentType.objects.get_for_model(report.model)
-                report.object, created = Report.objects.get_or_create(
-                    key=report.key,
-                    contenttype=ct
-                )
-                if created:
-                    logger.debug('Reportobject for report %s created' % report.key)
 
         # ~~~~ settings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

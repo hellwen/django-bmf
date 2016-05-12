@@ -126,19 +126,19 @@ class ModuleTestFactory(SuperuserMixin, BaseTestCase):
                 response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
                 self.assertEqual(response.status_code, 200)
 
-    def test_module_report(self):
-        for model in self.models:
+    # def test_module_report(self):
+    #     for model in self.models:
 
-            ns = model._bmfmeta.namespace_api
+    #         ns = model._bmfmeta.namespace_api
 
-            for obj in model.objects.all():
-                for key, slug, view in site.modules[model].list_reports():
-                    url = reverse('%s:report' % ns, kwargs={
-                        'pk': obj.pk,
-                        'key': key,
-                    })
-                    response = self.client.get(url)
-                    self.assertEqual(response.status_code, 200)
+    #         for obj in model.objects.all():
+    #             for key, slug, view in site.modules[model].list_reports():
+    #                 url = reverse('%s:report' % ns, kwargs={
+    #                     'pk': obj.pk,
+    #                     'key': key,
+    #                 })
+    #                 response = self.client.get(url)
+    #                 self.assertEqual(response.status_code, 200)
 
     def test_module_update(self):
         for model in self.models:

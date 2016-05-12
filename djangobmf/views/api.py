@@ -106,31 +106,19 @@ class APIIndex(BaseMixin, APIView):
             perm = '%s.view_%s' % info
             if self.request.user.has_perms([perm]):  # pragma: no branch
 
-                modules.append(OrderedDict([
-                    ('app', model._meta.app_label),
-                    ('model', model._meta.model_name),
-                    ('ct', ct),
-                    ('name', model._meta.verbose_name_plural),
-                    ('watch_function', model._bmfmeta.has_watchfunction),
-                    ('data', reverse('djangobmf:api', request=request, format=format, kwargs={
-                        'app': model._meta.app_label,
-                        'model': model._meta.model_name,
-                    })),
-                    ('notification', reverse('djangobmf:notification', request=request, format=format, kwargs={
-                        'app': model._meta.app_label,
-                        'model': model._meta.model_name,
-                    })),
-                    ('only_related', model._bmfmeta.only_related),
-                    ('relations', relations.get(ct, [])),
-                    ('creates', [
-                        {
-                            "name": i[1],
-                            "url": reverse(model._bmfmeta.namespace_api + ':create', kwargs={
-                                "key": i[0],
-                            }),
-                        } for i in model._bmfmeta.create_views
-                    ]),
-                ]))
+                data = module.serialize_class()
+                data['watch_function'] = model._bmfmeta.has_watchfunction
+                data['data'] = reverse('djangobmf:api', request=request, format=format, kwargs={
+                    'app': model._meta.app_label,
+                    'model': model._meta.model_name,
+                })
+                data['notification'] = reverse('djangobmf:notification', request=request, format=format, kwargs={
+                    'app': model._meta.app_label,
+                    'model': model._meta.model_name,
+                })
+                data['only_related'] = model._bmfmeta.only_related
+
+                modules.append(data)
 
         # === Dashboards ------------------------------------------------------
 
@@ -246,6 +234,7 @@ class APIViewDetail(BaseMixin, APIView):
                 'djangobmf/api/list-table-default.html',
             ]).render().strip()
             context['html'] = html
+            # context['reports'] = request.djangobmf_appconfig.bmf_modules[view.model].list_reports
 
         return Response(context)
 

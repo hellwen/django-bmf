@@ -8,7 +8,7 @@ from django.test import LiveServerTestCase
 from django.core.urlresolvers import reverse
 from django.contrib.contenttypes.models import ContentType
 
-from djangobmf.models import Report
+# from djangobmf.models import Report
 from djangobmf.models import Document
 from djangobmf.utils.testcases import BaseTestCase
 

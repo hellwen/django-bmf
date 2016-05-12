@@ -1,12 +1,12 @@
 {
   "name": "django-bmf",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "repository": [],
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "angular": "^1.5.0",
+    "angular": "^1.5.5",
     "bootstrap": "^3.3.6",
-    "d3": "^3.5.15",
+    "d3": "^3.5.17",
     "grunt": ">=0.4.2",
     "grunt-contrib-clean": "^0.7.0",
     "grunt-contrib-coffee": "^0.13.0",
@@ -16,7 +16,7 @@
     "grunt-contrib-less": "^1.2.0",
     "grunt-contrib-uglify": "^0.11.1",
     "grunt-contrib-watch": "^0.6.1",
-    "jquery": "^2.2.0",
+    "jquery": "^2.2.3",
     "jquery.cookie": "^1.4.1"
   },
   "engines": {

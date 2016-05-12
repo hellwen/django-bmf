@@ -4,133 +4,15 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.template.loader import select_template
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.fields import FileField
 
-# from django.contrib.contenttypes.models import ContentType
-# from django.contrib.contenttypes.fields import GenericForeignKey
-# from django.http import HttpResponse
-
-# from djangobmf.core.report import Report as BaseReport
-
-
-class Renderer(models.Model):
-    """
-    Model to store informations to generate a report
-    """
-    name = models.CharField(
-        verbose_name=_("Name"), max_length=20, blank=False, null=False,
-    )
-    size = models.CharField(
-        verbose_name=_("Size"), max_length=20, blank=False, null=False, default="A4/A",
-    )
-    letter = models.BooleanField(
-        verbose_name=_("Letter"), default=True,
-    )
-    extra = models.BooleanField(
-        verbose_name=_("Extra"), default=False,
-    )
-    letter_margin_right = models.PositiveIntegerField(
-        verbose_name=_("Letter margin right"), blank=False, null=False, default=10,
-    )
-    letter_margin_bottom = models.PositiveIntegerField(
-        verbose_name=_("Letter margin bottom"), blank=False, null=False, default=40,
-    )
-    letter_extra_right = models.PositiveIntegerField(
-        verbose_name=_("Letter extra right"), blank=False, null=False, default=10,
-    )
-    letter_extra_top = models.PositiveIntegerField(
-        verbose_name=_("Letter extra top"), blank=False, null=False, default=10,
-    )
-    letter_background = FileField(
-        verbose_name=_("Letter background"), null=True, blank=True,
-    )
-    letter_footer_right = models.PositiveIntegerField(
-        verbose_name=_("Letter footer right"), blank=False, null=False, default=10,
-    )
-    letter_footer_right = models.PositiveIntegerField(
-        verbose_name=_("Letter footer height"), blank=False, null=False, default=10,
-    )
-    page_margin_right = models.PositiveIntegerField(
-        verbose_name=_("Letter margin right"), blank=False, null=False, default=10,
-    )
-    page_margin_bottom = models.PositiveIntegerField(
-        verbose_name=_("Letter margin bottom"), blank=False, null=False, default=15,
-    )
-    page_margin_top = models.PositiveIntegerField(
-        verbose_name=_("Letter margin top"), blank=False, null=False, default=20,
-    )
-    page_background = FileField(
-        verbose_name=_("Page background"), null=True, blank=True,
-    )
-
-    modified = models.DateTimeField(_("Modified"), auto_now=True, editable=False,)
-
-    class Meta:
-        verbose_name = _('Renderer')
-        verbose_name_plural = _('Renderer')
-        get_latest_by = "modified"
-        abstract = True
-
-    def __str__(self):
-        return '%s' % self.name
-
-#   def clean(self):
-#       if self.options == "":
-#           generator = self.get_generator()
-#           self.options = generator.get_default_options().strip()
-
-#   def get_generator(self):
-#       from djangobmf.sites import site
-#       try:
-#           return site.reports[self.reporttype](self.options)
-#       except KeyError:
-#           return BaseReport()
-
-    # response with generated file
-    def render(self, filename, request, context):
-        pass
-#       generator = self.get_generator()
-
-#       extension, mimetype, data, attachment = generator.render(request, context)
-
-#       response = HttpResponse(content_type=mimetype)
-
-#       if attachment:
-#           response['Content-Disposition'] = 'attachment; filename="%s.%s"' % (
-#               filename,
-#               extension
-#           )
-
-#       response.write(data)
-
-#       return response
-
-'''
-#!/usr/bin/python
-# ex:set fileencoding=utf-8:
-
-from __future__ import unicode_literals
-
-from django.template import Context
-from django.template.loader import select_template
-from django.utils import six
-
-from djangobmf.conf import settings
-from djangobmf.core.renderer import Renderer
-from djangobmf.models import Document
+import codecs
 
 from io import BytesIO
-
-import codecs
-import requests
-
-
-if six.PY3:
-    from configparser import RawConfigParser
-else:
-    from ConfigParser import RawConfigParser
 
 try:
     from xhtml2pdf import pisa
@@ -139,110 +21,186 @@ except ImportError:
     XHTML2PDF = False
 
 
-DEFAULT_OPTS = """
-[layout]
-size = A4
-form = A
-letter = True
+class BaseRenderer(models.Model):
+    """
+    """
 
-[letter_page]
-margin_right = 10mm
-margin_bottom = 40mm
-extra = true
-extra_right = 10mm
-extra_top = 40mm
-pdf_background_pk = None
+    class Meta:
+        abstract = True
 
-[pages]
-margin_right = 10mm
-margin_bottom = 15mm
-margin_top = 20mm
-pdf_background_pk = None
+    def get_options(self):
+        return {}
 
-[footer]
-right = 10mm
-height = 10mm
-"""
+    def get_context(self, **context):
+        if 'options' not in context:
+            context['options'] = self.get_options()
+        return context
+
+    def get_template_names(self, context=None):
+        if context and "template_name" in context:
+            return [context['template_name']]
+        return []
+
+    def get_template(self, context=None):
+        return select_template(self.get_template_names(context=context) + ['djangobmf/report_missing.html'])
+
+    def render(self, **context):
+        return 'html', 'text/html', self.get_template(context).render(self.get_context()), False
 
 
-class Xhtml2PdfReport(Renderer):
+@python_2_unicode_compatible
+class PDFRenderer(BaseRenderer):
+    name = models.CharField(
+        verbose_name=_("Name"), max_length=20, blank=False, null=False,
+    )
 
-    def __init__(self, options):
-        self.options = RawConfigParser(allow_no_value=True)
-        try:
-            self.options.read_string(options)
-        except AttributeError:
-            self.options.readfp(BytesIO(options.encode("UTF-8")))
+    size = models.CharField(
+        verbose_name=_("Size"), max_length=10, blank=False, null=False, default="A4",
+    )
+    form = models.CharField(
+        verbose_name=_("Size"), max_length=10, blank=False, null=False, default="A",
+    )
+    template_extends = models.CharField(
+        verbose_name=_("Template Extends"), max_length=40, blank=True, null=True,
+    )
 
-    def get_default_options(self):
-        return DEFAULT_OPTS
+    letter = models.BooleanField(
+        verbose_name=_("Letter"), default=True,
+    )
 
-    def render(self, request, context):
-        model = context['bmfmodule']['model']._meta
-        template_name = '%s/%s_htmlreport.html' % (model.app_label, model.model_name)
+    letter_margin_top = models.PositiveIntegerField(
+        verbose_name=_("Letter margin top"), blank=True, null=True,
+    )
+    letter_margin_right = models.PositiveIntegerField(
+        verbose_name=_("Letter margin right"), blank=False, null=False, default=40,
+    )
+    letter_margin_bottom = models.PositiveIntegerField(
+        verbose_name=_("Letter margin bottom"), blank=False, null=False, default=10,
+    )
+    letter_margin_left = models.PositiveIntegerField(
+        verbose_name=_("Letter margin left"), blank=True, null=True,
+    )
+    letter_background = FileField(
+        verbose_name=_("Letter background"), null=True, blank=True,
+    )
 
-        pages_file = None
-        try:
-            bg_pk = self.options.getint('pages', 'pdf_background_pk')
-            file = Document.objects.get(pk=bg_pk)
-            pages_file = codecs.encode(file.file.read(), 'base64').decode().replace('\n', '')
-        except (Document.DoesNotExist, ValueError):
-            pass
+    page_margin_top = models.PositiveIntegerField(
+        verbose_name=_("Page margin top"), blank=False, null=False, default=20,
+    )
+    page_margin_right = models.PositiveIntegerField(
+        verbose_name=_("Page margin right"), blank=False, null=False, default=40,
+    )
+    page_margin_bottom = models.PositiveIntegerField(
+        verbose_name=_("Page margin bottom"), blank=False, null=False, default=10,
+    )
+    page_margin_left = models.PositiveIntegerField(
+        verbose_name=_("Page margin left"), blank=True, null=True,
+    )
+    page_background = FileField(
+        verbose_name=_("Page background"), null=True, blank=True,
+    )
 
-        letter_file = None
-        try:
-            bg_pk = self.options.getint('letter_page', 'pdf_background_pk')
-            file = Document.objects.get(pk=bg_pk)
-            letter_file = codecs.encode(file.file.read(), 'base64').decode().replace('\n', '')
-        except (Document.DoesNotExist, ValueError):
-            pass
+    # 'letter_footer': True,
+    # 'letter_footer_height': 10,
+    # 'letter_footer_right': 10,
 
+    # 'letter_extra': False,
+    # 'letter_extra_width': 10,
+    # 'letter_extra_top': 10,
+    # 'letter_extra_right': 10,
+
+    modified = models.DateTimeField(_("Modified"), auto_now=True, editable=False,)
+
+    class Meta:
+        verbose_name = _('PDF Renderer')
+        verbose_name_plural = _('PDF Renderer')
+        get_latest_by = "modified"
+        abstract = True
+
+    def __str__(self):
+        if self.form or self.size:
+            data = []
+            if self.size:
+                data += [self.size]
+            if self.form:
+                data += [self.form]
+            return '%s (%s)' % (self.name, '-'.join(data))
+        return '%s' % self.name
+
+    def get_options(self):
         options = {
-            'template_name': template_name,
+            'size': self.size,
+            'form': self.form,
 
-            'size': self.options.get('layout', 'size'),
-            'form': self.options.get('layout', 'form'),
-            'letter': self.options.getboolean('layout', 'letter'),
+            'template_extends': self.template_extends or "djangobmf/base_report.html",
 
-            'template_letter': letter_file,
-            'template_pages': pages_file,
+            'letter': self.letter,
+            'letter_margin_top': self.letter_margin_top,  # defined by size and form
+            'letter_margin_left': self.letter_margin_left,  # defined by size and form
+            'letter_margin_right': self.letter_margin_right,
+            'letter_margin_bottom': self.letter_margin_bottom,
+            'letter_background': None,
 
-            'letter_margin_right': self.options.get('letter_page', 'margin_right'),
-            'letter_margin_bottom': self.options.get('letter_page', 'margin_bottom'),
-            'letter_extra': self.options.getboolean('letter_page', 'extra'),
-            'letter_extra_right': self.options.get('letter_page', 'extra_right'),
-            'letter_extra_top': self.options.get('letter_page', 'extra_top'),
-
-            'page_margin_top': self.options.get('pages', 'margin_top'),
-            'page_margin_right': self.options.get('pages', 'margin_right'),
-            'page_margin_bottom': self.options.get('pages', 'margin_bottom'),
-
-            'footer_height': self.options.get('footer', 'height'),
-            'footer_right': self.options.get('footer', 'right'),
+            'page_margin_top': self.page_margin_top,
+            'page_margin_left': self.page_margin_left,  # defined by size and form
+            'page_margin_right': self.page_margin_right,
+            'page_margin_bottom': self.page_margin_bottom,
+            'page_background': None,
         }
-        context['options'] = options
 
-        template = select_template([template_name, 'djangobmf/report_html_base.html'])
+        if self.size == "A4":
+            if self.form == "A":
+                options['letter_margin_top'] = 87
+                options['letter_margin_left'] = 25
+                options['page_margin_left'] = 25
+                options['address'] = True
+                options['address_top'] = 27 + 5
+                options['address_left'] = 20
+                options['address_height'] = 40
+                options['address_width'] = 85
 
-        # pdf won't be in UTF-8
-        html = template.render(Context(context)).encode("ISO-8859-1")
+            elif self.form == "B":
+                options['letter_margin_top'] = 105
+                options['letter_margin_left'] = 25
+                options['page_margin_left'] = 25
+                options['address'] = True
+                options['address_top'] = 45 + 5
+                options['address_left'] = 20
+                options['address_height'] = 40
+                options['address_width'] = 85
 
-        if settings.REPORTING_SERVER:
-            response = requests.post(
-                settings.REPORTING_SERVER,
-                data=html,
-                timeout=5.0,
-            )
-            return 'pdf', 'application/pdf', response.content, True
-        elif XHTML2PDF:
-            buffer = BytesIO()
-            pdf = pisa.pisaDocument(BytesIO(html), buffer)
-            pdf = buffer.getvalue()
-            buffer.close()
+        if self.letter and self.letter_background and self.letter_background.file_exists:
+            self.letter_background.file.open()
+            options['letter_background'] = codecs.encode(
+                self.letter_background.file.read(),
+                'base64'
+            ).decode().replace('\n', '')
+
+        if self.page_background and self.page_background.file_exists:
+            self.page_background.file.open()
+            options['page_background'] = codecs.encode(
+                self.page_background.file.read(),
+                'base64'
+            ).decode().replace('\n', '')
+
+        return options
+
+    def render(self, **context):
+        debug = context.pop('debug', False)
+        html = self.get_template(context).render(self.get_context(**context)).encode("ISO-8859-1")
+
+        if XHTML2PDF and not debug:
+            buff = BytesIO()
+            pdf = pisa.pisaDocument(BytesIO(html), buff)
+            pdf = buff.getvalue()
+            buff.close()
             return 'pdf', 'application/pdf', pdf, True
         else:
             return 'html', 'text/html', html, False
 
 
-# site.register_report('xhtml2pdf', Xhtml2PdfReport)
-'''
+class CSVRenderer(BaseRenderer):
+    class Meta:
+        verbose_name = _('CSV Renderer')
+        verbose_name_plural = _('CSV Renderer')
+        abstract = True
