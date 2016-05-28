@@ -1,5 +1,6 @@
 Django==1.8.13
-pytz==2016.4
 djangorestframework==3.3.3
+pycountry==1.20
+xhtml2pdf==0.1a4
 Markdown==2.6.6
-pycountry==1.19
+pytz==2016.4

@@ -1,7 +1,0 @@
-Django==1.8.8
-pytz==2015.6
-djangorestframework==3.2.4
-Markdown==2.6.2
-uWSGI==2.0.11.2
-psycopg2==2.6.1
-pycountry==1.19
