@@ -75,7 +75,7 @@ setup(
     install_requires=[
         'django>=1.8,<1.9.999',
         'djangorestframework>=3.1,<3.4',
-        'pycountry==1.19',
+        'pycountry==1.20',
         'xhtml2pdf==0.1a3',
         'markdown',
         'pytz',
