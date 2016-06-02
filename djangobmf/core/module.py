@@ -12,8 +12,9 @@ from django.http import Http404
 from django.utils import six
 from django.utils.text import slugify
 
-from djangobmf.core.workflow import Workflow
+from rest_framework.reverse import reverse
 
+from djangobmf.core.workflow import Workflow
 from djangobmf.permissions import ModulePermission
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
@@ -168,13 +169,10 @@ class Module(object):
     def get_create_views(self):
         """
         """
-        pass
-        # {
-        #     "name": i[1],
-        #     "url": reverse(model._bmfmeta.namespace_api + ':create', kwargs={
-        #         "key": i[0],
-        #     }),
-        # } for i in model._bmfmeta.create_views
+        return [{
+            'name': i[1],
+            'url': reverse(self.model._bmfmeta.namespace_api + ':create', kwargs={"key": i[0]}),
+        } for i in self.list_creates()]
 
     # TODO
     def get_create_view(self, name):
