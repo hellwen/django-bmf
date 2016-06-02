@@ -300,6 +300,6 @@ LOGGING = {
 # === OVERWRITE WITH LOCAL SETTINGS -------------------------------------------
 
 try:
-    from settings_local import *
-except:
+    from .local_settings import *
+except ImportError:
     pass
