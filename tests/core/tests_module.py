@@ -65,7 +65,7 @@ class ModuleTests(TestCase):
 
     def test_get_create_views(self):
         # The function is not implemented - the return value should be None
-        self.assertEqual(None, self.module.get_create_views())
+        self.assertEqual([], self.module.get_create_views())
 
     def test_get_create_view(self):
         # The function is not implemented - the return value should be None

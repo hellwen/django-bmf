@@ -169,10 +169,17 @@ class Module(object):
     def get_create_views(self):
         """
         """
-        return [{
-            'name': i[1],
-            'url': reverse(self.model._bmfmeta.namespace_api + ':create', kwargs={"key": i[0]}),
-        } for i in self.list_creates()]
+        if self.bmfconfig:
+            namespace_api = '%s:moduleapi_%s_%s' % (
+                self.bmfconfig.label,
+                self.model._meta.app_label,
+                self.model._meta.model_name,
+            )
+            return [{
+                'name': i[1],
+                'url': reverse(namespace_api + ':create', kwargs={"key": i[0]}),
+            } for i in self.list_creates()]
+        return []
 
     # TODO
     def get_create_view(self, name):
@@ -477,9 +484,6 @@ class Module(object):
 
         elif issubclass(self.create, ModuleCreateView):
             self.listed_creates.append(('default', 'default', self.create))
-
-        # update model with all create views
-        self.model._bmfmeta.create_views = self.listed_creates
 
         return self.listed_creates
 
