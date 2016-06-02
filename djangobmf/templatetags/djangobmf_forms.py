@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext as _
+from django.utils.html import format_html
 from django.conf import settings
 from django import forms
 from django import template
@@ -123,6 +124,7 @@ def bmffield(field):
             else:
                 text = None
 
+
             if field.field.widget.attrs.get('readonly', False):
                 data = '<p class="form-control-static">%s</p>' % (text or '<i>%s</i>' % _('empty'))
                 data += field.as_hidden(attrs={'autocomplete': 'off', 'value': value})
@@ -138,7 +140,7 @@ def bmffield(field):
                 })
                 data += '</div>'
                 data += field.as_hidden(attrs={'autocomplete': 'off'})
-                return data
+                return format_html(data)
         else:
             # TODO: this manages relationsships to non-django models. it makes propably
             # sense to implement a search-function for django models like user
