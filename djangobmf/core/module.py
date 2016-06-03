@@ -369,14 +369,12 @@ class Module(object):
     def get_relations(self, request):
         """
         """
-        relations = {}
+        relations = []
         for relation in self._relations:
             perm = '%s.view_%s'
             info = (relation._model_to._meta.app_label, relation._model_to._meta.model_name)
             if not request.user.has_perms([perm % info]):
                 continue
-
-            ct_target = ContentType.objects.get_for_model(relation._model_to).pk
 
             data = OrderedDict([
                 ('app_label', relation._model_from._meta.app_label),
@@ -385,11 +383,7 @@ class Module(object):
                 ('slug', relation.slug),
                 ('template', relation.template),
             ])
-
-            if ct_target in relations.keys():
-                relations[ct_target].append(data)
-            else:
-                relations[ct_target] = [data]
+            relations.append(data)
         return relations
 
     # TODO
