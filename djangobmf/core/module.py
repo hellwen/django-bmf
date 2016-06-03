@@ -15,7 +15,10 @@ from django.utils.text import slugify
 
 from rest_framework.reverse import reverse
 
+from djangobmf.core.relationship import DocumentRelationship
+from djangobmf.core.serializers.document import DocumentSerializer
 from djangobmf.core.workflow import Workflow
+from djangobmf.models import Document
 from djangobmf.permissions import ModulePermission
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
@@ -58,6 +61,13 @@ class Module(object):
 
         self.signals_setup()
         self.validate_workflow()
+
+        # auto add document relationship
+        if hasattr(self.model, '_bmfmeta') and self.model._bmfmeta.has_files:
+            class FileDownload(DocumentRelationship):
+                model_to = self.model
+                serializer = DocumentSerializer
+            self.add_relation(FileDownload, Document)
 
         # TODO: OLD OLD OLD
         self.create_view = self.create

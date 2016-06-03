@@ -15,17 +15,6 @@ from django.utils.module_loading import import_module
 
 from djangobmf.conf import settings as bmfsettings
 
-# from djangobmf.core.relationship import DocumentRelationship
-#       # register files if module has them
-#       if module.model._bmfmeta.has_files:
-
-#           from djangobmf.core.serializers.document import DocumentSerializer
-
-#           class FileDownload(DocumentRelationship):
-#               model = module.model
-#               serializer = DocumentSerializer
-
-#           self.bmfregister_relationship(FileDownload, self.get_model("Document"))
 
 import logging
 logger = logging.getLogger(__name__)
