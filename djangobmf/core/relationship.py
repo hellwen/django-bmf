@@ -31,20 +31,20 @@ class RelationshipMetaclass(type):
         new_cls = super_new(cls, name, bases, attrs)
 
         # validation
-        if not getattr(new_cls, 'model', None):
-            raise ImproperlyConfigured('No model attribute defined in %s.' % new_cls)
+        if not getattr(new_cls, 'model_to', None):
+            raise ImproperlyConfigured('No model_to attribute defined in %s.' % new_cls)
 
         try:
-            ismodel = issubclass(new_cls.model, Model)
+            ismodel = issubclass(new_cls.model_to, Model)
         except:
             ismodel = False
 
         if ismodel:
-            new_cls._model = new_cls.model
+            new_cls._model_to = new_cls.model_to
         elif hasattr(new_cls, 'settings'):
-            new_cls._model = apps.get_model(getattr(settings, new_cls.settings, new_cls.model))
+            new_cls._model_to = apps.get_model(getattr(settings, new_cls.settings, new_cls.model_to))
         else:
-            new_cls._model = apps.get_model(new_cls.model)
+            new_cls._model_to = apps.get_model(new_cls.model_to)
 
         if not getattr(new_cls, 'name', None):
             raise ImproperlyConfigured('No name attribute defined in %s.' % new_cls)
@@ -59,14 +59,14 @@ class RelationshipMetaclass(type):
 
 
 class RelationshipMixin(object):
-    _related_model = None
+    _model_from = None
     settings = None
     template = None
     field = None
 
     def __eq__(self, other):
         if isinstance(other, Relationship):
-            return self._model == other._model and self.slug == other.slug
+            return self._model_to == other._model_to and self.slug == other.slug
         else:
             return False
 
@@ -79,8 +79,8 @@ class RelationshipMixin(object):
         if self.template:
             data.append(self.template)
         data.append('%s/%s_bmflist.html' % (
-            self._related_model._meta.app_label,
-            self._related_model._meta.model_name,
+            self._model_from._meta.app_label,
+            self._model_from._meta.model_name,
         ))
         data.append('djangobmf/api/list_template_not_found.html')
         return data

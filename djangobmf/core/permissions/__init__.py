@@ -31,8 +31,8 @@ class RelatedPermission(BasePermission):
         }
         perms1 = [perm % kwargs for perm in self._methods_map[method]]
         kwargs = {
-            'app': view.relation._related_model._meta.app_label,
-            'model': view.relation._related_model._meta.model_name,
+            'app': view.relation._model_from._meta.app_label,
+            'model': view.relation._model_from._meta.model_name,
         }
         perms2 = [perm % kwargs for perm in self._methods_map[method]]
         return perms1 + perms2

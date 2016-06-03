@@ -21,8 +21,8 @@ class View(BaseMixin, ListModelMixin, GenericAPIView):
     def get_serializer_class(self):
         if hasattr(self.relation, 'serializer'):
             return getattr(self.relation, 'serializer')
-        if hasattr(self.relation._related_model, '_bmfmeta'):
-            return self.relation._related_model._bmfmeta.serializer_class
+        if hasattr(self.relation._model_from, '_bmfmeta'):
+            return self.relation._model_from._bmfmeta.serializer_class
         raise NotImplementedError(
             'You need to use a model managed by djangobmf or '
             'define a serializer attribute on %s' % self.relation.__class__.__name__
@@ -33,8 +33,9 @@ class View(BaseMixin, ListModelMixin, GenericAPIView):
             return None
         self.object = self.get_bmfobject(self.kwargs.get('pk', None))
         self.relation = None
-        for o in self.request.djangobmf_appconfig.bmf_relations:
-            if o._model == self.object.__class__ and o.slug == self.kwargs.get('field', None):
+
+        for o in self.get_bmfmodule()._relations:
+            if o._model_to == self.object.__class__ and o.slug == self.kwargs.get('field', None):
                 self.relation = o
                 break
         if not self.relation:
@@ -51,7 +52,7 @@ class View(BaseMixin, ListModelMixin, GenericAPIView):
         response = self.list(request, *args, **kwargs)
         response.data['html'] = self.relation.get_html()
         response.data['model'] = {
-            'app_label': self.relation._related_model._meta.app_label,
-            'model_name': self.relation._related_model._meta.model_name,
+            'app_label': self.relation._model_from._meta.app_label,
+            'model_name': self.relation._model_from._meta.model_name,
         }
         return response

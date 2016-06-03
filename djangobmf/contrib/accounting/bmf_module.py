@@ -44,12 +44,12 @@ class TransactionItemModule(Module):
     default = True
 
 
-@register(model=TransactionItem)
+@register(model_from=TransactionItem)
 class AccountTransactionsRelationship(Relationship):
     name = _("Transactions")
     slug = "transactions"
     field = "transactions"
-    model = "djangobmf_accounting.Account"
+    model_to = "djangobmf_accounting.Account"
     settings = "BMF_CONTRIB_ACCOUNT"
 
 

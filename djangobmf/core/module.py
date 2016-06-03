@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from django.conf.urls import patterns
 from django.conf.urls import url
+from django.contrib.admin.sites import AlreadyRegistered
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import signals
@@ -42,6 +43,7 @@ class Module(object):
     detail_view = ModuleDetail
 
     def __init__(self, bmfconfig):
+
         # validation
         if not hasattr(self, 'model'):
             raise ImproperlyConfigured(
@@ -52,6 +54,7 @@ class Module(object):
 
         self._class_reports = {}
         self._object_reports = {}
+        self._relations = []
 
         self.signals_setup()
         self.validate_workflow()
@@ -98,7 +101,7 @@ class Module(object):
     # --- serialization -------------------------------------------------------
 
     # TODO
-    def serialize_class(self):
+    def serialize_class(self, request=None):
         """
         """
         return OrderedDict([
@@ -107,7 +110,7 @@ class Module(object):
             ('model', self.model._meta.model_name),
             ('name', self.model._meta.verbose_name_plural),
             ('creates', self.get_create_views()),
-            ('relations', self.get_relations()),
+            ('relations', self.get_relations(request)),
         ])
 
     # TODO
@@ -360,14 +363,34 @@ class Module(object):
         """
         return True if the module has one or more relations
         """
-        return getattr(self, '_has_relations', False)
+        return bool(self._relations)
 
     # TODO
-    def get_relations(self):
+    def get_relations(self, request):
         """
         """
-        pass
-        # ('relations', relations.get(ct, [])),
+        relations = {}
+        for relation in self._relations:
+            perm = '%s.view_%s'
+            info = (relation._model_to._meta.app_label, relation._model_to._meta.model_name)
+            if not request.user.has_perms([perm % info]):
+                continue
+
+            ct_target = ContentType.objects.get_for_model(relation._model_to).pk
+
+            data = OrderedDict([
+                ('app_label', relation._model_from._meta.app_label),
+                ('model_name', relation._model_from._meta.model_name),
+                ('name', relation.name),
+                ('slug', relation.slug),
+                ('template', relation.template),
+            ])
+
+            if ct_target in relations.keys():
+                relations[ct_target].append(data)
+            else:
+                relations[ct_target] = [data]
+        return relations
 
     # TODO
     def get_relation(self, name):
@@ -376,10 +399,18 @@ class Module(object):
         pass
 
     # TODO
-    def add_relation(self, name, relation):
+    def add_relation(self, cls, model_from):
         """
         """
-        pass
+        relation = cls()
+        relation._model_from = model_from
+
+        for obj in self._relations:
+            if obj == relation:
+                raise AlreadyRegistered(
+                    'Can not register the relationship %s' % cls.__name__
+                )
+        self._relations.append(relation)
 
     # --- number ranges -------------------------------------------------------
 

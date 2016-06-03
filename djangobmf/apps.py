@@ -14,7 +14,18 @@ from django.utils.module_loading import module_has_submodule
 from django.utils.module_loading import import_module
 
 from djangobmf.conf import settings as bmfsettings
-from djangobmf.core.relationship import DocumentRelationship
+
+# from djangobmf.core.relationship import DocumentRelationship
+#       # register files if module has them
+#       if module.model._bmfmeta.has_files:
+
+#           from djangobmf.core.serializers.document import DocumentSerializer
+
+#           class FileDownload(DocumentRelationship):
+#               model = module.model
+#               serializer = DocumentSerializer
+
+#           self.bmfregister_relationship(FileDownload, self.get_model("Document"))
 
 import logging
 logger = logging.getLogger(__name__)
@@ -28,7 +39,6 @@ class BMFConfig(AppConfig):
     def __init__(self, *args, **kwargs):
         super(BMFConfig, self).__init__(*args, **kwargs)
         self.bmf_modules = {}
-        self.bmf_relations = []
 
     def ready(self):
         from djangobmf.core.site import Site
@@ -51,61 +61,8 @@ class BMFConfig(AppConfig):
             raise AlreadyRegistered(
                 'The module %s is already registered' % module.model.__name__
             )
-
         self.bmf_modules[module.model] = module(self)
-
-        # register files if module has them
-        if module.model._bmfmeta.has_files:
-
-            from djangobmf.core.serializers.document import DocumentSerializer
-
-            class FileDownload(DocumentRelationship):
-                model = module.model
-                serializer = DocumentSerializer
-
-            self.bmfregister_relationship(FileDownload, self.get_model("Document"))
-
         return self.bmf_modules[module.model]
-
-    def bmfregister_relationship(self, relationship, model):
-        r = relationship()
-        r._related_model = model
-        for obj in self.bmf_relations:
-            if obj == r:
-                raise AlreadyRegistered(
-                    'Can not register the relationship %s' % relationship.__name__
-                )
-        self.bmf_relations.append(r)
-
-    def bmfregister_list_report(self, report, name):
-        pass
-#       if report.model not in self.bmf_modules:
-#           raise ImproperlyConfigured(
-#               'Model %s is not registered' % report.model.__class__
-#           )
-#       if name in self.bmf_modules[report.model].list_reports:
-#           raise AlreadyRegistered(
-#               'Can not register the report %s' % report.__name__
-#           )
-#       self.bmf_modules[report.model].list_reports[name] = {
-#           'class': report,
-#           'view': report.as_view(),
-#       }
-
-    def bmfregister_detail_report(self, report, name):
-        pass
-#       if report.model not in self.bmf_modules:
-#           raise ImproperlyConfigured(
-#               'Model %s is not registered' % report.model.__class__
-#           )
-#       if name in self.bmf_modules[report.model].detail_reports:
-#           raise AlreadyRegistered(
-#               'Can not register the report %s' % report.__name__
-#           )
-#       self.bmf_modules[report.model].detail_reports[name] = {
-#           'class': report,
-#           'view': report.as_view(),
-#       }
 
 
 class ModuleTemplate(AppConfig):

@@ -85,13 +85,12 @@ if apps.apps_ready:  # pragma: no branch
                 logger.debug('Registered View "%s" to %s', cls.__name__, category.__class__.__name__)
 
             elif issubclass(cls, Relationship):
-                if "model" not in self.kwargs:
+                if "model_from" not in self.kwargs:
                     raise ImproperlyConfigured(
-                        'You need to define a module when registering the view %s',
+                        'You need to define a model_from when registering %s',
                         cls.__name__,
                     )
-                bmfappconfig.bmfregister_relationship(cls, self.kwargs["model"])
-                return cls
+                bmfappconfig.get_bmfmodule(cls._model_to).add_relation(cls, self.kwargs["model_from"])
 
             elif issubclass(cls, Module):
                 instance = bmfappconfig.bmfregister_module(cls)
