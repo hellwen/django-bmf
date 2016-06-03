@@ -40,6 +40,7 @@ class Module(object):
     many functions used in the whole framework.
     """
 
+    open_relation = None
     workflow_class = None
     workflow_field_name = "state"
 
@@ -115,11 +116,12 @@ class Module(object):
         """
         """
         return OrderedDict([
-            ('ct', self.get_contenttype().pk),
             ('app', self.model._meta.app_label),
+            ('creates', self.get_create_views()),
+            ('ct', self.get_contenttype().pk),
             ('model', self.model._meta.model_name),
             ('name', self.model._meta.verbose_name_plural),
-            ('creates', self.get_create_views()),
+            ('open_relation', self.open_relation),
             ('relations', self.get_relations(request)),
         ])
 

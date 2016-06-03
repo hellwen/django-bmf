@@ -41,7 +41,7 @@ class RelationshipMetaclass(type):
 
         if ismodel:
             new_cls._model_to = new_cls.model_to
-        elif hasattr(new_cls, 'settings'):
+        elif hasattr(new_cls, 'settings') and new_cls.settings:
             new_cls._model_to = apps.get_model(getattr(settings, new_cls.settings, new_cls.model_to))
         else:
             new_cls._model_to = apps.get_model(new_cls.model_to)

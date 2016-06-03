@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.sites import Module
 from djangobmf.sites import PDFReport
+from djangobmf.sites import Relationship
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
 
@@ -20,7 +21,7 @@ from .views import QuotationUpdateView
 @register
 class QuotationModule(Module):
     model = Quotation
-    default = True
+    open_relation = 'positions'
     create = QuotationCreateView
     update = QuotationUpdateView
 
@@ -28,7 +29,24 @@ class QuotationModule(Module):
 @register
 class QuotationProductModule(Module):
     model = QuotationProduct
-    default = True
+
+
+@register(model_from=QuotationProduct)
+class QuotationProductRelationship(Relationship):
+    name = _("Positions")
+    slug = "positions"
+    field = "quotation_products"
+    model_to = "djangobmf_quotation.Quotation"
+    settings = "BMF_CONTRIB_QUOTATION"
+
+
+@register(model_from=Quotation)
+class QuotationProjectRelationship(Relationship):
+    name = _("Quotations")
+    slug = "quotation"
+    field = "quotation_set"
+    model_to = "djangobmf_project.Project"
+    settings = "BMF_CONTRIB_PROJECT"
 
 
 @register(category=QuotationCategory)

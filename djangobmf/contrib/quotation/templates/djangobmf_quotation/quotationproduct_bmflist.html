@@ -1,0 +1,57 @@
+{% load i18n djangobmf_angularjs %}
+<table class="table table-striped table-condensed table-hover">
+  <thead>
+    <tr>
+      <th width="40%">{% trans "Name" %}</th>
+      <th class="text-right" width="10%">{% trans "Price" %}</th>
+      <th class="text-right" width="10%">{% trans "Amount" %}</th>
+      <th class="text-right" width="15%">{% trans "Net" %}</th>
+      <th class="text-right" width="15%">{% trans "Gross" %}</th>
+      <th width="10%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="obj in data">
+      <td>
+          {% ng "obj.name" %}
+          <small ng-if="obj.description">{% ng "obj.description" %}</small>
+      </td>
+      <td class="text-right">
+          {% ng "obj.unitprice" %}
+      </td>
+      <td class="text-right">
+          {% ng "obj.amount" %}
+      </td>
+      <td class="text-right">
+          {% ng "obj.net" %}
+      </td>
+      <td class="text-right">
+          {% ng "obj.gross" %}
+      </td>
+      <td class="text-right">
+          <a class="btn btn-xs bmfedit btn-bmfupdate disabled" href="#?set-quotation={{ obj.quotation }}">
+            <span class="glyphicon glyphicon-wrench"></span>
+          </a>
+          <a class="btn btn-xs bmfedit btn-bmfdelete disabled" href="#">
+            <span class="glyphicon glyphicon-trash"></span>
+          </a>
+        </a>
+      </td>
+    </tr>
+  </tbody>
+  <tfoot ng-if="scopename=='related'">
+    <tr>
+      <td colspan="4" class="text-right">
+          NET TOTAL
+      </td>
+      <td colspan="1" class="text-right">
+          GROSS TOTAL
+      </td>
+      <td colspan="1" class="text-right">
+          <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_quotation_quotationproduct:create" "default" %}?data[quotation]={% ng "parent_object.pk" %}">
+          <span class="glyphicon glyphicon-plus"></span>
+        </a>
+      </td>
+    </tr>
+  </tfoot>
+</table>
