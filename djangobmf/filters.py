@@ -8,6 +8,8 @@ from django.utils.timezone import get_current_timezone
 
 from rest_framework.filters import BaseFilterBackend
 
+from djangobmf.sites import site
+
 import datetime
 import logging
 logger = logging.getLogger(__name__)
@@ -28,7 +30,7 @@ class ViewFilterBackend(BaseFilterBackend):
             return queryset
 
         try:
-            parent_view = request.djangobmf_site.get_dashboard(d)[c][v]
+            parent_view = site.get_dashboard(d)[c][v]
         except KeyError:
             return queryset
 
