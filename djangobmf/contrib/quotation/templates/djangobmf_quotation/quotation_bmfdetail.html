@@ -35,26 +35,6 @@
     </div>
 </div>
 
-<table class="table table-striped table-condensed table-hover">
-  <tfoot>
-    <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      {% if not object.completed %}
-      <td class="text-right">
-          <a class="btn btn-xs bmf-edit btn-success disabled">
-          <span class="glyphicon glyphicon-plus"></span>
-        </a>
-      </td>
-      {% else %}
-      <td></td>
-      {% endif %}
-    </tr>
-  </tfoot>
-</table>
 {% if object.term_of_payment %}
 <div class="panel panel-default">
   <div class="panel-heading">
