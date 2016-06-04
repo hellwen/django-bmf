@@ -29,10 +29,10 @@
           {% ng "obj.gross" %}
       </td>
       <td class="text-right">
-          <a class="btn btn-xs bmfedit btn-bmfupdate disabled" href="#?set-quotation={{ obj.quotation }}">
+          <a class="btn btn-xs btn-bmfupdate" bmf-form="update" bmf-pk="{% ng "obj.pk" %}" href="#?data[quotation]={% ng "parent_object.pk" %}">
             <span class="glyphicon glyphicon-wrench"></span>
           </a>
-          <a class="btn btn-xs bmfedit btn-bmfdelete disabled" href="#">
+          <a class="btn btn-xs btn-bmfdelete" bmf-form="delete" bmf-pk="{% ng "obj.pk" %}" href="#">
             <span class="glyphicon glyphicon-trash"></span>
           </a>
         </a>
