@@ -38,6 +38,7 @@ class QuotationSerializer(ModuleSerializer):
     def get_taxes(self, obj):
         return [{'name': t[0].name, 'value': t[1]} for t in obj.calc_taxes()]
 
+
 class QuotationProductSerializer(ModuleSerializer):
     unitprice = serializers.SerializerMethodField()
     net = serializers.SerializerMethodField()
