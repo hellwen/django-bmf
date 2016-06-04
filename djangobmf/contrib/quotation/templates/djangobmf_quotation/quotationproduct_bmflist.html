@@ -41,17 +41,26 @@
   </tbody>
   <tfoot ng-if="scopename=='related'">
     <tr>
-      <td colspan="4" class="text-right">
-          NET TOTAL
-      </td>
-      <td colspan="1" class="text-right">
-          GROSS TOTAL
-      </td>
-      <td colspan="1" class="text-right">
+      <td ng-if="!parent_object.completed" colspan="6" class="text-right">
           <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_quotation_quotationproduct:create" "default" %}?data[quotation]={% ng "parent_object.pk" %}">
           <span class="glyphicon glyphicon-plus"></span>
         </a>
       </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="text-right"><b>{% trans "Total net" %}</b></td>
+      <td class="text-right"><b>{% ng "parent_object.net" %}</b></td>
+      <td colspan="1"></td>
+    </tr>
+    <tr ng-repeat="tax in parent_object.taxes|orderBy:name">
+        <td colspan="4" class="text-right">{% ng "tax.name " %}</td>
+        <td class="text-right">{% ng "tax.value" %}</td>
+        <td colspan="1"></td>
+    </tr>
+    <tr>
+      <td colspan="4" class="text-right"><b>{% trans "Total gross" %}</b></td>
+      <td class="text-right"><b>{% ng "parent_object.gross" %}</b></td>
+      <td colspan="1"></td>
     </tr>
   </tfoot>
 </table>

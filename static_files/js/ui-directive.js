@@ -35,10 +35,11 @@ bmfapp.directive('bmfDetail', ['LinkFactory', function(LinkFactory) {
         restrict: 'A',
         scope: false,
         link: function(scope, element, attr) {
-            element.attr(
-                'href',
-                LinkFactory("detail", scope.module, attr.bmfDetail, undefined)
-            );
+            var url = LinkFactory("detail", scope.module, attr.bmfDetail, undefined);
+            if (scope.module && scope.module.open_relation) {
+                url += '?open=' + scope.module.open_relation;
+            }
+            element.attr('href', url);
 
             element.on('click', function(event) {
                 window.scrollTo(0,0);

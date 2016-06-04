@@ -12,6 +12,10 @@ class QuotationSerializer(ModuleSerializer):
     state_name = serializers.ReadOnlyField(source='state.name')
     project_name = serializers.ReadOnlyField(source='project.name')
 
+    net = serializers.SerializerMethodField()
+    gross = serializers.SerializerMethodField()
+    taxes = serializers.SerializerMethodField()
+
     class Meta:
         fields = (
             'quotation_number',
@@ -19,8 +23,20 @@ class QuotationSerializer(ModuleSerializer):
             'state_name',
             'project',
             'project_name',
+            'net',
+            'gross',
+            'taxes',
+            'completed',
         )
 
+    def get_net(self, obj):
+        return obj.calc_net()
+
+    def get_gross(self, obj):
+        return obj.calc_gross()
+
+    def get_taxes(self, obj):
+        return [{'name': t[0].name, 'value': t[1]} for t in obj.calc_taxes()]
 
 class QuotationProductSerializer(ModuleSerializer):
     unitprice = serializers.SerializerMethodField()
