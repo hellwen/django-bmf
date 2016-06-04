@@ -26,68 +26,6 @@
     </div>
 </div>
 
-<table class="table table-striped table-condensed table-hover">
-  <thead>
-    <tr>
-      <th width="">{% trans "Name" %}</th>
-      <th width="">{% trans "Price" %}</th>
-      <th width="">{% trans "Amount" %}</th>
-      <th width="">{% trans "Net" %}</th>
-      <th width="">{% trans "Gross" %}</th>
-      <th width="10%"></th>
-    </tr>
-  </thead>
-  <tfoot>
-    <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td>{{ object.calc_net }}</td>
-      <td>{{ object.calc_gross }}</td>
-      {% if not object.completed %}
-      <td class="text-right">
-          <a class="btn btn-xs bmf-edit btn-success" href="{% url "djangobmf:moduleapi_djangobmf_invoice_invoiceproduct:create" "default" %}?set-invoice={{ object.pk }}">
-          <span class="glyphicon glyphicon-plus"></span>
-        </a>
-      </td>
-      {% else %}
-      <td></td>
-      {% endif %}
-    </tr>
-  </tfoot>
-  <tbody>
-    {% for obj in object.get_products %}
-    <tr>
-      <td>
-          {{ obj.name }}
-      </td>
-      <td>
-          {{ obj.calc_net_unit }}
-          {{ obj.calc_taxes }}
-      </td>
-      <td>
-          {{ obj.amount }}
-      </td>
-      <td>
-          {{ obj.calc_net }}
-      </td>
-      <td>
-          {{ obj.calc_gross }}
-      </td>
-      <td class="text-right">
-          <a class="btn btn-xs bmfedit btn-bmfupdate" href="#?set-invoice={{ object.pk }}">
-            <span class="glyphicon glyphicon-wrench"></span>
-          </a>
-          <a class="btn btn-xs bmfedit btn-bmfdelete" href="#">
-            <span class="glyphicon glyphicon-trash"></span>
-          </a>
-        </a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
 {% if object.term_of_payment %}
 <div class="panel panel-default">
   <div class="panel-heading">

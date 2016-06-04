@@ -49,6 +49,15 @@ class QuotationProjectRelationship(Relationship):
     settings = "BMF_CONTRIB_PROJECT"
 
 
+@register(model_from=Quotation)
+class QuotationCustomerRelationship(Relationship):
+    name = _("Customers")
+    slug = "customer"
+    field = "quotation_set"
+    model_to = "djangobmf_customer.Customer"
+    settings = "BMF_CONTRIB_CUSTOMER"
+
+
 @register(category=QuotationCategory)
 class OpenQuotations(ViewMixin):
     model = Quotation

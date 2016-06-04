@@ -17,6 +17,7 @@ import datetime
 from decimal import Decimal
 
 from .serializers import InvoiceSerializer
+from .serializers import InvoiceProductSerializer
 from .workflows import InvoiceWorkflow
 from .utils import number_range
 
@@ -185,6 +186,7 @@ class InvoiceProduct(BMFModel):
 
     class BMFMeta:
         only_related = True
+        serializer = InvoiceProductSerializer
 
     def calc_all(self):
         if hasattr(self, '_calcs'):
