@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.sites import Module
 from djangobmf.sites import PDFReport
-from djangobmf.sites import Relationship
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
 
@@ -30,33 +29,6 @@ class InvoiceModule(Module):
 class InvoiceProductModule(Module):
     model = InvoiceProduct
     default = True
-
-
-@register(model_from=InvoiceProduct)
-class InvoiceProductRelationship(Relationship):
-    name = _("Positions")
-    slug = "positions"
-    field = "quotation_products"
-    model_to = "djangobmf_invoice.Invoice"
-    settings = "BMF_CONTRIB_INVOICE"
-
-
-@register(model_from=Invoice)
-class InvoiceProjectRelationship(Relationship):
-    name = _("Quotations")
-    slug = "quotation"
-    field = "quotation_set"
-    model_to = "djangobmf_project.Project"
-    settings = "BMF_CONTRIB_PROJECT"
-
-
-@register(model_from=Invoice)
-class InvoiceCustomerRelationship(Relationship):
-    name = _("Customers")
-    slug = "customer"
-    field = "quotation_set"
-    model_to = "djangobmf_customer.Customer"
-    settings = "BMF_CONTRIB_CUSTOMER"
 
 
 @register(category=InvoiceCategory)

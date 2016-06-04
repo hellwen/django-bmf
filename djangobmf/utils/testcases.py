@@ -17,7 +17,7 @@ from django.utils.translation import activate
 from djangobmf.conf import settings
 from djangobmf.demo import FIXTURES
 from djangobmf.sites import site
-from djangobmf.sites import bmfappconfig
+from djangobmf.sites import config
 
 from collections import OrderedDict
 
@@ -113,14 +113,14 @@ class ModuleTestFactory(SuperuserMixin, BaseTestCase):
         self.user = self.create_user("superuser", is_superuser=True)
         self.client_login("superuser")
         self.appconf = [app for app in apps.get_app_configs() if isinstance(app, self.app)][0]
-        self.models = [m for m in self.appconf.get_models() if m in site.models.values()]
+        self.models = [m for m in self.appconf.get_models() if config.has_module(m)]
 
     def test_module_create(self):
         for model in self.models:
 
             ns = model._bmfmeta.namespace_api
 
-            for key, slug, view in site.modules[model].list_creates():
+            for key, slug, view in config.get_module(model).list_creates():
                 url = reverse('%s:create' % ns, kwargs={
                     'key': key,
                 })
@@ -187,7 +187,7 @@ class ModuleTestFactory(SuperuserMixin, BaseTestCase):
 
     def test_module_api_related(self):
         for model in self.models:
-            for relation in bmfappconfig.get_bmfmodule(model)._relations:
+            for relation in config.get_module(model)._relations:
 
                 for obj in relation._model_to.objects.all():
                     url = reverse('%s:api-related' % settings.APP_LABEL, kwargs={

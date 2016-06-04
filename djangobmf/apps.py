@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib.admin.sites import AlreadyRegistered
 from django.core.checks import register
 from django.core.checks import Error
-from django.core.exceptions import ImproperlyConfigured
+# from django.core.exceptions import ImproperlyConfigured
 from django.utils.module_loading import module_has_submodule
 from django.utils.module_loading import import_module
 
@@ -27,62 +27,78 @@ class BMFConfig(AppConfig):
 
     def __init__(self, *args, **kwargs):
         super(BMFConfig, self).__init__(*args, **kwargs)
-        self.bmf_modules = {}
+        self._modules = {}
+        self._dashboard = {}
 
     def ready(self):
-        from djangobmf.core.site import Site
-        self.site = Site(namespace=self.label, app_name=self.label)
+        # Autoloader
+        for module in ['bmf_module', 'bmf_relation']:
+            for app_config in apps.get_app_configs():
+                # app_config.bmfconfig = self
+                try:
+                    import_module('%s.%s' % (app_config.name, module))
+                except:
+                    if module_has_submodule(app_config.module, module):
+                        raise
 
-    def get_bmfmodule(self, model):
+    def get_module(self, model):
         """
         returs a module instance when called with a model class
         """
-        return self.bmf_modules.get(model, None)
+        try:
+            return self._modules[model]
+        except:
+            print(list([i.__class__.__name__ for i in self._modules.values()]))
+            raise
 
-    def register_bmfmodule(self, module):
-        return self.bmfregister_module(module)
+    def has_module(self, model):
+        """
+        returs a module instance when called with a model class
+        """
+        return model in self._modules
 
-    def bmfregister_module(self, module):
+    def register_module(self, module):
         """
         register a module with the framework
         """
-        if module.model in self.bmf_modules:
+        if self.has_module(module.model):
             raise AlreadyRegistered(
                 'The module %s is already registered' % module.model.__name__
             )
-        self.bmf_modules[module.model] = module(self)
-        return self.bmf_modules[module.model]
+        self._modules[module.model] = module(self)
 
 
 class ModuleTemplate(AppConfig):
-    bmf_label = bmfsettings.APP_LABEL
+    pass
 
-    def ready(self):
-        # if ready was already called
-        if hasattr(self, 'bmf_config'):  # pragma: no cover
-            return True
+#   bmf_label = bmfsettings.APP_LABEL
 
-        self.bmf_config = apps.get_app_config(self.bmf_label)
+#   def ready(self):
+#       # if ready was already called
+#       if hasattr(self, 'bmf_config'):  # pragma: no cover
+#           return True
 
-        if not hasattr(self.bmf_config, 'site'):  # pragma: no cover
-            raise ImproperlyConfigured(
-                "Can not find a site attribute in %(cls)s. "
-                "Please import the BMF-Framework before you "
-                "import any BMF-Modules in your INSTALLED_APPS." % {
-                    'cls': self.bmf_config.__class__.__name__
-                }
-            )
+#       self.bmf_config = apps.get_app_config(self.bmf_label)
 
-        # autodiscover bmf modules ============================================
-        if module_has_submodule(self.module, "bmf_module"):  # pragma: no branch
+#       if not hasattr(self.bmf_config, 'site'):  # pragma: no cover
+#           raise ImproperlyConfigured(
+#               "Can not find a site attribute in %(cls)s. "
+#               "Please import the BMF-Framework before you "
+#               "import any BMF-Modules in your INSTALLED_APPS." % {
+#                   'cls': self.bmf_config.__class__.__name__
+#               }
+#           )
 
-            # load instructions of bmf_module.py
-            import_module('%s.%s' % (self.name, "bmf_module"))
+#       # autodiscover bmf modules ============================================
+#       if module_has_submodule(self.module, "bmf_module"):  # pragma: no branch
 
-        logger.debug('App "%s" (%s) is ready' % (
-            self.verbose_name,
-            self.label,
-        ))
+#           # load instructions of bmf_module.py
+#           import_module('%s.%s' % (self.name, "bmf_module"))
+
+#       logger.debug('App "%s" (%s) is ready' % (
+#           self.verbose_name,
+#           self.label,
+#       ))
 
 
 class ContribTemplate(ModuleTemplate):

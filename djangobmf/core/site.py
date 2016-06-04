@@ -10,9 +10,9 @@ from django.conf.urls import url
 from django.contrib.admin.sites import AlreadyRegistered
 from django.contrib.admin.sites import NotRegistered
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ImproperlyConfigured
+# from django.core.exceptions import ImproperlyConfigured
 
-from djangobmf.core.module import Module
+# from djangobmf.core.module import Module
 from djangobmf.models import Configuration
 # from djangobmf.models import Report
 
@@ -36,9 +36,6 @@ class Site(object):
     def clear(self):
         # true if the site is active, ie loaded
         self.is_active = False
-
-        # combine all registered modules here
-        self.modules = {}
 
         # all currencies should be stored here
         self.currencies = {}
@@ -95,26 +92,6 @@ class Site(object):
         self.is_active = True
         logger.debug('Site is now active')
         return True
-
-    # --- modules -------------------------------------------------------------
-
-    def register_module(self, model, **options):
-        if not hasattr(model, '_bmfmeta'):
-            raise ImproperlyConfigured(
-                'The module %s needs to be an BMF-Model in order to be'
-                'registered with django BMF.' % model.__name__
-            )
-        if model in self.modules:
-            raise AlreadyRegistered('The module %s is already registered' % model.__name__)
-        self.modules[model] = Module(model, **options)
-
-    def unregister_module(self, module):
-        if module not in self.modules:
-            raise NotRegistered('The module %s is not registered' % module.__name__)
-        del self.modules[module]
-
-    def get_module(self, model):
-        return self.modules[model]
 
     # --- currencies ----------------------------------------------------------
 
@@ -177,7 +154,7 @@ class Site(object):
             # pattern - the urls are not needed during migrations.
             return patterns('')
 
-        for module, data in self.modules.items():
+        for module, data in self.config._modules.items():
             info = (module._meta.app_label, module._meta.model_name)
             ct = ContentType.objects.get_for_model(module)
 
@@ -203,10 +180,10 @@ class Site(object):
 
     # --- misc methods --------------------------------------------------------
 
-    @property
-    def models(self):
-        models = {}
-        for model in self.modules.keys():
-            ct = ContentType.objects.get_for_model(model)
-            models[ct.pk] = model
-        return models
+#   @property
+#   def models(self):
+#       models = {}
+#       for model in self.modules.keys():
+#           ct = ContentType.objects.get_for_model(model)
+#           models[ct.pk] = model
+#       return models

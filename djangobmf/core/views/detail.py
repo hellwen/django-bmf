@@ -36,7 +36,7 @@ class View(BaseMixin, GenericAPIView):
         self.object = self.get_bmfobject(self.kwargs.get('pk', None))
         serialized = self.get_serializer_class()(self.object)
         meta = self.object._bmfmeta
-        module = self.bmfconfig.get_bmfmodule(self.object.__class__)
+        module = self.bmfconfig.get_module(self.object.__class__)
         related_response = module.get_detail_view(request, object=self.object)
 
         try:

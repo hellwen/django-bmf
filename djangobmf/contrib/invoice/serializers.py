@@ -26,7 +26,6 @@ class InvoiceSerializer(ModuleSerializer):
             'net',
             'gross',
             'taxes',
-            'completed',
         )
 
     def get_net(self, obj):
