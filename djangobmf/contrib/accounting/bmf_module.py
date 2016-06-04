@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from djangobmf.sites import Relationship
 from djangobmf.sites import Module
 from djangobmf.sites import ViewMixin
 from djangobmf.sites import register
@@ -42,15 +41,6 @@ class TransactionModule(Module):
 class TransactionItemModule(Module):
     model = TransactionItem
     default = True
-
-
-@register(model_from=TransactionItem)
-class AccountTransactionsRelationship(Relationship):
-    name = _("Transactions")
-    slug = "transactions"
-    field = "transactions"
-    model_to = "djangobmf_accounting.Account"
-    settings = "BMF_CONTRIB_ACCOUNT"
 
 
 site.register_settings('bmfcontrib_accounting', {

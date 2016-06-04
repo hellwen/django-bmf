@@ -39,6 +39,9 @@ from rest_framework.viewsets import GenericViewSet
 
 from collections import OrderedDict
 
+# TODO replace me
+from djangobmf.sites import site
+
 
 class ModelMixin(object):
 
@@ -63,14 +66,14 @@ class APIIndex(BaseMixin, APIView):
     def get(self, request, format=None):
         """
         """
-        site = request.djangobmf_site
+        # site = request.djangobmf_site
         appconfig = request.djangobmf_appconfig
 
         # === Modules ---------------------------------------------------------
 
         modules = []
 
-        for model, module in appconfig.bmf_modules.items():
+        for model, module in appconfig._modules.items():
 
             ct = module.get_contenttype().pk
             info = model._meta.app_label, model._meta.model_name
@@ -189,7 +192,7 @@ class APIViewDetail(BaseMixin, APIView):
         """
 
         try:
-            view_cls = request.djangobmf_site.get_dashboard(db)[cat][view]
+            view_cls = site.get_dashboard(db)[cat][view]
         except KeyError:
             raise Http404
 

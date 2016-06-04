@@ -152,7 +152,7 @@ class BaseMixin(object):
 
         # add the site object to every request
         setattr(self.request, 'djangobmf_appconfig', apps.get_app_config(bmfsettings.APP_LABEL))
-        setattr(self.request, 'djangobmf_site', self.request.djangobmf_appconfig.site)
+        # setattr(self.request, 'djangobmf_site', self.request.djangobmf_appconfig.site)
 
         # add the authenticated user and employee to the request (as a lazy queryset)
         self.request.user.djangobmf = Employee(self.request.user)
@@ -325,7 +325,7 @@ class ModuleBaseMixin(object):
         Return the list of items for this view.
         `QuerySet` in which case `QuerySet` specific behavior will be enabled.
         """
-        module = self.request.djangobmf_site.get_module(self.model)
+        module = self.request.djangobmf_appconfig.get_module(self.model)
 
         if self.model and manager:
             if module.manager.get(manager, None):

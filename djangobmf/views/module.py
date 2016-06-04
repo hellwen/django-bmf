@@ -235,7 +235,7 @@ class ModuleDeleteView(ModuleAjaxMixin, DeleteView):
             if not self.request.user.has_perm(p):
                 perms_needed.add(obj._meta.verbose_name)
 
-            registered = obj.__class__ in self.request.djangobmf_site.modules
+            registered = self.request.djangobmf_appconfig.has_module(obj.__class__)
 
             # only show bmf modules
             if not registered:
