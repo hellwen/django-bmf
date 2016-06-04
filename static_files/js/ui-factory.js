@@ -35,6 +35,9 @@ bmfapp.factory('LinkFactory', ['$location', '$rootScope', 'apiurl', 'appurl', 'M
             else {
                 url = appurl + 'detail/' + module.app + '/' + module.model + '/' + pk + '/';
             }
+            if (module.open_relation) {
+                url += '?open=' + module.open_relation;
+            }
         }
 
         return url
