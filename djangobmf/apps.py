@@ -48,7 +48,6 @@ class BMFConfig(AppConfig):
         try:
             return self._modules[model]
         except:
-            print(list([i.__class__.__name__ for i in self._modules.values()]))
             raise
 
     def has_module(self, model):

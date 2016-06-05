@@ -463,7 +463,7 @@ class ModuleFormAPI(ModuleFormMixin, ModuleAjaxMixin, ModuleSearchMixin, SingleO
 
             # use permissions from module
             try:
-                module = self.request.djangobmf_site.get_module(qs.model)
+                module = self.request.djangobmf_appconfig.get_module(qs.model)
                 qs = module.permissions().filter_queryset(
                     qs,
                     self.request.user,
