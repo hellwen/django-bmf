@@ -26,5 +26,3 @@ class View(BaseMixin, GenericAPIView):
         module = self.get_bmfmodule()
         report, renderer = self.module.get_object_report(self.kwargs.get('slug', None))
         return report(request, object=obj, renderer=renderer)
-        print(obj, module, report)
-        return Response('REPORT')
