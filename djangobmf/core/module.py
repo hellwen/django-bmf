@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from django.conf.urls import patterns
 from django.conf.urls import url
+from django.contrib.admin.sites import AlreadyRegistered
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import signals
@@ -14,7 +15,10 @@ from django.utils.text import slugify
 
 from rest_framework.reverse import reverse
 
+from djangobmf.core.relationship import DocumentRelationship
+from djangobmf.core.serializers.document import DocumentSerializer
 from djangobmf.core.workflow import Workflow
+from djangobmf.models import Document
 from djangobmf.permissions import ModulePermission
 from djangobmf.views import ModuleCreateView
 from djangobmf.views import ModuleDeleteView
@@ -36,12 +40,14 @@ class Module(object):
     many functions used in the whole framework.
     """
 
+    open_relation = None
     workflow_class = None
     workflow_field_name = "state"
 
     detail_view = ModuleDetail
 
     def __init__(self, bmfconfig):
+
         # validation
         if not hasattr(self, 'model'):
             raise ImproperlyConfigured(
@@ -52,9 +58,17 @@ class Module(object):
 
         self._class_reports = {}
         self._object_reports = {}
+        self._relations = []
 
         self.signals_setup()
         self.validate_workflow()
+
+        # auto add document relationship
+        if hasattr(self.model, '_bmfmeta') and self.model._bmfmeta.has_files:
+            class FileDownload(DocumentRelationship):
+                model_to = self.model
+                serializer = DocumentSerializer
+            self.add_relation(FileDownload, Document)
 
         # TODO: OLD OLD OLD
         self.create_view = self.create
@@ -98,16 +112,17 @@ class Module(object):
     # --- serialization -------------------------------------------------------
 
     # TODO
-    def serialize_class(self):
+    def serialize_class(self, request=None):
         """
         """
         return OrderedDict([
-            ('ct', self.get_contenttype().pk),
             ('app', self.model._meta.app_label),
+            ('creates', self.get_create_views()),
+            ('ct', self.get_contenttype().pk),
             ('model', self.model._meta.model_name),
             ('name', self.model._meta.verbose_name_plural),
-            ('creates', self.get_create_views()),
-            ('relations', self.get_relations()),
+            ('open_relation', self.open_relation),
+            ('relations', self.get_relations(request)),
         ])
 
     # TODO
@@ -360,14 +375,28 @@ class Module(object):
         """
         return True if the module has one or more relations
         """
-        return getattr(self, '_has_relations', False)
+        return bool(self._relations)
 
     # TODO
-    def get_relations(self):
+    def get_relations(self, request):
         """
         """
-        pass
-        # ('relations', relations.get(ct, [])),
+        relations = []
+        for relation in self._relations:
+            perm = '%s.view_%s'
+            info = (relation._model_to._meta.app_label, relation._model_to._meta.model_name)
+            if not request.user.has_perms([perm % info]):
+                continue
+
+            data = OrderedDict([
+                ('app_label', relation._model_from._meta.app_label),
+                ('model_name', relation._model_from._meta.model_name),
+                ('name', relation.name),
+                ('slug', relation.slug),
+                ('template', relation.template),
+            ])
+            relations.append(data)
+        return relations
 
     # TODO
     def get_relation(self, name):
@@ -376,10 +405,18 @@ class Module(object):
         pass
 
     # TODO
-    def add_relation(self, name, relation):
+    def add_relation(self, cls, model_from):
         """
         """
-        pass
+        relation = cls()
+        relation._model_from = model_from
+
+        for obj in self._relations:
+            if obj == relation:
+                raise AlreadyRegistered(
+                    'Can not register the relationship %s' % cls.__name__
+                )
+        self._relations.append(relation)
 
     # --- number ranges -------------------------------------------------------
 

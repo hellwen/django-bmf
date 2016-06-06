@@ -124,7 +124,6 @@ def bmffield(field):
             else:
                 text = None
 
-
             if field.field.widget.attrs.get('readonly', False):
                 data = '<p class="form-control-static">%s</p>' % (text or '<i>%s</i>' % _('empty'))
                 data += field.as_hidden(attrs={'autocomplete': 'off', 'value': value})

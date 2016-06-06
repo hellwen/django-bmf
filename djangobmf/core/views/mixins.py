@@ -50,7 +50,7 @@ class BaseMixin(object):
 
         # load the module
         config = self.request.djangobmf_appconfig
-        self.module = config.get_bmfmodule(self.get_bmfmodel())
+        self.module = config.get_module(self.get_bmfmodel())
         return self.module
 
     def get_bmfqueryset(self, filter=True):

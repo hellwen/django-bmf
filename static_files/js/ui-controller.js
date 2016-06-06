@@ -248,6 +248,10 @@ bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $ro
         var data = [];
         var current = undefined;
 
+        if (key == undefined) {
+            key = sessionStorage.bmf_dashboard || localStorage.bmf_dashboard;
+        }
+
         $rootScope.bmf_dashboards.forEach(function(d, di) {
             var active = false
             if (key == d.key) {
@@ -264,6 +268,8 @@ bmfapp.controller('DashboardCtrl', ['$scope', '$rootScope', function($scope, $ro
         // fire event
         if (current) {
             $rootScope.bmfevent_sidebar(key);
+            localStorage.setItem('bmf_dashboard', current.key);
+            sessionStorage.setItem('bmf_dashboard', current.key);
         }
 
         $scope.data = data;

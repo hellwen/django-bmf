@@ -10,11 +10,13 @@ from django.core.exceptions import ImproperlyConfigured
 from djangobmf.conf import settings
 from djangobmf.core.relationship import Relationship
 from djangobmf.core.category import Category
+from djangobmf.core.currency import BaseCurrency
 from djangobmf.core.dashboard import Dashboard
 from djangobmf.core.module import Module
 from djangobmf.core.viewmixin import ViewMixin
 # from djangobmf.views.module import ModuleDetail
 from djangobmf.views.report import ReportBaseView
+from djangobmf.core.site import Site
 
 
 import logging
@@ -31,6 +33,9 @@ __all__ = [
 ]
 
 
+site = Site(namespace=settings.APP_LABEL, app_name=settings.APP_LABEL)
+
+
 class PDFReport(ReportBaseView):
     renderer_class = apps.get_model(settings.APP_LABEL, "PDFRenderer")
 
@@ -41,9 +46,13 @@ class PDFReport(ReportBaseView):
 # apps are loaded (cause the site does some database
 # queries). Importing this to early leads to an exception
 # which is a feature and not a bug.
+
 if apps.apps_ready:  # pragma: no branch
-    bmfappconfig = apps.get_app_config(settings.APP_LABEL)
-    site = apps.get_app_config(settings.APP_LABEL).site
+    # bmfappconfig = apps.get_app_config(settings.APP_LABEL)
+    # site = apps.get_app_config(settings.APP_LABEL).site
+
+    config = apps.get_app_config(settings.APP_LABEL)
+    site.config = config
 
     class register(object):  # noqa
         """
@@ -56,6 +65,53 @@ if apps.apps_ready:  # pragma: no branch
 
         def __call__(self, cls):
             self.register_generic(cls)
+
+        def register_generic(self, cls):
+            # Currency
+            if issubclass(cls, BaseCurrency):
+                site.register_currency(cls)
+
+            # Module
+            elif issubclass(cls, Module):
+                config.register_module(cls)
+
+            # Views
+            elif issubclass(cls, ViewMixin):
+                if "category" not in self.kwargs:
+                    raise ImproperlyConfigured(
+                        'You need to define a category, when registering the view %s',
+                        cls,
+                    )
+                category = self.register_category(self.kwargs["category"])
+                category.add_view(cls)
+                logger.debug('Registered View "%s" to %s', cls.__name__, category.__class__.__name__)
+
+            # Relationship
+            elif issubclass(cls, Relationship):
+                if "model_from" not in self.kwargs:
+                    raise ImproperlyConfigured(
+                        'You need to define a model_from when registering %s',
+                        cls.__name__,
+                    )
+                config.get_module(cls._model_to).add_relation(cls, self.kwargs["model_from"])
+
+            # Report
+            elif issubclass(cls, ReportBaseView):
+                module = config.get_module(getattr(cls, "model", None))
+                if module:
+                    module.add_report(cls)
+                else:
+                    raise ImproperlyConfigured(
+                        '%s needs a model witch is registered with the bmf-framework',
+                        cls,
+                    )
+
+            # Raise Error
+            else:
+                raise ImproperlyConfigured(
+                    'You can not register %s with django-bmf',
+                    cls.__name__,
+                )
 
         def register_category(self, category):
             dashboard = self.register_dashboard(category.dashboard)
@@ -72,47 +128,6 @@ if apps.apps_ready:  # pragma: no branch
             site.dashboards.append(db)
             logger.debug('Registered Dashboard "%s"', dashboard.__name__)
             return db
-
-        def register_generic(self, cls):
-            if issubclass(cls, ViewMixin):
-                if "category" not in self.kwargs:
-                    raise ImproperlyConfigured(
-                        'You need to define a category, when registering the view %s',
-                        cls,
-                    )
-                category = self.register_category(self.kwargs["category"])
-                category.add_view(cls)
-                logger.debug('Registered View "%s" to %s', cls.__name__, category.__class__.__name__)
-
-            elif issubclass(cls, Relationship):
-                if "model" not in self.kwargs:
-                    raise ImproperlyConfigured(
-                        'You need to define a module when registering the view %s',
-                        cls.__name__,
-                    )
-                bmfappconfig.bmfregister_relationship(cls, self.kwargs["model"])
-                return cls
-
-            elif issubclass(cls, Module):
-                instance = bmfappconfig.bmfregister_module(cls)
-                site.modules[cls.model] = instance
-                return cls
-
-            elif issubclass(cls, ReportBaseView):
-                module = bmfappconfig.get_bmfmodule(getattr(cls, "model", None))
-                if module:
-                    module.add_report(cls)
-                else:
-                    raise ImproperlyConfigured(
-                        '%s needs a model witch is registered with the bmf-framework',
-                        cls,
-                    )
-
-            else:
-                raise ImproperlyConfigured(
-                    'You can not register %s with django-bmf',
-                    cls.__name__,
-                )
 
     __all__ += [
         'register',
