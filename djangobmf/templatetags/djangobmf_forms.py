@@ -124,11 +124,10 @@ def bmffield(field):
             else:
                 text = None
 
-
             if field.field.widget.attrs.get('readonly', False):
                 data = '<p class="form-control-static">%s</p>' % (text or '<i>%s</i>' % _('empty'))
                 data += field.as_hidden(attrs={'autocomplete': 'off', 'value': value})
-                return data
+                return format_html(data)
             else:
                 data = '<div class="input-group" data-bmf-autocomplete="1">'
                 data += field.as_text(attrs={
@@ -150,16 +149,16 @@ def bmffield(field):
         data = '<div class="input-group" data-bmf-calendar="dt">'
         data += field.as_widget(attrs={'class': 'form-control', 'autocomplete': 'off'})
         data += '</div>'
-        return data
+        return format_html(data)
     elif isinstance(field.field, forms.DateField):
         data = '<div class="input-group" data-bmf-calendar="d">'
         data += field.as_widget(attrs={'class': 'form-control', 'autocomplete': 'off'})
         data += '</div>'
-        return data
+        return format_html(data)
     elif isinstance(field.field, forms.TimeField):
         data = '<div class="input-group" data-bmf-calendar="t">'
         data += field.as_widget(attrs={'class': 'form-control', 'autocomplete': 'off'})
         data += '</div>'
-        return data
+        return format_html(data)
     else:
         return field.as_widget(attrs={'class': 'form-control'})
