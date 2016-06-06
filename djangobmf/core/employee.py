@@ -50,9 +50,8 @@ class Employee(object):
         return self._team
 
     def has_object_perms(self, obj):
-
-        from djangobmf.sites import site
-        module = site.get_module(obj.__class__)
+        config = apps.get_app_config(settings.APP_LABEL)
+        module = config.get_module(obj.__class__)
 
         return module.permissions().filter_queryset(
             obj._default_manager.filter(pk=obj.pk),

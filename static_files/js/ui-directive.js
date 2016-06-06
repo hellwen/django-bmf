@@ -35,10 +35,8 @@ bmfapp.directive('bmfDetail', ['LinkFactory', function(LinkFactory) {
         restrict: 'A',
         scope: false,
         link: function(scope, element, attr) {
-            element.attr(
-                'href',
-                LinkFactory("detail", scope.module, attr.bmfDetail, undefined)
-            );
+            var url = LinkFactory("detail", scope.module, attr.bmfDetail, undefined);
+            element.attr('href', url);
 
             element.on('click', function(event) {
                 window.scrollTo(0,0);
@@ -49,7 +47,7 @@ bmfapp.directive('bmfDetail', ['LinkFactory', function(LinkFactory) {
 
 
 // manages form modal calls
-bmfapp.directive('bmfForm', [function() {
+bmfapp.directive('bmfForm', ['$rootScope', function($rootScope) {
     return {
         restrict: 'A',
         link: function(scope, element, attr) {
@@ -85,9 +83,15 @@ bmfapp.directive('bmfForm', [function() {
                 // loads the formular data into the modal
                 if ($('#bmfmodal_edit').length == 0) { initialize_modal() }
 
+                var url = attr.href;
+                // new syntax - we must generate the link dynamically
+                if (attr.href[0] == "#" && attr.bmfForm && attr.bmfPk) {
+                    url = $rootScope.bmf_api.base + 'module/' + scope.module.ct + '/' + attr.bmfForm + '/' + attr.bmfPk + '/' + attr.href.substr(1);
+                }
+
                 var dict = $.bmf.AJAX;
                 dict.type = "GET";
-                dict.url = element[0].href;
+                dict.url = url;
                 $.ajax(dict).done(function( data, textStatus, jqXHR ) {
 
                     if (data.success == true && data.reload == true) {

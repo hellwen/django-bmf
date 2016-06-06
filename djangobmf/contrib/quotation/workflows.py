@@ -31,6 +31,18 @@ class QuotationWorkflow(Workflow):
 #   print user
 #   return True
 
+    def send(self):
+        self.instance.completed = True
+
+    def cancel(self):
+        self.instance.completed = True
+
+    def reopen(self):
+        self.instance.completed = False
+
+    def revise(self):
+        self.instance.completed = False
+
     def invoice(self):
         if not self.instance.invoice:
             invoice_mdl = self.instance._meta.model.invoice.field.related_field.model

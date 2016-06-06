@@ -20,7 +20,7 @@ from .views import InvoiceUpdateView
 @register
 class InvoiceModule(Module):
     model = Invoice
-    default = True
+    open_relation = 'positions'
     create = InvoiceCreateView
     update = InvoiceUpdateView
 

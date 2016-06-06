@@ -20,7 +20,7 @@ from .views import QuotationUpdateView
 @register
 class QuotationModule(Module):
     model = Quotation
-    default = True
+    open_relation = 'positions'
     create = QuotationCreateView
     update = QuotationUpdateView
 
@@ -28,7 +28,6 @@ class QuotationModule(Module):
 @register
 class QuotationProductModule(Module):
     model = QuotationProduct
-    default = True
 
 
 @register(category=QuotationCategory)

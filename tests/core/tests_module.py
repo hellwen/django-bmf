@@ -149,15 +149,15 @@ class ModuleTests(TestCase):
 
     def test_get_relations(self):
         # The function is not implemented - the return value should be None
-        self.assertEqual(None, self.module.get_relations())
+        self.assertEqual([], self.module.get_relations(None))
 
     def test_get_relation(self):
         # The function is not implemented - the return value should be None
         self.assertEqual(None, self.module.get_relation(None))
 
     def test_add_relation(self):
-        # The function is not implemented - the return value should be None
-        self.assertEqual(None, self.module.add_relation(None, None))
+        # TODO
+        pass
 
     def test_has_numberranges(self):
         # The function is not implemented - the return value should be None

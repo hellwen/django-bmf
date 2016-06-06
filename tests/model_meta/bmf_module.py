@@ -3,8 +3,8 @@
 
 from __future__ import unicode_literals
 
-from djangobmf.sites import site
+# from djangobmf.sites import site
 
-from .models import Category
+# from .models import Category
 
-site.register(Category)
+# site.register(Category)

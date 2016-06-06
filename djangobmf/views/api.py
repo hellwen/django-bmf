@@ -39,6 +39,9 @@ from rest_framework.viewsets import GenericViewSet
 
 from collections import OrderedDict
 
+# TODO replace me
+from djangobmf.sites import site
+
 
 class ModelMixin(object):
 
@@ -63,50 +66,23 @@ class APIIndex(BaseMixin, APIView):
     def get(self, request, format=None):
         """
         """
-        site = request.djangobmf_site
+        # site = request.djangobmf_site
         appconfig = request.djangobmf_appconfig
-
-        # === Relationships ---------------------------------------------------
-        relations = {}
-        for relation in appconfig.bmf_relations:
-
-            # check permissions
-            perm = '%s.view_%s'
-
-            info = relation._model._meta.app_label, relation._model._meta.model_name
-            if not self.request.user.has_perms([perm % info]):
-                continue
-
-            info = relation._related_model._meta.app_label, relation._related_model._meta.model_name
-            if not self.request.user.has_perms([perm]):
-                continue
-
-            ct_target = ContentType.objects.get_for_model(relation._model).pk
-
-            data = OrderedDict([
-                ('app_label', relation._related_model._meta.app_label),
-                ('model_name', relation._related_model._meta.model_name),
-                ('name', relation.name),
-                ('slug', relation.slug),
-                ('template', relation.template),
-            ])
-
-            if ct_target in relations.keys():
-                relations[ct_target].append(data)
-            else:
-                relations[ct_target] = [data]
 
         # === Modules ---------------------------------------------------------
 
         modules = []
-        for model, module in appconfig.bmf_modules.items():
-            ct = ContentType.objects.get_for_model(model).pk
 
+        for model, module in appconfig._modules.items():
+
+            ct = module.get_contenttype().pk
             info = model._meta.app_label, model._meta.model_name
+
             perm = '%s.view_%s' % info
+
             if self.request.user.has_perms([perm]):  # pragma: no branch
 
-                data = module.serialize_class()
+                data = module.serialize_class(request=self.request)
                 data['watch_function'] = model._bmfmeta.has_watchfunction
                 data['data'] = reverse('djangobmf:api', request=request, format=format, kwargs={
                     'app': model._meta.app_label,
@@ -216,7 +192,7 @@ class APIViewDetail(BaseMixin, APIView):
         """
 
         try:
-            view_cls = request.djangobmf_site.get_dashboard(db)[cat][view]
+            view_cls = site.get_dashboard(db)[cat][view]
         except KeyError:
             raise Http404
 

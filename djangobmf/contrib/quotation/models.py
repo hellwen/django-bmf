@@ -16,6 +16,7 @@ import datetime
 from decimal import Decimal
 
 from .serializers import QuotationSerializer
+from .serializers import QuotationProductSerializer
 from .workflows import QuotationWorkflow
 from .utils import number_range
 
@@ -32,19 +33,19 @@ class AbstractQuotation(BMFModel):
         related_name="quotation",
         on_delete=models.PROTECT
     )
-    customer = models.ForeignKey(  # TODO: make me optional
+    customer = models.ForeignKey(
         settings.CONTRIB_CUSTOMER,
         null=True,
         blank=False,
         on_delete=models.SET_NULL,
     )
-    project = models.ForeignKey(  # TODO: make me optional
+    project = models.ForeignKey(
         settings.CONTRIB_PROJECT,
         null=True,
         blank=False,
         on_delete=models.SET_NULL,
     )
-    employee = models.ForeignKey(  # TODO: make me optional
+    employee = models.ForeignKey(
         settings.CONTRIB_EMPLOYEE,
         null=True,
         blank=False,
@@ -200,6 +201,7 @@ class QuotationProduct(BMFModel):
 
     class BMFMeta:
         only_related = True
+        serializer = QuotationProductSerializer
 
     def calc_all(self):
         if hasattr(self, '_calcs'):
