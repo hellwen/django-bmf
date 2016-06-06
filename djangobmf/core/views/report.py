@@ -7,7 +7,6 @@ from django.apps import apps
 from djangobmf.conf import settings
 
 from rest_framework.generics import GenericAPIView
-from rest_framework.response import Response
 
 from djangobmf.core.permissions import DetailPermission
 from djangobmf.core.views.mixins import BaseMixin
@@ -23,6 +22,5 @@ class View(BaseMixin, GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         obj = self.get_bmfobject(self.kwargs.get('pk', None))
-        module = self.get_bmfmodule()
         report, renderer = self.module.get_object_report(self.kwargs.get('slug', None))
         return report(request, object=obj, renderer=renderer)
