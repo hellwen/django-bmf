@@ -1,0 +1,39 @@
+{% load i18n djangobmf_angularjs %}{% spaceless %}
+<table class="table table-striped table-condensed table-hover">
+    <thead>
+        <tr>
+            <th width="40%">{% trans "Name" %}</th>
+            <th width="30%">{% trans "Email" %}</th>
+            <th width="30%">{% trans "Phone" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="obj in data" ng-class="''">
+            <td>
+                <a bmf-detail="{% ng "obj.pk" %}" href="#">{% ng "obj.name" %}</a>
+                <span ng-if="obj.user" class="text-muted"><br><small>{% ng "obj.user_name" %}
+                </small></span>
+            </td>
+            </td>
+            <td>{% ng "obj.email" %}
+            </td>
+            <td>
+                {% ng "obj.phone_mobile" %}
+                <br>
+                <small>{% ng "obj.phone_office" %}</small>
+            </td>
+        </tr>
+    </tbody>
+    {% block related_tfoot %}
+    <tfoot ng-if="scopename=='related'">
+      <tr>
+        <td colspan="3" class="text-right">
+          <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_employee_employee:create" "default" %}">
+            <span class="glyphicon glyphicon-plus"></span>
+          </a>
+        </td>
+      </tr>
+    </tfoot>
+    {% endblock %}
+</table>
+{% endspaceless %}
