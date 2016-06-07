@@ -7,4 +7,8 @@ from djangobmf.serializers import ModuleSerializer
 
 
 class TeamSerializer(ModuleSerializer):
-    pass
+    class Meta:
+        fields = (
+            'name',
+            'members',
+        )
