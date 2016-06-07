@@ -12,9 +12,10 @@ class EmployeeSerializer(ModuleSerializer):
     product_name = serializers.ReadOnlyField(source='product.name')
 
     class Meta:
-        fields = ('name', 
+        fields = (
+            'name',
             'user',
-            'user_name', 
+            'user_name',
             'product',
             'product_name',
             'email',

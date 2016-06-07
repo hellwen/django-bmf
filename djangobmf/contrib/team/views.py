@@ -18,6 +18,7 @@ class TeamCreateView(ModuleCreateView):
 class TeamUpdateView(ModuleUpdateView):
     form_class = TeamUpdateForm
 
+
 class TeamDetailView(ModuleDetail):
     def get_context_data(self, **kwargs):
         employees = []

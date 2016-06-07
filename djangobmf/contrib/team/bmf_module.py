@@ -35,4 +35,3 @@ class AllTeams(ViewMixin):
     model = Team
     name = _("All Teams")
     slug = "all"
-
