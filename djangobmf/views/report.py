@@ -38,6 +38,10 @@ class ReportBaseView(ModuleViewMixin, DetailView):
     # define the view's verbose name
     verbose_name = _("Report")
 
+    # specify a form_class which can add additional informations to the report
+    # TODO: currently not working
+    form_class = None
+
     def get(self, request, *args, **kwargs):
         return self.get_report(request=self.request)
 
