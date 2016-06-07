@@ -44,9 +44,6 @@ class BaseRenderer(models.Model):
     def get_template(self, context=None):
         return select_template(self.get_template_names(context=context) + ['djangobmf/report_missing.html'])
 
-    def prepare_render(self, context):
-        pass
-
     def render(self, **context):
         return 'html', 'text/html', self.get_template(context).render(self.get_context()), False
 
@@ -188,9 +185,6 @@ class PDFRenderer(BaseRenderer):
 
         return options
 
-    def prepare_render(self, **context):
-        pass
-
     def render(self, **context):
         debug = context.pop('debug', False)
         html = self.get_template(context).render(self.get_context(**context)).encode("ISO-8859-1")
@@ -203,13 +197,6 @@ class PDFRenderer(BaseRenderer):
             return 'pdf', 'application/pdf', pdf, True
         else:
             return 'html', 'text/html', html, False
-
-
-class ReportLabRenderer(BaseRenderer):
-    class Meta:
-        verbose_name = _('ReportLab Renderer')
-        verbose_name_plural = _('ReportLab Renderer')
-        abstract = True
 
 
 class CSVRenderer(BaseRenderer):

@@ -38,6 +38,9 @@ class ReportBaseView(ModuleViewMixin, DetailView):
     # define the view's verbose name
     verbose_name = _("Report")
 
+    def get(self, request, *args, **kwargs):
+        return self.get_report(request=self.request)
+
     def get_filename(self):
         """
         returns the filename which is used for the generateted report.
@@ -96,27 +99,3 @@ class ReportBaseView(ModuleViewMixin, DetailView):
             )
 
         return response
-
-    # OLD -------------------------------------------------
-
-    # which template should be rendered for the view as default
-    default_template_name = "djangobmf/module_report.html"
-
-    # which template should be rendered for the view
-    view_template_name = None
-
-    # pass additional informations to the view, if form_class is provided
-    form_class = None
-
-    def get_view_template_names(self):
-        if self.view_template_name:
-            return [self.view_template_name, self.default_template_name]
-        else:
-            return [self.default_template_name]
-
-    # OLD
-    content_type = None
-    needs_pk = False
-
-    def get(self, request, *args, **kwargs):
-        return self.get_report(request=self.request)
