@@ -1,0 +1,8 @@
+{% extends "djangobmf_employee/employee_bmflist.html" %}
+{% load i18n djangobmf_angularjs %}
+
+{% block related_tfoot %}{% spaceless %}
+<tfoot ng-if="scopename=='related'">
+</tfoot>
+{% endspaceless %}{% endblock %}
+
