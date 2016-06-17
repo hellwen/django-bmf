@@ -194,6 +194,26 @@ class Settings(object):
     def DEFAULT_CURRENCY(self):  # noqa
         return getattr(djsettings, 'BMF_DEFAULT_CURRENCY', 'EUR')
 
+    @property
+    def AUTH_HEADER_PREFIX(self):  # noqa
+        return getattr(djsettings, 'BMF_AUTH_HEADER_PREFIX', 'JWT')
+
+    @property
+    def AUTH_SECRET_KEY(self):  # noqa
+        return getattr(djsettings, 'BMF_AUTH_SECRET_KEY', settings.SECRET_KEY)
+
+    @property
+    def AUTH_ISSUER(self):  # noqa
+        return getattr(djsettings, 'BMF_AUTH_ISSUER', None)
+
+    @property
+    def AUTH_AUDIENCE(self):  # noqa
+        return getattr(djsettings, 'BMF_AUTH_AUDIENCE', None)
+
+    @property
+    def AUTH_ALGORITHMS(self):  # noqa
+        return getattr(djsettings, 'BMF_AUTH_ALGORITHMS', ['HS256'])
+
     def patch(self):
         """
         This function is used to update django.conf.settings in the testrunner.
