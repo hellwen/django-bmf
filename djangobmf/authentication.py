@@ -29,7 +29,7 @@ class JWTAuthentication(BaseAuthentication):
         """
         return '{0} realm="{1}"'.format("JWT", "API")
 
-    def authenticate(self, request):
+    def authenticate(self, request, payload=False):
         """
         Returns a two-tuple of `User` and token if a valid signature has been
         supplied using JWT-based authentication.  Otherwise returns `None`.
@@ -61,7 +61,10 @@ class JWTAuthentication(BaseAuthentication):
 
         user = self.authenticate_credentials(payload)
 
-        return (user, auth[1])
+        if payload:
+            return (user, payload)
+        else:
+            return (user, auth[1])
 
     def authenticate_credentials(self, payload):
         """
@@ -76,7 +79,7 @@ class JWTAuthentication(BaseAuthentication):
             raise AuthenticationFailed(msg)
 
         try:
-            user = User.objects.get_by_natural_key(username)
+            user = User.objects.get_by_natural_key(*username)
         except User.DoesNotExist:
             msg = _('User is invalid')
             raise AuthenticationFailed(msg)

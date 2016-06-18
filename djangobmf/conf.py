@@ -195,12 +195,16 @@ class Settings(object):
         return getattr(djsettings, 'BMF_DEFAULT_CURRENCY', 'EUR')
 
     @property
+    def AUTH_EXPIRATION_DELTA(self):  # noqa
+        return getattr(djsettings, 'BMF_AUTH_EXPIRATION_DELTA', 600)
+
+    @property
     def AUTH_HEADER_PREFIX(self):  # noqa
         return getattr(djsettings, 'BMF_AUTH_HEADER_PREFIX', 'JWT')
 
     @property
     def AUTH_SECRET_KEY(self):  # noqa
-        return getattr(djsettings, 'BMF_AUTH_SECRET_KEY', settings.SECRET_KEY)
+        return getattr(djsettings, 'BMF_AUTH_SECRET_KEY', djsettings.SECRET_KEY)
 
     @property
     def AUTH_ISSUER(self):  # noqa
