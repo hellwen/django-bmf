@@ -18,6 +18,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 
 from djangobmf import get_version
+from djangobmf.authentication import JWTAuthentication
 from djangobmf.conf import settings as bmfsettings
 from djangobmf.core.employee import Employee
 from djangobmf.decorators import login_required
@@ -27,6 +28,8 @@ from djangobmf.views.defaults import bad_request
 from djangobmf.views.defaults import permission_denied
 from djangobmf.views.defaults import page_not_found
 from djangobmf.views.defaults import server_error
+
+from rest_framework.authentication import SessionAuthentication
 
 import json
 import re
@@ -50,6 +53,9 @@ class BaseMixin(object):
 
     # default permission classes
     default_permission_classes = []
+
+    # authentification
+    authentication_classes = (JWTAuthentication, SessionAuthentication)
 
     # Function name and parameters are identical to the django rest framework
     def check_permissions(self, request):

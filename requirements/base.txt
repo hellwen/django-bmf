@@ -3,4 +3,5 @@ djangorestframework==3.3.3
 pycountry==1.20
 xhtml2pdf==0.1a4
 Markdown==2.6.6
+PyJWT==1.4.0
 pytz==2016.4
