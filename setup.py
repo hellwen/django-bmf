@@ -77,14 +77,15 @@ setup(
         'djangorestframework>=3.1,<3.4',
         'pycountry==1.20',
         'xhtml2pdf==0.1a4',
-        'markdown',
+        'Markdown',
         'pytz',
+        'PyJWT',
     ],
     include_package_data=True,
     zip_safe=False,
-#   test_suite='runtests.main',
-#   tests_require = [
-#       'coverage',
-#       'pep8',
-#   ],
+    # test_suite='runtests.main',
+    # tests_require = [
+    #     'coverage',
+    #     'pep8',
+    # ],
 )
