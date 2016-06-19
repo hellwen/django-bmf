@@ -21,14 +21,16 @@
             </td>
         </tr>
     </tbody>
-    <!--tfoot ng-if="scopename=='related'">
+    <tfoot ng-if="scopename=='related'">
       <tr>
-        <td colspan="2" class="text-right">
-          <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_task_goal:create" "default" %}">
-            <span class="glyphicon glyphicon-plus"></span>
-          </a>
+        <td colspan="2">
+            <a href="#" bmf-document-upload>
+                <b>
+                    Currently the Upload is only working over the REST-API or django-admin for non object-related files.
+                </b>
+            </a>
         </td>
       </tr>
-    </tfoot -->
+    </tfoot>
 </table>
 {% endspaceless %}

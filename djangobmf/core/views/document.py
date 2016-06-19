@@ -54,7 +54,7 @@ class View(BaseMixin, ModelViewSet):
         return self.related_object
 
     def get_object(self):
-        if hasattr(self, "object"):
+        if hasattr(self, "object") and self.object:
             return self.object
 
         queryset = self.get_queryset()
@@ -98,6 +98,9 @@ class View(BaseMixin, ModelViewSet):
         download the document (filestream-response)
         """
         obj = self.get_object()
+
+        if not obj or not obj.file:
+            raise Http404
 
         sendtype = settings.DOCUMENT_SENDTYPE
         filename = os.path.basename(obj.file.name)
