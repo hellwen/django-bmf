@@ -26,6 +26,9 @@ class DocumentSerializer(ModelSerializer):
                 self.fields.pop('created')
 
     def get_download(self, obj):
+        """
+        resolve the download url of the file
+        """
         return reverse(
             'djangobmf:api-document-download',
             request=self.request,
