@@ -26,21 +26,19 @@ from .views import TransactionUpdateView
 @register
 class AccountModule(Module):
     model = Account
-    default = True
 
 
 @register
 class TransactionModule(Module):
     model = Transaction
-    default = True
     create = TransactionCreateView
     update = TransactionUpdateView
+    open_relation = 'items'
 
 
 @register
 class TransactionItemModule(Module):
     model = TransactionItem
-    default = True
 
 
 site.register_settings('bmfcontrib_accounting', {

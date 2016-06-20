@@ -12,9 +12,9 @@ from .models import TransactionItem
 
 
 @register(model_from=TransactionItem)
-class AccountTransactionsRelationship(Relationship):
-    name = _("Transactions")
-    slug = "transactions"
-    field = "transactions"
-    model_to = "djangobmf_accounting.Account"
-    settings = "BMF_CONTRIB_ACCOUNT"
+class TransactionItemRelationship(Relationship):
+    name = _("Items")
+    slug = "items"
+    field = "items"
+    model_to = "djangobmf_accounting.Transaction"
+    settings = "BMF_CONTRIB_TRANSACTION"
