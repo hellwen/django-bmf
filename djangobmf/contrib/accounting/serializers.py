@@ -29,7 +29,7 @@ class AccountSerializer(ModuleSerializer):
 
 class TransactionSerializer(ModuleSerializer):
     class Meta:
-        fields = ['text', 'project']
+        fields = ['text', 'project', 'draft']
 
 
 class TransactionItemSerializer(ModuleSerializer):
@@ -40,7 +40,7 @@ class TransactionItemSerializer(ModuleSerializer):
     class Meta:
         fields = [
             'date', 'credit', 'amount', 'amount_currency', 'account_name',
-            'transaction_name', 'date_localized'
+            'transaction_name', 'date_localized', 'draft',
         ]
 
     def get_account_name(self, obj):
