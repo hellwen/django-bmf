@@ -38,10 +38,6 @@ bmfapp.directive('bmfDetail', ['LinkFactory', function(LinkFactory) {
             var url = LinkFactory("detail", scope.module, attr.bmfDetail, undefined);
             element.attr('href', url);
 
-            var href = LinkFactory("document", module, pk, attr.action);
-
-            if (href) element.attr('href', href);
-
             element.on('click', function(event) {
                 window.scrollTo(0,0);
             });
