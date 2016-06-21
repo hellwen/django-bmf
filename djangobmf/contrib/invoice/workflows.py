@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 
+from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.workflow import Workflow, State, Transition
@@ -35,7 +36,10 @@ class InvoiceWorkflow(Workflow):
         """
         if not self.instance.transaction:
             transaction_mdl = self.instance._meta.model.transaction.field.related_field.model
-            item_cls = transaction_mdl.items.related.model
+            item_cls = transaction_mdl.items.related.related_model
+
+            date = now()
+
             items = self.instance.invoice_products.select_related('product').all()
             transaction = transaction_mdl(
                 project=self.instance.project,
@@ -95,6 +99,7 @@ class InvoiceWorkflow(Workflow):
                     amount=value,
                     credit=True,
                     draft=False,
+                    date=date,
                 )
                 item.save()
                 calc_account_balance(account)
@@ -106,6 +111,7 @@ class InvoiceWorkflow(Workflow):
                     amount=value,
                     credit=False,
                     draft=False,
+                    date=date,
                 )
                 item.save()
                 calc_account_balance(account)

@@ -50,4 +50,5 @@ class TransactionItemSerializer(ModuleSerializer):
         return '%s' % obj.transaction
 
     def get_date_localized(self, obj):
-        return date_format(obj.date, "SHORT_DATE_FORMAT")
+        if obj.date:
+            return date_format(obj.date, "SHORT_DATE_FORMAT")

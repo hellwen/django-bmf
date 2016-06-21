@@ -244,7 +244,7 @@ class BaseTransactionItem(BMFModel):
     date = models.DateField(
         _('Date'),
         null=True,
-        blank=False,
+        blank=True,
     )
 
     amount_currency = CurrencyField()
@@ -261,22 +261,10 @@ class BaseTransactionItem(BMFModel):
     class Meta:
         abstract = True
         swappable = "BMF_CONTRIB_TRANSACTIONITEM"
-        ordering = ('-date', '-draft', 'credit', 'transaction__text')
+        ordering = ('-draft', '-date', 'credit', 'account__number', 'transaction__text')
 
     class BMFMeta:
         serializer = TransactionItemSerializer
-
-# def set_debit(self, amount):
-#   if self.get_type in [ACCOUNTING_ASSET, ACCOUNTING_EXPENSE]:
-#     self.amount =  amount
-#   else:
-#     self.amount = -amount
-
-# def set_credit(self, amount):
-#   if self.get_type in [ACCOUNTING_ASSET, ACCOUNTING_EXPENSE]:
-#     self.amount = -amount
-#   else:
-#     self.amount =  amount
 
     @property
     def get_type(self):
@@ -284,24 +272,6 @@ class BaseTransactionItem(BMFModel):
             return getattr(self, 'type', self.account.type)
         except AttributeError:
             return 0
-
-# @property
-# def is_debit(self):
-#   if self.type in [ACCOUNTING_ASSET, ACCOUNTING_EXPENSE]:
-#     return self.amount > 0.
-#   else:
-#     return self.amount < 0.
-
-# @property
-# def is_credit(self):
-#   return not self.is_debit
-
-# @property
-# def get_transation(self):
-#   if self.is_debit:
-#     return (abs(self.amount), 0)
-#   else:
-#     return (0, abs(self.amount))
 
 
 class TransactionItem(BaseTransactionItem):

@@ -17,4 +17,8 @@ class InvoiceUpdateForm(ModelForm):
 class InvoiceCreateForm(ModelForm):
     class Meta:
         model = Invoice
-        exclude = ['invoice_number', 'state', 'shipping_address', 'invoice_address', 'valid_until', 'products']
+        exclude = [
+            'invoice_number', 'state', 'invoice',
+            'shipping_address', 'invoice_address',
+            'valid_until', 'products'
+        ]

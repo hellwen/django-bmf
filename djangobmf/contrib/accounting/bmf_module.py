@@ -26,6 +26,7 @@ from .views import TransactionUpdateView
 @register
 class AccountModule(Module):
     model = Account
+    open_relation = 'transactions'
 
 
 @register
