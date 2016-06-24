@@ -41,7 +41,6 @@ class AbstractStock(BMFModel):
     bill_no = models.CharField(_("Bill no"), max_length=20, null=False, blank=False)
     description = models.TextField(_("Description"), null=True, blank=True)
 
-    date = models.DateField(_("Date"), null=True, blank=False)
     employee = models.ForeignKey(
         settings.CONTRIB_EMPLOYEE, null=True, blank=True, on_delete=models.SET_NULL)
 

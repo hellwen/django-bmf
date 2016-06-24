@@ -14,9 +14,7 @@ from .forms import StockinCreateForm
 class StockinCreateView(ModuleCreateView):
     form_class = StockinCreateForm
 
-    def get_initial(self):
-        self.initial.update({
-            'date': now(),
-            'employee': self.request.user.djangobmf.employee,
-        })
-        return super(StockinCreateView, self).get_initial()
+    def form_valid(self, form):
+        form.instance.date = now()
+        form.instance.employee = self.request.user.djangobmf.employee
+        return super(StockinCreateView, self).form_valid(form)

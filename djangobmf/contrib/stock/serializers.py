@@ -14,6 +14,9 @@ class StockSerializer(ModuleSerializer):
     class Meta:
         fields = (
             'bill_no',
+            'completed',
+            'created',
+            'modified',
         )
 
     def get_modified_date(self, obj):

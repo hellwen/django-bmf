@@ -3,7 +3,7 @@
     <thead>
         <tr>
             <th width="40%">{% trans "#Bill" %}</th>
-            <th width="40%">{% trans "Date" %}</th>
+            <th width="40%">{% trans "Modified" %}</th>
             <th width="20%">{% trans "Completed" %}</th>
         </tr>
     </thead>
@@ -13,7 +13,7 @@
             <td>
                 <a bmf-detail="{{ obj.pk }}" href="#">{{ obj.bill_no }}</a>
             </td>
-            <td>{{ obj.date }}</td>
+            <td>{{ obj.modified }}</td>
             <td>{{ obj.completed }}</td>
         </tr>
     {% endverbatim %}
