@@ -1,0 +1,11 @@
+{% load i18n %}{% spaceless %}
+<h1>{% trans "Location" %}: {{ object.name }}</h1>
+{% if object.parent %}
+<ol class="breadcrumb">
+    {% for parent in object.parents.all %}
+    <li><a href="{{ parent.bmfmodule_detail }}">{{ parent.name }}</a></li>
+    {% endfor %}
+</ol>
+{% endif %}
+{% trans "Description" %}: {{ object.description }}
+{% endspaceless %}

@@ -154,6 +154,8 @@ And if you want to add the ERP included in the Framework you should also include
     'djangobmf.contrib.taxing',
     'djangobmf.contrib.team',
     'djangobmf.contrib.timesheet',
+    'djangobmf.contrib.location',
+    'djangobmf.contrib.stock',
     'djangobmf.currency.EUR',
     'djangobmf.currency.USD',
 
