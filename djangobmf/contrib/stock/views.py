@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from django.utils.timezone import now
 
 from djangobmf.views import ModuleCreateView
-from djangobmf.views import ModuleUpdateView
 
 from .forms import StockinCreateForm
 
