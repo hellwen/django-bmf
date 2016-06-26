@@ -20,7 +20,6 @@ from .views import PositionAPI
 @register
 class PositionModule(Module):
     model = Position
-    default = True
     create = PositionCreateView
     update = PositionUpdateView
     api_urlpatterns = patterns(

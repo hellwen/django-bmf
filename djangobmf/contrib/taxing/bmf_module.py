@@ -16,7 +16,6 @@ from .models import Tax
 @register
 class TaxModule(Module):
     model = Tax
-    default = True
 
 
 @register(category=TaxCategory)
