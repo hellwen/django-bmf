@@ -10,13 +10,25 @@ from django.utils.translation import ugettext_lazy as _
 from .models import Stock
 
 
-class StockinCreateForm(ModelForm):
+class StockInCreateForm(ModelForm):
     class Meta:
         model = Stock
         exclude = ['date', 'employee']
 
 
-class StockinUpdateForm(ModelForm):
+class StockOutCreateForm(ModelForm):
+    class Meta:
+        model = Stock
+        exclude = ['date', 'employee']
+
+
+class StockInUpdateForm(ModelForm):
+    class Meta:
+        model = Stock
+        exclude = ['date']
+
+
+class StockOutUpdateForm(ModelForm):
     class Meta:
         model = Stock
         exclude = ['date']

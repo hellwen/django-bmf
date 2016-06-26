@@ -12,14 +12,20 @@ from djangobmf.sites import register
 from .categories import StockCategory
 from .models import Stock
 from .models import StockProduct
-from .views import StockinCreateView
+from .views import StockInCreateView
+from .views import StockOutCreateView
+from .views import StockUpdateView
 
 
 @register
 class StockModule(Module):
     model = Stock
-    default = True
-    create = StockinCreateView
+    open_relation = 'products'
+    create = {
+        u'in': (_('In'), StockInCreateView),
+        u'out': (_('Out'), StockOutCreateView),
+    }
+    update = StockUpdateView
 
 
 @register
@@ -36,6 +42,7 @@ class Stockin(ViewMixin):
     def filter_queryset(self, request, queryset, view):
         return queryset.filter(
             completed=False,
+            stock_type="IN",
             employee=request.user.djangobmf.employee,
         )
 
@@ -49,6 +56,7 @@ class Stockout(ViewMixin):
     def filter_queryset(self, request, queryset, view):
         return queryset.filter(
             completed=False,
+            stock_type="OUT",
             employee=request.user.djangobmf.employee,
         )
 

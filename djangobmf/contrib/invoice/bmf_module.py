@@ -28,7 +28,6 @@ class InvoiceModule(Module):
 @register
 class InvoiceProductModule(Module):
     model = InvoiceProduct
-    default = True
 
 
 @register(category=InvoiceCategory)
