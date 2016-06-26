@@ -100,7 +100,7 @@ class APIIndex(APIView):
 
         if self.request.user.is_authenticated():
             user = {
-                'pk':  self.request.user.pk,
+                'pk': self.request.user.pk,
                 'authenticated': True,
             }
         else:
