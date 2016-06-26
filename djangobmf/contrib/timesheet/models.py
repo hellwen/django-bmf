@@ -42,11 +42,13 @@ class AbstractTimesheet(BMFModel):
         related_name="+"
     )
 
-    project = models.ForeignKey(  # TODO: make optional
+    project = models.ForeignKey(
         settings.CONTRIB_PROJECT, null=True, blank=True, on_delete=models.SET_NULL,
     )
-
-    task = models.ForeignKey(  # TODO: make optional
+    goal = models.ForeignKey(
+        settings.CONTRIB_GOAL, null=True, blank=True, on_delete=models.SET_NULL,
+    )
+    task = models.ForeignKey(
         settings.CONTRIB_TASK, null=True, blank=True, on_delete=models.SET_NULL,
     )
 
@@ -70,16 +72,34 @@ class AbstractTimesheet(BMFModel):
     def clean(self):
         # overwrite the project with the tasks project
         if self.task:
+            self.goal = self.task.goal
             self.project = self.task.project
+        elif self.goal:
+            self.project = self.goal.project
+
+        if not self.project:
+            self.billable = False
 
     def get_project_queryset(self, qs):
         if self.task:
             return qs.filter(task=self.task)
+        elif self.goal:
+            return qs.filter(goal=self.goal)
+        else:
+            return qs
+
+    def get_goal_queryset(self, qs):
+        if self.task:
+            return qs.filter(task=self.task)
+        elif self.project:
+            return qs.filter(project=self.project)
         else:
             return qs
 
     def get_task_queryset(self, qs):
-        if self.project:
+        if self.goal:
+            return qs.filter(goal=self.goal)
+        elif self.project:
             return qs.filter(project=self.project)
         else:
             return qs
