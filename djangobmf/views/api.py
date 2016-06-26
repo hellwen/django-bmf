@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 
-# from django.apps import apps
+from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
@@ -15,6 +15,7 @@ from django.template.loader import get_template
 from django.template.loader import select_template
 from django.utils.translation import ugettext_lazy as _
 
+from djangobmf.conf import settings as bmfsettings
 from djangobmf.models import Notification
 from djangobmf.filters import ViewFilterBackend
 from djangobmf.filters import RangeFilterBackend
@@ -55,7 +56,7 @@ class ModelMixin(object):
         return self.get_bmfmodel()._bmfmeta.serializer_class
 
 
-class APIIndex(BaseMixin, APIView):
+class APIIndex(APIView):
     """
     All registered modules and views which are viewable by the current user
     """
@@ -66,8 +67,7 @@ class APIIndex(BaseMixin, APIView):
     def get(self, request, format=None):
         """
         """
-        # site = request.djangobmf_site
-        appconfig = request.djangobmf_appconfig
+        appconfig = apps.get_app_config(bmfsettings.APP_LABEL)
 
         # === Modules ---------------------------------------------------------
 
@@ -95,6 +95,16 @@ class APIIndex(BaseMixin, APIView):
                 data['only_related'] = model._bmfmeta.only_related
 
                 modules.append(data)
+
+        # === User ------------------------------------------------------------
+
+        if self.request.user.is_authenticated():
+            user = {
+                'pk':  self.request.user.pk,
+                'authenticated': True,
+            }
+        else:
+            user = {'authenticated': False}
 
         # === Dashboards ------------------------------------------------------
 
@@ -170,7 +180,8 @@ class APIIndex(BaseMixin, APIView):
 
         # === Response --------------------------------------------------------
 
-        return Response(OrderedDict([
+        response = Response(OrderedDict([
+            ('user', user),
             ('dashboards', dashboards),
             ('modules', modules),
             ('navigation', navigation),
@@ -183,6 +194,13 @@ class APIIndex(BaseMixin, APIView):
             ])),
             ('debug', settings.DEBUG),
         ]))
+
+        if not settings.DEBUG:
+            return response
+
+        # TODO move me to settings
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
 
 
 class APIViewDetail(BaseMixin, APIView):
