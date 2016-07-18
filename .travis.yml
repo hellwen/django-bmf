@@ -11,7 +11,6 @@ python:
   - "3.5"
 
 install:
-  - pip install setuptools>=18.5
   - pip install $DJANGO_VERSION $PIP_ADDITIONAL
   - pip install . 
   - pip install -rrequirements/develop.txt
