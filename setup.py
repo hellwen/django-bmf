@@ -76,6 +76,7 @@ setup(
         'coreapi',
         'django>=1.8,<1.9.999',
         'djangorestframework>=3.4,<3.5',
+        'html5lib<=0.9999999'
         'Markdown',
         'pycountry==1.20',
         'PyJWT',
