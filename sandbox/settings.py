@@ -83,11 +83,12 @@ TEST_PROJECT_APPS = (
     'djangobmf.contrib.project',
     'djangobmf.contrib.quotation',
     # 'djangobmf.contrib.shipment',
-    # 'djangobmf.contrib.stock',
     'djangobmf.contrib.task',
     'djangobmf.contrib.taxing',
     'djangobmf.contrib.team',
     'djangobmf.contrib.timesheet',
+    'djangobmf.contrib.location',
+    'djangobmf.contrib.stock',
     'djangobmf.currency.EUR',
     'djangobmf.currency.USD',
 )

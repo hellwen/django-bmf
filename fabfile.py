@@ -27,6 +27,8 @@ APPS = [
     'taxing',
     'team',
     'timesheet',
+    'location',
+    'stock',
 ]
 
 

@@ -43,6 +43,12 @@ source_file = djangobmf/contrib/invoice/locale/en/LC_MESSAGES/django.po
 source_lang = en
 type = PO
 
+[django-bmf.contrib-location]
+file_filter = djangobmf/contrib/location/locale/<lang>/LC_MESSAGES/django.po
+source_file = djangobmf/contrib/location/locale/en/LC_MESSAGES/django.po
+source_lang = en
+type = PO
+
 [django-bmf.contrib-position]
 file_filter = djangobmf/contrib/position/locale/<lang>/LC_MESSAGES/django.po
 source_file = djangobmf/contrib/position/locale/en/LC_MESSAGES/django.po
@@ -64,6 +70,12 @@ type = PO
 [django-bmf.contrib-quotation]
 file_filter = djangobmf/contrib/quotation/locale/<lang>/LC_MESSAGES/django.po
 source_file = djangobmf/contrib/quotation/locale/en/LC_MESSAGES/django.po
+source_lang = en
+type = PO
+
+[django-bmf.contrib-stock]
+file_filter = djangobmf/contrib/stock/locale/<lang>/LC_MESSAGES/django.po
+source_file = djangobmf/contrib/stock/locale/en/LC_MESSAGES/django.po
 source_lang = en
 type = PO
 

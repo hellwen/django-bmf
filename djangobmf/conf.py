@@ -133,6 +133,24 @@ class Settings(object):
         return getattr(djsettings, 'BMF_CONTRIB_TRANSACTIONITEM')
 
     @property
+    def CONTRIB_WAREHOUSE(self):  # noqa
+        if not hasattr(djsettings, 'BMF_CONTRIB_WAREHOUSE'):
+            setattr(djsettings, 'BMF_CONTRIB_WAREHOUSE', 'djangobmf_location.Warehouse')
+        return getattr(djsettings, 'BMF_CONTRIB_WAREHOUSE')
+
+    @property
+    def CONTRIB_LOCATION(self):  # noqa
+        if not hasattr(djsettings, 'BMF_CONTRIB_LOCATION'):
+            setattr(djsettings, 'BMF_CONTRIB_LOCATION', 'djangobmf_location.Location')
+        return getattr(djsettings, 'BMF_CONTRIB_LOCATION')
+
+    @property
+    def CONTRIB_STOCK(self):  # noqa
+        if not hasattr(djsettings, 'BMF_CONTRIB_STOCK'):
+            setattr(djsettings, 'BMF_CONTRIB_STOCK', 'djangobmf_stock.Stock')
+        return getattr(djsettings, 'BMF_CONTRIB_STOCK')
+
+    @property
     def DEBUG(self):  # noqa
         return getattr(djsettings, 'DEBUG', False)
 
@@ -240,6 +258,9 @@ class Settings(object):
             'CONTRIB_TIMESHEET',
             'CONTRIB_TRANSACTION',
             'CONTRIB_TRANSACTIONITEM',
+            'CONTRIB_WAREHOUSE',
+            'CONTRIB_LOCATION',
+            'CONTRIB_STOCK',
         ]:
             getattr(self, setting)
 

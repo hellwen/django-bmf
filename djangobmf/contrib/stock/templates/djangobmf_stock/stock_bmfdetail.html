@@ -1,0 +1,16 @@
+{% load i18n %}{% spaceless %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{ object.bill_no }}</h3>
+  </div>
+  <div class="panel-body">
+    {{ object.completed }}
+  </div>
+  <div class="panel-footer">
+      <ul>
+          <li>{% trans "Created" %}: {{ object.created }}</li>
+          <li>{% trans "Modified" %}: {{ object.modified }}</li>
+      </ul>
+  </div>
+</div>
+{% endspaceless %}
