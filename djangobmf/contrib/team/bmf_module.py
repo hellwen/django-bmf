@@ -19,7 +19,6 @@ from .views import TeamUpdateView
 @register
 class TeamModule(Module):
     model = Team
-    default = True
     create = TeamCreateView
     update = TeamUpdateView
 
@@ -27,7 +26,6 @@ class TeamModule(Module):
 @register
 class TeamMemberModule(Module):
     model = TeamMember
-    default = True
 
 
 @register(category=TeamCategory)

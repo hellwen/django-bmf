@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
+from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 from djangobmf.workflow import Workflow, State, Transition
@@ -30,6 +31,9 @@ class TransactionWorkflow(Workflow):
         # we need to excecute the queryset here in oder to get
         # all affected accounts (querysets are lazy)
         update_accounts = list(queryset.distinct().values_list('account_id', flat=True).order_by('account_id'))
+
+        # update all dates
+        queryset.filter(date=None).update(date=now())
 
         queryset.update(draft=False)
 

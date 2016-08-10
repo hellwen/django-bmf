@@ -18,7 +18,6 @@ from .views import ProjectUpdateView
 @register
 class ProjectModule(Module):
     model = Project
-    default = True
     update = ProjectUpdateView
     permissions = ProjectPermission
 

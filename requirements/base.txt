@@ -1,6 +1,8 @@
+coreapi==1.32.0
 Django==1.8.13
-djangorestframework==3.3.3
-pycountry==1.20
-xhtml2pdf==0.1a4
+djangorestframework==3.4.0
 Markdown==2.6.6
+pycountry==1.20
+PyJWT==1.4.0
 pytz==2016.4
+xhtml2pdf==0.1a4

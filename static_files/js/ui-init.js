@@ -15,4 +15,4 @@ var BMFEVENT_OBJECTDATA = "bmf.event.update.objectdata";
 var BMFEVENT_SIDEBAR = "bmf.event.update.sidebar";
 
 // INIT APP
-var bmfapp = angular.module('djangoBMF', []);
+var bmfapp = angular.module('djangoBMF', ['angular-jwt']);

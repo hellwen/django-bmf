@@ -1,0 +1,33 @@
+{% load i18n %}{% spaceless %}
+<table class="table table-striped table-condensed table-hover">
+    <thead>
+        <tr>
+            <th width="50%">{% trans "Name" %}</th>
+            <th width="50%">{% trans "Base price" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% verbatim %}
+        <tr ng-repeat="obj in data">
+            <td>
+                <a bmf-detail="{{ obj.pk }}" href="#">{{ obj.name }}<small><br />{{ obj.code }}</small></a>
+            </td>
+            <td>
+                {{ obj.price || "---" }}
+            </td>
+        </tr>
+    {% endverbatim %}
+    </tbody>
+    {% block related_tfoot %}
+    <tfoot ng-if="scopename=='related'">
+      <tr>
+        <td colspan="3" class="text-right">
+          <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_task_goal:create" "default" %}">
+            <span class="glyphicon glyphicon-plus"></span>
+          </a>
+        </td>
+      </tr>
+    </tfoot>
+    {% endblock %}
+</table>
+{% endspaceless %}

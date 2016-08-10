@@ -19,7 +19,6 @@ from .views import UpdateView
 @register
 class CustomerModule(Module):
     model = Customer
-    default = True
     create = {
         u'company': (_('Company'), CompanyCreateView),
         u'customer': (_('Customer'), CustomerCreateView),

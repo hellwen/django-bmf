@@ -45,6 +45,21 @@ bmfapp.directive('bmfDetail', ['LinkFactory', function(LinkFactory) {
     };
 }]);
 
+// manages links vom list views to detail views
+bmfapp.directive('bmfDocumentUpload', ['ApiUrlFactory', function(ApiUrlFactory) {
+    return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, element, attr) {
+            var href = ApiUrlFactory(scope.parent_module, "documents", undefined, scope.pk);
+            if (href) {
+                element.attr('href', href + '#post-object-form');
+                element.attr('target', '_blank');
+            }
+        }
+    };
+}]);
+
 
 // manages form modal calls
 bmfapp.directive('bmfForm', ['$rootScope', function($rootScope) {

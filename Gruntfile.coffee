@@ -30,6 +30,7 @@ module.exports = (grunt) ->
                 'angular/angular.min.js',
                 'angular/angular.min.js.map',
                 'd3/d3.min.js',
+                'angular-jwt/dist/angular-jwt.min.js',
                 'bootstrap/dist/js/bootstrap.min.js',
               ]
               dest: 'djangobmf/static/djangobmf/js/'

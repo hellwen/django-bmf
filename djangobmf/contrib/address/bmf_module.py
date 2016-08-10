@@ -16,7 +16,6 @@ from .models import Address
 @register
 class AddressModule(Module):
     model = Address
-    default = True
 
 
 @register(category=AddressCategory)

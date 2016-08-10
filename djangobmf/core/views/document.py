@@ -54,7 +54,7 @@ class View(BaseMixin, ModelViewSet):
         return self.related_object
 
     def get_object(self):
-        if hasattr(self, "object"):
+        if hasattr(self, "object") and self.object:
             return self.object
 
         queryset = self.get_queryset()
@@ -79,6 +79,10 @@ class View(BaseMixin, ModelViewSet):
 
         return self.object
 
+    def pre_save(self, obj):
+        if self.request.FILES.get('file', None):
+            obj.file = self.request.FILES.get('file')
+
     def perform_create(self, serializer):
         if self.get_related_object():
             serializer.validated_data['is_static'] = False
@@ -95,6 +99,9 @@ class View(BaseMixin, ModelViewSet):
         """
         obj = self.get_object()
 
+        if not obj or not obj.file:
+            raise Http404
+
         sendtype = settings.DOCUMENT_SENDTYPE
         filename = os.path.basename(obj.file.name)
         filepath = obj.file.path
@@ -106,7 +113,7 @@ class View(BaseMixin, ModelViewSet):
         if not request.method == "GET":
             return HttpResponse()
 
-        # Nginx (untested)
+        # Nginx (TODO: untested)
         if sendtype == "xaccel" and not settings.DEBUG:
             response = HttpResponse()
             response['Content-Type'] = 'application/force-download'
@@ -114,7 +121,7 @@ class View(BaseMixin, ModelViewSet):
             response['X-Accel-Redirect'] = fileuri
             return response
 
-        # Lighthttpd or Apache with mod_xsendfile (untested)
+        # Lighthttpd or Apache with mod_xsendfile (TODO: untested)
         if sendtype == "xsendfile" and not settings.DEBUG:
             response = HttpResponse()
             response['Content-Type'] = 'application/force-download'

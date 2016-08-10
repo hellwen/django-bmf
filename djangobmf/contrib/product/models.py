@@ -13,11 +13,13 @@ from djangobmf.models import BMFModel
 from djangobmf.fields import CurrencyField
 from djangobmf.fields import MoneyField
 
-from djangobmf.contrib.accounting.models import ACCOUNTING_INCOME, ACCOUNTING_EXPENSE
+from djangobmf.contrib.accounting.models import ACCOUNTING_INCOME
+from djangobmf.contrib.accounting.models import ACCOUNTING_EXPENSE
 
 from decimal import Decimal
 
 from .serializers import ProductSerializer
+from .serializers import ProductTaxSerializer
 
 
 PRODUCT_SERVICE = 1
@@ -232,3 +234,4 @@ class ProductTax(BMFModel):
 
     class BMFMeta:
         only_related = True
+        serializer = ProductTaxSerializer

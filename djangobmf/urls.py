@@ -24,6 +24,7 @@ from djangobmf.core.views.related import View as APIRelatedView
 from djangobmf.core.views.report import View as APIReportView
 from djangobmf.sites import site
 from djangobmf.views import Index
+from djangobmf.views.jwt import JSONWebTokenAPIView
 from djangobmf.views.api import APIIndex
 from djangobmf.views.api import APIViewDetail
 from djangobmf.views.api import APIModuleListView
@@ -115,6 +116,13 @@ urlpatterns = patterns(
             APIIndex.as_view()
         ),
         name="api",
+    ),
+    url(
+        r'^api/jwt/$',
+        never_cache(
+            JSONWebTokenAPIView.as_view()
+        ),
+        name="api-jwt",
     ),
     url(
         r'^api/data/(?P<app>[\w-]+)/(?P<model>[\w-]+)/$',

@@ -1,34 +1,50 @@
-{% load i18n %}{% spaceless %}
+{% load i18n djangobmf_angularjs %}{% spaceless %}
 <table class="table table-striped table-condensed table-hover">
     <thead>
         <tr>
-            <th width="20%">{% trans "Date" %}</th>
+            <th width="15%">{% trans "Date" %}</th>
             <th width="20%">{% trans "Text" %}</th>
-            <th width="20%">{% trans "Account" %}</th>
-            <th width="20%">{% trans "Credit" %}</th>
-            <th width="20%">{% trans "Value" %}</th>
+            <th width="25%">{% trans "Account" %}</th>
+            <th width="15%">{% trans "Debit" %}</th>
+            <th width="15%">{% trans "Credit" %}</th>
+            <th width="10%" ng-if="scopename=='related'"></th>
         </tr>
     </thead>
     <tbody>
-    {% verbatim %}
         <tr ng-repeat="obj in data">
             <td>
-                {{ obj.date_localized }}
+                <span ng-if="obj.draft" class="glyphicon glyphicon-unchecked"></span>
+                <span ng-if="!obj.draft" class="glyphicon glyphicon-check"></span>
+                {% ng "obj.date_localized" %}
             </td>
-            <td>
-                <a bmf-detail="{{ obj.pk }}" href="#">{{ obj.transaction_name }}</a>
+            <td ng-if="scopename=='related'">
+                {% ng "obj.transaction_name" %}
             </td>
-            <td>
-                {{ obj.account_name }}
+            <td ng-if="scopename!='related'">
+                <a bmf-detail="{% ng "obj.pk" %}" href="#">{% ng "obj.transaction_name" %}</a>
             </td>
-            <td>
-                {{ obj.credit }}
-            </td>
-            <td>
-                {{ obj.amount }} {{ obj.amount_currency }}
+            <td>{% ng "obj.account_name" %}</td>
+            <td><span ng-if="!obj.credit">{% ng "obj.amount" %} {% ng "obj.amount_currency" %}</span></td>
+            <td><span ng-if="obj.credit">{% ng "obj.amount" %} {% ng "obj.amount_currency" %}</span></td>
+            <td ng-if="scopename=='related'" class="text-right">
+                <a ng-if="obj.draft" class="btn btn-xs btn-bmfupdate" bmf-form="update" bmf-pk="{% ng "obj.pk" %}" href="#?data[transaction]={% ng "parent_object.pk" %}">
+                  <span class="glyphicon glyphicon-wrench"></span>
+                </a>
+                &thinsp;
+                <a ng-if="obj.draft" class="btn btn-xs btn-bmfdelete" bmf-form="delete" bmf-pk="{% ng "obj.pk" %}" href="#">
+                  <span class="glyphicon glyphicon-trash"></span>
+                </a>
             </td>
         </tr>
-    {% endverbatim %}
     </tbody>
+  <tfoot ng-if="scopename=='related' && parent_object.draft">
+    <tr>
+      <td ng-if="!parent_object.completed" colspan="6" class="text-right">
+          <a class="btn btn-xs bmf-edit btn-success" bmf-form="create" href="{% url "djangobmf:moduleapi_djangobmf_accounting_transactionitem:create" "default" %}?data[transaction]={% ng "parent_object.pk" %}">
+          <span class="glyphicon glyphicon-plus"></span>
+        </a>
+      </td>
+    </tr>
+  </tfoot>
 </table>
 {% endspaceless %}

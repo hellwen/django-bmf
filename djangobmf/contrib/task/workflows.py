@@ -134,6 +134,7 @@ class TaskWorkflow(Workflow):
         if timesheet is not None:
             obj = timesheet(
                 task=self.instance,
+                goal=self.instance.goal,
                 employee=self.user.djangobmf.employee,
                 auto=True,
                 project=project,

@@ -19,7 +19,6 @@ from .views import UpdateView
 @register
 class TimesheetModule(Module):
     model = Timesheet
-    default = True
     create = CreateView
     update = UpdateView
     permissions = TimesheetPermission

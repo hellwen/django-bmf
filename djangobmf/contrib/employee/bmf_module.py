@@ -17,7 +17,6 @@ from .views import EmployeeCreateView
 @register
 class EmployeeModule(Module):
     model = Employee
-    default = True
     create = EmployeeCreateView
 
 

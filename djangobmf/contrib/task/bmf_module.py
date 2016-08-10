@@ -22,13 +22,11 @@ from .views import GoalCloneView
 @register
 class TaskModule(Module):
     model = Task
-    default = True
 
 
 @register
 class GoalModule(Module):
     model = Goal
-    default = True
     clone = GoalCloneView
     detail = GoalDetailView
 
